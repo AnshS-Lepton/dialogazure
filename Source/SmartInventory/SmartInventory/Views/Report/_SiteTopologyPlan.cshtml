@@ -280,6 +280,10 @@
         $("#segmentModal .input-validation-error").removeClass("input-validation-error");
         $("#ringModal .input-validation-error").removeClass("input-validation-error");
 
+        var siteId = '@Model.site_id';
+          var sitename = '@Model.site_name';
+        $("#txtSiteId").val(siteId);
+        $("#txtSiteName").val(sitename);
         $('.chosen-select').chosen({ width: '100%' });
         $("#txtnoOfsite").on("input", function () {
             this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
@@ -324,7 +328,7 @@
             }
             });
 
-         
+
             $("#ddltopologytype").change(function () {
             debugger;
             var selectedValue = $(this).val(); // Get selected value
@@ -657,7 +661,7 @@
 
                 var segmentid = $("#ddlsegment").val();
                 var nofsites = $("#ddlnofsites").val();
-                
+
             if (regionid == "")
             {
             alert("Please select Region!");
@@ -746,7 +750,7 @@
                 //var ringcode =  response.ring_code;
 
                 $("#txtRingCode").val(ringcode);
-                $("#ringModal").show(); 
+                $("#ringModal").show();
             } else {
             alert("Failed to fetch segment code.");
             }

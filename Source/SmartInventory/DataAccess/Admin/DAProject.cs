@@ -799,6 +799,20 @@ namespace DataAccess.Admin
             return sitname;
            
         }
+        public List<PODMaster> getSiteIdName(int systemid)
+        {
+            var siteList = repo.GetAll(m => m.system_id == systemid)
+                               .Select(m => new PODMaster
+                               {
+                                   site_id = m.site_id,
+                                   site_name = m.site_name
+                               })
+                               .ToList();
+
+            return siteList;
+        }
+
+
         public List<PODMaster> getSiteNameList(string site_name)
         {
             var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(site_name.ToUpper())).ToList();
