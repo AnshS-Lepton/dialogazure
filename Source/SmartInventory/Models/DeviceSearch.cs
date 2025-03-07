@@ -43,5 +43,19 @@ namespace Models
         public dynamic results { get; set; }
     }
 
-  
+    #region PNO Integration
+
+    public class InputEntityInfo
+    {
+        public string entity_type { get; set; }
+
+        public string entity_name { get; set; }
+
+        public string network_id { get; set; }
+
+        public int route_buffer { get; set; } = 5;
+    }
+
+    #endregion
+
 }
