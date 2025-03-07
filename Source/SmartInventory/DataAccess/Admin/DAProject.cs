@@ -649,6 +649,11 @@ namespace DataAccess.Admin
 
             //return repo.GetAll(m => m.segment_id == segment_Id).ToList();
         }
+        public List<TopologyRingMaster> getRingCodeDetailByIdList(int segment_Id)
+        {
+            return repo.GetAll(m => m.segment_id == segment_Id).ToList();
+
+        }
         public TopologyRingMaster GetRingCode()
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();

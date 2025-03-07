@@ -13402,7 +13402,7 @@ namespace SmartInventory.Controllers
                 ringAssociationDetails.region_id = string.IsNullOrEmpty(regionCode) ? 0 : ringAssociationDetails.lstTopologyRegionMaster.FirstOrDefault(x => x.region_name == regionCode).id;
                 var segments = new BLProject().getSegmentDetailByIdList(ringAssociationDetails.region_id);
                 ringAssociationDetails.segment_id = string.IsNullOrEmpty(segementCode) || segments == null ? 0 : segments.FirstOrDefault(x => x.segment_code == segementCode).id;
-                var ringsdata = new BLProject().getRingDetailByIdList(ringAssociationDetails.segment_id);
+                var ringsdata = new BLProject().getRingCodeDetailByIdList(ringAssociationDetails.segment_id);
                 ringAssociationDetails.ring_id = string.IsNullOrEmpty(ringId) || ringsdata == null ? 0 : ringsdata.FirstOrDefault(x => x.ring_code == ringId).id;
             }
             ringAssociationDetails.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();

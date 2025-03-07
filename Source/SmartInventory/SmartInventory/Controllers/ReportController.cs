@@ -13601,6 +13601,23 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(ringsdata, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetRingCodeTypesByRegion(int segmentId)
+        {
+            var ringsdata = new BLProject().getRingCodeDetailByIdList(segmentId);
+            // Transform into key-value pairs for dropdown
+            var ringsDropdownData = ringsdata
+             .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
+             .Select(s => new
+             {
+                 Value = s.id,
+                 Text = s.ring_code
+             }).ToList();
+
+            // Return as JSON
+            return Json(ringsDropdownData, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult SaveSiteTopology(PODMaster pODMaster)
         {
             ModelState.Clear();

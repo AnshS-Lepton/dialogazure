@@ -205,6 +205,10 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologySegment().getSegmentDetailByIdList(id);
         }
+        public List<TopologyRingMaster> getRingCodeDetailByIdList(int segment_Id)
+        {
+            return new DAToplologyRing().getRingCodeDetailByIdList(segment_Id);
+        }
         public TopologySegment GetSegmentCode()
         {
             return new DAToplologySegment().GetSegmentCode();
