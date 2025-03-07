@@ -5,10 +5,13 @@ using Models.API;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net;
 using System.Security.Claims;
 using System.Threading;
 using System.Web.Http;
 using Utility;
+using Newtonsoft.Json.Linq;
 
 namespace IntegrationServices.Controllers
 {
@@ -136,5 +139,49 @@ namespace IntegrationServices.Controllers
                 return Json(new { status = ResponseStatus.ERROR.ToString(), result = "" });
             }
         }
+
+
+        #region PNO Integration API
+        [HttpPost]
+        [Route("getCableFiberDetails")]
+        public HttpResponseMessage GetCableFiberDetails([FromBody] InputEntityInfo obj)
+        {
+           
+            try
+            {
+
+                if (obj.entity_type == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Entity type is required. (parameter name: entity_type)" });
+                   
+                }
+                if (obj.entity_name == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Entity name is required. (parameter name: entity_name)" });
+                }
+                if (obj.network_id == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Network id is required. (parameter name: network_id)" });
+                }
+                if (obj.route_buffer > 50)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Maximum buffer value can be 50 meters. (parameter name: route_buffer)" });
+                }
+
+                var objData = BLDeviceSearch.Instance.GetCableDetails(obj);
+                JObject JObj = JObject.Parse(objData);
+
+                
+                return this.Request.CreateResponse(HttpStatusCode.OK, JObj);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetCableFiberDetails()", "SearchController", "", ex);
+                return this.Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = "UNKNOWN_ERROR", message = "Error while processing the request." });
+            }
+        }
+        #endregion
+
     }
 }

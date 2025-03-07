@@ -42,5 +42,10 @@ namespace BusinessLogics
         {
             return DADeviceSearch.Instance.GetFiberCutDistance(obj);          
         }
+        public string GetCableDetails(InputEntityInfo obj)
+        {
+            return DADeviceSearch.Instance.GetCableDetails(obj);
+        }
+        
     }
 }

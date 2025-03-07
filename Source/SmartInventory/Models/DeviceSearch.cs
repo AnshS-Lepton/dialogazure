@@ -43,5 +43,52 @@ namespace Models
         public dynamic results { get; set; }
     }
 
-  
+    #region PNO Integration
+
+    public class InputEntityInfo
+    {
+        public string entity_type { get; set; }
+
+        public string entity_name { get; set; }
+
+        public string network_id { get; set; }
+
+        public int route_buffer { get; set; } = 5;
+    }
+
+    public class OutEntityInfo
+    {
+        public string cable_network_id { get; set; }
+        public string linl_network_id { get; set; }
+
+        public string entity_type { get; set; }
+        public string cable_Name { get; set; }
+
+        public string link_id { get; set; }
+
+        public string link_name { get; set; }
+    }
+
+    public class FiberLinkInfo
+    {
+        public string network_id { get; set; }
+
+        public string link_id { get; set; }
+
+        public string link_name { get; set; }
+    }
+
+    public class Cable
+    {
+        public string Network_Id { get; set; }  
+        public string Cable_Name { get; set; }  
+        public List<FiberLinkInfo> Fiberlinks { get; set; }= new List<FiberLinkInfo>();
+    }
+
+    public class CableResponse
+    {
+        public List<Cable> Cables { get; set; }
+    }
+    #endregion
+
 }
