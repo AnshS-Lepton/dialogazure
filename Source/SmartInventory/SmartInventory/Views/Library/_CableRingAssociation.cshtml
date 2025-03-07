@@ -127,7 +127,7 @@ grid.Column("segment_code", "Segment Code", format: @<text>@item.segment_code</t
         function bindRingTypes(segmentId) {
             if (segmentId) {
                 $.ajax({
-                    url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch Ring Types
+                    url: '@Url.Action("GetRingCodeTypesByRegion", "Report")', // Fetch Ring Types
                     type: 'GET',
                     data: { segmentId: segmentId },
                     success: function (data) {
