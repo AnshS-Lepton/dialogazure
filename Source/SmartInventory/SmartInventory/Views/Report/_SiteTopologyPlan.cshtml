@@ -79,7 +79,7 @@
                 <div class="tab-pane active" id="GISInfo">
 
                     <fieldset class="sitePlan_fieldset">
-                        <legend>Topology Plan</legend>
+                        <legend>Topology Configure</legend>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -478,7 +478,7 @@
             var segment = $("#ddlsegment option:selected").text();
                 var ringtype = $("#ddlringtype option:selected").text();
                 var noofsites = $("#ddlnofsites").val();
-                var networkIdValue = (ringtype ?? "N/A") + " (" + (noofsites ?? "0") + ")";
+                var networkIdValue = (ringtype ?? "N/A");
             $("#lbdringsiteId").text(networkIdValue).css("display", "block");
             $("#ring_site_id").val(networkIdValue);
             //$("#networkIdField").val(networkIdValue);
@@ -733,6 +733,11 @@
             var segmentid = $("#ddlsegment").val();
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
+            var ringcapacity = $("#ddlringcapacity").val();
+                if (!ringcapacity) {
+                    alert("Please select Ring Capacity.");
+                    return;
+                }
             // Validate required fields
             if (!segmentid) {
             alert("Please select segment.");
@@ -917,7 +922,7 @@
 
             // Append new options
             $.each(data, function (index, item) {
-            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
             });
 
             // Update Chosen.js Dropdown (if used)

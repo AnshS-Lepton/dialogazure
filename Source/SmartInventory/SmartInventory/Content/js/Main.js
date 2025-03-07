@@ -21914,10 +21914,10 @@ var Main = function () {
         debugger;
         var formURL = "Report/SiteTopology";
         var layerTitle = getLayerTltle(_entityType);
-        var titleText = "Topology Plan";
+        var titleText = " Topology Plan";
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType
-        }, titleText, 'modal-lg');
+        }, titleText, 'modal-xl');
     }
     this.ViewLossDetail = function () {
         var value = $('#ddl_waveLength').val();

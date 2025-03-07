@@ -1605,7 +1605,7 @@ MAP
 		GROUP 'Network'
 CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P')  			
+            EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '0')  			
 			STYLE
 				SYMBOL "icons/Planned/POD.png" 
 				SIZE 25
@@ -1630,9 +1630,58 @@ CLASS
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A')  			
+            EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '1')  			
+			STYLE
+				SYMBOL "icons/Planned/Podag.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END	         		
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '0')  			
 			STYLE
 				SYMBOL "icons/AsBuild/POD.png" 
+				SIZE 21		
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END			
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '1')  			
+			STYLE
+				SYMBOL "icons/AsBuild/Podag.png" 
 				SIZE 21		
 			END
 			LEADER

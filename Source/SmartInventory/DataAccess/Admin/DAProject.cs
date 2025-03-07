@@ -786,7 +786,7 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
+            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site == false).ToList();
 
             return sitname;
            
@@ -814,8 +814,9 @@ namespace DataAccess.Admin
         public List<PODMaster> getAGG1List(string site)
         {
             var sitname = repo.GetAll(m =>
-                m.site_id.ToUpper().Contains(site.ToUpper()) ||
-                m.site_name.ToUpper().Contains(site.ToUpper())
+                (m.site_id.ToString().Contains(site.ToUpper()) ||
+                m.site_name.ToUpper().Contains(site.ToUpper())) &&
+                m.is_agg_site == true
             ).ToList();
 
             return sitname;
@@ -824,9 +825,10 @@ namespace DataAccess.Admin
         {
             // var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
             var sitname = repo.GetAll(m =>
-              m.site_id.ToUpper().Contains(site.ToUpper()) ||
-              m.site_name.ToUpper().Contains(site.ToUpper())
-          ).ToList();
+                  (m.site_id.ToString().Contains(site.ToUpper()) ||
+                  m.site_name.ToUpper().Contains(site.ToUpper())) &&
+                  m.is_agg_site == true
+              ).ToList();
             return sitname;
         }
 
