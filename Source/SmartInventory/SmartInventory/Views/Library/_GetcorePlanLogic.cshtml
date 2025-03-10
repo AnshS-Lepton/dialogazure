@@ -114,8 +114,8 @@
 
 <script>
     $(document).ready(function () {
-        // Disable submit button when user types or pastes a value in txtRequiredCore
-        $("#txtRequiredCore").on("input", function () {
+        // Disable submit button when user types or pastes a value in these fields txtRequiredCore,txtODF1,txtODF2
+        $("#txtODF1, #txtODF2, #txtRequiredCore").on("input", function () {
             $("#btnSubmit").prop("disabled", true);
         });
     });
