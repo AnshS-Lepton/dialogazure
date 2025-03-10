@@ -19566,12 +19566,14 @@ var Main = function () {
        
        let result = app.validateCoreAndODFFields();
        if(result) {
+           $("#gridTable").hide();
         ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val().trim(), ODF2: $("#txtODF2").val().trim(), required_core: $("#txtRequiredCore").val().trim() }, true, function (resp) {
             if (resp != null && resp != undefined) {
 
                 if (resp.status) {
                     $("#btnSubmit").prop("disabled", false);
-                    $("#ddlfiberlink").prop("required", true)
+                    $("#ddlfiberlink").prop("required", true);
+                    // Clear grid table data                
                     alert(resp.message);
 
                 }
@@ -19608,9 +19610,8 @@ var Main = function () {
                                 $("#gridTable").show();
                             } 
                             else 
-                            {
-                                $("#gridTable tbody").html("<tr><td colspan='5'>No data available</td></tr>");
-                                $("#gridTable").show();
+                            {                           
+                               $("#gridTable").hide();
                             }
                         }, true, true);
                         $("#btnSubmit").prop("disabled", true);

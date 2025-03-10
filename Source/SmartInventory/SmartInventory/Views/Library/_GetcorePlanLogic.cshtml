@@ -17,13 +17,13 @@
         top:2px !important;
     }
 
-        .pose-plus button {
-            min-height: 28px;
-        }
+    .pose-plus button {
+        min-height: 28px;
+    }
 
-        .pose-plus i {
-            line-height: 21px;
-        }
+    .pose-plus i {
+        line-height: 21px;
+    }
 </style>
 <link href="~/Content/css/HPSMTicket.css" rel="stylesheet" />
 @Html.HiddenFor(m => m.requiredcore, new { @id = "hdnCheckforCLP" })
@@ -111,3 +111,13 @@
 </div>
 
 <script src="~/Content/js/core_planner/core_plan_logic.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Disable submit button when user types or pastes a value in these fields txtRequiredCore,txtODF1,txtODF2
+        $("#txtODF1, #txtODF2, #txtRequiredCore").on("input", function () {
+            $("#btnSubmit").prop("disabled", true);
+        });
+    });
+
+</script>
