@@ -297,6 +297,7 @@ namespace Models
         public string connected_network_id { get; set; }
         public int? connected_port_no { get; set; }
         public string connected_entity_type { get; set; }
+        public string core_number { get; set; }
 
 
     }

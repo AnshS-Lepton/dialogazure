@@ -10353,3 +10353,23 @@ tfoot tr td a:hover {
     /* border: 1px solid gray; */
     border-radius: 3px;
 }
+
+.gm-style-iw-chr {
+    display: none !important;
+}
+
+.gm-style .gm-style-iw-c {
+    border-radius: 4px !important;
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.05) !important;
+    -webkit-box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.gm-style .gm-style-iw-tc {
+    -webkit-filter: drop-shadow(0 1px 1px rgba(178, 178, 178, .2));
+    filter: drop-shadow(0 1px 1px rgba(178, 178, 178, .2));
+}
+
+.gm-style .gm-style-iw-d {
+    position: relative !important;
+    top: 3px !important;
+}

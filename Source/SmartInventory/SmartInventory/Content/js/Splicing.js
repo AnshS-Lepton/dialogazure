@@ -2282,7 +2282,7 @@
                                 for (var z = 0; z < geometry.length; z++) {
                                     bounds.extend(geometry[z]);
                                 }
-                                var lineObj = si.createLine(geometry);
+                                var lineObj = si.createLineWithCore(geometry, resp.result.lstCableInfo[i].core_number);
                                 lineObj.strokeColor = 'blue';
                                 var _lineIcon = [{
                                     icon: {
