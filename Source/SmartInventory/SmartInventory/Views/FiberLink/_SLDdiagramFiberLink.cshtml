@@ -40,9 +40,6 @@
         white-space: nowrap;
     }
 
-    span {
-        word-spacing: 100px;
-    }
 
     .legend3Icon {
         bottom: 27px;
@@ -83,28 +80,30 @@
     </div>
     <div id="content" class="mainContainer">
         <div class="contentHeader">
-            <div class="pagetitle" style="width:90%;"><h2>Schematic View</h2></div>
-            @*<div class="midContent" style="width:20%;">             
-                @Model.entityDisplayText
-            </div>*@
+            <div class="pagetitle" style="width:50%;"><h2>Schematic View</h2></div>
+            <div class="midContent" style="width:40%;">
+                <span style="font-weight:600"> Link Id:</span>  <span> @Model.fiber_link_id</span>
+            </div>
+            
+
             @*<div class="StreamActions" style="width:40%;">
-                <div style="width:60%;float:left;">
-                    <label>
-                        <input type="checkbox" name="SchematicStream" id="chkSchematicValue" onclick="onChangeSchematicStream(this);" />Change Direction
-                    </label>
-                </div>
-                <div style="width:30%;float:left;">
-                    @if (ApplicationSettings.SLDTypeSpider == 0)
-                    {
-                        <span>Direction</span>
-                        @Html.DropDownList("ddldirection", new List<SelectListItem>
-                     {
-                        new SelectListItem{ Text="Left-Right", Value = "LR" },
-                        new SelectListItem{ Text="Up-Down", Value = "UD" }
-                     }, new { @onchange = "draw(this.value)", @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
-                    }
-             </div>
-            </div>*@
+            <div style="width:60%;float:left;">
+                <label>
+                    <input type="checkbox" name="SchematicStream" id="chkSchematicValue" onclick="onChangeSchematicStream(this);" />Change Direction
+                </label>
+            </div>
+            <div style="width:30%;float:left;">
+                @if (ApplicationSettings.SLDTypeSpider == 0)
+                {
+                    <span>Direction</span>
+                    @Html.DropDownList("ddldirection", new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="Left-Right", Value = "LR" },
+                    new SelectListItem{ Text="Up-Down", Value = "UD" }
+                 }, new { @onchange = "draw(this.value)", @class = "chosen-select col-sm-4", @style = "width: 81px !important;height: 26px;float: right;margin-left: 11px;" })
+                }
+         </div>
+        </div>*@
             <div class="exportActions" style="width:10%;">
                 <input type="button" id="btnExport" value="Export" class="Download" onclick="downloadPDF();" />
             </div>

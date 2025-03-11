@@ -1349,12 +1349,13 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
-        public ActionResult GetSchematicView(string key)
+        public ActionResult GetSchematicView(string key, string fiber_link_id)
         {
             var value = MiscHelper.Decrypt(key);
             var data = value.Split('-');
             int link_system_id = Convert.ToInt32(data[0]);
             SLDModel obj = new SLDModel();
+            
             //fn_get_fiberlink_schematicview_deepak(5507);
             obj = new BLOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
             if (!string.IsNullOrEmpty(obj.legends))
@@ -1367,6 +1368,7 @@ namespace SmartInventory.Controllers
             }
             // obj.title = pSLDType; primary done after discuss with Deepak yadav Sir
             obj.title = "Primary";
+            obj.fiber_link_id = fiber_link_id;
             return PartialView("_SLDdiagramFiberLink", obj);
         }
 
