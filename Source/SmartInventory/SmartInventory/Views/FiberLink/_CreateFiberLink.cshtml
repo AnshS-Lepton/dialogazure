@@ -447,7 +447,7 @@
         debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
-        if ($('txtLinkId').val() != 'undefined' && $('ddlLinkPrifixType').val() != 'undefined') {
+        if ($('txtLinkId').val() !== undefined && $('ddlLinkPrifixType').val() !== undefined) {
             $("#liAddFiberLink a").html('Update Link');
             $('#ddlLinkPrifixType').prop("disabled", true).trigger("chosen:updated");
             $('#txtLinkId').prop("disabled", true);
