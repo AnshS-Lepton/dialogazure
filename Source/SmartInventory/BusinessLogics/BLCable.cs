@@ -181,6 +181,10 @@ namespace BusinessLogics
         {
             return new DACable().GetCorePlanLogsByUserId(user_id);
         }
+        public List<CorePlannerLogs> getCorePlanInvalidCable(int user_id)
+        {
+            return new DACable().getCorePlanInvalidCable(user_id);
+        }
         public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
             return DACable.Instance.SaveCorePlanLogic(required_core, user_id, fiber_link_network_id, source_network_id, destination_network_id, buffer);
@@ -196,6 +200,14 @@ namespace BusinessLogics
         public void GetUpdateFiberStatus(int cableId,int fiberNumber,string fiberStatus)
         {
              new DACable().GetUpdateFiberStatus(cableId, fiberNumber, fiberStatus);
+        }
+        public List<RingAssociation> GetRingAssociationDetails(Boolean filterSelected, string regionCode, string segementCode, string ringId, int userId,string cableId)
+        {
+            return new DACable().GetRingAssociationDetails(filterSelected, regionCode, segementCode, ringId, userId, cableId);
+        }
+        public DbMessage GetRemoveRingAssociation( int ringId, int userId,string cableId)
+        {
+            return new DACable().GetRemoveRingAssociation( ringId, userId, cableId);
         }
         
     }

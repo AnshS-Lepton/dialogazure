@@ -151,7 +151,11 @@ namespace BusinessLogics.Admin
 
             new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
         }
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId)
+        {
 
+            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId,  segmentId);
+        }
         public PlanningCodeMaster getPlanningCodeDetailById(int id, int project_id=0)
         {
             return new DAPlanningCode().getPlanningCodeDetailById(id, project_id);
@@ -201,6 +205,10 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologySegment().getSegmentDetailByIdList(id);
         }
+        public List<TopologyRingMaster> getRingCodeDetailByIdList(int segment_Id)
+        {
+            return new DAToplologyRing().getRingCodeDetailByIdList(segment_Id);
+        }
         public TopologySegment GetSegmentCode()
         {
             return new DAToplologySegment().GetSegmentCode();
@@ -209,7 +217,7 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologyRing().GetRingCode();
         }
-        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id = 0)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id = 0)
         {
             return new DAToplologyRing().getRingDetailByIdList(segment_Id);
         }
@@ -244,6 +252,10 @@ namespace BusinessLogics.Admin
         public List<PODMaster> getAGG2List(string site_name)
         {
             return new DAPodMaster().getAGG2List(site_name);
+        }
+        public List<PODMaster> getSiteIdName(int systemId)
+        {
+            return new DAPodMaster().getSiteIdName(systemId);
         }
     }
 }

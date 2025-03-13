@@ -1013,7 +1013,13 @@ namespace Models
 
         
     }
-
+    public class ringinfo
+    {
+        
+         public int ring_id { get; set; }
+        public string ring_info { get; set; }
+    
+    }
          public class TopologySegment
          {
         [Key]
@@ -1036,6 +1042,15 @@ namespace Models
         public int id { get; set; }
         public int cable_id { get; set; }
         public int segment_id { get; set; }
+    }
+
+    public class TopringCableMapping
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
+        public int cable_id { get; set; }
+        public int ring_id { get; set; }
     }
 }
 

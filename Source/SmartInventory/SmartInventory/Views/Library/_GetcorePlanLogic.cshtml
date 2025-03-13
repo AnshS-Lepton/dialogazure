@@ -17,13 +17,13 @@
         top:2px !important;
     }
 
-        .pose-plus button {
-            min-height: 28px;
-        }
+    .pose-plus button {
+        min-height: 28px;
+    }
 
-        .pose-plus i {
-            line-height: 21px;
-        }
+    .pose-plus i {
+        line-height: 21px;
+    }
 </style>
 <link href="~/Content/css/HPSMTicket.css" rel="stylesheet" />
 @Html.HiddenFor(m => m.requiredcore, new { @id = "hdnCheckforCLP" })
@@ -66,7 +66,7 @@
             Required Core <i class="clsMandatory">*</i>
         </label>
         <div class="col-md-4 col-sm-4">
-            @Html.TextBoxFor(m => m.requiredcore, new { @id = "txtRequiredCore", @class = "input-sm form-control", @maxlength = "2", @required = "required" })
+            @Html.TextBoxFor(m => m.requiredcore, new { @id = "txtRequiredCore", @class = "input-sm form-control", @maxlength = "3", @required = "required" })
 
         </div>
         <div class="col-md-6 col-sm-6 d-flex">
@@ -99,7 +99,7 @@
         <thead>
             <tr>
                 <th>Action</th>
-                <th>NetworkId</th>
+                <th>Network Id</th>
 
             </tr>
         </thead>
@@ -111,3 +111,13 @@
 </div>
 
 <script src="~/Content/js/core_planner/core_plan_logic.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Disable submit button when user types or pastes a value in these fields txtRequiredCore,txtODF1,txtODF2
+        $("#txtODF1, #txtODF2, #txtRequiredCore").on("input", function () {
+            $("#btnSubmit").prop("disabled", true);
+        });
+    });
+
+</script>

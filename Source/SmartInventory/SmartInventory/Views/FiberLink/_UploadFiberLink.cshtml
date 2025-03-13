@@ -154,5 +154,9 @@
             else { $('#UpdatedFiled').css("display", "none"); $('input:checkbox').attr('checked', false); }
         });
     });
+    $("#liUploadFiberLink a").on("click", function () {
+        $("#liAddFiberLink a").html("Create Link");
+        $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
+    });
 </script>
 

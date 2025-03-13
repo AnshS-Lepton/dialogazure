@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI;
 using static Mono.Security.X509.X520;
 
 namespace DataAccess.Admin
@@ -310,6 +311,28 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId)
+        {
+            try
+            {
+                repo.ExecuteProcedure<bool>("fn_insert_top_segment_ring_cable_mapping", new
+                {
+                    p_agg1_system_id = Agg1SystemId,
+                    p_agg2_system_id = Agg2SystemId,
+                    p_user_id = userId,
+                    p_ring_id = ringId,
+                    p_segment_id = segmentId
+
+                }, false);
+
+
+            }
+
+            catch { throw; }
+
+        }
+
+        
     }
 
 
@@ -614,40 +637,81 @@ namespace DataAccess.Admin
     }
     public class DAToplologyRing : Repository<TopologyRingMaster>
     {
-        public List<TopologyRingMaster> getRingDetailByIdList(int segment_Id)
+
+       
+        public List<ringinfo> getRingDetailByIdList(int segment_Id)
+        {
+            var res = repo.ExecuteProcedure<ringinfo>("fn_get_ring_details", new
+            {
+                p_segment_id = segment_Id
+            }, false);
+            return res;
+
+            //return repo.GetAll(m => m.segment_id == segment_Id).ToList();
+        }
+        public List<TopologyRingMaster> getRingCodeDetailByIdList(int segment_Id)
         {
             return repo.GetAll(m => m.segment_id == segment_Id).ToList();
+
         }
         public TopologyRingMaster GetRingCode()
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
-            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
-            int newSequence = maxSequence + 1;
-            string ringCode = "R" + newSequence;
 
-            //string newRingCode = GenerateNextSegmentCode(lasringCode);
-            objTopologyPlan.ring_code = ringCode;
+            // Step 1: Get the max segment_id
+            int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
+
+            // Step 2: Find the latest ring_code for that segment
+            string lastRingCode = repo.GetAll()
+                                      .Where(r => r.segment_id == maxSegmentId)
+                                      .OrderByDescending(r => r.sequence)
+                                      .Select(r => r.ring_code)
+                                      .FirstOrDefault();
+
+            // Step 3: Extract the last sequence number from the ring_code (e.g., "CMBN-ACC34-R3" → 3)
+            int lastSequence = 0;
+            if (!string.IsNullOrEmpty(lastRingCode))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
+                if (match.Success)
+                {
+                    lastSequence = int.Parse(match.Groups[1].Value);
+                }
+            }
+
+            // Step 4: Increment the sequence number
+            int newSequence = lastSequence + 1;
+            string ringCode = "";
+            // Step 5: Generate the new ring code
+            if (maxSegmentId == 0)
+            {
+                 ringCode = $"R{newSequence}";
+            }
+            else { 
+                ringCode = $"R{newSequence}"; 
+            }
+                // Step 6: Assign values and return the object
+                objTopologyPlan.ring_code = ringCode;
             objTopologyPlan.sequence = newSequence;
+            objTopologyPlan.segment_id = maxSegmentId;
+
             return objTopologyPlan;
         }
-        private string GenerateNextSegmentCode(string lastRingCode)
+
+
+        public TopologyRingMaster GetRingCode1()
         {
-            if (string.IsNullOrEmpty(lastRingCode) || !lastRingCode.StartsWith("R"))
-            {
-                return "R1"; // Default if no valid ring code exists
-            }
+            TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
+            int ringCounter = 0;
+            ringCounter++; // Increment the counter
+            string ringCode = "R" + ringCounter; // Generate new ring code
 
-            // Extract numeric part from the last ring code
-            string numberPart = lastRingCode.Substring(1); // Get everything after "R"
+            objTopologyPlan.ring_code = ringCode;
+            objTopologyPlan.sequence = ringCounter; // Assign sequence
 
-            // Convert to integer and increment
-            if (int.TryParse(numberPart, out int numericValue))
-            {
-                return $"R{numericValue + 1}"; // No leading zeros (R1, R2, R10)
-            }
-
-            return "R1"; // Fallback if parsing fails
+            return objTopologyPlan;
         }
+        
 
         public TopologyRingMaster SaveRing(TopologyRingMaster topologyRingMaster)
         {
@@ -727,11 +791,25 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
+            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site == false).ToList();
 
             return sitname;
            
         }
+        public List<PODMaster> getSiteIdName(int systemid)
+        {
+            var siteList = repo.GetAll(m => m.system_id == systemid)
+                               .Select(m => new PODMaster
+                               {
+                                   site_id = m.site_id,
+                                   site_name = m.site_name
+                               })
+                               .ToList();
+
+            return siteList;
+        }
+
+
         public List<PODMaster> getSiteNameList(string site_name)
         {
             var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(site_name.ToUpper())).ToList();
@@ -741,8 +819,9 @@ namespace DataAccess.Admin
         public List<PODMaster> getAGG1List(string site)
         {
             var sitname = repo.GetAll(m =>
-                m.site_id.ToUpper().Contains(site.ToUpper()) ||
-                m.site_name.ToUpper().Contains(site.ToUpper())
+                (m.site_id.ToString().Contains(site.ToUpper()) ||
+                m.site_name.ToUpper().Contains(site.ToUpper())) &&
+                m.is_agg_site == true
             ).ToList();
 
             return sitname;
@@ -751,15 +830,20 @@ namespace DataAccess.Admin
         {
             // var sitname = repo.GetAll(m => m.agg_02.ToUpper().Contains(agg2.ToUpper())).ToList();
             var sitname = repo.GetAll(m =>
-              m.site_id.ToUpper().Contains(site.ToUpper()) ||
-              m.site_name.ToUpper().Contains(site.ToUpper())
-          ).ToList();
+                  (m.site_id.ToString().Contains(site.ToUpper()) ||
+                  m.site_name.ToUpper().Contains(site.ToUpper())) &&
+                  m.is_agg_site == true
+              ).ToList();
             return sitname;
         }
 
         public PODMaster updatetopology(PODMaster objPODMaster)
         {
             // Retrieve the existing record
+
+            var agg1SystemId = repo.Get(x => x.agg_01 == objPODMaster.agg_01)?.system_id;
+            var agg2SystemId = repo.Get(x => x.agg_02 == objPODMaster.agg_02)?.system_id;
+
             var objPOD = repo.Get(x => x.system_id == objPODMaster.system_id);
 
             if (objPOD == null)
@@ -779,10 +863,13 @@ namespace DataAccess.Admin
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
             objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
             objPOD.top_type = objPODMaster.top_type;
+            objPOD.ring_id = objPODMaster.ring_id;
+
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
 
             // Save changes
             var TopologyResp = repo.Update(objPOD);
+
             return TopologyResp;
         }
 

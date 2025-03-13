@@ -189,6 +189,7 @@
 <script>
 
     $(document).ready(function () {
+        $("#liAddFiberLink a").html("Create Link");
         fiberLink.InitApp();
         fiberLink.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         $('th a, tfoot a').on("click", function () {
@@ -196,5 +197,30 @@
             $('#frmViewLink').attr('action', $(this).attr('href')).submit();
             return false;
         });
+        
+      
+        
+        applyHideLogic();
+        setInterval(function () {
+            applyHideLogic();
+        }, 100);  
     });
+    $("#liViewFiberLink a").on("click", function () {
+        debugger; 
+        $("#liAddFiberLink a").html("Create Link");
+        $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
+    });
+    function applyHideLogic() {
+       // debugger;
+        var allowedHeaders = ["Action","Network ID", "Link/Route ID", "OP_ALIAS", "Link Type", "GIS Length(meter)","Total Route Length(meter)"]; // Headers to keep visible
+        $("table thead th").each(function () {
+            var headerText = $(this).text().trim();
+            if (!allowedHeaders.includes(headerText)) {
+                var columnIndex = $(this).index();
+                $("table tr").each(function () {
+                    $(this).find("th, td").eq(columnIndex).hide();
+                });
+            }
+        });
+    }
 </script>

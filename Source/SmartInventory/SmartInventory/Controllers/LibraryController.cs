@@ -13294,7 +13294,7 @@ namespace SmartInventory.Controllers
         {
             JsonResponse<List<CorePlannerLogs>> jResp = new JsonResponse<List<CorePlannerLogs>>();
             int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-           List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().GetCorePlanLogsByUserId(user_id);
+           List<CorePlannerLogs> lstCorePlannerLogs = new BLCable().getCorePlanInvalidCable(user_id);
 
             return Json(lstCorePlannerLogs, JsonRequestBehavior.AllowGet);
         }
@@ -13412,6 +13412,34 @@ namespace SmartInventory.Controllers
                 return Json(new { message = "Error: " + ex.Message, status = false }, JsonRequestBehavior.AllowGet);
             }
         }
-        
+        [HttpPost]
+        public ActionResult GetCableRingAssociation(Boolean filterSelected, string regionCode,string segementCode, string ringId,string cableId)
+        {
+            RingAssociationDetails ringAssociationDetails = new RingAssociationDetails();
+            int userId = Convert.ToInt32(Session["user_id"]);
+            ringAssociationDetails.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+            if (filterSelected)
+            {
+                ringAssociationDetails.region_id = string.IsNullOrEmpty(regionCode) ? 0 : ringAssociationDetails.lstTopologyRegionMaster.FirstOrDefault(x => x.region_name == regionCode).id;
+                var segments = new BLProject().getSegmentDetailByIdList(ringAssociationDetails.region_id);
+                ringAssociationDetails.segment_id = string.IsNullOrEmpty(segementCode) || segments == null ? 0 : segments.FirstOrDefault(x => x.segment_code == segementCode).id;
+                var ringsdata = new BLProject().getRingCodeDetailByIdList(ringAssociationDetails.segment_id);
+                ringAssociationDetails.ring_id = string.IsNullOrEmpty(ringId) || ringsdata == null ? 0 : ringsdata.FirstOrDefault(x => x.ring_code == ringId).id;
+            }
+            ringAssociationDetails.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+            ringAssociationDetails.cable_id = cableId;
+            ringAssociationDetails.ringAssociations = new BLCable().GetRingAssociationDetails(filterSelected, regionCode, segementCode, ringId, userId, cableId);
+            return PartialView("_CableRingAssociation", ringAssociationDetails);
+        }
+
+        [HttpPost]
+        public JsonResult RemoveRingAssociation(int ringId,string cableId)
+        {
+            DbMessage objResp = new DbMessage();
+            int userId = Convert.ToInt32(Session["user_id"]);
+            objResp  = new BLCable().GetRemoveRingAssociation(ringId, userId, cableId);
+            return Json(new { message = objResp.message, status = objResp.status }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

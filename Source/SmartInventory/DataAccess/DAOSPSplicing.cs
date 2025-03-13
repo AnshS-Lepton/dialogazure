@@ -569,11 +569,11 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public DbMessage deleteConnection(string listConnection)
+        public DbMessage deleteConnection(string listConnection, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_splicing_delete_connection", new { p_listConnection = listConnection }).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_splicing_delete_connection", new { p_listConnection = listConnection , p_userid = user_id }).FirstOrDefault();
             }
             catch { throw; }
         }

@@ -23,13 +23,8 @@
                 // Extract user-specific columns dynamically
                 var firstRow = (IDictionary<string, object>)gridData.FirstOrDefault();
 
-                users = firstRow.Keys.Where(k => k.StartsWith("User_")).ToList();
-               
-
+                users = firstRow.Keys.Where(k => k.StartsWith("User_")).ToList();              
             }
-
-
-
         }
         @{
             WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: false, ajaxUpdateContainerId: "dvViewLayerGroups", ajaxUpdateCallback: "onGridHeaderClick('tblItemVendorCost')");
@@ -53,31 +48,18 @@
             foreach (var user in users)
             {
 
-
-
-                //columns.Add(grid.Column(user, user.Replace("User_", ""), format: item =>
-                //    Html.Raw("<div style='display: flex; width: 100%;'>"
-                //    + "<div style='width: 50%; text-align: center; border-right: 1px solid #ddd; padding: 5px;'>"
-                //    + "<a href='#' class='auto' title='Edit'  data-user='" + user + "' data-value='" + item[user] +
-                //    "' onclick='editItemVendorCost(this);'><i class='fa fa-pencil action_icon fa-fw m-r-xs'></i></a></div>"
-                //    + "<div style='width: 50%; text-align: center; padding: 5px;'>" + item[user] + "</div>"
-                //    + "</div>")));
-
                 columns.Add(grid.Column(user, user.Replace("User_", "").Split('/')[0], format: item =>
-    Html.Raw("<div style='display: flex; width: 100%;'>"
-    + "<div style='width: 50%; text-align: center; border-right: 1px solid #ddd; padding: 5px;'>"
-    + "<a href='#' class='auto' title='Edit'  data-user='" + user + "' data-value='" + item[user] +
-    "' onclick='editItemVendorCost(this);'><i class='fa fa-pencil action_icon fa-fw m-r-xs'></i></a></div>"
-    + "<div style='width: 50%; text-align: center; padding: 5px;'>" + item[user] + "</div>"
-    + "</div>")));
+                Html.Raw("<div style='display: flex; width: 100%;'>"
+                + "<div style='width: 50%; text-align: center; border-right: 1px solid #ddd; padding: 5px;'>"
+                + "<a href='#' class='auto' title='Edit'  data-user='" + user + "' data-value='" + item[user] +
+                "' onclick='editItemVendorCost(this);'><i class='fa fa-pencil action_icon fa-fw m-r-xs'></i></a></div>"
+                + "<div style='width: 50%; text-align: center; padding: 5px;'>" + item[user] + "</div>"
+                + "</div>")));
             }
             columns.Add(grid.Column("uom", "UOM"));
-            columns.Add(grid.Column("layer_id", "layer_id", style: "display: none"));
+            columns.Add(grid.Column("layer_id", "layer_id", style: "display: none"));    
            
-
         }
-
-
         @using (Html.BeginForm("ViewItemVendorCost", "Vendor", FormMethod.Post, new { autocomplete = "off", @id = "frmtblItemVendorCost" }))
         {
             <section class="--pad-15">
@@ -146,39 +128,53 @@
                 }
 
             </section>
-
-
         }
 
         <script>
            
-            $(document).ready(function () {
+        $(document).ready(function () 
+        {
                 debugger;
                 updateNumberstoFormatedNumber();
-               // addDefaultSortingIcons("tblItemVendorCost");
+                 $('table thead th:last-child, table tbody td:last-child').hide();             
+                 applyHideLogic();       
+                setInterval(function () 
+                {
+                    applyHideLogic();
+                }, 50);
+        });
 
-                //$("th:contains('layer_id')").hide();
-                //$("td:nth-child(8)").hide();
-                //$('table thead th:last-child, table tbody td:last-child').hide();
-             
-                    $('table thead th:last-child, table tbody td:last-child').hide();
-            });
-            
 
-           
+        function hideColumnByHeader(headerText) 
+        {
+            var columnIndex = $("table thead th").filter(function () {
+                return $(this).text().trim() === 'layer_id';
+            }).index();
+
+            if (columnIndex !== -1) {
+                $("table tr").each(function () {
+                    $(this).find("th, td").eq(columnIndex).hide();
+                });
+                }
+        }
+        function applyHideLogic() 
+        {
+        hideColumnByHeader("Column 3"); // Change to your column header name
+        }
+
             function ViewGroupsReport() {
                 window.location = appRoot + 'Vendor/DownloadItemVendorCostDetails';
             }
 
-            function updateNumberstoFormatedNumber() {
-                $('span[data]').each(function (index) {
-                    // Get the value of the data-target attribute for each element
-                    var targetValue = $(this).data('data');
+        function updateNumberstoFormatedNumber() {
+            $('span[data]').each(function (index) {
+                // Get the value of the data-target attribute for each element
+                var targetValue = $(this).data('data');
 
-                    // Do whatever you want with the element or its data
-                    $(this).text(getFormattedNumber($(this).text().trim()));
-                });
-            }
+                // Do whatever you want with the element or its data
+                $(this).text(getFormattedNumber($(this).text().trim()));
+            });
+        }
 
             function editItemVendorCost(element) {
                 debugger;
@@ -188,18 +184,9 @@
                     var value = element.getAttribute("data-value") || "";
                     var usr = user.replace("User_", "");
                     var item_cost = parseFloat(value);
-
-
-                     // Example value
-
-                    var arr_user = usr.split("/");
-
-                  
+                    var arr_user = usr.split("/");                 
                     var user_id = arr_user[1];
                     var user_name = arr_user[0];
-
-
-
                     var item_cost = isNaN(parseFloat(value)) ? 0.0 : parseFloat(parseFloat(value).toFixed(2)); // Ensure valid double
 
                     // Find the closest table row
@@ -209,11 +196,13 @@
                     var item_code = row.querySelector("td:nth-child(1)")?.textContent.trim();
                     var specification = row.querySelector("td:nth-child(2)")?.textContent.trim();
                     var entity_type = row.querySelector("td:nth-child(3)")?.textContent.trim();
-                    var UOM = row.querySelector("td:nth-child(7)")?.textContent.trim();
+                    //var UOM = row.querySelector("td:nth-child(7)")?.textContent.trim();
+                    var UOM = row.children[row.children.length - 2]?.textContent.trim();
                     //var layer_id = row.querySelector("td:nth-child(8)")?.textContent.trim();
                     var layer_id = row.lastElementChild?.textContent.trim();
                 }
                 else {
+                     
                     var item_code = '';
                     var specification = '';
                     var entity_type = '';

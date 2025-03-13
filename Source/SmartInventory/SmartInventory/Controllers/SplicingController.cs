@@ -284,9 +284,9 @@ namespace SmartInventory.Controllers
         }
         public JsonResult deleteConnection(List<deleteConeectionInput> objConnectionInfo)
         {
-
+            var objLgnUsrDtl = (User)Session["userDetail"];
             JsonResponse<string> objResp = new JsonResponse<string>();
-            DbMessage response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo));
+            DbMessage response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo), objLgnUsrDtl.user_id);
             var module = lstUserModule.Where(x => x.module_abbr.ToUpper() == "NTF").ToString();
             if (module == "NTF")
             {

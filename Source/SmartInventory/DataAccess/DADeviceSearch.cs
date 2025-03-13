@@ -83,5 +83,22 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public string GetCableDetails(InputEntityInfo obj)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<string>("fn_get_cable_FiberLink_detail", new
+                {
+                    p_entity_type = obj.entity_type,
+                    p_entity_name = obj.entity_name,
+                    p_network_id = obj.network_id,
+                    p_route_buffer = obj.route_buffer
+
+                }, false).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
     }
 }

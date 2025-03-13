@@ -15,8 +15,11 @@
 {
     @Html.HiddenFor(m => m.system_id, new { @id = "hdnFiberLinkSystemId" })
     @Html.HiddenFor(m => m.CreateFL)
-    @Html.HiddenFor(m => m.Link_Prefix, new { @id = "hdnLinkPrefix" })
+    @Html.HiddenFor(m => m.Link_Prefix, new { @id = "hdnLinkPrefix"  })
     @Html.HiddenFor(m => m.Lst_Link_Prefix, new { @id = "hdnLstLinkPrefix" })
+
+    @Html.HiddenFor(m => m.link_id, new { @id = "link_id",@name= "link_id" })
+    @Html.HiddenFor(m => m.FiberLinkPrefix.link_prefix, new { @id = "link_prefix",@name= "link_prefix" })
     <div id="CreateFiberLink" class="tab-pane fade in active show">
         <div class="space-pad fiber--min-height">
             <fieldset class="the-fieldset">
@@ -24,11 +27,11 @@
                 <div class="form-group row">
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</label>
                     <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId"})
+                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId" })
                     </div>
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102:</label>
                     <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.service_id, new { @class = "form-control", @id = "txtServiceId", @maxlength = "100"})
+                        @Html.TextBoxFor(m => m.service_id, new { @class = "form-control", @id = "txtServiceId", @maxlength = "100" })
                     </div>
                 </div>
                 <div class="form-group row">
@@ -40,18 +43,18 @@
                     <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_153 <i class="clsMandatory">*</i>:</label>
                     <div class="col-md-4">
                         <div class="TickCrossicon">
-                            <img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.system_id==0?" crossIcon":"")" id="IconCross" title="Link Id Already Exist!" />
-                            <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.system_id>0?" tickIcon":"")" id="ImgTick" />
+                            @*<img src="~/Content/images/cross.gif" class="GifImg crossIcon @(Model.system_id==0?" crossIcon":"")" id="IconCross" title="Link Id Already Exist!" />
+                                <img src="~/Content/images/tick_1.gif" class="GifImg tickIcon @(Model.system_id>0?" tickIcon":"")" id="ImgTick" />*@
 
                         </div>
                         @if (Model.system_id == 0)
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100", @onblur = "fiberLink.validateLinkId(this.value,'link_id');"})
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @oninput = "validateInput(this)", @maxlength = "20", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
 
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @maxlength = "100" })
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @oninput = "validateInput(this)", @id = "txtLinkId", @maxlength = "20" })
                         }
 
                     </div>
@@ -61,21 +64,21 @@
                     <div class="col-md-4">
                         @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType", @style = "height: 28px;!important" })
                     </div>
-                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>
+                    @*<label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>*@
 
 
                     <div class="col-md-4" style="display:none;">
 
                         @*@Html.DropDownListFor(m => m.main_link_type, new List<SelectListItem>
-        {
-         //new SelectListItem{ Text="-Select-", Value = ""},
-           new SelectListItem{ Text="Optical", Value = "Optical"},
-           //new SelectListItem{ Text="MW", Value = "MW"  }
-        }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
-             {
-                 @class = "chosen-select form-control",
-                 @style = "padding:0;",
-             }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status", @readonly = true }))*@
+                            {
+                             //new SelectListItem{ Text="-Select-", Value = ""},
+                               new SelectListItem{ Text="Optical", Value = "Optical"},
+                               //new SelectListItem{ Text="MW", Value = "MW"  }
+                            }, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
+                                 {
+                                     @class = "chosen-select form-control",
+                                     @style = "padding:0;",
+                                 }, new { @id = "ddlMainlinktype", @tabindex = "2", @title = "Status", @readonly = true }))*@
                         @Html.TextBoxFor(m => m.main_link_type, SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
                    {
                        @class = "form-control",
@@ -102,7 +105,7 @@
 
                     </label>
 
-                    <div class="col-md-4">                        
+                    <div class="col-md-4">
                         @Html.TextBoxFor(m => m.redundant_link_type,
                         SmartInventory.Helper.CustomHtmlHelper.GetHtmlAttributes(new
                         {
@@ -143,8 +146,8 @@
 
                     </div>
                     @*<div class="col-md-4">
-            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @maxlength = "100", @id = "txtLinkName", @readonly = true })
-        </div>*@
+                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @maxlength = "100", @id = "txtLinkName", @readonly = true })
+                        </div>*@
 
                 </div>
                 <div class="form-group row" style="display:none;">
@@ -231,7 +234,7 @@
 
 
                 </div>
-                <div class="form-group row" >
+                <div class="form-group row">
                     @if (Model.lstFiberLinkColumnsMapping.Contains("total_route_length"))
                     {
                         <label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_NET_FRM_136:</label>
@@ -350,7 +353,7 @@
                             @if (Model.any_row_portion)
                             {
 
-                                @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();"})
+                                @Html.TextBoxFor(m => m.row_authority, new { @class = "form-control ui-autocomplete-input", @maxlength = "10", @id = "txtROWAuthority", @onkeyup = "si.GetAutoROWAuthority();" })
 
                             }
                             else
@@ -441,7 +444,32 @@
         var fiberLink = new FiberLink();
     }
     $(document).ready(function () {
+        debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
+        if ($('txtLinkId').val() !== undefined && $('ddlLinkPrifixType').val() !== undefined) {
+            $("#liAddFiberLink a").html('Update Link');
+            $('#ddlLinkPrifixType').prop("disabled", true).trigger("chosen:updated");
+            $('#txtLinkId').prop("disabled", true);
+            $('link_id').val($('txtLinkId').val())
+            $('link_prefix').val($('ddlLinkPrifixType').val())
+        }
+        else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); }
+        
+      
     });
+    $("#liAddFiberLink a").on("click", function () {
+        debugger;
+        if ($("#liAddFiberLink a").html() === 'Create Link') {
+            $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
+            $('#txtNetworkId').val(''); $('#ddlLinkPrifixType').val('0'); $('#txtGISLength').val('0');
+            $('#txtTotalRouteLength').val('0'); $('#txtTotalRouteLength').val('0'); $('#ddlLinkType').val('0').trigger("chosen:updated");
+            $('#txtLinkId').val(''); $('#txtServiceId').val('');
+        }   
+        
+    });
+
+    function validateInput(input) {
+        input.value = input.value.replace(/[^a-zA-Z0-9]/g, ''); // Remove non-alphanumeric characters
+    }
 </script>

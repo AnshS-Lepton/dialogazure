@@ -1661,18 +1661,35 @@ LAYER
 		STATUS OFF
 		GROUP 'Network'		
 		CLASS
+		NAME 'POD'
+		EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '1')
+		STYLE
+			SYMBOL "icons/Planned/Podag.png"
+			SIZE 25
+			OFFSET 0 -5
+		END
+	END
+	CLASS
+		NAME 'POD'
+		EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '0')
+		STYLE
+			SYMBOL "icons/Planned/POD.png"
+			SIZE 25
+			OFFSET 0 -5
+		END
+	END
+		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '1')  			
 			STYLE
-				SYMBOL "icons/Planned/POD.png" 
-				SIZE 25
-				OFFSET 0 -5
+				SYMBOL "icons/AsBuild/Podag.png" 
+				SIZE 21			
 			END
             			
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '0')  			
 			STYLE
 				SYMBOL "icons/AsBuild/POD.png" 
 				SIZE 21			
@@ -1681,9 +1698,19 @@ LAYER
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D')  			
+            EXPRESSION ('[network_status]'  eq 'D'AND '[agg_02]'  eq '1')  			
 			STYLE
-				SYMBOL "icons/Dorment/POD.png" 
+				SYMBOL "icons/Dorment/Podag.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END
+            			
+		END	
+CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'D'AND '[agg_02]'  eq '1')  			
+			STYLE
+				SYMBOL "icons/Dorment/Podag.png" 
 				SIZE 25
 				OFFSET 0 -5				
 			END

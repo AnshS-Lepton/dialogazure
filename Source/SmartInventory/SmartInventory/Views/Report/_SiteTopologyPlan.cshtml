@@ -27,9 +27,19 @@
 
     .pose-plus {
         position: absolute;
-        right: -28px;
-        top: 0;
+        right: 9px;
+        top: 1px;
         z-index: 9;
+    }
+    .txtdesc {
+        width: 469px;
+    }
+    #dvregionId .chosen-container, #dvringId .chosen-container {
+        width: 84% !important;
+        margin-left:20px;
+    }
+    #dvregionId .btn, #dvringId .btn{
+        padding:4px 6px;
     }
 </style>
 
@@ -42,13 +52,16 @@
     {
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
-        <input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
-        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />
+        @*<input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
+        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
         @Html.HiddenFor(m => m.ring_site_seq, new { id = "hdnringsiteseq" })
         @Html.HiddenFor(m => m.ring_a_site_id, new { id = "hdnRingASiteId" })
         @Html.HiddenFor(m => m.ring_b_site_id, new { id = "hdnRingBSiteId" })
+
+        @Html.HiddenFor(m => m.agg1SystemId, new { id = "hdnAgg1SystemId" })
+        @Html.HiddenFor(m => m.agg2SystemId, new { id = "hdnAgg2SystemId" })
 
         @*<input type="hidden" id="hdnRingASiteId" name="hdnRingASiteId" />*@
         @*<input type="hidden" id="hdnRingASiteDistance" name="hdnRingASiteDistance" />*@
@@ -66,7 +79,7 @@
                 <div class="tab-pane active" id="GISInfo">
 
                     <fieldset class="sitePlan_fieldset">
-                        <legend>Topology Plan</legend>
+                        <legend>Topology Configure</legend>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -116,7 +129,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="sitePlan_fieldset" id="fldtopology">
-                        <legend>Dummy text</legend>
+                        <legend> </legend>
                         <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -148,13 +161,13 @@
                         </div>
 
                         <div class="form-group row" id="dvregionId" style="display: block;">
-                            <label class="control-label col-sm-2" for="searchby">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="searchby">Dist from Planned to Existing: <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">Distance from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext">Dist from Planned to Existing : <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
 
@@ -190,25 +203,27 @@
 
                             @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                         </div>
+                        <label class="control-label col-sm-2" for="searchby">Segment Code:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                       
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                        </div>
+                        
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">Segment Code:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
-                        </div>
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
-                        <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50 })
                         </div>
                     </div>
                 </form>
@@ -227,8 +242,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header d-flex">
-                <h4 class="modal-titles" id="segmentModalLabel">Create Segment</h4>
-                <span class="icon-close ml-auto" id="closedChildPopup" data-bs-dismiss="modal" aria-label="Close"></span>
+                <h4 class="modal-titles" id="segmentModalLabel">Create Ring</h4>
+                <span class="icon-close ml-auto" id="closedringChildPopup" data-bs-dismiss="modal" aria-label="Close"></span>
             </div>
             <div class="space-pad">
                 <form id="segmentForm">
@@ -247,14 +262,15 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtringdesc", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                            @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
                         </div>
                     </div>
                 </form>
             </div>
             <div class="ModalFooter d-flex --gap05">
-                <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
-                <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+                <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnringCancel">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+                </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
 
             </div>
         </div>
@@ -266,6 +282,10 @@
         $("#segmentModal .input-validation-error").removeClass("input-validation-error");
         $("#ringModal .input-validation-error").removeClass("input-validation-error");
 
+        var siteId = '@Model.site_id';
+          var sitename = '@Model.site_name';
+        $("#txtSiteId").val(siteId);
+        $("#txtSiteName").val(sitename);
         $('.chosen-select').chosen({ width: '100%' });
         $("#txtnoOfsite").on("input", function () {
             this.value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
@@ -310,38 +330,7 @@
             }
             });
 
-            @*$("#txtSiteId").autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            url: '@Url.Action("GetSiteIds", "Report")',
-                            type: "GET",
-                            dataType: "json",
-                            data: { term: request.term },
-                            success: function (data) {
-                                debugger;
-                                if (data.length === 0) {
-                                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
-                                } else {
-                                    response($.map(data, function (item) {
-                                        return {
-                                            label: item.label,  // Display site_id in dropdown
-                                            value: item.value,  // Store site_id in textbox
-                                            siteName: item.siteName // Pass site_name
-                                        };
-                                    }));
-                                }
-                            }
-                        });
-                    },
-                    minLength: 3,
-                    select: function (event, ui) {
-                        if (ui.item.value !== "") {
-                            $("#txtSiteId").val(ui.item.value);   // Set selected site_id
-                            $("#txtSiteName").val(ui.item.siteName); // Set corresponding site_name
-                        }
-                        return false;
-                    }
-                });*@
+
             $("#ddltopologytype").change(function () {
             debugger;
             var selectedValue = $(this).val(); // Get selected value
@@ -386,64 +375,6 @@
             }
             });
 
-            @*$("#txtagg1").autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            url: '@Url.Action("GetAGG1", "Report")',
-                            type: "GET",
-                            dataType: "json",
-                            data: { term: request.term },
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
-                                } else {
-                                    response($.map(data, function (item) {
-                                        return {
-                                            label: item.label,  // Display site_id in dropdown
-                                            value: item.value,  // Store site_id in textbox
-                                        };
-                                    }));
-                                }
-                            }
-                        });
-                    },
-                    minLength: 3,
-                    select: function (event, ui) {
-                        if (ui.item.value !== "") {
-                            $("#txtagg1").val(ui.item.value);   // Set selected site_id
-                        }
-                        return false;
-                    }
-                });*@
-            @*$("#txtagg2").autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            url: '@Url.Action("GetAGG2", "Report")',
-                            type: "GET",
-                            dataType: "json",
-                            data: { term: request.term },
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    response([{ label: "No results found", value: "", siteName: "" }]); // Show message
-                                } else {
-                                    response($.map(data, function (item) {
-                                        return {
-                                            label: item.label,  // Display site_id in dropdown
-                                            value: item.value,  // Store site_id in textbox
-                                        };
-                                    }));
-                                }
-                            }
-                        });
-                    },
-                    minLength: 3,
-                    select: function (event, ui) {
-                        if (ui.item.value !== "") {
-                            $("#txtagg2").val(ui.item.value);   // Set selected site_id
-                        }
-                        return false;
-                    }
-                });*@
             $("#txtagg2").autocomplete({
             source: function (request, response) {
             $.ajax({
@@ -521,7 +452,7 @@
 
             // Append new options from response
             $.each(data, function (index, item) {
-            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
             });
 
             // **Update Chosen Dropdown**
@@ -547,7 +478,7 @@
             var segment = $("#ddlsegment option:selected").text();
                 var ringtype = $("#ddlringtype option:selected").text();
                 var noofsites = $("#ddlnofsites").val();
-                var networkIdValue = (ringtype ?? "N/A") + " (" + (noofsites ?? "0") + ")";
+                var networkIdValue = (ringtype ?? "N/A");
             $("#lbdringsiteId").text(networkIdValue).css("display", "block");
             $("#ring_site_id").val(networkIdValue);
             //$("#networkIdField").val(networkIdValue);
@@ -574,7 +505,7 @@
 
             // Append new options from response
             $.each(response.lsttopologygetsites, function (index, item) {
-            var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '</option>';
+                var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '( '+ item.sitedistance+')'  + '</option>';
             dropdownA.append(optionHtml);
             dropdownB.append(optionHtml);
             });
@@ -732,7 +663,7 @@
 
                 var segmentid = $("#ddlsegment").val();
                 var nofsites = $("#ddlnofsites").val();
-                
+
             if (regionid == "")
             {
             alert("Please select Region!");
@@ -788,7 +719,12 @@
             //$("#segmentModal").modal("hide");
             $("#segmentModal").hide();
             });
-
+        $("#closedringChildPopup").click(function () {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            //$("#segmentModal").modal("hide");
+            $("#ringModal").hide();
+        });
             $("#btncreatering").click(function (event) {
             debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
@@ -797,6 +733,11 @@
             var segmentid = $("#ddlsegment").val();
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
+            var ringcapacity = $("#ddlringcapacity").val();
+                if (!ringcapacity) {
+                    alert("Please select Ring Capacity.");
+                    return;
+                }
             // Validate required fields
             if (!segmentid) {
             alert("Please select segment.");
@@ -812,8 +753,11 @@
             success: function (response) {
             if (response.ring_code) {
             $("#hdnringsiteseq").val(response.sequence);
-            var ringcode = region + "-" + segment + "-" + response.ring_code;
-            $("#txtRingCode").val(ringcode);
+                var ringcode = region + "-" + segment + "-" + response.ring_code;
+                //var ringcode =  response.ring_code;
+
+                $("#txtRingCode").val(ringcode);
+                $("#ringModal").show();
             } else {
             alert("Failed to fetch segment code.");
             }
@@ -942,7 +886,7 @@
             var segmentid = $("#ddlsegment").val();
             var segmentcode = $("#txtsegmentcode").val();
             var ringdesc = $("#txtringdesc").val();
-
+            var ringcapacity = $("#ddlringcapacity").val();
             // Validate required fields
             if (!segmentid ) {
             alert("Please select segment.");
@@ -957,12 +901,14 @@
             data: {
             segmentcode: segmentid,
             ringcode: ringcode,
-            description: ringdesc
+                description: ringdesc,
+                ringcapacity: ringcapacity
             },
             success: function (response) {
             if (response) {
             alert("Ring saved!");
             $("#ringModal").hide(); // Hide modal after saving
+            //    $("#ringModal").modal("hide");
 
             // Now fetch updated ring types
             $.ajax({
@@ -976,7 +922,7 @@
 
             // Append new options
             $.each(data, function (index, item) {
-            ringTypeDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
+                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
             });
 
             // Update Chosen.js Dropdown (if used)
@@ -1003,6 +949,12 @@
             event.stopPropagation();
             $("#segmentModal").hide();
             });
+        $("#btnringCancel").click(function (event) {
+            debugger;
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            event.stopPropagation();
+            $("#ringModal").hide();
+        });
             function disableSelectedOptions() {
             var selectedA = $("#ddlRingASite").val();
             var selectedB = $("#ddlRingBSite").val();

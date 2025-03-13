@@ -1,6 +1,8 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.TempUpload;
+using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -380,6 +382,15 @@ namespace DataAccess
                 return res;
             }
             catch { throw; }
+        } 
+        public List<CorePlannerLogs> getCorePlanInvalidCable(int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<CorePlannerLogs>("fn_core_planner_invalid_cable", new { p_user_id = user_id }, true);
+                return res;
+            }
+            catch { throw; }
         }
         public DbMessageConePlanLogic SaveCorePlanLogic(string required_core, int user_id, string fiber_link_network_id, string source_network_id, string destination_network_id, int buffer)
         {
@@ -749,6 +760,26 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+        public List<RingAssociation> GetRingAssociationDetails(Boolean filterSelected , string regionCode , string segementCode,string ringId, int userId,string cableId)
+        {
+            try
+            {
+                var lstRingAssociation = repo.ExecuteProcedure<RingAssociation>("fn_get_ring_assocication_details", new { filter_data_flag= filterSelected , p_region_code= regionCode, p_segement_code = segementCode, p_ring_id = ringId, p_user_id = userId, cable_id = cableId }, true);
+                return lstRingAssociation;
+            }
+            catch { throw; }
+        }
+        public DbMessage GetRemoveRingAssociation(int ringId, int userId,string cableId)
+        {
+            try
+            {
+                var lstRingAssociation = repo.ExecuteProcedure<DbMessage>("fn_get_remove_ring_assocication_details", new { p_ring_id = ringId, p_user_id = userId, cable_id= cableId }).FirstOrDefault();
+                return lstRingAssociation;
+            }
+            catch { throw; }
+        }
+
     }
     public class DAIspLine : Repository<IspLineMaster>
     {

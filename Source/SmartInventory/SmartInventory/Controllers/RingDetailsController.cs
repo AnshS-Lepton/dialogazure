@@ -19,6 +19,7 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Utility;
 using Models.API;
+using NetTopologySuite.Noding;
 
 
 namespace SmartInventory.Controllers
@@ -63,6 +64,40 @@ namespace SmartInventory.Controllers
             objRingFilter.lstRingType = new BLRingDetails().GetRingTypeDetails();
 
             return PartialView("_ShowTopologyRingDetails", objRingFilter);
+        }
+
+        [HttpPost]
+        public ActionResult getSitGeometryDetail(int ring_id)
+        {
+            JsonResponse<vmGeomRingDetailIn> objResp = new JsonResponse<vmGeomRingDetailIn>();
+            // var objGeometryDetail = new BLSearch().GetGeometryDetails(objGeomDetailIn);
+            objResp.result = new BLRingDetails().getSiteDetails(ring_id);
+
+
+            //if (objGeometryDetail.geometry_extent != null)
+            //{
+            //    var extent = objGeometryDetail.geometry_extent.TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+            //    string[] bounds = extent.Split(',');
+            //    string[] southWest = bounds[0].Split(' ');
+            //    string[] northEast = bounds[1].Split(' ');
+            //    objGeometryDetail.southWest = new latlong { Lat = southWest[1], Long = southWest[0] };
+            //    objGeometryDetail.northEast = new latlong { Lat = northEast[1], Long = northEast[0] };
+            //    objResp.result = objGeometryDetail;
+            //    objResp.status = ResponseStatus.OK.ToString();
+            //}
+            //else
+            //{
+            //    objResp.status = ResponseStatus.ZERO_RESULTS.ToString();
+            //}
+            return Json(objResp.result, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public string getSitGeometryDetail11(int ring_id)
+        {
+            string objresp = string.Empty;
+            objresp = new BLDataUploader().getsiteShowOnMap(ring_id);
+            return objresp;
         }
     }
 }

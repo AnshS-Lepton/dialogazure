@@ -38,7 +38,6 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using Utility;
-using static Mono.Security.X509.X520;
 using BorderStyle = NPOI.SS.UserModel.BorderStyle;
 
 
@@ -13530,7 +13529,10 @@ namespace SmartInventory.Controllers
                 objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
                 objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
                 objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
-               //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
+                //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
+                var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
+                objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
+                objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
 
             }
             catch (Exception ex)
@@ -13587,21 +13589,44 @@ namespace SmartInventory.Controllers
         {
             var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
             // Transform into key-value pairs for dropdown
-            var ringsDropdownData = ringsdata.Select(s => new
-            {
-                Value = s.id,     
-                Text = s.ring_code
-            }).ToList();
+            //var ringsDropdownData = ringsdata
+            // .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
+            // .Select(s => new
+            // {
+            //     Value = s.id,
+            //     Text = s.ring_code
+            // })
+            // .ToList();
+
+            // Return as JSON
+            return Json(ringsdata, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetRingCodeTypesByRegion(int segmentId)
+        {
+            var ringsdata = new BLProject().getRingCodeDetailByIdList(segmentId);
+            // Transform into key-value pairs for dropdown
+            var ringsDropdownData = ringsdata
+             .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
+             .Select(s => new
+             {
+                 Value = s.id,
+                 Text = s.ring_code
+             }).ToList();
 
             // Return as JSON
             return Json(ringsDropdownData, JsonRequestBehavior.AllowGet);
         }
+
         public ActionResult SaveSiteTopology(PODMaster pODMaster)
         {
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
 
-                pODMaster = new BLProject().updatetopology(pODMaster);
+            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id);
+
+
+            pODMaster = new BLProject().updatetopology(pODMaster);
 
                 // Check if the save operation was successful
                 if (pODMaster != null)
@@ -13679,7 +13704,7 @@ namespace SmartInventory.Controllers
 
 
         [HttpPost]
-        public ActionResult SaveRing(int segmentcode, string ringcode, string description)
+        public ActionResult SaveRing(int segmentcode, string ringcode, string description,string ringcapacity)
         {
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
@@ -13687,6 +13712,7 @@ namespace SmartInventory.Controllers
             topologySegment.segment_id = segmentcode;
             topologySegment.ring_code = ringcode;
             topologySegment.description = description;
+            topologySegment.ring_capacity = ringcapacity;
             // Save to database
             topologySegment = new BLProject().SaveRing(topologySegment);
 
@@ -13728,6 +13754,18 @@ namespace SmartInventory.Controllers
         {
 
             var userdetails = (User)Session["userDetail"];
+            var firstItem = string.Empty;
+            if (!string.IsNullOrEmpty(searchBy) || !string.IsNullOrEmpty(searchText))
+            {
+                firstItem = Session["systemid"].ToString();//
+            }
+            else 
+            {
+                Session["systemid"] = null;
+                firstItem = refrenceData.Split(',')[0];
+            }
+            
+            
             CommonGridAttr objGridAttributes = new CommonGridAttr();
             BindSearchBy(objViewItemVendorCost);
             if (sort != "" || page != 0)
@@ -13740,7 +13778,7 @@ namespace SmartInventory.Controllers
             objViewItemVendorCost.objGridAttributes.orderBy = sortdir;
             objViewItemVendorCost.objGridAttributes.searchText = searchText;
             objViewItemVendorCost.objGridAttributes.searchBy = searchBy;
-            var firstItem = Session["systemid"]!=null? Session["systemid"].ToString():refrenceData.Split(',')[0];
+            //var firstItem = Session["systemid"]!=null? Session["systemid"].ToString():refrenceData.Split(',')[0];
             var siteplanid = new BomBoq().getSiteplanid(Convert.ToInt32(firstItem));
             Session["SitePlanId"] = siteplanid;
             Session["systemid"] = firstItem;
@@ -13813,7 +13851,7 @@ namespace SmartInventory.Controllers
             try
             {
                 objDBMessage = new BLVendorSpecification().SaveSiteAwardDetails(objivcm, Convert.ToInt32(Session["user_id"]));
-                var sitePlanId = Convert.ToInt32(Session["SitePlanId"]);
+                var sitePlanId = objivcm.Select(a => a.site_plan_id).FirstOrDefault();
                 CombineCableGeom objCombineCableGeom = new CombineCableGeom();
                 objCombineCableGeom = new BLVendorSpecification().GetCombileCableGeom(sitePlanId);
                 //----------------------------------------------network tickect assignment--------------------------------------
@@ -13843,7 +13881,7 @@ namespace SmartInventory.Controllers
                     #endregion
 
                     Session["refrenceData"] = null;
-                    Session["SitePlanId"] = null;
+                    Session["SitePlanId"] = sitePlanId; 
                 }
                     //-------------------------------------------------end-------------------------------------------------------
 

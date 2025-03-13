@@ -294,7 +294,11 @@ namespace BusinessLogics
 		{
 			return DAUploadSummary.Instance.ShowOnMap(id);
 		}
-		public List<Mapping> GetMappings(string layerName)
+        public string getsiteShowOnMap(int id)
+        {
+            return DAUploadSummary.Instance.getSiteShowOnMap(id);
+        }
+        public List<Mapping> GetMappings(string layerName)
 		{
 			return new DAMisc().GetMapping(layerName);
 		}
@@ -395,6 +399,7 @@ namespace BusinessLogics
         {
             return DAUploadSummary.Instance.getUploadCDBAttributesGuideLines(entityType);
         }
+        
 
     }
     internal static class Utilities
@@ -408,4 +413,6 @@ namespace BusinessLogics
 				.ToList();
 		}
 	}
+
+
 }

@@ -1040,6 +1040,8 @@ namespace Models
         public string latitude { get; set; }
         public string longitude { get; set; }
         public DateTime created_on { get; set; }
+        [NotMapped]
+        public string fiber_link_id { get; set; }
     }
     public class AddConnection
     {

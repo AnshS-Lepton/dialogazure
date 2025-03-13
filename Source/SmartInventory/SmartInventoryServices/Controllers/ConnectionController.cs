@@ -251,7 +251,7 @@ namespace SmartInventoryServices.Controllers
             try
             {
                 List<deleteConeectionInput> objConnectionInfo = ReqHelper.GetRequestData<List<deleteConeectionInput>>(data);
-                var response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo));
+                var response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo),0);
                 List<UserModule> lstUserModule = new BLMisc().GetUserModuleMasterList();
                 var module = lstUserModule.Where(x => x.module_abbr.ToUpper() == "NTF").ToString();
                 if (module == "NTF")

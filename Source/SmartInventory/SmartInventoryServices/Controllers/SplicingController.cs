@@ -135,7 +135,7 @@ namespace SmartInventoryServices.Controllers
         {
 
             JsonResponse<string> objResp = new JsonResponse<string>();
-            DbMessage response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo));
+            DbMessage response = new BLOSPSplicing().deleteConnection(JsonConvert.SerializeObject(objConnectionInfo), 0);
             var module = lstUserModule.Where(x => x.module_abbr.ToUpper() == "NTF").ToString();
             if (module == "NTF")
             {
