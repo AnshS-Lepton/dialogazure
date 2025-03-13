@@ -120,9 +120,8 @@
                     }
                     else
                     {
-
-
-                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="infoIcon--mrgn entitydiv @(subItem.action_name) @(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title) " @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title @(subItem.is_enabled ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021) " style="display:@(subItem.is_visible ? "block;" : "none;")">
+                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)"
+                             class="infoIcon--mrgn entitydiv @(subItem.action_name) @(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title) " @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title @(subItem.is_enabled ? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021) " style="display:@(subItem.is_visible ? "block;" : "none;")">
                         </div>
                     }
                 }
@@ -194,7 +193,7 @@
                     }
                     else
                     {
-                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="entitydiv @(subItem.action_name) @(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title)" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title" style="display:@(subItem.is_visible ? "block;" : "none;")">
+                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="entitydiv @(subItem.action_name)  @(subItem.is_template_filled ? "infoFilledTemplate" : "infoTemplate")@(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title)" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title" style="display:@(subItem.is_visible ? "block;" : "none;")">
                         </div>
                     }
                 }
@@ -238,9 +237,11 @@
     });
 
     $(document).on("click", function () {
+        
         var container = $(".action_container");
         var target = $(event.target);
         if (!target.is('#EntityAddEntity')) {
+            
             if (!container.is(event.target) && !container.has(event.target).length) {
                 container.hide();
                 $('#EntityAddEntity').removeClass("active-action");

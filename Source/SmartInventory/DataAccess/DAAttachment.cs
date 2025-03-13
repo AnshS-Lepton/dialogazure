@@ -1,11 +1,13 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
+using Models.WFM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Models.GoogleMapAPI;
 
 
 namespace DataAccess
@@ -74,7 +76,8 @@ namespace DataAccess
         {
             try
             {
-                return repo.GetById(m => m.id == system_id);
+                var result = repo.ExecuteProcedure<LibraryAttachment>("fn_get_downloadtextformatfile", new { p_entity_system_id = system_id });
+                return result?.FirstOrDefault();
             }
             catch { throw; }
         }
@@ -82,6 +85,7 @@ namespace DataAccess
         {
             try
             {
+               
                 return repo.GetById(m => m.id == id);
             }
             catch { throw; }
@@ -143,6 +147,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
+
+
     }
 
     public class DAAttachments : Repository<UploadVendorSpecificationImageDoc>

@@ -42,9 +42,10 @@
                     {
                         var ctrD = 0;
                         var ctrT = 0;
+                        var ctrM = 0;
                         var groupItem = (from c in Model.legendList
                                          select c.group_name)
-                                                .Distinct();
+                                                        .Distinct();
                         //.OrderBy(x => x);
                         <div>
                             <div class="d-fx justify-content-between mb-15">
@@ -81,9 +82,9 @@
                                                     <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
                                                 </div>
                                             }
-                                            if (item.group_name == "MicroDuct" && ctrD == 0)
+                                            if (item.group_name == "Microduct" && ctrM == 0)
                                             {
-                                                ctrD = ctrD + 1;
+                                                ctrM = ctrM + 1;
                                                 <div id="subLayer" class="d-flex bm-nl-child">
 
                                                     <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
@@ -144,7 +145,6 @@
                                                         <span style=" width: 64px; border-bottom: 3px dashed; color: @item.color_code_hex; margin-left: 0"></span>
                                                     }
                                                 }
-
                                                 else
                                                 {
                                                     <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "20px;")">
@@ -154,7 +154,6 @@
                                                 {
                                                     <span>@item.sub_Layer.Substring(0, 8)</span>
                                                 }
-
                                                 else
                                                 { <span>@item.sub_Layer</span>}
 
@@ -166,9 +165,9 @@
                                     }
 
                                 </div>
-                                            }
-                                        </div>
-                    }
+                               }
+                        </div>
+                       }
                 </div>
             </div>
         </div>

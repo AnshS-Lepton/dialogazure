@@ -5243,6 +5243,14 @@ form {
     border-radius: 2px 0px 0px 2px;
 }
 
+.tool_bar .SplicingDiagram {
+    background-position: -104px -453px;
+    width: 25px;
+    border: 1px solid gray;
+    background-color: #f8f8f8;
+    border-radius: 2px 0px 0px 2px;
+}
+
 .tool_bar .addAdb {
     background-position: -378px -454px;
     width: 25px;

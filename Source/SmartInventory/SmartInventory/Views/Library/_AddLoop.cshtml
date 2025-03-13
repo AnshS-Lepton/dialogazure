@@ -120,7 +120,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4 col-sm-4" for="txtlooplength">@Resources.Resources.SI_OSP_CAB_NET_GBL_001<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-8 col-sm-8 mrgn_btm">
-                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl clsReadOnly", @readonly = true, @maxlength = "10", @id = "txt_loop_length" })
+                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl clsReadOnly", @readonly = true, @maxlength = "10", @id = "txt_loop_length", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
                         </div>
 
@@ -130,7 +130,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4 col-sm-4" for="txtlooplength">@Resources.Resources.SI_OSP_CAB_NET_GBL_001<i class="clsMandatory">*</i>:</label>
                             <div class="col-md-8 col-sm-8 mrgn_btm">
-                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl ", @maxlength = "10", @id = "txt_loop_length" })
+                                @Html.TextBoxFor(m => m.loop_length, new { @class = "form-control allownumeric_value enableControl ", @maxlength = "10", @id = "txt_loop_length", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);;" })
                             </div>
                         </div>
                     }
