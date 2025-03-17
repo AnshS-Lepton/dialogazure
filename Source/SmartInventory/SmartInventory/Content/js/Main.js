@@ -13534,7 +13534,7 @@ var Main = function () {
 
 
     this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true, siteIdSiteName = '') {
-        //;,
+        
         $("#infoTB").css('background-image', 'url(' + baseUrl + 'Content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
@@ -13690,6 +13690,7 @@ var Main = function () {
 
 
     this.initializeToolbarFunctions = function (systemId, entityType, geomType, networkId, displayname, geom, siteIdSiteName = '') {
+      
         var lyrDetail = getLayerDetail(entityType);
         var layerMapping = getLayerMapping(entityType);
         var chkClone = lyrDetail['is_clone'];
@@ -14655,7 +14656,7 @@ var Main = function () {
                         break;
                     case "BUTTERFLY":
                         ajaxReq('main/Encrypt', { systemId: systemId }, false, function (resp) {
-                            window.open(appRoot + 'Library/GetSplicingNetworkDiagram?key=' + resp + ','
+                            window.open(appRoot + 'Library/GetVizButterflyNetwork?key=' + resp + ','
                                 + entityType, '_blank');
                         }, false, false);
                         break;
@@ -14912,7 +14913,12 @@ var Main = function () {
                         p_fsa_system_id = parseInt(systemId);
                         popup.LoadModalDialog('PARENT', 'FiberAllocationTool/GetConnectionDetails', { systemId: parseInt(systemId) }, "Auto Splicing Tool", 'modal-xl');
                         break;
-
+                    case "SPLICINGDIAGRAM":
+                        ajaxReq('main/Encrypt', { systemId: systemId }, false, function (resp) {
+                            window.open(appRoot + 'Library/GetSplicingNetworkDiagram?key=' + resp + ','
+                                + entityType, '_blank');
+                        }, false, false);
+                        break;
 
                     default:
 

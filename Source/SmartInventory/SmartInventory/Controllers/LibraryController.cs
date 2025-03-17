@@ -8636,6 +8636,27 @@ namespace SmartInventory.Controllers
         //}
         #endregion
 
+
+        public ActionResult GetVizButterflyNetwork(string key)
+        {
+            // Currently running for manhole only further modification reqired in encryption for other entities
+            string[] _value = key.Split(',');
+            var value = MiscHelper.Decrypt(_value[0]);
+            VizButterFlyNetwork objVizNetwork = new VizButterFlyNetwork();
+            if (_value[1] == EntityType.Manhole.ToString())
+                objVizNetwork = new BLOSPSplicing().GetVizButterflyNetwork(Convert.ToInt32(value), EntityType.Manhole.ToString());
+            if (_value[1] == EntityType.Handhole.ToString())
+                objVizNetwork = new BLOSPSplicing().GetVizButterflyNetwork(Convert.ToInt32(value), EntityType.Handhole.ToString());
+            if (!string.IsNullOrEmpty(objVizNetwork.legends))
+            {
+                objVizNetwork.lstlegend = JsonConvert.DeserializeObject<List<legend>>(objVizNetwork.legends);
+            }
+            if (!string.IsNullOrEmpty(objVizNetwork.checkbox))
+            {
+                objVizNetwork.lstChekbox = JsonConvert.DeserializeObject<List<checkbox>>(objVizNetwork.checkbox);
+            }
+            return PartialView("_ButterFlyNetworkDiagram", objVizNetwork);
+        }
         public ActionResult GetSplicingNetworkDiagram(string key)
         {
             // Currently running for manhole only further modification reqired in encryption for other entities
