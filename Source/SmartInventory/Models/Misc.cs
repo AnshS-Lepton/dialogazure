@@ -249,7 +249,8 @@ namespace Models
 	public class TopologyGetSites
 	{
 		public int siteid { get; set; }
-		public string sitename { get; set; }
+        public int ringid { get; set; }
+        public string sitename { get; set; }
 		public decimal sitedistance { get; set; }
 
 	}

@@ -13570,10 +13570,14 @@ namespace SmartInventory.Controllers
         public JsonResult Gettopologygetsites(int systemId, int ringId)
         {
             PODMaster pODMaster = new PODMaster();
-            // Fetch segments based on regionId
             pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, Convert.ToInt32(Session["user_id"])).ToList();
-
-
+            return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Gettopologygetsitesringwise(int systemId, int ringId)
+        {
+            PODMaster pODMaster = new PODMaster();
+            // Fetch segments based on regionId
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsitesringwise(systemId, ringId, Convert.ToInt32(Session["user_id"])).ToList();
             // Return as JSON
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }

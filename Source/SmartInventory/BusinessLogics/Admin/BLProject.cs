@@ -121,7 +121,13 @@ namespace BusinessLogics.Admin
         public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id, int user_id)
         {
 
-            return new DAProject().Bindtopologygetsites( system_id,  ring_id,  user_id);
+            return new DAProject().Bindtopologygetsites( system_id, ring_id, user_id);
+
+        }
+        public List<TopologyGetSites> Bindtopologygetsitesringwise(int system_id, int ring_id, int user_id)
+        {
+
+            return new DAProject().Bindtopologygetsitesringwise(system_id, ring_id, user_id);
 
         }
         public List<TopologySegmentCables> Gettopologysegmentcables(int system_id, int ring_id, int user_id)

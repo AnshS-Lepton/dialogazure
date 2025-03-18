@@ -31,15 +31,18 @@
         top: 1px;
         z-index: 9;
     }
+
     .txtdesc {
         width: 469px;
     }
+
     #dvregionId .chosen-container, #dvringId .chosen-container {
         width: 84% !important;
-        margin-left:20px;
+        margin-left: 20px;
     }
-    #dvregionId .btn, #dvringId .btn{
-        padding:4px 6px;
+
+    #dvregionId .btn, #dvringId .btn {
+        padding: 4px 6px;
     }
 </style>
 
@@ -53,7 +56,7 @@
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
         @*<input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
-        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
+            <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
         @Html.HiddenFor(m => m.ring_site_seq, new { id = "hdnringsiteseq" })
@@ -163,13 +166,13 @@
                         <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">Dist from Planned to Existing: <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
+                                @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.ringid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">Dist from Planned to Existing : <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
+                                @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.ringid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
 
                             </div>
                         </div>
@@ -207,14 +210,14 @@
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                         </div>
-                       
+
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                         </div>
-                        
+
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
@@ -472,9 +475,10 @@
 
             });
 
-            $("#ddlringtype").on("change", function () {
-            debugger;
-            var region = $("#ddlregionid option:selected").text();
+                $("#ddlringtype").on("change", function () {
+                    debugger;
+                var topologytype = $("#ddltopologytype option:selected").text();
+                var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
                 var ringtype = $("#ddlringtype option:selected").text();
                 var noofsites = $("#ddlnofsites").val();
@@ -483,17 +487,24 @@
             $("#ring_site_id").val(networkIdValue);
             //$("#networkIdField").val(networkIdValue);
             var ringid = $("#ddlringtype").val();
-            var systemId = $("#hdnSystemId").val();
+                    var systemId = $("#hdnSystemId").val();
+                    var endpoint = "Gettopologygetsites";
+                    if (topologytype == "Dual Home") {
+                        endpoint = "Gettopologygetsitesringwise";
+                    }
+
             $.ajax({
-            url: '@Url.Action("Gettopologygetsites", "Report")',
+            url: '@Url.Action("Endpoint", "Report")'.replace("Endpoint", endpoint),
             type: "GET",
             dataType: "json",
             data: { systemId: systemId, ringId: ringid },
-            success: function (response) {
+                success: function (response) {
+                    debugger;
             if (response.lsttopologygetsites.length > 0) {
 
             var dropdownA = $("#ddlRingASite");
             var dropdownB = $("#ddlRingBSite");
+
 
             // Clear existing options
             dropdownA.empty();
@@ -513,8 +524,23 @@
             // Refresh dropdowns
             dropdownA.trigger("chosen:updated");
             dropdownB.trigger("chosen:updated");
-            } else {
-            //alert("No sites found for the selected system.");
+            }
+            else {
+                //alert("No sites found for the selected system.");
+                var dropdownA = $("#ddlRingASite");
+                var dropdownB = $("#ddlRingBSite");
+
+
+                // Clear existing options
+                dropdownA.empty();
+                dropdownB.empty();
+
+                // Append default option
+                dropdownA.append('<option value="">--Select--</option>');
+                dropdownB.append('<option value="">--Select--</option>');
+                // Refresh dropdowns
+                dropdownA.trigger("chosen:updated");
+                dropdownB.trigger("chosen:updated");
             }
             },
             error: function () {
@@ -1002,9 +1028,98 @@
             });
             // Attach change event handlers
             $("#ddlRingASite, #ddlRingBSite").change(disableSelectedOptions);
-            $('.chosen-select').chosen({ width: '100%' });
+        $('.chosen-select').chosen({ width: '100%' });
 
-            });
+        function getAllSitelistItem() {
+
+        };
+
+    });
+
+
 
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Get selected values
+        var topologytype = $("#ddltopologytype").val();
+        // Get ring and system IDs
+        var ringid = $("#ddlringtype").val();
+        var systemId = $("#hdnSystemId").val();
+
+        // Determine endpoint based on topology type
+        var endpoint = (topologytype === "Dual Home") ? "Gettopologygetsitesringwise" : "Gettopologygetsites"; // Can add more conditions if needed
+
+        // Ensure systemId and ringId are valid
+        if (!systemId || !ringid) {
+           /* alert("System ID or Ring ID is missing.systemId : " + systemId);*/
+            ringid=0;
+        }
+        // AJAX Call
+        $.ajax({
+ url: '@Url.Action("Endpoint", "Report")'.replace("Endpoint", endpoint),
+ type: "GET",
+ dataType: "json",
+ data: { systemId: systemId, ringId: ringid },
+     success: function (response) {
+         debugger;
+ if (response.lsttopologygetsites.length > 0) {
+
+     populateDropdowns(response.lsttopologygetsites);
+ }
+ else {
+     resetDropdowns();
+ }
+ },
+ error: function () {
+ alert("Error fetching topology sites. Please try again.");
+ }
+ });
+
+        // Function to populate dropdowns
+        function populateDropdowns(sites) {
+            var dropdownA = $("#ddlRingASite");
+            var dropdownB = $("#ddlRingBSite");
+
+            // Clear existing options
+            dropdownA.empty();
+            dropdownB.empty();
+
+            // Append default option
+            dropdownA.append('<option value="">--Select--</option>');
+            dropdownB.append('<option value="">--Select--</option>');
+
+            // Append new options
+            $.each(sites, function (index, item) {
+                var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + ' (' + item.sitedistance + ')</option>';
+                dropdownA.append(optionHtml);
+                dropdownB.append(optionHtml);
+            });
+
+            // Refresh dropdowns
+            dropdownA.trigger("chosen:updated");
+            dropdownB.trigger("chosen:updated");
+        }
+
+        // Function to reset dropdowns
+        function resetDropdowns() {
+            var dropdownA = $("#ddlRingASite");
+            var dropdownB = $("#ddlRingBSite");
+
+            // Clear existing options
+            dropdownA.empty();
+            dropdownB.empty();
+
+            // Append default option
+            dropdownA.append('<option value="">--Select--</option>');
+            dropdownB.append('<option value="">--Select--</option>');
+
+            // Refresh dropdowns
+            dropdownA.trigger("chosen:updated");
+            dropdownB.trigger("chosen:updated");
+        }
+    });
+</script>
+
 
