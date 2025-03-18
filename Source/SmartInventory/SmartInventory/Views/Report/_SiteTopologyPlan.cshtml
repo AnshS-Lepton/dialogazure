@@ -41,6 +41,9 @@
     #dvregionId .btn, #dvringId .btn{
         padding:4px 6px;
     }
+    .disabledChosenBox{
+        cursor:not-allowed;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -87,7 +90,7 @@
 
                                 @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                             </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2"  for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                             </div>
@@ -137,10 +140,10 @@
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" id="lblddlsegment" for="ddlsegment">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
-                                <div class="pose-plus"><button class="btn btn-primary" id="btncreatesegment" title="Create segment"><i class="fa fa-plus"></i></button> </div>
+                                <div class="pose-plus" id="btncreatesegmentdiv"><button class="btn btn-primary" id="btncreatesegment" title="Create segment"><i class="fa fa-plus"></i></button> </div>
 
                             </div>
                         </div>
@@ -148,8 +151,8 @@
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
 
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
-                                <div class="pose-plus"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
+                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" }) 
+                                <div class="pose-plus" id="btncreateringdiv"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
                             </div>
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
 
@@ -333,16 +336,42 @@
 
             $("#ddltopologytype").change(function () {
             debugger;
-            var selectedValue = $(this).val(); // Get selected value
+                var selectedValue = $(this).val(); // Get selected value
+                var ddlRingASite = $("#ddlRingASite").val();
+                var ddlRingBSite = $("#ddlRingBSite").val();
+                if (selectedValue == "Ring") {
+                    $("#txtagg2").css("display", "block").prop("disabled", false);
+                    $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated"); 
+                    $("#ddlsegment").prop("disabled", false).trigger("chosen:updated");
+                    $("#btncreatesegmentdiv").css("display", "block");
+                    $("#ddlringtype").prop("disabled", false).trigger("chosen:updated");
+                    $("#btncreateringdiv").css("display", "block");
+                      
+                }
+                else if (selectedValue == "Linear")
+                {
+                    $("#txtagg2").css("display", "block").prop("disabled", true); 
+                    $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
+                    $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
+                    $("#btncreatesegmentdiv").css("display", "none");  
+                    $("#ddlringtype").prop("disabled", true).trigger("chosen:updated");
+                    $("#btncreateringdiv").css("display", "none");
+                    $("#ddlringtype").val('');
+                    $("#ddlRingBSite_chosen").val('');
+                }
+                else
+                {
+                    $("#txtagg2").css("display", "block").prop("disabled", true); // Show and enable
+                    $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
+                    $("#ddlsegment").prop("disabled", false).trigger("chosen:updated");
+                    $("#ddlRingBSite_chosen").val('');
+                    $("#btncreatesegmentdiv").css("display", "block");
+                    $("#ddlringtype").prop("disabled", false).trigger("chosen:updated");
+                    $("#btncreateringdiv").css("display", "block");
 
-            if (selectedValue === "Ring") {
-            $("#txtagg2").css("display", "block").prop("disabled", false);
-            }
-            else
-            {
-            $("#txtagg2").css("display", "block").prop("disabled", true); // Show and enable
-            }
+                }
             });
+
             $("#txtagg1").autocomplete({
             source: function (request, response) {
             $.ajax({
@@ -445,7 +474,7 @@
             url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
             type: 'GET',
             data: { segmentId: segmentId }, // Pass the selected segment ID
-            success: function (data) {
+                success: function (data) {
             var ringTypeDropdown = $('#ddlringtype'); // Ensure correct variable name
             ringTypeDropdown.empty(); // Clear existing options
             ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
@@ -473,7 +502,17 @@
             });
 
             $("#ddlringtype").on("change", function () {
-            debugger;
+                debugger;
+                var str = $("#ddlringtype option:selected").text(); 
+                var numberformatch = str.match(/\((\d+)\)/);
+                var extractedNumber = parseInt(numberformatch[1], 10);
+                var numberofsites = parseInt($("#ddlnofsites").val(), 10);
+                if (extractedNumber >= numberofsites) {
+                    $("#btncreatering").prop("disabled", true);
+                }
+                else {
+                    $("#btncreatering").prop("disabled", false);
+                }
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
                 var ringtype = $("#ddlringtype option:selected").text();
@@ -529,7 +568,27 @@
             $('#btnSave').click(function (e) {
             e.preventDefault(); // Prevent default button action
             var isValid = true;
-            debugger;
+
+                var ddlRingASite = $("#ddlRingASite").val();
+                var ddlRingBSite = $("#ddlRingBSite").val();
+                var ddltopologytype = $("#ddltopologytype").val();
+                if (ddltopologytype == "Ring") {
+                    if ((ddlRingASite == "" && ddlRingASite == "") || ddlRingASite == "" || ddlRingBSite == "" ) {
+                        alert("Both Dist from Planned to Existing are selected when Topology Type: Ring.");
+                        return false;
+                    }
+                }
+                else if (ddltopologytype == "Linear"){
+                    $("#ddlRingBSite").val('');
+                    $("#ddlRingBSite").prop("disabled", true);
+                    if (ddlRingASite == "") {
+                        alert("First Dist from Planned to Existing cannot be blank when Topology Type: Linear.");
+                        return false;
+                    }
+
+                }
+
+
             //  Validate all fields
             var SiteId = $('#txtSiteId').val();
             var SiteName = $("#txtSiteName").val();
@@ -600,7 +659,7 @@
             });
             }
             });
-            $("#bdnsearch").click(function (event) {
+        $("#bdnsearch").click(function (event) {
             debugger;
             //$("#ddlregionid").css("display", "block").prop("disabled", true);
             //$("#ddlsegment").css("display", "block").prop("disabled", true);
@@ -610,12 +669,22 @@
             var agg1SiteId = $("#txtagg1").val();
             var agg2SiteId = $("#txtagg2").val();
             var regionId = $("#ddlRegion").val();
+            var topologyType = $("#ddltopologytype").val();
 
-            var segmentName = $("#txtSegmentName").val();
-            if (agg1SiteId === "" || agg2SiteId === "" || segmentName === "") {
-            alert("Please fill all fields.");
-            return;
+            // var segmentName = $("#txtSegmentName").val();
+            if (topologyType == "Ring") {
+                if (agg1SiteId === "" || agg2SiteId === "") {
+                    alert("Please select both AGG1 & AGG2");
+                    return;
+                }
             }
+            else if (topologyType == "Linear") {
+                    if (agg1SiteId === "") {
+                        alert("Please select AGG1.");
+                        return;
+                    }
+                }          
+            
             $.ajax({
             url: '@Url.Action("GetSegmentdata", "Report")',
             type: 'POST',
@@ -719,7 +788,7 @@
             //$("#segmentModal").modal("hide");
             $("#segmentModal").hide();
             });
-        $("#closedringChildPopup").click(function () {
+            $("#closedringChildPopup").click(function () {
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
             //$("#segmentModal").modal("hide");
