@@ -27,6 +27,14 @@
 
 @Html.HiddenFor(m => m.SearchbyText)
 @Html.HiddenFor(m => m.Searchtext)
+<style>
+    .mr-01 .chosen-container {
+        width: 200px !important;
+    }
+    .modal-xxl {
+        width:1000px;
+    }
+</style>
 
 <!DOCTYPE html>
 <div class="tab-content" id="dvViewLink">
@@ -94,42 +102,41 @@
                 </div>
 
                 <div class="BdrSet">
-                    <div class="d-flex jc-sb tablePad--tn">
-                        <div>
-
+                    <div class="d-flex tablePad--tn">
+                        <div id="dropdownContainer" style=" display:none;">
                             @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
-                        new SelectListItem { Text = "-Select-", Value = "0"},
-                        new SelectListItem { Text = "Custom", Value = "1"},
-                        new SelectListItem { Text = "Today", Value = "2"},
-                        new SelectListItem { Text = "Previous Day", Value = "3"},
-                        new SelectListItem { Text = "Last 7 Days", Value = "4"},
-                        new SelectListItem { Text = "Last 30 Days", Value = "5"},
-                        new SelectListItem { Text = "Last 3 Months", Value = "6"},
-                        new SelectListItem { Text = "Last 6 Months", Value = "7"},
-                      new SelectListItem { Text = "Last 1 Year", Value = "8"},
-                    }, new { @class = "chosen-select", @onchange = "fiberLink.onChangeCustomDate();", @id = "customedate", @style = "width:60px" })
+                                new SelectListItem { Text = "-Select-", Value = "0"},
+                                new SelectListItem { Text = "Custom", Value = "1"},
+                                new SelectListItem { Text = "Today", Value = "2"},
+                                new SelectListItem { Text = "Previous Day", Value = "3"},
+                                new SelectListItem { Text = "Last 7 Days", Value = "4"},
+                                new SelectListItem { Text = "Last 30 Days", Value = "5"},
+                                new SelectListItem { Text = "Last 3 Months", Value = "6"},
+                                new SelectListItem { Text = "Last 6 Months", Value = "7"},
+                                new SelectListItem { Text = "Last 1 Year", Value = "8"},
+                            }, new { @class = "chosen-select", @onchange = "fiberLink.onChangeCustomDate();", @id = "customedate", @style = "width:60px;" })
                         </div>
-                        <div class="d-flex pos-rel">
+                        <div class="d-flex pos-rel" style=" display:none;">
                             <label class="control-label pt-0" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_130<i class="clsMandatory">*</i>:&nbsp; </label>
                             @Html.TextBoxFor(m => m.fromDate, new { @id = "txtDateFrom", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_096, @class = "input-sm form-control roTextBox", @readonly = true, @style = "height:26px;" })
                             <img id="imgFromDate" class="assign-calen link--assign mr-05" src="~/Content/images/calendar.png" />
                         </div>
-                        <div class="d-flex pos-rel">
+                        <div class="d-flex pos-rel" style=" display:none;">
                             <label class="control-label pt-0" for="txtDatefrom">&nbsp;&nbsp;@Resources.Resources.SI_OSP_GBL_NET_FRM_131<i class="clsMandatory">*</i>:&nbsp;  </label>
                             @Html.TextBoxFor(m => m.toDate, new { @id = "txtDateTo", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_097, @class = "input-sm form-control roTextBox", @readonly = true, @style = "height:26px;" })
                             <img id="imgToDate" class="assign-calen link--assign mr-05" src="~/Content/images/calendar.png" />
                         </div>
-                        <div class="d-flex">
+                        <div class="d-flex mr-01">
                             <label class="control-label pt-0" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_100:&nbsp; </label>
-                            @Html.DropDownListFor(x => x.SearchbyText, new SelectList(Model.lstSearchByColumns.Select(x => new { value = x.column_name, text = x.display_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSearchBy", @onchange = "fiberLink.enableSearchtext();", @style = "width:78px !important;" })
+                            &nbsp; &nbsp; @Html.DropDownListFor(x => x.SearchbyText, new SelectList(Model.lstSearchByColumns.Select(x => new { value = x.column_name, text = x.display_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSearchBy", @onchange = "fiberLink.enableSearchtext();", @style = "width:300px;" })
                         </div>
                         <div class="d-flex">
-
-                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "20", @class = "form-control input-mr search--padding", @style = "height:26px; width:120px", @readonly = true })
+                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "20", @class = "form-control input-mr search--padding", @style = "width:300px;", @readonly = true })
                             <i class="glyphicon glyphicon-search"></i>
-                            <button type="submit" class="btn btn-success ml-2" id="btnLinkData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
-                            <button type="submit" class="btn btn-default ml-10" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
                         </div>
+                        <button type="submit" class="btn btn-success ml-auto" id="btnLinkData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+                        <button type="submit" class="btn btn-default ml-10" id="btnResetSearchFilter"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+
                     </div>
 
                     @if (Model.lstFiberLinkDetails.Count > 0)
@@ -194,25 +201,27 @@
         fiberLink.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         $('th a, tfoot a').on("click", function () {
             // onGridHeaderClick('tblFiberLinkGrid');
-            $('#frmViewLink').attr('action', $(this).attr('href')).submit();
+             $('#frmViewLink').attr('action', $(this).attr('href')).submit();
             return false;
         });
-        
-      
-        
+
+
+
         applyHideLogic();
         setInterval(function () {
             applyHideLogic();
-        }, 100);  
+            $('#ddlSearchBy').val('link_id').trigger('chosen:updated');
+        }, 1000);
     });
     $("#liViewFiberLink a").on("click", function () {
-        debugger; 
+        debugger;
         $("#liAddFiberLink a").html("Create Link");
         $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
     });
     function applyHideLogic() {
-       // debugger;
-        var allowedHeaders = ["Action","Network ID", "Link/Route ID", "OP_ALIAS", "Link Type", "GIS Length(meter)","Total Route Length(meter)"]; // Headers to keep visible
+        // debugger;
+        //var allowedHeaders = ["Action", "Link/Route ID", "OP_ALIAS", "Total Route Length(meter)", "GIS Length(meter)", "Link Type", "Network ID"]; // Headers to keep visible
+         var allowedHeaders = ["Action","Network ID", "Link/Route ID", "OP_ALIAS", "Link Type", "GIS Length(meter)","Total Route Length(meter)"];
         $("table thead th").each(function () {
             var headerText = $(this).text().trim();
             if (!allowedHeaders.includes(headerText)) {
@@ -223,4 +232,5 @@
             }
         });
     }
+
 </script>
