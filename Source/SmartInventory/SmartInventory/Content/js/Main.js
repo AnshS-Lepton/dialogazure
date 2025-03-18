@@ -19952,6 +19952,7 @@ var Main = function () {
         if (typeof networkdata != "undefined") {
             networkdata.hideAllNetworkFile();
         }
+
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xxl');
     }
     this.showRingDetails =function () {

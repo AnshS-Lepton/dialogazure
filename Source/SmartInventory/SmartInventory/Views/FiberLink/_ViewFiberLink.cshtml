@@ -31,7 +31,7 @@
     .mr-01 .chosen-container {
         width: 200px !important;
     }
-    .modal-xxl{
+    .modal-xxl {
         width:1000px;
     }
 </style>
@@ -103,7 +103,7 @@
 
                 <div class="BdrSet">
                     <div class="d-flex tablePad--tn">
-                        <div id="dropdownContainer" style="display:none;">
+                        <div id="dropdownContainer" style=" display:none;">
                             @Html.DropDownListFor(m => m.customDate, new List<SelectListItem>{
                                 new SelectListItem { Text = "-Select-", Value = "0"},
                                 new SelectListItem { Text = "Custom", Value = "1"},
@@ -116,12 +116,12 @@
                                 new SelectListItem { Text = "Last 1 Year", Value = "8"},
                             }, new { @class = "chosen-select", @onchange = "fiberLink.onChangeCustomDate();", @id = "customedate", @style = "width:60px;" })
                         </div>
-                        <div class="d-flex pos-rel" style="display:none;">
+                        <div class="d-flex pos-rel" style=" display:none;">
                             <label class="control-label pt-0" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_130<i class="clsMandatory">*</i>:&nbsp; </label>
                             @Html.TextBoxFor(m => m.fromDate, new { @id = "txtDateFrom", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_096, @class = "input-sm form-control roTextBox", @readonly = true, @style = "height:26px;" })
                             <img id="imgFromDate" class="assign-calen link--assign mr-05" src="~/Content/images/calendar.png" />
                         </div>
-                        <div class="d-flex pos-rel" style="display:none;">
+                        <div class="d-flex pos-rel" style=" display:none;">
                             <label class="control-label pt-0" for="txtDatefrom">&nbsp;&nbsp;@Resources.Resources.SI_OSP_GBL_NET_FRM_131<i class="clsMandatory">*</i>:&nbsp;  </label>
                             @Html.TextBoxFor(m => m.toDate, new { @id = "txtDateTo", @title = @Resources.Resources.SI_OSP_GBL_NET_FRM_097, @class = "input-sm form-control roTextBox", @readonly = true, @style = "height:26px;" })
                             <img id="imgToDate" class="assign-calen link--assign mr-05" src="~/Content/images/calendar.png" />
@@ -201,7 +201,7 @@
         fiberLink.setDateTimeCalendar_viewLink("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
         $('th a, tfoot a').on("click", function () {
             // onGridHeaderClick('tblFiberLinkGrid');
-            $('#frmViewLink').attr('action', $(this).attr('href')).submit();
+             $('#frmViewLink').attr('action', $(this).attr('href')).submit();
             return false;
         });
 
