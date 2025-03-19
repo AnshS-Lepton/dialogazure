@@ -818,7 +818,7 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
-        if ($('#txtLinkId').val() == '') { alert('RouteId is required'); return false; }
+        if ($('#txtLinkId').val() == '') { alert('Route Id is required'); return false; } if ($('#ddlLinkType').val() == null) { alert('Link Type is required'); return false; }
         if ($('#txtLinkId').val() == '0') { alert('RouteId is not equals to 0'); $('#txtLinkId').css('border-color', 'red'); return false; } else { $('#txtLinkId').css('border-color', ''); }
         const lstLinkPrefix = $('#hdnLstLinkPrefix').val().split(','); // Split the prefixes by comma
         const linkId = $('#txtLinkId').val().toUpperCase(); // Convert linkId to uppercase
@@ -872,22 +872,22 @@
         else {
             $('#txtLinkName').css('border-color', '');
         }
-        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
-            $('#ddlMainlinktype').css('border-color', 'red');
-            $('#ddlMainlinktype_chosen a').css('border-color', 'red');
-            return false;
-        } else {
+        //if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
+        //    $('#ddlMainlinktype').css('border-color', 'red');
+        //    $('#ddlMainlinktype_chosen a').css('border-color', 'red');
+        //    return false;
+        //} else {
 
-            $('#ddlMainlinktype').css('border-color', '');
-            $('#ddlMainlinktype_chosen a').css('border-color', '');
-        }
-        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
-            $('#txtmainlinkid').css('border-color', 'red');
-            return false;
-        } else {
+        //    $('#ddlMainlinktype').css('border-color', '');
+        //    $('#ddlMainlinktype_chosen a').css('border-color', '');
+        //}
+        //if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
+        //    $('#txtmainlinkid').css('border-color', 'red');
+        //    return false;
+        //} else {
 
-            $('#txtmainlinkid').css('border-color', '');
-        }
+        //    $('#txtmainlinkid').css('border-color', '');
+        //}
 
 
         //if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
