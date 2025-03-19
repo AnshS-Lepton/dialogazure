@@ -205,11 +205,9 @@
             return false;
         });
 
-
-
-        applyHideLogic();
+      //  applyHideLogic();
         setInterval(function () {
-            applyHideLogic();
+         //   applyHideLogic();
             $('#ddlSearchBy').val('link_id').trigger('chosen:updated');
         }, 1000);
     });
@@ -218,19 +216,20 @@
         $("#liAddFiberLink a").html("Create Link");
         $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
     });
-    function applyHideLogic() {
-        // debugger;
-        //var allowedHeaders = ["Action", "Link/Route ID", "OP_ALIAS", "Total Route Length(meter)", "GIS Length(meter)", "Link Type", "Network ID"]; // Headers to keep visible
-         var allowedHeaders = ["Action","Network ID", "Link/Route ID", "OP_ALIAS", "Link Type", "GIS Length(meter)","Total Route Length(meter)"];
-        $("table thead th").each(function () {
-            var headerText = $(this).text().trim();
-            if (!allowedHeaders.includes(headerText)) {
-                var columnIndex = $(this).index();
-                $("table tr").each(function () {
-                    $(this).find("th, td").eq(columnIndex).hide();
-                });
-            }
-        });
-    }
+
+    //function applyHideLogic() {
+    //    // debugger;
+    //    //var allowedHeaders = ["Action", "Link/Route ID", "OP_ALIAS", "Total Route Length(meter)", "GIS Length(meter)", "Link Type", "Network ID"]; // Headers to keep visible
+    //     var allowedHeaders = ["Action","Network ID", "Link/Route ID", "OP_ALIAS", "Link Type", "GIS Length(meter)","Total Route Length(meter)"];
+    //    $("table thead th").each(function () {
+    //        var headerText = $(this).text().trim();
+    //        if (!allowedHeaders.includes(headerText)) {
+    //            var columnIndex = $(this).index();
+    //            $("table tr").each(function () {
+    //                $(this).find("th, td").eq(columnIndex).hide();
+    //            });
+    //        }
+    //    });
+    //}
 
 </script>
