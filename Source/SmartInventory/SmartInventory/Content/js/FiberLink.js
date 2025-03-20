@@ -1059,6 +1059,7 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
+        debugger;
         app.CableFiberButton = true;
         var linkPrefixes = $(app.DE.hdnLinkPrefixes).val();
         // Ensure the linkPrefixes is a string and split it into an array 
@@ -1077,7 +1078,8 @@
             alert(MultilingualKey.SI_OSP_GBL_NET_GBL_290 + linkPrefixes);
         }
         else {
-            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            //popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
         }
     }
     this.closepopup = function () {

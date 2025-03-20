@@ -162,37 +162,51 @@ namespace SmartInventory.Controllers
         }
 
         //Mayank 
+        //public FileResult DownloadUploadFiberTemplate(string FileName)
+        //{
+        //    //var file = "~//Content//Templates//Bulk//FiberData.xlsx";
+        //    string contentType = "";
+        //    string filePath = Server.MapPath("~/Content/Templates/Bulk/FiberData.xlsx");
+
+        //    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        //    {
+        //        IWorkbook workbook = new XSSFWorkbook(fs);
+        //        ISheet sheet = workbook.GetSheetAt(0); // Get the first sheet
+        //        string[] allowedColumns = {
+        //        "link_type", "link_id", "link_name", "main_link_id",
+        //        "main_link_type", "redundant_link_id", "redundant_link_type", "link_prefix"
+        //    };              
+        //        IRow headerRow = sheet.GetRow(0);
+        //        int totalCols = headerRow.LastCellNum;
+
+        //        for (int col = 0; col < totalCols; col++)
+        //        {
+        //            string header = headerRow.GetCell(col)?.ToString().Trim();
+        //            if (!Array.Exists(allowedColumns, element => element.Equals(header, StringComparison.OrdinalIgnoreCase)))
+        //            {
+        //                sheet.SetColumnHidden(col, true); // Hide columns that are not in the allowed list
+        //            }
+        //        }
+        //        using (FileStream outFs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        //        {
+        //            workbook.Write(outFs);
+        //        }
+        //    }
+        //    var file = "~//Content//Templates//Bulk//FiberData.xlsx";
+        //    try
+        //    {
+        //        contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //DACommon.WriteAdminErrorLogDB("DownloadTemplate", "DownloadTemplate[Maker]", ex);
+        //    }
+        //    return File(file, contentType, FileName + ".xlsx");
+        //}
         public FileResult DownloadUploadFiberTemplate(string FileName)
         {
-            //var file = "~//Content//Templates//Bulk//FiberData.xlsx";
-            string contentType = "";
-            string filePath = Server.MapPath("~/Content/Templates/Bulk/FiberData.xlsx");
-
-            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                IWorkbook workbook = new XSSFWorkbook(fs);
-                ISheet sheet = workbook.GetSheetAt(0); // Get the first sheet
-                string[] allowedColumns = {
-                "link_type", "link_id", "link_name", "main_link_id",
-                "main_link_type", "redundant_link_id", "redundant_link_type", "link_prefix"
-            };              
-                IRow headerRow = sheet.GetRow(0);
-                int totalCols = headerRow.LastCellNum;
-
-                for (int col = 0; col < totalCols; col++)
-                {
-                    string header = headerRow.GetCell(col)?.ToString().Trim();
-                    if (!Array.Exists(allowedColumns, element => element.Equals(header, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        sheet.SetColumnHidden(col, true); // Hide columns that are not in the allowed list
-                    }
-                }
-                using (FileStream outFs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                {
-                    workbook.Write(outFs);
-                }
-            }
             var file = "~//Content//Templates//Bulk//FiberData.xlsx";
+            string contentType = "";
             try
             {
                 contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -255,38 +269,53 @@ namespace SmartInventory.Controllers
                             BLTempFiberLink.Instance.DeleteTempFiberData(userId);
 
                             List<TempFiberLink> lstFiberLink = new List<TempFiberLink>();
-
+                            BLFiberLink objBLFiberLink = new BLFiberLink();
+                            
                             foreach (DataRow dr in dtExcelData.Rows)
                             {
-
+                                var linkid = objBLFiberLink.GetlinkPrefixbyPrefixType(dr["Link Prefix"].ToString()).link_prefix.ToString();
 
                                 TempFiberLink objTempFiberLink = new TempFiberLink();
 
 
-                                objTempFiberLink.link_id = dr["link_id"].ToString();
-                                objTempFiberLink.link_name = dr["link_name"].ToString();
-                                objTempFiberLink.link_type = dr["link_type"].ToString();
-                                objTempFiberLink.main_link_type = dr["main_link_type"].ToString();
-                                objTempFiberLink.main_link_id = dr["main_link_id"].ToString();
-                                objTempFiberLink.redundant_link_id = dr["redundant_link_id"].ToString();
-                                objTempFiberLink.redundant_link_type = dr["redundant_link_type"].ToString();
-                                objTempFiberLink.end_point_location = dr["end_point_location"].ToString();
-                                //objTempFiberLink.end_point_network_id = dr["end_point_network_id"].ToString();
-                                objTempFiberLink.end_point_type = dr["end_point_type"].ToString();
-                                //objTempFiberLink.start_point_network_id = dr["start_point_network_id"].ToString();
-                                objTempFiberLink.each_lmc_length = dr["each_lmc_length"].ToString();
-                                objTempFiberLink.start_point_location = dr["start_point_location"].ToString();
-                                objTempFiberLink.start_point_type = dr["start_point_type"].ToString();
+                                //objTempFiberLink.link_id = dr["link_id"].ToString();
+                                //objTempFiberLink.link_name = dr["link_name"].ToString();
+                                //objTempFiberLink.link_type = dr["link_type"].ToString();
+                                //objTempFiberLink.main_link_type = dr["main_link_type"].ToString();
+                                //objTempFiberLink.main_link_id = dr["main_link_id"].ToString();
+                                //objTempFiberLink.redundant_link_id = dr["redundant_link_id"].ToString();
+                                //objTempFiberLink.redundant_link_type = dr["redundant_link_type"].ToString();
+                                //objTempFiberLink.end_point_location = dr["end_point_location"].ToString();
+                                ////objTempFiberLink.end_point_network_id = dr["end_point_network_id"].ToString();
+                                //objTempFiberLink.end_point_type = dr["end_point_type"].ToString();
+                                ////objTempFiberLink.start_point_network_id = dr["start_point_network_id"].ToString();
+                                //objTempFiberLink.each_lmc_length = dr["each_lmc_length"].ToString();
+                                //objTempFiberLink.start_point_location = dr["start_point_location"].ToString();
+                                //objTempFiberLink.start_point_type = dr["start_point_type"].ToString();
+                                //objTempFiberLink.created_by = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                                //objTempFiberLink.created_on = DateTimeHelper.Now;
+                                //objTempFiberLink.handover_date = DateTimeHelper.Now;
+                                //objTempFiberLink.hoto_signoff_date = DateTimeHelper.Now;
+                                //objTempFiberLink.fiber_link_status = "Free";
+                                //objTempFiberLink.link_prefix = dr["link_prefix"].ToString(); ;
+
+
+
+                                objTempFiberLink.link_id = linkid.ToString();// dr["Link/Route ID"].ToString();
+                                objTempFiberLink.link_name = linkid.ToString();//dr["Link/Route ID"].ToString();
+                                objTempFiberLink.link_type = dr["Link Type"].ToString();
+                                objTempFiberLink.service_id = dr["OP_ALIAS"].ToString();
+
                                 objTempFiberLink.created_by = Convert.ToInt32(((User)Session["userDetail"]).user_id);
                                 objTempFiberLink.created_on = DateTimeHelper.Now;
                                 objTempFiberLink.handover_date = DateTimeHelper.Now;
                                 objTempFiberLink.hoto_signoff_date = DateTimeHelper.Now;
                                 objTempFiberLink.fiber_link_status = "Free";
-                                objTempFiberLink.link_prefix = dr["link_prefix"].ToString(); ;
+                                objTempFiberLink.link_prefix = dr["Link Prefix"].ToString(); ;
                                 //Get Network Id
 
 
-                                string strErrorMsg = ValidateFiberData(dr, ref objTempFiberLink);
+                                string strErrorMsg = ValidateFiberData(dr, ref objTempFiberLink,linkid);
                                 lstFiberLink.Add(objTempFiberLink);
 
 
@@ -352,7 +381,7 @@ namespace SmartInventory.Controllers
             );
 
         }
-        public string ValidateFiberData(DataRow dr, ref TempFiberLink objTempFiberLink)
+        public string ValidateFiberData(DataRow dr, ref TempFiberLink objTempFiberLink,string RoutId)
         {
             objTempFiberLink.is_valid = true;
             Regex nonNumericRegex = new Regex(@"\.");
@@ -360,7 +389,7 @@ namespace SmartInventory.Controllers
             {
                 FiberLink objFiberLink = new FiberLink();
                 objFiberLink.lstPrefixType = new BLMisc().GetDropDownList("", DropDownType.FiberLinkPrefix.ToString());
-                string linkId = dr["link_id"].ToString();
+                string linkId = RoutId.ToString();//dr["link_id"].ToString();
 
                 var prefixList = objFiberLink.lstPrefixType.Select(prefix => prefix.dropdown_value).ToList();
 
@@ -376,56 +405,56 @@ namespace SmartInventory.Controllers
                 if (objTempFiberLink.link_type == "Main Link".ToString())
                 {
 
-                    if (string.IsNullOrWhiteSpace(dr["link_id"].ToString()))
+                    if (string.IsNullOrWhiteSpace(RoutId))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_id Can Not Be Blank! ";
                     }
-                    else if (string.IsNullOrWhiteSpace(dr["redundant_link_type"].ToString()))
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "redundant_link_type Can Not Be Blank! ";
-                    }
-                    else if (string.IsNullOrWhiteSpace(dr["redundant_link_id"].ToString()))
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "redundant_link_id Can Not Be Blank!";
-                    }
-                    else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "link_name Can Not Be Blank!";
-                    }
+                    //else if (string.IsNullOrWhiteSpace(dr["redundant_link_type"].ToString()))
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "redundant_link_type Can Not Be Blank! ";
+                    //}
+                    //else if (string.IsNullOrWhiteSpace(dr["redundant_link_id"].ToString()))
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "redundant_link_id Can Not Be Blank!";
+                    //}
+                    //else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "link_name Can Not Be Blank!";
+                    //}
                 }
                 else
                 {
-                    if (string.IsNullOrWhiteSpace(dr["link_id"].ToString()))
+                    if (string.IsNullOrWhiteSpace(RoutId.ToString()))
                     {
                         objTempFiberLink.is_valid = false;
                         objTempFiberLink.error_msg = "link_id Can Not Be Blank!";
                     }
-                    else if (string.IsNullOrWhiteSpace(dr["main_link_type"].ToString()))
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "main_link_type Not Be Blank!";
-                    }
-                    else if (string.IsNullOrWhiteSpace(dr["main_link_id"].ToString()))
+                    //else if (string.IsNullOrWhiteSpace(dr["main_link_type"].ToString()))
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "main_link_type Not Be Blank!";
+                    //}
+                    //else if (string.IsNullOrWhiteSpace(dr["main_link_id"].ToString()))
 
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "main_link_id Not Be Blank!";
-                    }
-                    else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
-                    {
-                        objTempFiberLink.is_valid = false;
-                        objTempFiberLink.error_msg = "link_name Not Be Blank!";
-                    }
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "main_link_id Not Be Blank!";
+                    //}
+                    //else if (string.IsNullOrWhiteSpace(dr["link_name"].ToString()))
+                    //{
+                    //    objTempFiberLink.is_valid = false;
+                    //    objTempFiberLink.error_msg = "link_name Not Be Blank!";
+                    //}
 
                 }
 
-                if (objTempFiberLink.is_valid && dr["link_id"].ToString() != "")
+                if (objTempFiberLink.is_valid && RoutId.ToString() != "")
                 {
-                    string link_id = dr["link_id"].ToString();
+                    string link_id = RoutId.ToString();
                     var lstLinkId = new BLFiberLink().checkDuplicaketLinkId(link_id);
                     if (lstLinkId.Count > 0)
                     {
@@ -445,13 +474,18 @@ namespace SmartInventory.Controllers
         {
 
             DataTable dtlogs = new DataTable();
-            dtlogs.Columns.Add("link_id", typeof(string));
-            dtlogs.Columns.Add("link_name", typeof(string));
-            dtlogs.Columns.Add("link_type", typeof(string));
-            dtlogs.Columns.Add("main_link_type", typeof(string));
-            dtlogs.Columns.Add("main_link_id", typeof(string));
-            dtlogs.Columns.Add("redundant_link_id", typeof(string));
-            dtlogs.Columns.Add("redundant_link_type", typeof(string));
+            //dtlogs.Columns.Add("link_id", typeof(string));
+            //dtlogs.Columns.Add("link_name", typeof(string));
+            //dtlogs.Columns.Add("link_type", typeof(string));
+            //dtlogs.Columns.Add("main_link_type", typeof(string));
+            //dtlogs.Columns.Add("main_link_id", typeof(string));
+            //dtlogs.Columns.Add("redundant_link_id", typeof(string));
+            //dtlogs.Columns.Add("redundant_link_type", typeof(string));
+
+            dtlogs.Columns.Add("Link Prefix", typeof(string));
+            dtlogs.Columns.Add("Link Type", typeof(string));
+            dtlogs.Columns.Add("Link/Route ID", typeof(string));
+            dtlogs.Columns.Add("OP_ALIAS", typeof(string));
             dtlogs.Columns.Add("Error Msg", typeof(string));
             dtlogs.TableName = "FiberLogs";
             int userId = Convert.ToInt32(Session["user_id"]);
@@ -465,7 +499,8 @@ namespace SmartInventory.Controllers
                     foreach (var l in BulkUploadLogs)
                     {
                         {
-                            dtlogs.Rows.Add(l.link_id.ToString(), l.link_name.ToString(), l.link_type.ToString(), l.main_link_type.ToString(), l.main_link_id.ToString(), l.redundant_link_id.ToString(), l.redundant_link_type.ToString(), l.error_msg);
+                            //dtlogs.Rows.Add(l.link_id.ToString(), l.link_name.ToString(), l.link_type.ToString(), l.main_link_type.ToString(), l.main_link_id.ToString(), l.redundant_link_id.ToString(), l.redundant_link_type.ToString(), l.error_msg);
+                            dtlogs.Rows.Add(l.link_prefix.ToString(), l.link_type.ToString(), l.link_id.ToString(), l.service_id, l.error_msg);
                         }
                     }
 
@@ -1040,7 +1075,6 @@ namespace SmartInventory.Controllers
         public PartialViewResult CreateFiberLink(int system_id = 0, string link_id = "")
         {
             FiberLink objFiberLink = new FiberLink();
-
             objFiberLink.link_id = link_id;
             objFiberLink.CreateFL = 1;
             BindFiberLinkDropDown(objFiberLink);
