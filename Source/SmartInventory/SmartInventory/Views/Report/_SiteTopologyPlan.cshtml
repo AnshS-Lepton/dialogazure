@@ -1176,10 +1176,12 @@
     var $dropdownA = $("#ddlRingASite");
     var $dropdownB = $("#ddlRingBSite");
 
-    function filterDropdownOptions($dropdown, condition, hideOthers = true) {
+            function filterDropdownOptions($dropdown, condition, hideOthers = true) {
+
+               
         $dropdown.find("option").each(function () {
             var ringId = $(this).attr("data-ringid");
-
+            debugger;
             if (ringId === condition || ringId === "" || ringId === undefined) {
                 $(this).show();
                 if (hideOthers) visibleCount++;
@@ -1189,21 +1191,24 @@
         });
     }
 
+            debugger;
     //--- Start Case First ---
-    if (!isfresh) {
-        filterDropdownOptions($dropdownA, selectedRingId);
-        filterDropdownOptions($dropdownB, selectedRingId, false);
+            if (!isfresh) {
+                filterDropdownOptions($dropdownA, selectedRingId);
+                filterDropdownOptions($dropdownB, selectedRingId,false);
     }
     //--- End Case First ---
 
+            debugger;
     //--- Start Case Second ---
     if (visibleCount === 1 && !isfresh) {
         filterDropdownOptions($dropdownA, "0");
         filterDropdownOptions($dropdownB, "0", false);
+        if (visibleCount==1)
         secondaryVisibleCount++;
     }
     //--- End Case Second ---
-
+            debugger;
     //--- Start Case Third ---
     if (secondaryVisibleCount === 1 || isfresh) {
         $dropdownA.find("option").each(function () {
