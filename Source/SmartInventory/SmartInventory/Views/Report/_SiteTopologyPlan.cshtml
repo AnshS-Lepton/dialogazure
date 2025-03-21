@@ -1016,7 +1016,7 @@
             $("#ddlRingASite, #ddlRingBSite").trigger("chosen:updated");
             }
             $('#ddlRingBSite').change(function () {
-            debugger;
+                debugger;
                 var selectedAA = $("#ddlRingASite option:selected").text().trim();
                 var selectedBB = $("#ddlRingBSite option:selected").text().trim();
 
@@ -1166,7 +1166,7 @@
     $table.addClass("hidden");
     $dvsiteTable.addClass("hidden");
 
-    var selectedRingId = $("#ddlringtype").val(); // Get selected value
+            var selectedRingId = $("#ddlringtype").val(); // Get selected value
             var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
             $("#lbdringsiteId").text(selectedRing).css("display", "block");
     var visibleCount = 0;
