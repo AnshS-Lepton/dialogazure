@@ -27,7 +27,7 @@
                 <div class="form-group row">
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</label>
                     <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId" })
+                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId", @disabled = "disabled" })
                     </div>
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102:</label>
                     <div class="col-md-4">
@@ -49,12 +49,12 @@
                         </div>
                         @if (Model.system_id == 0)
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @oninput = "validateInput(this)", @maxlength = "20", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @oninput = "validateInput(this)", @maxlength = "12", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
 
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @oninput = "validateInput(this)", @id = "txtLinkId", @maxlength = "20" })
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @oninput = "validateInput(this)", @id = "txtLinkId", @maxlength = "12" })
                         }
 
                     </div>
@@ -62,7 +62,7 @@
                 <div class="form-group row">
                     <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_GBL_GBL_155 <i class="clsMandatory">*</i> :</label>
                     <div class="col-md-4">
-                        @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType", @style = "height: 28px;!important" })
+                        @Html.DropDownListFor(m => m.link_type, new SelectList(Model.lstLinkType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlLinkType", @style = "height: 28px;!important"  })
                     </div>
                     @*<label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_206:</label>*@
 
@@ -136,12 +136,12 @@
                         </div>
                         @if (Model.system_id == 0)
                         {
-                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @id = "txtLinkName", @maxlength = "100", @onblur = "fiberLink.validateLinkId(this.value,'link_id');", @readonly = true })
+                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @id = "txtLinkName", @maxlength = "12", @onblur = "fiberLink.validateLinkId(this.value,'link_id');", @readonly = true })
 
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @id = "txtLinkName", @maxlength = "100", @readonly = true })
+                            @Html.TextBoxFor(m => m.link_name, new { @class = "form-control remove-white-space", @id = "txtLinkName", @maxlength = "12", @readonly = true })
                         }
 
                     </div>
@@ -412,7 +412,7 @@
                 }
 
             </fieldset>
-            @if (Model.system_id > 0)
+            @*@if (Model.system_id > 0)
             {
                 <fieldset class="the-fieldset">
                     <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_152</legend>
@@ -430,7 +430,7 @@
                         @Html.Partial("~/Views/Library/_ViewFiberLinkAttachment.cshtml", Model.lstFiberLinkAttachments)
                     </div>
                 </fieldset>
-            }
+            }*@
 
         </div>
         <div class="ModalFooter d-flex">
@@ -447,14 +447,12 @@
         debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
-        if ($('txtLinkId').val() !== undefined && $('ddlLinkPrifixType').val() !== undefined) {
-            $("#liAddFiberLink a").html('Update Link');
-            $('#ddlLinkPrifixType').prop("disabled", true).trigger("chosen:updated");
+        if ($('txtLinkId').val() !== 'undefined' && $('ddlLinkPrifixType').val() !== 'undefined') {
             $('#txtLinkId').prop("disabled", true);
-            $('link_id').val($('txtLinkId').val())
-            $('link_prefix').val($('ddlLinkPrifixType').val())
+            $('#link_id').val($('txtLinkId').val())
+            $('#link_prefix').val($('ddlLinkPrifixType').val())
         }
-        else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); }
+        else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
         
       
     });

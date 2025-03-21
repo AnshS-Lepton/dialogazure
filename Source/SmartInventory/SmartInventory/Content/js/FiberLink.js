@@ -818,7 +818,7 @@
 
 
     this.createUpdateLink = function (IsNewLink) {
-        if ($('#txtLinkId').val() == '') { alert('RouteId is required'); return false; }
+        if ($('#txtLinkId').val() == '') { alert('Route Id is required'); return false; } if ($('#ddlLinkType').val() == null) { alert('Link Type is required'); return false; }
         if ($('#txtLinkId').val() == '0') { alert('RouteId is not equals to 0'); $('#txtLinkId').css('border-color', 'red'); return false; } else { $('#txtLinkId').css('border-color', ''); }
         const lstLinkPrefix = $('#hdnLstLinkPrefix').val().split(','); // Split the prefixes by comma
         const linkId = $('#txtLinkId').val().toUpperCase(); // Convert linkId to uppercase
@@ -872,22 +872,22 @@
         else {
             $('#txtLinkName').css('border-color', '');
         }
-        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
-            $('#ddlMainlinktype').css('border-color', 'red');
-            $('#ddlMainlinktype_chosen a').css('border-color', 'red');
-            return false;
-        } else {
+        //if (($('#ddlLinkType').val() == "Redundant Link") && ($('#ddlMainlinktype').val() == "")) {
+        //    $('#ddlMainlinktype').css('border-color', 'red');
+        //    $('#ddlMainlinktype_chosen a').css('border-color', 'red');
+        //    return false;
+        //} else {
 
-            $('#ddlMainlinktype').css('border-color', '');
-            $('#ddlMainlinktype_chosen a').css('border-color', '');
-        }
-        if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
-            $('#txtmainlinkid').css('border-color', 'red');
-            return false;
-        } else {
+        //    $('#ddlMainlinktype').css('border-color', '');
+        //    $('#ddlMainlinktype_chosen a').css('border-color', '');
+        //}
+        //if (($('#ddlLinkType').val() == "Redundant Link") && ($('#txtmainlinkid').val() == "")) {
+        //    $('#txtmainlinkid').css('border-color', 'red');
+        //    return false;
+        //} else {
 
-            $('#txtmainlinkid').css('border-color', '');
-        }
+        //    $('#txtmainlinkid').css('border-color', '');
+        //}
 
 
         //if (($('#ddlLinkType').val() == "Main Link") && ($('#ddlredundantlinktype').val() == "")) {
@@ -1059,6 +1059,7 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
+        debugger;
         app.CableFiberButton = true;
         var linkPrefixes = $(app.DE.hdnLinkPrefixes).val();
         // Ensure the linkPrefixes is a string and split it into an array 
@@ -1077,7 +1078,8 @@
             alert(MultilingualKey.SI_OSP_GBL_NET_GBL_290 + linkPrefixes);
         }
         else {
-            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            //popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
         }
     }
     this.closepopup = function () {
