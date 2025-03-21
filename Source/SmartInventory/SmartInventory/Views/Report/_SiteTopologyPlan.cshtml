@@ -631,7 +631,7 @@
             if (response.Success) {
             // Show success message
             alert(response.Message);
-            $('#closeChildPopup').trigger("click");
+                $('#closeModalPopup').trigger("click");
             } else {
             // Show error message
             alert(response.Message);
@@ -1016,7 +1016,10 @@
             $("#ddlRingASite, #ddlRingBSite").trigger("chosen:updated");
             }
             $('#ddlRingBSite').change(function () {
-            debugger;
+                debugger;
+                var selectedAA = $("#ddlRingASite option:selected").text().trim();
+                var selectedBB = $("#ddlRingBSite option:selected").text().trim();
+
             var selectedSiteId = $(this).val();
             var selectedDistance = $(this).find(":selected").data("distance");
             $("#hdnRingBSiteId").val(selectedSiteId);
@@ -1024,7 +1027,7 @@
             var siteA = $("#ddlRingASite").val();
             var siteB = $("#ddlRingBSite").val();
 
-                if (selectedA === selectedB && siteA !== "" && siteB !== "") {
+                if (selectedAA === selectedBB && siteA !== "" && siteB !== "") {
             alert("Both sites cannot be the same. Please select different sites.");
             $("#ddlRingBSite").val(""); // Reset second dropdown
             }
@@ -1163,7 +1166,9 @@
     $table.addClass("hidden");
     $dvsiteTable.addClass("hidden");
 
-    var selectedRingId = $("#ddlringtype").val(); // Get selected value
+            var selectedRingId = $("#ddlringtype").val(); // Get selected value
+            var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
+            $("#lbdringsiteId").text(selectedRing).css("display", "block");
     var visibleCount = 0;
     var secondaryVisibleCount = 0;
     var thirdCount = 0;
@@ -1171,10 +1176,12 @@
     var $dropdownA = $("#ddlRingASite");
     var $dropdownB = $("#ddlRingBSite");
 
-    function filterDropdownOptions($dropdown, condition, hideOthers = true) {
+            function filterDropdownOptions($dropdown, condition, hideOthers = true) {
+
+               
         $dropdown.find("option").each(function () {
             var ringId = $(this).attr("data-ringid");
-
+            debugger;
             if (ringId === condition || ringId === "" || ringId === undefined) {
                 $(this).show();
                 if (hideOthers) visibleCount++;
@@ -1184,21 +1191,24 @@
         });
     }
 
+            debugger;
     //--- Start Case First ---
-    if (!isfresh) {
-        filterDropdownOptions($dropdownA, selectedRingId);
-        filterDropdownOptions($dropdownB, selectedRingId, false);
+            if (!isfresh) {
+                filterDropdownOptions($dropdownA, selectedRingId);
+                filterDropdownOptions($dropdownB, selectedRingId,false);
     }
     //--- End Case First ---
 
+            debugger;
     //--- Start Case Second ---
     if (visibleCount === 1 && !isfresh) {
         filterDropdownOptions($dropdownA, "0");
         filterDropdownOptions($dropdownB, "0", false);
+        if (visibleCount==1)
         secondaryVisibleCount++;
     }
     //--- End Case Second ---
-
+            debugger;
     //--- Start Case Third ---
     if (secondaryVisibleCount === 1 || isfresh) {
         $dropdownA.find("option").each(function () {
