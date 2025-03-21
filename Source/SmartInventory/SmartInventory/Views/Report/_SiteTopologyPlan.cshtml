@@ -631,7 +631,7 @@
             if (response.Success) {
             // Show success message
             alert(response.Message);
-            $('#closeChildPopup').trigger("click");
+                $('#closeModalPopup').trigger("click");
             } else {
             // Show error message
             alert(response.Message);
@@ -1017,6 +1017,9 @@
             }
             $('#ddlRingBSite').change(function () {
             debugger;
+                var selectedAA = $("#ddlRingASite option:selected").text().trim();
+                var selectedBB = $("#ddlRingBSite option:selected").text().trim();
+
             var selectedSiteId = $(this).val();
             var selectedDistance = $(this).find(":selected").data("distance");
             $("#hdnRingBSiteId").val(selectedSiteId);
@@ -1024,7 +1027,7 @@
             var siteA = $("#ddlRingASite").val();
             var siteB = $("#ddlRingBSite").val();
 
-                if (selectedA === selectedB && siteA !== "" && siteB !== "") {
+                if (selectedAA === selectedBB && siteA !== "" && siteB !== "") {
             alert("Both sites cannot be the same. Please select different sites.");
             $("#ddlRingBSite").val(""); // Reset second dropdown
             }
@@ -1164,6 +1167,8 @@
     $dvsiteTable.addClass("hidden");
 
     var selectedRingId = $("#ddlringtype").val(); // Get selected value
+            var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
+            $("#lbdringsiteId").text(selectedRing).css("display", "block");
     var visibleCount = 0;
     var secondaryVisibleCount = 0;
     var thirdCount = 0;
