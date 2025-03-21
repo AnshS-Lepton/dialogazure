@@ -31,18 +31,22 @@
         top: 1px;
         z-index: 9;
     }
+
     .txtdesc {
         width: 469px;
     }
+
     #dvregionId .chosen-container, #dvringId .chosen-container {
         width: 84% !important;
-        margin-left:20px;
+        margin-left: 20px;
     }
-    #dvregionId .btn, #dvringId .btn{
-        padding:4px 6px;
+
+    #dvregionId .btn, #dvringId .btn {
+        padding: 4px 6px;
     }
-    .disabledChosenBox{
-        cursor:not-allowed;
+
+    .disabledChosenBox {
+        cursor: not-allowed;
     }
 </style>
 
@@ -56,7 +60,7 @@
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
         @*<input type="hidden" id="hdnAgg1SystemId" name="hdnAgg1SystemId" />
-        <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
+            <input type="hidden" id="hdnAgg2SystemId" name="hdnAgg2SystemId" />*@
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
         @Html.HiddenFor(m => m.ring_site_seq, new { id = "hdnringsiteseq" })
@@ -90,7 +94,7 @@
 
                                 @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
                             </div>
-                            <label class="control-label col-sm-2"  for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                             </div>
@@ -127,7 +131,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12 d-flex">
-                                <button class="ml-auto btn btn-primary" id="bdnsearch">Search</button>
+                                <button type="button" class="ml-auto btn btn-primary" id="bdnsearch">Search</button>
                             </div>
                         </div>
                     </fieldset>
@@ -151,7 +155,7 @@
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
 
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" }) 
+                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
                                 <div class="pose-plus" id="btncreateringdiv"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
                             </div>
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
@@ -166,15 +170,34 @@
                         <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">Dist from Planned to Existing: <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
+                                @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
+
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">Dist from Planned to Existing : <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.sitedistance, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
+                                @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
 
                             </div>
+                        </div>
+
+                        <div class="form-group" style="display: block;">
+
+                            <p id="dvsiteTable" class="hidden" style="text-align:center;"> <b>Note :</b> There is no site available for the selected ring. You can rearrange the rings below for the topology plan.</p>
+                            <!-- Grid to Display Visible Items -->
+                            <table id="siteTable" class="hidden">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Site Id</th>
+                                        <th>Ring Code</th>
+                                        <th>Distance (m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
                         </div>
                     </fieldset>
                 </div>
@@ -210,14 +233,14 @@
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                         </div>
-                       
+
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                         </div>
-                        
+
                         <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
@@ -279,6 +302,23 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Custom button styles */
+    .action-btn-success {
+        background-color: #28a745; /* Green color */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .action-btn-success:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+</style>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $("#GISInfo .input-validation-error").removeClass("input-validation-error");
@@ -341,19 +381,19 @@
                 var ddlRingBSite = $("#ddlRingBSite").val();
                 if (selectedValue == "Ring") {
                     $("#txtagg2").css("display", "block").prop("disabled", false);
-                    $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated"); 
+                    $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
                     $("#ddlsegment").prop("disabled", false).trigger("chosen:updated");
                     $("#btncreatesegmentdiv").css("display", "block");
                     $("#ddlringtype").prop("disabled", false).trigger("chosen:updated");
                     $("#btncreateringdiv").css("display", "block");
-                      
+
                 }
                 else if (selectedValue == "Linear")
                 {
-                    $("#txtagg2").css("display", "block").prop("disabled", true); 
+                    $("#txtagg2").css("display", "block").prop("disabled", true);
                     $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
                     $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
-                    $("#btncreatesegmentdiv").css("display", "none");  
+                    $("#btncreatesegmentdiv").css("display", "none");
                     $("#ddlringtype").prop("disabled", true).trigger("chosen:updated");
                     $("#btncreateringdiv").css("display", "none");
                     $("#ddlringtype").val('');
@@ -502,64 +542,8 @@
             });
 
             $("#ddlringtype").on("change", function () {
-                debugger;
-                var str = $("#ddlringtype option:selected").text(); 
-                var numberformatch = str.match(/\((\d+)\)/);
-                var extractedNumber = parseInt(numberformatch[1], 10);
-                var numberofsites = parseInt($("#ddlnofsites").val(), 10);
-                if (extractedNumber >= numberofsites) {
-                    $("#btncreatering").prop("disabled", true);
-                }
-                else {
-                    $("#btncreatering").prop("disabled", false);
-                }
-            var region = $("#ddlregionid option:selected").text();
-            var segment = $("#ddlsegment option:selected").text();
-                var ringtype = $("#ddlringtype option:selected").text();
-                var noofsites = $("#ddlnofsites").val();
-                var networkIdValue = (ringtype ?? "N/A");
-            $("#lbdringsiteId").text(networkIdValue).css("display", "block");
-            $("#ring_site_id").val(networkIdValue);
-            //$("#networkIdField").val(networkIdValue);
-            var ringid = $("#ddlringtype").val();
-            var systemId = $("#hdnSystemId").val();
-            $.ajax({
-            url: '@Url.Action("Gettopologygetsites", "Report")',
-            type: "GET",
-            dataType: "json",
-            data: { systemId: systemId, ringId: ringid },
-            success: function (response) {
-            if (response.lsttopologygetsites.length > 0) {
 
-            var dropdownA = $("#ddlRingASite");
-            var dropdownB = $("#ddlRingBSite");
-
-            // Clear existing options
-            dropdownA.empty();
-            dropdownB.empty();
-
-            // Append default option
-            dropdownA.append('<option value="">--Select--</option>');
-            dropdownB.append('<option value="">--Select--</option>');
-
-            // Append new options from response
-            $.each(response.lsttopologygetsites, function (index, item) {
-                var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '">' + item.sitename + '( '+ item.sitedistance+')'  + '</option>';
-            dropdownA.append(optionHtml);
-            dropdownB.append(optionHtml);
-            });
-
-            // Refresh dropdowns
-            dropdownA.trigger("chosen:updated");
-            dropdownB.trigger("chosen:updated");
-            } else {
-            //alert("No sites found for the selected system.");
-            }
-            },
-            error: function () {
-            alert("Error fetching topology sites. Please try again.");
-            }
-            });
+                getSiteListItemRingwise();
 
             });
 
@@ -660,10 +644,7 @@
             }
             });
         $("#bdnsearch").click(function (event) {
-            debugger;
-            //$("#ddlregionid").css("display", "block").prop("disabled", true);
-            //$("#ddlsegment").css("display", "block").prop("disabled", true);
-            //$("#ddlringtype").css("display", "block").prop("disabled", true);
+           
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
             var agg1SiteId = $("#txtagg1").val();
@@ -683,8 +664,8 @@
                         alert("Please select AGG1.");
                         return;
                     }
-                }          
-            
+                }
+
             $.ajax({
             url: '@Url.Action("GetSegmentdata", "Report")',
             type: 'POST',
@@ -695,7 +676,7 @@
             // segment_name: segmentName
             },
             success: function (response) {
-            debugger;
+           // debugger;
             if (response) {
             var dropdown = $('#ddlsegment');
             dropdown.empty(); // Clear existing options
@@ -717,8 +698,11 @@
             });
 
 
+            getAllSitelistItem();
 
-            });
+        });
+
+
             $('.chosen-select').chosen({ width: '100%' });
             $("#btncreatesegment").click(function (event) {
             debugger;
@@ -873,24 +857,7 @@
             var Agg1SystemId = $("#hdnAgg1SystemId").val();
             var segment_id=$("#hdnSequenceId").val();
             var Agg2SystemId = $("#hdnAgg2SystemId").val();
-            // Validate required fields
-            //if (!region || !agg1 || !agg2 || !description) {
-            //    alert("Please fill all required fields.");
-            //    return;
-            //}
-
-            // Prepare JSON object to send
-            //var data = {
-            //    region_code: region,
-            //    agg1_site_id: agg1,
-            //    agg2_site_id: agg2,
-            //    description: description
-            //};
-
-            // AJAX call to save data
-
-
-
+           
 
             $.ajax({
             url: '@Url.Action("SaveSegment", "Report")',
@@ -1024,17 +991,25 @@
             event.stopPropagation();
             $("#ringModal").hide();
         });
-            function disableSelectedOptions() {
-            var selectedA = $("#ddlRingASite").val();
-            var selectedB = $("#ddlRingBSite").val();
+
+        function disableSelectedOptions() {
+            debugger;
+            var selectedA = $("#ddlRingASite option:selected").text().trim();
+            var selectedB = $("#ddlRingBSite option:selected").text().trim();
 
             $("#ddlRingBSite option, #ddlRingASite option").prop("disabled", false); // Reset all options
 
+
             if (selectedA) {
-            $("#ddlRingBSite option[value='" + selectedA + "']").prop("disabled", true);
+                $("#ddlRingBSite option").filter(function () {
+                    return $(this).text().trim() === selectedA;
+                }).prop("disabled", true);
             }
+
             if (selectedB) {
-            $("#ddlRingASite option[value='" + selectedB + "']").prop("disabled", true);
+                $("#ddlRingASite option").filter(function () {
+                    return $(this).text().trim() === selectedB;
+                }).prop("disabled", true);
             }
 
             // Refresh chosen plugin if used
@@ -1049,7 +1024,7 @@
             var siteA = $("#ddlRingASite").val();
             var siteB = $("#ddlRingBSite").val();
 
-            if (siteA === siteB && siteA !== "" && siteB !== "") {
+                if (selectedA === selectedB && siteA !== "" && siteB !== "") {
             alert("Both sites cannot be the same. Please select different sites.");
             $("#ddlRingBSite").val(""); // Reset second dropdown
             }
@@ -1071,9 +1046,265 @@
             });
             // Attach change event handlers
             $("#ddlRingASite, #ddlRingBSite").change(disableSelectedOptions);
-            $('.chosen-select').chosen({ width: '100%' });
+        $('.chosen-select').chosen({ width: '100%' });
+
+        // Remove site association
+        $(document).off("click", ".action-btn-success").on("click", ".action-btn-success", function () {
+
+            // Extract data attributes
+    var inRingId = $(this).data("id") || 0;
+    var inSystemId = $(this).data("siteid") || 0;
+    var baseSystemId = $("#hdnSystemId").val();
+    var maxDistancePeer = $("#txtmaxdistancepeer").val();
+
+    // AJAX Call
+    $.ajax({
+        url: `@Url.Action("Removetopologygetsitedissociation", "Report")`,
+        type: "GET",
+        dataType: "json",
+        data: {
+            basesystem_id: baseSystemId,
+            systemId: inSystemId,
+            ringId: inRingId,
+            distance: maxDistancePeer
+        },
+        success: function (response) {
+            if (response?.lsttopologygetsites?.length > 0) {
+                populateDropdowns(response.lsttopologygetsites, true);
+            } else {
+                resetDropdowns();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(`Error fetching topology sites: ${status}`, error);
+            alert("Error fetching topology sites. Please try again.");
+        }
+    });
+
+        });
+
+        function updateGrid() {
+            var $dvsiteTable = $("#dvsiteTable");
+            var $table = $("#siteTable");
+            var $tbody = $table.find("tbody");
+
+            // Clear previous data
+            $tbody.empty();
+            // Get all options that are NOT hidden (Alternative way)
+            var visibleOptions = $("#ddlRingASite option").filter(function () {
+                 return !$(this).prop("hidden");  // Use hidden property instead of :visible
+                //return !$(this).css("display") === "none";
+            });
+
+            debugger;
+            var v_length = visibleOptions.length;
+            // Get all visible options
+            visibleOptions.each(function () {
+                var fullText = $(this).text();
+                var ringId = $(this).val();
+                var siteid = $(this).data("siteid");
+
+                debugger;
+                // Extract values
+                let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
+                if (parts.length > 1) {
+
+                    let siteName = parts[0]; // "siteN-2"
+                    let RingName = parts[1].replace(/\)\s*$/, ""); // Remove trailing ")"
+                    let extractedValue = parts[2].replace(")", ""); // Remove ")"
+
+                    // Skip empty/default option
+                    if (ringId !== "") {
+                        var row = "<tr>" +
+                            "<td><button type='button' class='action-btn-success' data-id='" + ringId + "' data-siteid='" + siteid + "'>Remove</button></td>" +
+                            "<td>" + siteName + "</td>" +
+                            "<td>" + RingName + "</td>" +
+                            "<td>" + extractedValue + "</td>" +
+                            "</tr>";
+
+                        $tbody.append(row);
+                    }
+
+                    // Show or hide the table based on data availability
+                    if ($tbody.children().length > 0) {
+                        $dvsiteTable.show();
+                        $table.show(); // Show table if data exists
+                        $table.addClass("grid"); // Show table if data exists
+                    } else {
+                        $dvsiteTable.hide();
+                        $table.hide(); // Hide table if no data
+                    }
+                }
+
+
+
 
             });
 
+            var childrenlength = $tbody.children().length;
+            // Show or hide the table based on data availability
+            if ($tbody.children().length > 0) {
+                $table.removeClass("hidden");
+                $dvsiteTable.removeClass("hidden");
+                $table.addClass("grid"); // Show table if data exists
+            } else {
+                $table.addClass("hidden");
+                $dvsiteTable.addClass("hidden");
+            }
+        }
+
+        function getSiteListItemRingwise(isfresh = false) {
+    var $dvsiteTable = $("#dvsiteTable");
+    var $table = $("#siteTable");
+    var $tbody = $table.find("tbody");
+
+    // Clear previous data
+    $tbody.empty();
+    $table.addClass("hidden");
+    $dvsiteTable.addClass("hidden");
+
+    var selectedRingId = $("#ddlringtype").val(); // Get selected value
+    var visibleCount = 0;
+    var secondaryVisibleCount = 0;
+    var thirdCount = 0;
+
+    var $dropdownA = $("#ddlRingASite");
+    var $dropdownB = $("#ddlRingBSite");
+
+    function filterDropdownOptions($dropdown, condition, hideOthers = true) {
+        $dropdown.find("option").each(function () {
+            var ringId = $(this).attr("data-ringid");
+
+            if (ringId === condition || ringId === "" || ringId === undefined) {
+                $(this).show();
+                if (hideOthers) visibleCount++;
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    //--- Start Case First ---
+    if (!isfresh) {
+        filterDropdownOptions($dropdownA, selectedRingId);
+        filterDropdownOptions($dropdownB, selectedRingId, false);
+    }
+    //--- End Case First ---
+
+    //--- Start Case Second ---
+    if (visibleCount === 1 && !isfresh) {
+        filterDropdownOptions($dropdownA, "0");
+        filterDropdownOptions($dropdownB, "0", false);
+        secondaryVisibleCount++;
+    }
+    //--- End Case Second ---
+
+    //--- Start Case Third ---
+    if (secondaryVisibleCount === 1 || isfresh) {
+        $dropdownA.find("option").each(function () {
+            var ringId = $(this).attr("data-ringid");
+            if (ringId !== selectedRingId && ringId !== "0" && ringId !== "" || ringId === undefined) {
+                $(this).show();
+                thirdCount++;
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    if (thirdCount > 1 && selectedRingId !== null || isfresh) {
+        updateGrid();
+    }
+    //--- End Case Third ---
+
+    // Refresh dropdowns
+    $dropdownA.trigger("chosen:updated");
+    $dropdownB.trigger("chosen:updated");
+}
+
+
+        function getAllSitelistItem() {
+    // Get selected values
+            var topologytype = $("#ddltopologytype").val();
+            var maxdistancepeer = $("#txtmaxdistancepeer").val();
+    var ringid = $("#ddlringtype").val() || 0; // Fallback to 0 if null/undefined
+    var systemId = $("#hdnSystemId").val() || 0;
+
+
+            if (!systemId) {
+                alert("System ID is missing. Defaulting to 0.");
+            }
+
+     // AJAX Call
+     $.ajax({
+         url: '@Url.Action("Gettopologygetsites", "Report")',
+         type: "GET",
+         dataType: "json",
+          data: { systemId: systemId, ringId: ringid, distance: maxdistancepeer },
+         success: function (response) {
+            if (response && response.lsttopologygetsites && response.lsttopologygetsites.length > 0) {
+                populateDropdowns(response.lsttopologygetsites);
+            } else {
+                resetDropdowns();
+            }
+          },
+         error: function (xhr, status, error) {
+            console.error("Error fetching topology sites:", status, error);
+            alert("Error fetching topology sites. Please try again.");
+              }
+      });
+}
+
+            // Function to populate dropdowns
+        function populateDropdowns(sites, isfresh = false) {
+            debugger;
+                var dropdownA = $("#ddlRingASite");
+                var dropdownB = $("#ddlRingBSite");
+
+                // Clear existing options
+                dropdownA.empty();
+                dropdownB.empty();
+
+                // Append default option
+                dropdownA.append('<option value="">--Select--</option>');
+                dropdownB.append('<option value="">--Select--</option>');
+
+                debugger;
+                // Append new options
+                $.each(sites, function (index, item) {
+                    var optionHtml = '<option value="' + item.ringid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"  data-siteid="' + item.siteid + '">' + item.sitename + ' (' + item.sitedistance + ')</option>';
+                    dropdownA.append(optionHtml);
+                    dropdownB.append(optionHtml);
+                });
+
+            getSiteListItemRingwise(isfresh);
+                // Refresh dropdowns
+                dropdownA.trigger("chosen:updated");
+                dropdownB.trigger("chosen:updated");
+            }
+
+            // Function to reset dropdowns
+            function resetDropdowns() {
+                var dropdownA = $("#ddlRingASite");
+                var dropdownB = $("#ddlRingBSite");
+
+                // Clear existing options
+                dropdownA.empty();
+                dropdownB.empty();
+
+                // Append default option
+                dropdownA.append('<option value="">--Select--</option>');
+                dropdownB.append('<option value="">--Select--</option>');
+
+                // Refresh dropdowns
+                dropdownA.trigger("chosen:updated");
+                dropdownB.trigger("chosen:updated");
+            }
+
+    });
+
+
+
 </script>
+
 

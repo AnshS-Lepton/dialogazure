@@ -118,10 +118,16 @@ namespace BusinessLogics.Admin
             return new DAProject().BindPurpose(network_stage, ddlworkorder_id);
 
         }
-        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id, int user_id)
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id, int distance, int user_id)
         {
 
-            return new DAProject().Bindtopologygetsites( system_id,  ring_id,  user_id);
+            return new DAProject().Bindtopologygetsites( system_id, ring_id, distance, user_id);
+
+        }
+        public List<TopologyGetSites> Bindtopologygetsitessitedissociation(int basesystem_id, int system_id, int ring_id, int distance, int user_id)
+        {
+
+            return new DAProject().Bindtopologygetsitessitedissociation(basesystem_id,system_id, ring_id, distance, user_id);
 
         }
         public List<TopologySegmentCables> Gettopologysegmentcables(int system_id, int ring_id, int user_id)
