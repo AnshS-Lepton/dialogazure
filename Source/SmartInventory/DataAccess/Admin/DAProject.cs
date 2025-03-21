@@ -166,11 +166,21 @@ namespace DataAccess.Admin
 
         }
 
-        public List<TopologyGetSites> Bindtopologygetsites(int system_id,int ring_id,int user_id)
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id,int distance, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id= ring_id, p_user_id=user_id }, false);
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id = ring_id, p_distance= distance, p_user_id =user_id }, false);
+
+            }
+            catch { throw; }
+
+        }
+        public List<TopologyGetSites> Bindtopologygetsitessitedissociation(int basesystem_id, int system_id, int ring_id, int distance, int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_sites_dissociation", new { p_base_site_id= basesystem_id, p_system_id = system_id, p_ring_id = ring_id, p_distance = distance, p_user_id = user_id }, false);
 
             }
             catch { throw; }
