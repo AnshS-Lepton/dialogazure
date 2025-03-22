@@ -447,12 +447,12 @@
         debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
-        if ($('txtLinkId').val() !== 'undefined' && $('ddlLinkPrifixType').val() !== 'undefined') {
+        if ($('#txtLinkId').val() !== undefined && $('#ddlLinkPrifixType').val() !== undefined) {
             $('#txtLinkId').prop("disabled", true);
             $('#link_id').val($('txtLinkId').val())
             $('#link_prefix').val($('ddlLinkPrifixType').val())
         }
-        else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
+       // else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
         
       
     });
