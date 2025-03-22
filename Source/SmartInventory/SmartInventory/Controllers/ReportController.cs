@@ -13589,9 +13589,9 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(ringCode, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetRingTypesByRegion(int segmentId)
+        public JsonResult GetRingTypesByRegion(int segmentId, int numberofsites)
         {
-            var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
+            var ringsdata = new BLProject().getRingDetailByIdList(segmentId, numberofsites);
             // Transform into key-value pairs for dropdown
             //var ringsDropdownData = ringsdata
             // .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order

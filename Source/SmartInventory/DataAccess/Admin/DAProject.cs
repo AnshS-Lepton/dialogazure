@@ -649,11 +649,12 @@ namespace DataAccess.Admin
     {
 
        
-        public List<ringinfo> getRingDetailByIdList(int segment_Id)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id, int numberofsites)
         {
             var res = repo.ExecuteProcedure<ringinfo>("fn_get_ring_details", new
             {
-                p_segment_id = segment_Id
+                p_segment_id = segment_Id,
+                p_numberofsites = numberofsites
             }, false);
             return res;
 
@@ -866,8 +867,8 @@ namespace DataAccess.Admin
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
             objPOD.site_id = objPODMaster.site_id;
             objPOD.site_name = objPODMaster.site_name;
-            objPOD.agg_01 = objPODMaster.agg_01;
-            objPOD.agg_02 = objPODMaster.agg_02;
+            // objPOD.agg_01 = objPODMaster.agg_01; // To avoide red icon on ring association
+            // objPOD.agg_02 = objPODMaster.agg_02; // To avoide red icon on ring association
             objPOD.ring_a_site_id = objPODMaster.ring_a_site_id;
             objPOD.ring_b_site_id = objPODMaster.ring_b_site_id;
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
