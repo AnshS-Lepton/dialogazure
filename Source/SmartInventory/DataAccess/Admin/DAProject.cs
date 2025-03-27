@@ -827,8 +827,26 @@ namespace DataAccess.Admin
 
             return sitname;
         }
+
+        public List<SiteMaster> getAllAGGListRoutewise(int siteid, int user_id,string site_name)
+        {
+            // Execute stored procedure and get list
+            var sitname = repo.ExecuteProcedure<SiteMaster>(
+                "fn_get_agg_sitedetail_routewise",
+                new
+                {
+                    p_site_id = siteid,
+                    p_user_id = user_id,
+                      p_site_name = site_name
+                },
+                false
+            ).ToList();
+            return sitname;
+        }
+
         public List<PODMaster> getAGG1List(string site)
         {
+
             var sitname = repo.GetAll(m =>
                 (m.site_id.ToString().Contains(site.ToUpper()) ||
                 m.site_name.ToUpper().Contains(site.ToUpper())) &&
@@ -856,6 +874,13 @@ namespace DataAccess.Admin
             var agg2SystemId = repo.Get(x => x.agg_02 == objPODMaster.agg_02)?.system_id;
 
             var objPOD = repo.Get(x => x.system_id == objPODMaster.system_id);
+            var objPODring = repo.Get(x => x.system_id == objPODMaster.system_id && x.ring_id == objPODMaster.ring_id);
+            if(objPODring !=null)
+            {
+                PODMaster ObjPODMaster = new PODMaster();
+                ObjPODMaster.ring_id = objPODring.ring_id;
+              return ObjPODMaster;
+            }
 
             if (objPOD == null)
             {
