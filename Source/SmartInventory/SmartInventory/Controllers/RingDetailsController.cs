@@ -20,6 +20,7 @@ using System.Web.Script.Serialization;
 using Utility;
 using Models.API;
 using NetTopologySuite.Noding;
+using Newtonsoft.Json;
 
 
 namespace SmartInventory.Controllers
@@ -98,6 +99,29 @@ namespace SmartInventory.Controllers
             string objresp = string.Empty;
             objresp = new BLDataUploader().getsiteShowOnMap(ring_id);
             return objresp;
+        }
+        public ActionResult GetSchematicView(string key, int ring_id,string ring_code)
+        {
+            var value = MiscHelper.Decrypt(key);
+            var data = value.Split('/');
+            int ringid = Convert.ToInt32(data[0]);
+            string ringcode = Convert.ToString(data[1]);
+            SLDModel obj = new SLDModel();
+            obj = new BLOSPSplicing().GetSLDDiagrambyRingId(ringid, ringcode);
+          
+            if (!string.IsNullOrEmpty(obj.legends))
+            {
+                obj.lstlegend = JsonConvert.DeserializeObject<List<legend>>(obj.legends);
+            }
+            if (!string.IsNullOrEmpty(obj.cables))
+            {
+                obj.lstCableLegend = JsonConvert.DeserializeObject<List<CableLegend>>(obj.cables);
+            }
+            // obj.title = pSLDType; primary done after discuss with Deepak yadav Sir
+            obj.title = "Primary";
+            obj.ring_id = ring_id;
+            obj.ring_code = ringcode;
+            return PartialView("_SLDdiagramRingDetails", obj);
         }
     }
 }

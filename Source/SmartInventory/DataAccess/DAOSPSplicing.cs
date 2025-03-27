@@ -308,6 +308,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public SLDModel GetSLDDiagrambyRingId(int ring_id,string ring_code)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<SLDModel>("fn_get_ring_schematicview", new
+                {
+                   p_ring_id = ring_id
+                   //p_ring_code = ring_code
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
 
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
