@@ -120,7 +120,14 @@
         }, true, true);
     }
 
-   
+    this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
+        debugger;
+        var ringId = ringId.toString();
+        ajaxReq('main/Encrypt', { systemId: ringId +'/'+ ring_code  }, false, function (resp) {
+           
+            window.open(appRoot + 'RingDetails/GetSchematicView?key=' + resp + '&ring_id=' + ringId + '&ring_code=' + ring_code, '_blank');
+        }, false, false);
+    }
 </script>
 
 <style>
@@ -254,9 +261,14 @@
                                               title="Show on Map"
                                               onclick="ShowEntityOnMap(@item.id);">
                                                <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                               <i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>
                                            </a>
+                                       
+                                            
+                                        
                             </text>, canSort: false
 ),
+                   
 grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),
 grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
 grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
