@@ -575,6 +575,15 @@ namespace Models
 
     }
 
+
+    public class SiteMaster
+    {
+        public int system_id { get; set; }
+        public string site_id { get; set; }
+        public string network_id { get; set; }
+        public string site_name { get; set; }
+    }
+
     public class ADBSubArea
     {
         public int system_id { get; set; }

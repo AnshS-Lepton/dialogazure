@@ -23,7 +23,7 @@
                 <div class="col-sm-4">
                     @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
                 </div>
-                <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 Code <i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 Code @*<i class="clsMandatory">*</i>*@:</label>
                 <div class="col-sm-4">
                     @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
 
@@ -31,7 +31,7 @@
             </div>
             <div class="form-group row">
 
-                <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 Code <i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 Code @*<i class="clsMandatory">*</i>*@:</label>
 
                 <div class="col-sm-4">
                     @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })

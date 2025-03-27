@@ -13629,13 +13629,16 @@ namespace SmartInventory.Controllers
 
             new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id);
 
-
+            int ring_id = pODMaster.ring_id ?? 0;
             pODMaster = new BLProject().updatetopology(pODMaster);
 
                 // Check if the save operation was successful
                 if (pODMaster != null)
                 {
-                    response = new { Success = true, Message = "Topology Plan saved successfully" };
+                if(pODMaster.ring_id== ring_id && pODMaster.site_id==null)
+                    response = new { Success = false, Message = "Selected ring already associated !" };
+                else
+                response = new { Success = true, Message = "Topology Plan saved successfully" };
                 }
             
 
@@ -13671,8 +13674,23 @@ namespace SmartInventory.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetAGG1(string term)
+        public JsonResult AllAGGListRoutewise(int siteid, string term)
         {
+            var sitelist = new BLProject().getAllAGGListRoutewise(siteid, Convert.ToInt32(Session["user_id"]), term).ToList();
+
+            var result = sitelist.Select(s => new
+            {
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
+            }).ToList();
+
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetAGG1(string term)
+        {           
             var sitenameList = new BLProject().getAGG1List(term);
 
             var result = sitenameList.Select(s => new
