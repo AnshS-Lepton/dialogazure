@@ -86,7 +86,7 @@
                 <div class="tab-pane active" id="GISInfo">
 
                     <fieldset class="sitePlan_fieldset">
-                        <legend>Topology Configure</legend>
+                        <legend>Topology Criteria</legend>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -126,7 +126,7 @@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (km)<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 4 })
                             </div>
                         </div>
                         <div class="row">
@@ -158,7 +158,7 @@
                                 @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
                                 <div class="pose-plus" id="btncreateringdiv"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
                             </div>
-                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
+                            <label class="control-label col-sm-2" for="searchby" style="display:none;">@Resources.Resources.SI_OSP_GBL_NET_RPT_466:</label>
 
                             <div class="col-sm-4">
                                 @Html.LabelFor(model => model.ring_site_id, new { id = "lbdringsiteId", style = "display: none;" })
@@ -168,7 +168,7 @@
                         </div>
 
                         <div class="form-group row" id="dvregionId" style="display: block;">
-                            <label class="control-label col-sm-2" for="searchby">Dist from Planned to Existing: <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="searchby">Peer Site 1 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingASite" })
                                 <div style="display:none;">
@@ -186,7 +186,7 @@
 
                             </div>
 
-                            <label class="control-label col-sm-2" for="txtSearchtext">Dist from Planned to Existing : <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext">Peer Site 2 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.ring_b_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlRingBSite" })
                                 <div class="pose-plus">
@@ -267,7 +267,7 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50 })
+                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
                         </div>
                     </div>
                 </form>
@@ -306,7 +306,7 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50 })
+                            @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 4, @cols = 50, @style = "resize: none;" })
                         </div>
                     </div>
                 </form>
@@ -357,6 +357,11 @@
             this.value = this.value.replace(/[^0-9.]/g, ''); // Remove invalid characters
             if ((this.value.match(/\./g) || []).length > 1) {
                 this.value = this.value.slice(0, -1); // Prevent multiple dots
+            }
+
+            if (this.value > @ApplicationSettings.MaxSitePeerDisatence) {
+                 this.value = @ApplicationSettings.MaxSitePeerDisatence;
+                alert("Please enter less than " +@ApplicationSettings.MaxSitePeerDisatence+" (km)!");
             }
         });
                $("#txtSiteId").autocomplete({
@@ -526,11 +531,11 @@
                 var agg1 = $("#txtagg1").val();
                 var agg2 = $("#txtagg2").val();
                 if (agg1 == "") {
-                    alert("Please select agg1!");
+                    alert("Please select Aggregate Site 1!");
                     return false;
                 }
                 if (agg2 == "") {
-                    alert("Please select agg2!");
+                    alert("Please select Aggregate Site 2!");
                     return false;
                 }
             if (regionId) {
@@ -542,7 +547,7 @@
             // Populate the Ring Type Dropdown
             var segmenttype = $('#ddlsegment');
             segmenttype.empty(); // Clear existing options
-            segmenttype.append('<option value="">--Select Segment Type--</option>');
+            segmenttype.append('<option value="">--Select Segment--</option>');
 
             // Append options from the data
             $.each(data, function (index, item) {
@@ -572,7 +577,7 @@
                     alert("Please select no of sites !");
                     return;
                 }
-               
+
 
             if (segmentId) {
             $.ajax({
@@ -582,7 +587,7 @@
                 success: function (data) {
             var ringTypeDropdown = $('#ddlringtype'); // Ensure correct variable name
             ringTypeDropdown.empty(); // Clear existing options
-            ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+            ringTypeDropdown.append('<option value="">--Select Ring--</option>');
 
             // Append new options from response
             $.each(data, function (index, item) {
@@ -748,13 +753,13 @@
             // var segmentName = $("#txtSegmentName").val();
             if (topologyType == "Ring") {
                 if (agg1SiteId === "" || agg2SiteId === "") {
-                    alert("Please select both AGG1 & AGG2");
+                    alert("Please select both Aggregate Site 1 & Aggregate Site 2");
                     return;
                 }
             }
             else if (topologyType == "Linear") {
                     if (agg1SiteId === "") {
-                        alert("Please select AGG1.");
+                        alert("Please select Aggregate Site 1.");
                         return;
                     }
                 }
@@ -817,15 +822,15 @@
                 }
 
                 if (nofsites == "") {
-                    alert("Please select NoOf Sites!");
+                    alert("Please select Max. Sites per Ring!");
                     return false;
                 }
             if (agg1 == "") {
-            alert("Please select agg1!");
+                alert("Please select Aggregate Site 1!");
             return false;
             }
             if (agg2 == "") {
-            alert("Please select agg2!");
+                alert("Please select Aggregate Site 2!");
             return false;
             }
             if (segmentid != "") {
@@ -943,7 +948,7 @@
             });
             $("#btnSaveSegment").click(function () {
             // debugger;
-            debugger;
+
             // Get input values
             var region = $("#txtregion").val();
             var regionid = $("#ddlregionid").val();
@@ -977,16 +982,16 @@
             // Hide modal
             $("#segmentModal").hide();
 
+                debugger;
             // Now call the second AJAX request
             $.ajax({
             url: '@Url.Action("GetSegmentsByRegion", "Report")',
             type: "GET",
-            dataType: "json",
-            data: { id: regionid }, // Pass selected regionId to the server
+                data: { id: regionid, aggregate1: agg1, aggregate2: agg2 }, // Pass selected regionId to the server
             success: function (data) {
             var segmentDropdown = $('#ddlsegment');
             segmentDropdown.empty(); // Clear existing options
-            segmentDropdown.append('<option value="">--Select Ring Type--</option>');
+                segmentDropdown.append('<option value="">--Select Segment--</option>');
 
             // Append options from the data
             $.each(data, function (index, item) {
@@ -1051,15 +1056,16 @@
                     alert("Please select no of sites !");
                 }
 
+                var ringcap = $("#ddlringcapacity").val();
             // Now fetch updated ring types
             $.ajax({
             url: '@Url.Action("GetRingTypesByRegion", "Report")',
             type: 'GET',
-                data: { segmentId: segmentid, numberofsites: nbrOfsites }, // Pass the selected segment ID
+                data: { segmentId: segmentid, numberofsites: nbrOfsites, ringcapacity: ringcap }, // Pass the selected segment ID
             success: function (data) {
             var ringTypeDropdown = $('#ddlringtype');
             ringTypeDropdown.empty(); // Clear previous options
-            ringTypeDropdown.append('<option value="">--Select Ring Type--</option>');
+            ringTypeDropdown.append('<option value="">--Select Ring--</option>');
 
             // Append new options
             $.each(data, function (index, item) {
@@ -1257,9 +1263,9 @@
                         extractedValue = parts[2].replace(")", ""); // Remove ")"
                       //  extractedValue = (extractedValue / 1000).toFixed(3); // Convert and format to 3 decimal places;
                     }
-                   
-                   
-                    
+
+
+
 
                     // Skip empty/default option
                     if (ringId !== "") {
@@ -1314,8 +1320,8 @@
 
             var selectedRingId = $("#ddlringtype").val(); // Get selected value
             var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
-            if (selectedRing !="--Select Ring Type--")
-            $("#lbdringsiteId").text(selectedRing).css("display", "block");
+            if (selectedRing !="--Select Ring--")
+            $("#lbdringsiteId").text(selectedRing).css("display", "none");
     var visibleCount = 0;
     var secondaryVisibleCount = 0;
     var thirdCount = 0;
@@ -1360,7 +1366,7 @@
                         }
                     });
                 }
-        
+
     }
 
             debugger;
@@ -1396,7 +1402,7 @@
                 $(this).hide();
             }
         });
-       
+
     }
 
             if (thirdCount > 1 && selectedRingId !== null || isfresh) {
