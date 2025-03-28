@@ -272,12 +272,12 @@
                             </text>, canSort: false
 ),
                    
-grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),
+@*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
 grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
 grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
 grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
-grid.Column("agg1_site_id", "AGG_A", format: @<text>@item.agg1_site_id</text>, canSort: true),
-grid.Column("agg2_site_id", "Agg_B", format: @<text>@item.agg2_site_id</text>, canSort: true),
+grid.Column("agg1_site_id", "Aggregate Site 1", format: @<text>@item.agg1_site_id</text>, canSort: true),
+grid.Column("agg2_site_id", "Aggregate Site 2", format: @<text>@item.agg2_site_id</text>, canSort: true),
 grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</text>, canSort: true)
 
 ))
