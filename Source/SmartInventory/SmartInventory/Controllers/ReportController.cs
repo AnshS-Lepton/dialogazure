@@ -13543,10 +13543,10 @@ namespace SmartInventory.Controllers
 
             return PartialView("_SiteTopologyPlan", objToplogyPlan);
         }
-        public JsonResult GetSegmentsByRegion(int id)
+        public JsonResult GetSegmentsByRegion(int id,string aggregate1, string aggregate2)
         {
             // Fetch segments based on regionId
-            var segments = new BLProject().getSegmentDetailByIdList(id);
+            var segments = new BLProject().getSegmentDetailByIdList(id, aggregate1, aggregate2);
             //var segmentcode = new BLProject().GetSegmentCode();
             // Transform into key-value pairs for dropdown
             var segmentDropdownData = segments.Select(s => new
@@ -13569,6 +13569,7 @@ namespace SmartInventory.Controllers
 
         public JsonResult Gettopologygetsites(int systemId, int ringId, int distance)
         {
+            distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
             pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
@@ -13581,17 +13582,17 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetRingCode()
+        public JsonResult GetRingCode(int ring)
         {
             // Fetch segments based on regionId
-            var ringCode = new BLProject().GetRingCode();
+            var ringCode = new BLProject().GetRingCode(ring);
 
             // Return as JSON
             return Json(ringCode, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetRingTypesByRegion(int segmentId, int numberofsites)
+        public JsonResult GetRingTypesByRegion(int segmentId, int numberofsites, string ringcapacity = "")
         {
-            var ringsdata = new BLProject().getRingDetailByIdList(segmentId, numberofsites);
+            var ringsdata = new BLProject().getRingDetailByIdList(segmentId, numberofsites, ringcapacity);
             // Transform into key-value pairs for dropdown
             //var ringsDropdownData = ringsdata
             // .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
@@ -13627,7 +13628,7 @@ namespace SmartInventory.Controllers
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
 
-            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id);
+            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id, pODMaster.top_type);
 
             int ring_id = pODMaster.ring_id ?? 0;
             pODMaster = new BLProject().updatetopology(pODMaster);
@@ -13638,7 +13639,7 @@ namespace SmartInventory.Controllers
                 if(pODMaster.ring_id== ring_id && pODMaster.site_id==null)
                     response = new { Success = false, Message = "Selected ring already associated !" };
                 else
-                response = new { Success = true, Message = "Topology Plan saved successfully" };
+                response = new { Success = true, Message = "The site has been connected to the selected topology." };
                 }
             
 

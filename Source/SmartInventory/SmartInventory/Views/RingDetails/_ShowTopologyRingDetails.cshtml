@@ -48,7 +48,7 @@
         var bounds = new google.maps.LatLngBounds();
         ajaxReq('RingDetails/getSitGeometryDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
-                debugger;
+              
 
                 if (resp.lstSitedetails != null || resp.lstSitedetails != undefined) {
 
@@ -72,6 +72,7 @@
                         content: contentString
                     });
 
+                    debugger;
                     for (var i = 0; i < resp.lstSitedetails.length; i++) {
 
                         var en_type = 'POD';
@@ -86,7 +87,7 @@
                         //    ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.lstSitedetails[i].connected_entity_category + '_' + en_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
                         //}
                         //else {
-                        ptObj = si.createMarkerForPathFinder(geometry[0], 'http://localhost:56824/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
+                        ptObj = si.createMarkerForPathFinder(geometry[0], 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
                             //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
 
                         //}
@@ -115,6 +116,8 @@
                         oms.addMarker(ptObj);
 
                     }
+
+                    debugger;
                 }
             }
         }, true, true);

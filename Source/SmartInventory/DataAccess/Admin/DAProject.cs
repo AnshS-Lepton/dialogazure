@@ -321,7 +321,7 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
-        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId)
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId,string top_type)
         {
             try
             {
@@ -331,7 +331,8 @@ namespace DataAccess.Admin
                     p_agg2_system_id = Agg2SystemId,
                     p_user_id = userId,
                     p_ring_id = ringId,
-                    p_segment_id = segmentId
+                    p_segment_id = segmentId,
+                    p_top_type= top_type
 
                 }, false);
 
@@ -604,9 +605,12 @@ namespace DataAccess.Admin
   }
     public class DAToplologySegment : Repository<TopologySegment>
     {
-        public List<TopologySegment> getSegmentDetailByIdList(int id)
+        public List<TopologySegment> getSegmentDetailByIdList(int id, string aggregate1, string aggregate2)
         {
-            return repo.GetAll(m => m.region_id == id).ToList();
+            if (aggregate1 != "" && aggregate2 !="")
+            return repo.GetAll(m => m.region_id == id && m.agg1_site_id== aggregate1 && m.agg2_site_id== aggregate2).ToList();
+            else
+                return repo.GetAll(m => m.region_id == id).ToList();
         }
         public TopologySegment GetSegmentCode()
         {
@@ -649,12 +653,13 @@ namespace DataAccess.Admin
     {
 
        
-        public List<ringinfo> getRingDetailByIdList(int segment_Id, int numberofsites)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id, int numberofsites,string ringcapacity)
         {
             var res = repo.ExecuteProcedure<ringinfo>("fn_get_ring_details", new
             {
                 p_segment_id = segment_Id,
-                p_numberofsites = numberofsites
+                p_numberofsites = numberofsites,
+                p_ringcapacity = ringcapacity
             }, false);
             return res;
 
@@ -665,7 +670,7 @@ namespace DataAccess.Admin
             return repo.GetAll(m => m.segment_id == segment_Id).ToList();
 
         }
-        public TopologyRingMaster GetRingCode()
+        public TopologyRingMaster GetRingCode(int ring)
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
 
@@ -689,7 +694,8 @@ namespace DataAccess.Admin
                     lastSequence = int.Parse(match.Groups[1].Value);
                 }
             }
-
+            if (ring == 1)
+                lastSequence = 0;
             // Step 4: Increment the sequence number
             int newSequence = lastSequence + 1;
             string ringCode = "";

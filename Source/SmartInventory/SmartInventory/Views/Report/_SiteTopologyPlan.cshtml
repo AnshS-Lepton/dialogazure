@@ -124,7 +124,7 @@
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlnofsites" })
                             </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (meter)<i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (km)<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
                             </div>
@@ -209,7 +209,7 @@
                                         <th>Action</th>
                                         <th>Site Id</th>
                                         <th>Ring Code</th>
-                                        <th>Distance (m)</th>
+                                        <th>Distance (km)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -400,6 +400,14 @@
                 var ddlRingASite = $("#ddlRingASite").val();
                 var ddlRingBSite = $("#ddlRingBSite").val();
                 if (selectedValue == "Ring") {
+                    var ddlnofsites = $('#ddlnofsites');
+                    ddlnofsites.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlnofsites").prop("disabled", false).trigger("chosen:updated");
+
+                    var ddlringcapacity = $('#ddlringcapacity');
+                    ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
+
                     $("#txtagg2").css("display", "block").prop("disabled", false);
                     $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
                     $("#ddlsegment").prop("disabled", false).trigger("chosen:updated");
@@ -410,25 +418,40 @@
                 }
                 else if (selectedValue == "Linear")
                 {
-                    $("#txtagg2").val("");
-                    $("#txtagg2").css("display", "block").prop("disabled", true);
+                   // $("#txtagg2").val("");
+                    $("#txtagg2").css("display", "block").prop("disabled", false);
                     $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
-                    $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
+                    //  $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
+                    var ddlnofsites = $('#ddlnofsites');
+                    ddlnofsites.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlnofsites").prop("disabled", false).trigger("chosen:updated");
+
+                    var ddlringcapacity = $('#ddlringcapacity');
+                    ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
                     $("#btncreatesegmentdiv").css("display", "none");
-                    $("#ddlringtype").prop("disabled", true).trigger("chosen:updated");
+                   // $("#ddlringtype").prop("disabled", true).trigger("chosen:updated");
                     $("#btncreateringdiv").css("display", "none");
                     $("#ddlringtype").val('');
                     $("#ddlRingBSite_chosen").val('');
                 }
                 else
                 {
+                    var ddlnofsites = $('#ddlnofsites');
+                    ddlnofsites.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlnofsites").prop("disabled", false).trigger("chosen:updated");
+
+                    var ddlringcapacity = $('#ddlringcapacity');
+                    ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
+
                     $("#txtagg2").css("display", "block").prop("disabled", true); // Show and enable
                      $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");// Show and enable for Dual home
                     $("#ddlsegment").prop("disabled", false).trigger("chosen:updated");
                     $("#ddlRingBSite_chosen").val('');
                     $("#btncreatesegmentdiv").css("display", "block");
                     $("#ddlringtype").prop("disabled", false).trigger("chosen:updated");
-                    $("#btncreateringdiv").css("display", "block");
+                    $("#btncreateringdiv").css("display", "none");
 
                 }
             });
@@ -499,18 +522,27 @@
 
             $('#ddlregionid').change(function () {
             debugger;
-            var regionId = $(this).val(); // Get the selected RegionId
-
+                var regionId = $(this).val(); // Get the selected RegionId
+                var agg1 = $("#txtagg1").val();
+                var agg2 = $("#txtagg2").val();
+                if (agg1 == "") {
+                    alert("Please select agg1!");
+                    return false;
+                }
+                if (agg2 == "") {
+                    alert("Please select agg2!");
+                    return false;
+                }
             if (regionId) {
             $.ajax({
             url: '@Url.Action("GetSegmentsByRegion", "Report")', // Action to fetch ring types
             type: 'GET',
-            data: { id: regionId }, // Pass selected regionId to the server
+                data: { id: regionId, aggregate1: agg1, aggregate2: agg2 }, // Pass selected regionId to the server
             success: function (data) {
             // Populate the Ring Type Dropdown
             var segmenttype = $('#ddlsegment');
             segmenttype.empty(); // Clear existing options
-            segmenttype.append('<option value="">--Select Ring Type--</option>');
+            segmenttype.append('<option value="">--Select Segment Type--</option>');
 
             // Append options from the data
             $.each(data, function (index, item) {
@@ -526,12 +558,17 @@
             // Clear the ringtype dropdown if no region is selected
             // $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
             }
-                $('#ddlsegment').off("click", ".action-btn-success").change(function () {
+                $('#ddlsegment').off("click").change(function () {
             debugger;
-                var segmentId = $(this).val(); // Get the selected SegmentId
+                    var segmentId = $(this).val(); // Get the selected SegmentId
+                    var ringcap = $("#ddlringcapacity").val();
+                    var topologyType = $("#ddltopologytype").val();
                     var nofsites = $("#ddlnofsites").val();
-
-                    if (nofsites === "") {
+                    if (ringcap == "") {
+                        alert("Please select ring capacity!");
+                        return;
+                    }
+                    if (nofsites === "" && topologyType == "Ring") {
                     alert("Please select no of sites !");
                     return;
                 }
@@ -541,7 +578,7 @@
             $.ajax({
             url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
             type: 'GET',
-                data: { segmentId: segmentId, numberofsites: nofsites }, // Pass the selected segment ID
+                data: { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap }, // Pass the selected segment ID
                 success: function (data) {
             var ringTypeDropdown = $('#ddlringtype'); // Ensure correct variable name
             ringTypeDropdown.empty(); // Clear existing options
@@ -703,7 +740,7 @@
 
             debugger;
             var ddlnofsites = $("#ddlnofsites").val();
-            if (ddlnofsites === "") {
+            if (ddlnofsites === "" && topologyType == "Ring") {
                 alert("Please select no of sites !");
                 return;
             }
@@ -763,7 +800,7 @@
             $("#btncreatesegment").click(function (event) {
             debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
-            event.stopPropagation();
+          //  event.stopPropagation();
             var agg1 = $("#txtagg1").val();
             var agg2 = $("#txtagg2").val();
             var regionid = $("#ddlregionid").val();
@@ -822,13 +859,15 @@
             });
             //$('#closedChildPopup').trigger("click");
 
-            $("#closedChildPopup").click(function () {
-            event.preventDefault(); // Prevent form submission (if inside a form)
-            event.stopPropagation();
-            //$("#segmentModal").modal("hide");
-            $("#segmentModal").hide();
+        $("#closedChildPopup").click(function () {
+            debugger;
+          //  event.preventDefault(); // Prevent form submission (if inside a form)
+          //  event.stopPropagation();
+            $("#segmentModal").modal("hide");
+           // $("#segmentModal").hide();
             });
-            $("#closedringChildPopup").click(function () {
+        $("#closedringChildPopup").click(function () {
+            debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
             //$("#segmentModal").modal("hide");
@@ -851,14 +890,16 @@
             if (!segmentid) {
             alert("Please select segment.");
             return;
-            }
+                }
+                var ringCount = $("#ddlringtype option").length;
             $("#ringModal").modal("show");
 
             $.ajax({
             url: '@Url.Action("GetRingCode", "Report")',
 
             type: 'GET',
-            dataType: 'json',
+                dataType: 'json',
+                data: { ring: ringCount },
             success: function (response) {
             if (response.ring_code) {
             $("#hdnringsiteseq").val(response.sequence);
@@ -931,7 +972,7 @@
             },
             success: function (response) {
             if (response) {
-            alert("Segment saved!");
+                alert("Segment saved successfully!");
 
             // Hide modal
             $("#segmentModal").hide();
@@ -998,7 +1039,7 @@
             },
             success: function (response) {
             if (response) {
-            alert("Ring saved!");
+                alert("Ring saved successfully!");
             $("#ringModal").hide(); // Hide modal after saving
             //    $("#ringModal").modal("hide");
 
@@ -1046,8 +1087,9 @@
             $("#btnsegCancel").click(function (event) {
             debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
-            event.stopPropagation();
-            $("#segmentModal").hide();
+                event.stopPropagation();
+                $("#segmentModal").modal("hide");
+            //$("#segmentModal").hide();
             });
         $("#btnringCancel").click(function (event) {
             debugger;
@@ -1213,6 +1255,7 @@
                     if (parts.length == 3) {
                         RingName = parts[1].replace(/\)\s*$/, ""); // Remove trailing ")"
                         extractedValue = parts[2].replace(")", ""); // Remove ")"
+                      //  extractedValue = (extractedValue / 1000).toFixed(3); // Convert and format to 3 decimal places;
                     }
                    
                    
@@ -1288,7 +1331,7 @@
                     $dropdown.find("option").each(function () {
                         var ringId = $(this).attr("data-ringid");
                         debugger;
-                        if (ddltopologytype == "Dual Home" && condition != "0" && (ringId === condition || ringId === "" || ringId === undefined))
+                        if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === "" || ringId === undefined))
                         {
                             $(this).show();
                             if (hideOthers) visibleCount++;
@@ -1419,7 +1462,7 @@
                 debugger;
                 // Append new options
                 $.each(sites, function (index, item) {
-                    var optionHtml = '<option value="' + item.ringid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"  data-siteid="' + item.siteid + '">' + item.sitename + ' (' + item.sitedistance + ')</option>';
+                    var optionHtml = '<option value="' + item.ringid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"  data-siteid="' + item.siteid + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
                     dropdownA.append(optionHtml);
                     dropdownB.append(optionHtml);
                     dropdownOther.append(optionHtml);
