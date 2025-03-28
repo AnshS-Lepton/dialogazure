@@ -157,10 +157,10 @@ namespace BusinessLogics.Admin
 
             new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
         }
-        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId)
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId,string top_type)
         {
 
-            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId,  segmentId);
+            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId,  segmentId, top_type);
         }
         public PlanningCodeMaster getPlanningCodeDetailById(int id, int project_id=0)
         {
@@ -207,9 +207,9 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologyRegion().getTopologyRegionDetails();
         }
-        public List<TopologySegment> getSegmentDetailByIdList(int  id)
+        public List<TopologySegment> getSegmentDetailByIdList(int  id, string aggregate1="", string aggregate2="")
         {
-            return new DAToplologySegment().getSegmentDetailByIdList(id);
+            return new DAToplologySegment().getSegmentDetailByIdList(id, aggregate1, aggregate2);
         }
         public List<TopologyRingMaster> getRingCodeDetailByIdList(int segment_Id)
         {
@@ -219,13 +219,13 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologySegment().GetSegmentCode();
         }
-        public TopologyRingMaster GetRingCode()
+        public TopologyRingMaster GetRingCode(int ring)
         {
-            return new DAToplologyRing().GetRingCode();
+            return new DAToplologyRing().GetRingCode(ring);
         }
-        public List<ringinfo> getRingDetailByIdList(int segment_Id = 0, int numberofsites = 0)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id = 0, int numberofsites = 0, string ringcapacity="")
         {
-            return new DAToplologyRing().getRingDetailByIdList(segment_Id, numberofsites);
+            return new DAToplologyRing().getRingDetailByIdList(segment_Id, numberofsites, ringcapacity);
         }
         public PODMaster updatetopology(PODMaster PODMaster)
         {

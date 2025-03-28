@@ -538,7 +538,7 @@ namespace Models
         public string Seg_desc { get; set; }
         [NotMapped]
         public string Ring_desc { get; set; }
-        public bool is_agg_site { get; set; }
+        public bool? is_agg_site { get; set; }
 
         /// Site Details Properties end
         public PODMaster()

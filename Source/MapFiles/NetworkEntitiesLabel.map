@@ -1605,7 +1605,7 @@ MAP
 		GROUP 'Network'
 CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '0')  			
+            EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'false')  			
 			STYLE
 				SYMBOL "icons/Planned/POD.png" 
 				SIZE 25
@@ -1630,7 +1630,7 @@ CLASS
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P' AND '[agg_02]'  eq '1')  			
+            EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
 				SYMBOL "icons/Planned/Podag.png" 
 				SIZE 25
@@ -1655,7 +1655,7 @@ CLASS
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '0')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'false')  			
 			STYLE
 				SYMBOL "icons/AsBuild/POD.png" 
 				SIZE 21		
@@ -1679,7 +1679,7 @@ CLASS
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A' AND '[agg_02]'  eq '1')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
 				SYMBOL "icons/AsBuild/Podag.png" 
 				SIZE 21		
