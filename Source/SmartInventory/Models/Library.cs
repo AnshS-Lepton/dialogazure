@@ -531,6 +531,8 @@ namespace Models
         [NotMapped]
         public List<TopologyGetSites> lsttopologygetsites { get; set; }
         [NotMapped]
+        public List<Topologysegment> lstsegment { get; set; }
+        [NotMapped]
         public int agg1SystemId { get; set; }
         [NotMapped]
         public int agg2SystemId { get; set; }

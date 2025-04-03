@@ -953,7 +953,39 @@
                     </li>
                     <li class="techSep"></li>
                 }
-                @if (Model.lstUserModule.Contains("RNG"))
+
+                @if (Model.lstUserModule.Contains("TPL"))
+                {
+                    <li>
+                        <a href="#" class="iconBaricomoon maintoolbar clsROWReport" title="Topology">
+                            <span class="icon-topology"></span>
+                        </a>
+                        <ul>
+                            @if (Model.lstUserModule.Contains("TPLP"))
+                            {
+                                <li>
+                                    <a href="#" class="iconBaricomoon" onclick="si.TopologyPlan('','POD')" title="Plan Details">
+                                        <span class="icon-export_report"></span>
+                                    </a>
+                                </li>
+
+                            }
+
+                            @if (Model.lstUserModule.Contains("RNG"))
+                            {
+                                <li>
+                                    <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
+                                        <span class="icon-topology"></span>
+                                    </a>
+                                </li>
+
+                            }
+                        </ul>
+                    </li>
+                    <li class="techSep"></li>
+                }
+
+                @*@if (Model.lstUserModule.Contains("RNG"))
                 {
                     <li>
                         <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
@@ -961,7 +993,7 @@
                         </a>
                     </li>
                     <li class="techSep"></li>
-                }
+                }*@
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
@@ -1023,7 +1055,7 @@
                     <li class="techSep"></li>
                 }
 
-              
+
 
                 @if (Model.lstUserModule.Contains("BMQ"))
                 {
