@@ -164,10 +164,10 @@ namespace BusinessLogics.Admin
 
             new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
         }
-        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId,string top_type)
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId,string top_type,int system_id)
         {
 
-            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId,  segmentId, top_type);
+            new DAProjectCode().Savetopsegmentringcablemapping(Agg1SystemId, Agg2SystemId, userId, ringId,  segmentId, top_type, system_id);
         }
         public PlanningCodeMaster getPlanningCodeDetailById(int id, int project_id=0)
         {

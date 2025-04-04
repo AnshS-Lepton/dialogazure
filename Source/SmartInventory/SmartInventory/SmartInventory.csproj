@@ -21,7 +21,6 @@
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -650,6 +649,7 @@
     <Content Include="Content\images\icons\lib\circle\HTB.png" />
     <Content Include="Content\images\icons\lib\circle\ONT.png" />
     <Content Include="Content\images\icons\lib\circle\OpticalRepeater.png" />
+    <Content Include="Content\images\icons\lib\circle\podag.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_ADB.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_BDB.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_CDB.png" />
@@ -1635,6 +1635,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\04-04-2025-dailog.sql" />
     <Content Include="MigrationScripts\02-04-2025-dailog.sql" />
     <Content Include="MigrationScripts\05-03-2025-dailog.sql" />
     <Content Include="MigrationScripts\19-03-2025_dialog.sql" />

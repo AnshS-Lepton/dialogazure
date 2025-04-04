@@ -107,7 +107,6 @@ namespace SmartInventory.Controllers
         [HttpPost]
         public ActionResult getRingConnectedElementDetail(int ring_id)
         {
-            ring_id = 27774;
             JsonResponse<vmRingConnectedElementDetails> objResp = new JsonResponse<vmRingConnectedElementDetails>();
            
             objResp.result = new BLRingDetails().getRingConnectedElementDetail(ring_id, Convert.ToInt32(Session["user_id"]));

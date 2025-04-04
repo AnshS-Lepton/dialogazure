@@ -94,6 +94,7 @@ namespace Models
         public string connected_network_id { get; set; }
         public string connected_entity_type { get; set; }
         public bool is_virtual { get; set; }
+        public bool is_agg_site { get; set; }
 
     }
 

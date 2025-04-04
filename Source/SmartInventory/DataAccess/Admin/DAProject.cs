@@ -332,7 +332,7 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
-        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId,string top_type)
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId,string top_type,int system_id)
         {
             try
             {
@@ -343,7 +343,8 @@ namespace DataAccess.Admin
                     p_user_id = userId,
                     p_ring_id = ringId,
                     p_segment_id = segmentId,
-                    p_top_type= top_type
+                    p_top_type= top_type,
+                    p_system_id = system_id
 
                 }, false);
 
