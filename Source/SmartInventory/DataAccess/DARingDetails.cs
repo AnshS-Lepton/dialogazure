@@ -103,5 +103,19 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public vmRingConnectedElementDetails getRingConnectedElementDetail(int ringId, int user_id)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<vmRingConnectedElementDetails>("fn_get_ring_connectedelement_details", new
+                {
+                    p_site_id = ringId,
+                    p_user_id= user_id
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+
     }
 }

@@ -46,7 +46,7 @@
         this.mainJSPlumb = null;
         this.gMapObj = {};
         var bounds = new google.maps.LatLngBounds();
-        ajaxReq('RingDetails/getSitGeometryDetail', { ring_id: ringId }, true, function (resp) {
+        ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
               
 
@@ -122,6 +122,9 @@
             }
         }, true, true);
     }
+
+
+  
 
     this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
         debugger;
@@ -261,16 +264,16 @@
                     mode: WebGridPagerModes.All,
                     columns: grid.Columns(
                                grid.Column("", "Action", format:@<text>
-                                        <a href="javascript:void(0);"
-                                           class="ShowEntityOnMap"
-                                           title="Show on Map"
-                                           onclick="ShowEntityOnMap(@item.id);">
-                                            <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
-                                            @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
-                                        </a>
-
-
-
+                                           <a href="javascript:void(0);"
+                                              class="ShowEntityOnMap"
+                                              title="Show on Map"
+                                              onclick="si.showRingDetailsOnMap(@item.id);">
+                                               <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                               @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
+                                           </a>
+                                       
+                                            
+                                        
                             </text>, canSort: false
 ),
 
