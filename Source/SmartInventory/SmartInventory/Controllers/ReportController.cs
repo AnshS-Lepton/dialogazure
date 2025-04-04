@@ -29,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13582,13 +13583,37 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetRingCode(int ring)
+        //public JsonResult GetRingCode(int ring)
+        //{
+           
+        //    var ringCode = new BLProject().GetRingCode(ring);
+        //    return Json(ringCode, JsonRequestBehavior.AllowGet);
+        //}
+        public ActionResult GetRingCode(int ring,int segmentid,string segment,string partialringcode)
         {
-            // Fetch segments based on regionId
-            var ringCode = new BLProject().GetRingCode(ring);
+            PageMessage objMsg = new PageMessage();
+            PODMaster pODMaster = new PODMaster();
+            try
+            {
+                var ringCode = new BLProject().GetRingCode(ring, segmentid);
+                pODMaster.site_id = segment;
+                pODMaster.agg_02 = partialringcode + Convert.ToString(ringCode.ring_code);
+                pODMaster.sequence = ringCode.sequence;
+                if (ringCode == null)
+                {
 
-            // Return as JSON
-            return Json(ringCode, JsonRequestBehavior.AllowGet);
+                    pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                    pODMaster.objPM.message = "Failed to fetch segment code.";
+
+                }
+                
+            }catch
+            {
+                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                pODMaster.objPM.message = "Failed to fetch segment code.";
+            }
+
+            return PartialView("AddRingDetails", pODMaster);
         }
         public JsonResult GetRingTypesByRegion(int segmentId, int numberofsites, string ringcapacity = "")
         {

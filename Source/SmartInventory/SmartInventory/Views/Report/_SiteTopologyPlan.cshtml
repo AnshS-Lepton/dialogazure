@@ -1,5 +1,7 @@
 ﻿@using SmartInventory.Settings;
 @model Models.PODMaster
+
+
 <style>
 
     .btn {
@@ -174,7 +176,7 @@
                                 <div style="display:none;">
                                     @Html.DropDownListFor(m => m.ring_a_site_distance, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select clsddlOtherRingSite", id = "ddlOtherRingSite" })
                                 </div>
-                                
+
                                 <div class="pose-plus">
                                     <a href="javascript:void(0);"
                                        class="AsiterowShowOnMap"
@@ -254,20 +256,20 @@
 
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_460:</label>
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459:</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                         </div>
 
-                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg1", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.agg_02, new { @id = "txtsegagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                         <div class="col-sm-4">
-                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Search text", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
+                            @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
                         </div>
                     </div>
                 </form>
@@ -282,7 +284,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="ringModal" tabindex="-1" aria-labelledby="segmentModalLabel" aria-hidden="true">
+
+<!--<div class="modal fade" id="ringModal" tabindex="-1" aria-labelledby="segmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header d-flex">
@@ -294,10 +297,10 @@
                     <div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">Segment Code <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
-                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })-->
 
                             @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
-                        </div>
+                        <!--</div>
                         <label class="control-label col-sm-2" for="txtSearchtext">Ring Code <i class="clsMandatory">*</i>:</label>
                         <div class="col-sm-4">
                             @Html.TextBoxFor(m => m.agg_02, new { @id = "txtRingCode", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
@@ -319,7 +322,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
 
 <style>
     /* Custom button styles */
@@ -837,7 +840,7 @@
             alert("Segment already added!");
             return false;
             }
-            $("#segmentModal").modal("show");
+           
             $("#txtregion").val(selectedregion);
             $("#txtsegagg1").val(agg1); // Example: Combining both values
             $("#txtsegagg2").val(agg2);
@@ -852,6 +855,7 @@
             $("#txtsegcode").val(response.segment_code);
             if (response.sequence) {  // Assuming "sequence_id" is the key in the response
             $("#hdnSequenceId").val(response.sequence);
+                $("#segmentModal").modal("show");
             }
             } else {
             alert("Failed to fetch segment code.");
@@ -869,16 +873,16 @@
           //  event.preventDefault(); // Prevent form submission (if inside a form)
           //  event.stopPropagation();
             $("#segmentModal").modal("hide");
-           // $("#segmentModal").hide();
+          
             });
         $("#closedringChildPopup").click(function () {
             debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
             //$("#segmentModal").modal("hide");
-            $("#ringModal").hide();
+           // $("#ringModal").hide();
         });
-            $("#btncreatering").click(function (event) {
+        $("#btncreatering").click(function (event) {
             debugger;
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
@@ -887,43 +891,28 @@
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
             var ringcapacity = $("#ddlringcapacity").val();
-                if (!ringcapacity) {
-                    alert("Please select Ring Capacity.");
-                    return;
-                }
+            if (!ringcapacity) {
+                alert("Please select Ring Capacity.");
+                return;
+            }
             // Validate required fields
             if (!segmentid) {
-            alert("Please select segment.");
-            return;
-                }
-                var ringCount = $("#ddlringtype option").length;
-            $("#ringModal").modal("show");
-
-            $.ajax({
-            url: '@Url.Action("GetRingCode", "Report")',
-
-            type: 'GET',
-                dataType: 'json',
-                data: { ring: ringCount },
-            success: function (response) {
-            if (response.ring_code) {
-            $("#hdnringsiteseq").val(response.sequence);
-                var ringcode = region + "-" + segment + "-" + response.ring_code;
-                //var ringcode =  response.ring_code;
-
-                $("#txtRingCode").val(ringcode);
-                $("#ringModal").show();
-            } else {
-            alert("Failed to fetch segment code.");
+                alert("Please select segment.");
+                return;
             }
-            },
-            error: function () {
-            alert("An error occurred while fetching segment code.");
-            }
-            });
+            var ringCount = $("#ddlringtype option").length;
 
-            $("#txtsegmentcode").val(selectedsegment);
-            });
+            //$("#ringModal").modal("show");
+            popup.LoadModalDialog('CHILD', 'Report/GetRingCode', { ring: ringCount, segmentid:segmentid,segment: selectedsegment, partialringcode: region + "-" + segment + "-" }, 'Create Ring', 'modal-lg'); 
+            //popup.LoadModalDialog('Report/GetRingCode', { ring: ringCount, segment: selectedsegment, partialringcode: region + "-" + segment + "-" }, 'Create Ring', 'modal-md');
+         
+        });
+
+                //----
+           //------------------
+
+            //$("#txtsegmentcode").val(selectedsegment);
+            //});
 
             // Handle Save Button Click
             $("#saveSegment").click(function (event) {
@@ -978,12 +967,14 @@
             success: function (response) {
             if (response) {
                 alert("Segment saved successfully!");
-
+               
             // Hide modal
             $("#segmentModal").hide();
 
                 debugger;
-            // Now call the second AJAX request
+                // Now call the second AJAX request
+
+                
             $.ajax({
             url: '@Url.Action("GetSegmentsByRegion", "Report")',
             type: "GET",
@@ -997,7 +988,7 @@
             $.each(data, function (index, item) {
             segmentDropdown.append('<option value="' + item.Value + '">' + item.Text + '</option>');
             });
-
+               
             // Refresh the dropdown if using Chosen.js
             segmentDropdown.trigger("chosen:updated");
             },

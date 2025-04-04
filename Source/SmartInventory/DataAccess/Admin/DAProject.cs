@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI;
 using static Mono.Security.X509.X520;
@@ -670,49 +671,68 @@ namespace DataAccess.Admin
             return repo.GetAll(m => m.segment_id == segment_Id).ToList();
 
         }
-        public TopologyRingMaster GetRingCode(int ring)
+        public TopologyRingMaster GetRingCode(int ring, int segmentid)
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
-
-            // Step 1: Get the max segment_id
-            int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
-
-            // Step 2: Find the latest ring_code for that segment
-            string lastRingCode = repo.GetAll()
-                                      .Where(r => r.segment_id == maxSegmentId)
-                                      .OrderByDescending(r => r.sequence)
-                                      .Select(r => r.ring_code)
-                                      .FirstOrDefault();
-
-            // Step 3: Extract the last sequence number from the ring_code (e.g., "CMBN-ACC34-R3" → 3)
-            int lastSequence = 0;
-            if (!string.IsNullOrEmpty(lastRingCode))
+           // int segment_Id = repo.GetAll().Where(a=>a.id== ring).Select(a=>a.segment_id).FirstOrDefault();
+            var SequenceNum=  1 + repo.GetAll()
+            .Where(r => r.ring_code != null && r.segment_id== segmentid)
+            .Select(r => new
             {
-                var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
-                if (match.Success)
-                {
-                    lastSequence = int.Parse(match.Groups[1].Value);
-                }
-            }
-            if (ring == 1)
-                lastSequence = 0;
-            // Step 4: Increment the sequence number
-            int newSequence = lastSequence + 1;
+                ring_code = r.ring_code,
+                RingNumber = int.Parse(Regex.Match(r.ring_code, @"\d+$").Value) // Extract the last integer
+            })
+            .OrderByDescending(r => r.RingNumber)
+            .Select(r => r.RingNumber)
+            .FirstOrDefault();
+           
             string ringCode = "";
-            // Step 5: Generate the new ring code
-            if (maxSegmentId == 0)
-            {
-                 ringCode = $"R{newSequence}";
-            }
-            else { 
-                ringCode = $"R{newSequence}"; 
-            }
-                // Step 6: Assign values and return the object
-                objTopologyPlan.ring_code = ringCode;
-            objTopologyPlan.sequence = newSequence;
-            objTopologyPlan.segment_id = maxSegmentId;
-
+            ringCode = $"R{SequenceNum}";
+            objTopologyPlan.ring_code = ringCode;
+            objTopologyPlan.sequence = SequenceNum;
+            objTopologyPlan.segment_id = segmentid;
             return objTopologyPlan;
+
+
+
+
+
+            //int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
+            //string lastRingCode = repo.GetAll()
+            //                          .Where(r => r.segment_id == maxSegmentId)
+            //                          .OrderByDescending(r => r.sequence)
+            //                          .Select(r => r.ring_code)
+            //                          .FirstOrDefault();
+
+            //int lastSequence = 0;
+            //if (!string.IsNullOrEmpty(lastRingCode))
+            //{
+            //    var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
+            //    if (match.Success)
+            //    {
+
+            //        lastSequence = int.Parse(match.Groups[1].Value);
+            //    }        
+            //}
+            //if (ring == 1)
+            //    lastSequence = 0;
+            
+            //int newSequence = lastSequence + 1;
+            //string ringCode = "";
+          
+            //if (maxSegmentId == 0)
+            //{
+            //     ringCode = $"R{newSequence}";
+            //}
+            //else { 
+            //    ringCode = $"R{newSequence}"; 
+            //}
+              
+            //objTopologyPlan.ring_code = ringCode;
+            //objTopologyPlan.sequence = newSequence;
+            //objTopologyPlan.segment_id = maxSegmentId;
+
+            //return objTopologyPlan;
         }
 
 

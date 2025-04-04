@@ -2441,6 +2441,7 @@
     <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
     <Content Include="Views\Library\_CableRingAssociation.cshtml" />
     <Content Include="Views\RingDetails\_SLDdiagramRingDetails.cshtml" />
+    <Content Include="Views\Report\AddRingDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
