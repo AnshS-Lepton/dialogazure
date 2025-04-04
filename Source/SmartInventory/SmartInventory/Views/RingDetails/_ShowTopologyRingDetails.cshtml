@@ -242,7 +242,7 @@
                     "--Select Ring--",
                     new { @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
 
-                <button type="submit" class="btn btn-success ml-auto" id="tes"> Serach</button>
+                <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Serach</button>
                 <button id="btnExportLinks" class="btn btn-success ml-auto" >Export</button>
                
             </div>
@@ -313,21 +313,6 @@ grid.Column("ring_b_site_distance", "Distances From AGG_B (KM)", format: @<text>
     $("#btnExportLinks").on("click", function () {
         window.location = appRoot + 'RingDetails/ExportRingDetails';        
     });
-    $("#frmViewRingDetails").on("submit", function (event) {
-        if (!validateSearch(event)) {
-            event.preventDefault(); // Stops form submission if validation fails
-        }
-    });
-    //function validateSearch(event) {
-    //    debugger;
-    //    var ringCode = $("#SearchbyRingType").val() || "";
-    //    var segName = $("#SearchbySegmentName").val() || "";
-    //    var regName = $("#SearchbyRegionName").val() || "";
-    //    if (ringCode=='' && segName=='' && regName=='')
-    //    {
-    //        alert('Please select at least one valid search criteria.'); event.preventDefault(); return false;
-    //    }
-    //}
     function validateSearch(event) {
         debugger;
         var ringCode = $("#ddllstRingName").val()?.trim();
