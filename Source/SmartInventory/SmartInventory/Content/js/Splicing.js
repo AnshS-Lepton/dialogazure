@@ -1127,7 +1127,7 @@
         }
     }
     this._focusMe = function (geomType, latLngArr, cableDirection) {
-        debugger;
+        
         switch (geomType) {
             case 'Point':
                 if (app.gMapObj.pointObj != null) { app.gMapObj.pointObj.setMap(null); app.gMapObj.pointObj = null; }
@@ -2222,7 +2222,7 @@
         ddlCore.trigger("chosen:updated");
     }
     this.clearCPFMarker = function () {
-        debugger;
+       
         app.clearUserTempOverlay(gMapObj.TraceRoute);
         gMapObj.TraceRoute = [];
         if (app.oms != null) { app.oms.removeAllMarkers(); }
@@ -2248,7 +2248,7 @@
 
 
     this.showFiberLinkOnMap = function (_linkSystemID) {
-        debugger;
+        
 
         ajaxReq('FiberLink/showFiberLinkOnMap', { linkSystemID: _linkSystemID }, true, function (resp) {
             if (resp.status = 'OK') {
@@ -2392,11 +2392,11 @@
     }
 
     this.showPath = function () {
-        debugger;
+        
         //alert('Entry Splice without osp');
         ajaxReq('Splicing/GetCPFelementPath', {}, true, function (resp) {      
             if (resp.status = 'OK') {
-                debugger;
+                
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
                     //  plotSinglePath(resp, '#ff0000', true)

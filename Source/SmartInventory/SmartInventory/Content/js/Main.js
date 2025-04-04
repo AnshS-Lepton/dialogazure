@@ -8208,7 +8208,7 @@ var Main = function () {
         });
 
         $('.mainLyr .checkbox-custom-SubChild').change(function () {
-            debugger;
+             
             var layersid = document.getElementById(this.id).parentNode.parentNode.parentNode.querySelector('input[type="checkbox"]').id;
             if (this.checked) {
                 var chkSubChildid = this.id;
@@ -9125,11 +9125,11 @@ var Main = function () {
     }
 
     this.getcablecategoryfilters = function () {
-        debugger;
+         
         var lyrsh = [];
         $('input[name="chkcategory-Cable"]:checked').each(function () {
             //{
-            debugger;
+             
             //// if ($('#' + this.id).is(":checked"))
             //  { 
             var chkid = this.id;
@@ -9144,7 +9144,7 @@ var Main = function () {
         return lyrsh;
     }
     this.SetCableCategoryFilters = function () {
-        debugger;
+         
         app.filtercablecategory = "";
         app.filtercablecategoryvalue = app.getcablecategoryfilters();
         //app.cable_type = $('#ddlFilterCableType').val();
@@ -13705,7 +13705,7 @@ var Main = function () {
 
         $(document).off("click", ".tool_bar  [id^=Entity]");
         $(document).on('click', ".tool_bar  [id^=Entity]", function (e) {
-            debugger;
+             
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled") && !$iconElement.hasClass("buffer-disabled")) {
                 var actionName = $iconElement.data("action")
@@ -19644,7 +19644,7 @@ var Main = function () {
 
                 }
                 else {
-                    debugger;
+                     
                     if (resp.source_network_id != null && resp.source_network_id !== '') {
                         app.ShowCableOnMapbyGeom('Polygon', resp);
                         $("#btnSubmit").prop("disabled", true);
@@ -21969,7 +21969,7 @@ var Main = function () {
 
 
     this.showHistory = function (_systemId, _entityType) {
-        debugger;
+         
         var formURL = "Audit/GetHistory";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = layerTitle.toUpperCase() + " History";
@@ -21978,7 +21978,7 @@ var Main = function () {
         }, titleText, 'modal-lg');
     }
     this.TopologyPlan = function (_systemId, _entityType) {
-        debugger;
+         
         var formURL = "Report/SiteTopology";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = " Topology Plan";
@@ -24722,7 +24722,7 @@ var Main = function () {
             }
         },
         SiteReport: function (geom, modeType, radius, obj) {
-            debugger;
+             
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 $(obj).addClass('activeToolBar');
@@ -24780,7 +24780,7 @@ var Main = function () {
             }
         },
         ItemSiteAwarding: function (geom, modeType, radius, obj, searchBy, searchText) {
-            debugger;
+             
                                            
             popup.LoadModalDialog('CHILD', 'Report/SiteBomBoqSummary', {
                 eType: '', refrenceData: modeType, searchBy: searchBy, searchText: searchText
@@ -24789,7 +24789,7 @@ var Main = function () {
 
         SiteTopology: function (geom, modeType, radius, obj) {
             
-            debugger;
+             
             if (obj) {
                 //$('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 //$(obj).addClass('activeToolBar');
