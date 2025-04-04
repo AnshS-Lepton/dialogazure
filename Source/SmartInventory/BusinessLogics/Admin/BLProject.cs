@@ -226,9 +226,9 @@ namespace BusinessLogics.Admin
         {
             return new DAToplologySegment().GetSegmentCode();
         }
-        public TopologyRingMaster GetRingCode(int ring)
+        public TopologyRingMaster GetRingCode(int ring,int segmentid)
         {
-            return new DAToplologyRing().GetRingCode(ring);
+            return new DAToplologyRing().GetRingCode(ring, segmentid);
         }
         public List<ringinfo> getRingDetailByIdList(int segment_Id = 0, int numberofsites = 0, string ringcapacity="")
         {

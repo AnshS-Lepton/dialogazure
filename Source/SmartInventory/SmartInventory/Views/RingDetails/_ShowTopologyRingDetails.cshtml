@@ -222,7 +222,7 @@
             <div class="filter-container">
                 <label>Region:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
-                    new SelectList(Model.lstRegionName.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Region--",
                     new { @class = "chosen-select", @id = "ddllstRegionName" })
 
@@ -230,7 +230,7 @@
 
                 <label>Segment:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
-                    new SelectList(Model.lstSegmentName.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Segment--",
                     new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
 
@@ -238,11 +238,13 @@
 
                 <label class="white-space">Ring ID:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
-                    new SelectList(Model.lstRingType.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                    new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Ring--",
                     new { @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
 
-                <button type="submit" class="btn btn-success ml-auto" onclick="fngetRingDetails()"> Serach </button>
+                <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Serach</button>
+                <button id="btnExportLinks" class="btn btn-success ml-auto" >Export</button>
+               
             </div>
 
 
@@ -259,26 +261,33 @@
                     mode: WebGridPagerModes.All,
                     columns: grid.Columns(
                                grid.Column("", "Action", format:@<text>
-                                           <a href="javascript:void(0);"
-                                              class="ShowEntityOnMap"
-                                              title="Show on Map"
-                                              onclick="ShowEntityOnMap(@item.id);">
-                                               <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
-                                               <i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>
-                                           </a>
-                                       
-                                            
-                                        
+                                        <a href="javascript:void(0);"
+                                           class="ShowEntityOnMap"
+                                           title="Show on Map"
+                                           onclick="ShowEntityOnMap(@item.id);">
+                                            <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                            @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
+                                        </a>
+
+
+
                             </text>, canSort: false
 ),
-                   
-@*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
-grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
+
+        @*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
 grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
 grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
+grid.Column("site_id", "Site Id", format: @<text>@item.site_id</text>, canSort: true),
+grid.Column("site_name", "Site Name", format: @<text>@item.site_name</text>, canSort: true),
+grid.Column("region_name", "Region", format: @<text>@item.region_name</text> , canSort: true),
 grid.Column("agg1_site_id", "Aggregate Site 1", format: @<text>@item.agg1_site_id</text>, canSort: true),
 grid.Column("agg2_site_id", "Aggregate Site 2", format: @<text>@item.agg2_site_id</text>, canSort: true),
-grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</text>, canSort: true)
+grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</text>, canSort: true),
+grid.Column("description", "Description", format: @<text>@item.description</text>, canSort: true),
+
+grid.Column("bh_status", "Site Status of the Access Ring", format: @<text>@item.bh_status</text>, canSort: true),
+grid.Column("ring_a_site_distance", "Distances From AGG_A (KM)", format: @<text>@item.ring_a_site_distance</text>, canSort: true),
+grid.Column("ring_b_site_distance", "Distances From AGG_B (KM)", format: @<text>@item.ring_b_site_distance</text>, canSort: true)
 
 ))
 
@@ -300,4 +309,25 @@ grid.Column("ring_capacity", "Capacity", format: @<text>@item.ring_capacity</tex
 
     </div>
 </div>
+<script>
+    $("#btnExportLinks").on("click", function () {
+        window.location = appRoot + 'RingDetails/ExportRingDetails';        
+    });
+    function validateSearch(event) {
+        debugger;
+        var ringCode = $("#ddllstRingName").val()?.trim();
+        var segName = $("#ddllstSegmentName").val()?.trim();
+        var regName = $("#ddllstRegionName").val()?.trim();
+
+        if (!ringCode && !segName && !regName) {
+            alert("Please select at least one valid search criteria.");
+            event.preventDefault(); // Prevents submission
+            event.returnValue = false; // Ensures older browser compatibility
+            return false;
+        }
+        return true;
+    }
+ 
+
+</script>
 
