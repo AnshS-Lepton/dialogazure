@@ -30,7 +30,11 @@ namespace BusinessLogics
         {
             return new DARingDetails().getSiteDetails(site_id);
         }
+        public vmRingConnectedElementDetails getRingConnectedElementDetail(int site_id,int user_id)
+        {
+            return new DARingDetails().getRingConnectedElementDetail(site_id, user_id);
+        }
 
-        
+
     }
 }
