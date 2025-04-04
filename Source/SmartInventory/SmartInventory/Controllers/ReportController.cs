@@ -13521,18 +13521,21 @@ namespace SmartInventory.Controllers
         {
             try
             {
-                objToplogyPlan.system_id = Convert.ToInt32(systemid); // Store in ViewBag to access in View
+                    objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
+                    objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
+                    objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
+                    objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
+                    objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
 
+                if (systemid != "")
+                {
+                    objToplogyPlan.system_id = Convert.ToInt32(systemid); // Store in ViewBag to access in View
 
-                objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
-                objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
-                objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
-                objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
-                objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
-                //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
-                var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
-                objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
-                objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
+                    var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
+                    objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
+                    objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
+                }
+               
 
             }
             catch (Exception ex)
@@ -13572,6 +13575,14 @@ namespace SmartInventory.Controllers
             distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
             pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
+            return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getSegmentDetailsRoutewise(int systemId)
+        {
+
+            PODMaster pODMaster = new PODMaster();
+            pODMaster.lstsegment = new BLProject().getSegmentDetailsRoutewise(systemId, Convert.ToInt32(Session["user_id"])).ToList();
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
         public JsonResult Removetopologygetsitedissociation(int basesystem_id, int systemId, int ringId, int distance)
