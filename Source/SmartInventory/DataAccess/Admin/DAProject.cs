@@ -177,6 +177,16 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
+        public List<Topologysegment> getSegmentDetailsRoutewise(int system_id,int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Topologysegment>("fn_topology_get_segmentdetailssitewise", new { p_system_id = system_id, p_user_id = user_id }, false);
+
+            }
+            catch { throw; }
+
+        }
         public List<TopologyGetSites> Bindtopologygetsitessitedissociation(int basesystem_id, int system_id, int ring_id, int distance, int user_id)
         {
             try
