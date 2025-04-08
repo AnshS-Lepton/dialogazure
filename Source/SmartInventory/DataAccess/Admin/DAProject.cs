@@ -839,7 +839,7 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site == false).ToList();
+            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
 
             return sitname;
            
@@ -855,6 +855,20 @@ namespace DataAccess.Admin
                                .ToList();
 
             return siteList;
+        }
+        public List<SiteMaster> getSiteDetails(int siteid, int user_id)
+        {
+            var sites = repo.ExecuteProcedure<SiteMaster>(
+                "fn_topology_get_siteDetails",
+                new
+                {
+                    p_site_id = siteid,
+                    p_user_id = user_id
+                },
+                false
+            ).ToList();
+            return sites;
+          
         }
 
 
@@ -929,12 +943,14 @@ namespace DataAccess.Admin
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
             objPOD.site_id = objPODMaster.site_id;
             objPOD.site_name = objPODMaster.site_name;
-            // objPOD.agg_01 = objPODMaster.agg_01; // To avoide red icon on ring association
-            // objPOD.agg_02 = objPODMaster.agg_02; // To avoide red icon on ring association
+            objPOD.agg_01 = objPODMaster.agg_01; 
+            objPOD.agg_02 = objPODMaster.agg_02; 
             objPOD.ring_a_site_id = objPODMaster.ring_a_site_id;
             objPOD.ring_b_site_id = objPODMaster.ring_b_site_id;
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
             objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
+            objPOD.no_of_sites = objPODMaster.no_of_sites;
+            objPOD.max_distance_peer = objPODMaster.max_distance_peer;
             objPOD.top_type = objPODMaster.top_type;
             objPOD.ring_id = objPODMaster.ring_id;
 

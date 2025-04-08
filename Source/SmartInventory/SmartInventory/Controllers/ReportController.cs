@@ -13584,10 +13584,32 @@ namespace SmartInventory.Controllers
 
             PODMaster pODMaster = new PODMaster();
             pODMaster.lstsegment = new BLProject().getSegmentDetailsRoutewise(systemId, Convert.ToInt32(Session["user_id"])).ToList();
+            
+                var siteInfo = new BLProject().getSiteDetails(systemId, Convert.ToInt32(Session["user_id"]));
+                if(siteInfo.Count>0)
+                {
+                    pODMaster.site_id = siteInfo.FirstOrDefault().site_id;
+                    pODMaster.site_name = siteInfo.FirstOrDefault().site_name;
+                    pODMaster.topology_type = siteInfo.FirstOrDefault().top_type;
+                    pODMaster.ring_id = siteInfo.FirstOrDefault().ring_id;
+                    pODMaster.ring = siteInfo.FirstOrDefault().ring_code;
+                    pODMaster.ring_capacity = siteInfo.FirstOrDefault().ring_capacity;
+                    pODMaster.region_name = siteInfo.FirstOrDefault().region_name;
+                    pODMaster.segment = siteInfo.FirstOrDefault().segment_code;
+                    pODMaster.agg_01 = siteInfo.FirstOrDefault().agg1_site_id;
+                    pODMaster.agg_02 = siteInfo.FirstOrDefault().agg2_site_id;
+                    pODMaster.no_of_sites = siteInfo.FirstOrDefault().no_of_sites;
+                    pODMaster.max_distance_peer = siteInfo.FirstOrDefault().max_distance_peer;
+                    pODMaster.ring_a_site_id = siteInfo.FirstOrDefault().ring_a_site_id;
+                    pODMaster.ring_b_site_id = siteInfo.FirstOrDefault().ring_b_site_id;
+                }
+         
+            
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
         public JsonResult Removetopologygetsitedissociation(int basesystem_id, int systemId, int ringId, int distance)
         {
+            distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
             // Fetch segments based on regionId
             pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsitessitedissociation(basesystem_id,systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
