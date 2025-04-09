@@ -274,5 +274,9 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getSiteIdName(systemId);
         }
+        public List<SiteMaster> getSiteDetails(int systemId, int user_id)
+        {
+            return new DAPodMaster().getSiteDetails(systemId, user_id);
+        }
     }
 }
