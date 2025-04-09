@@ -40,6 +40,7 @@ namespace SmartInventory.Controllers
             string region_id = "";
             string segment_code = "";
             string ring_code = "";
+            Session["RingFilter"] = null;
             objRingFilter.objGridAttributes.pageSize = 10;
             objRingFilter.objGridAttributes.currentPage = page == 0 ? 1 : page;
             objRingFilter.objGridAttributes.sort = sort;
@@ -67,6 +68,7 @@ namespace SmartInventory.Controllers
 
 
             }
+            Session["RingFilter"] = objRingFilter;
             var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
 
             objRingFilter.lstRingDetails = ringdetails;
@@ -145,14 +147,32 @@ namespace SmartInventory.Controllers
         public void ExportRingDetails()
         {
             RingDetailsFiltter objRingFilter = new RingDetailsFiltter();
-            
+            objRingFilter=(RingDetailsFiltter) Session["RingFilter"];
+
             string region_id = "";
             string segment_code = "";
             string ring_code = "";
-            objRingFilter.objGridAttributes.pageSize = 0;
-            objRingFilter.objGridAttributes.currentPage = 0;
-            objRingFilter.objGridAttributes.sort = "";
-            objRingFilter.objGridAttributes.orderBy = "";
+            //objRingFilter.objGridAttributes.pageSize = 0;
+            //objRingFilter.objGridAttributes.currentPage = 0;
+            //objRingFilter.objGridAttributes.sort = "";
+            //objRingFilter.objGridAttributes.orderBy = "";
+            if (objRingFilter.objRingDetails != null)
+            {
+                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName) || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType) || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType))
+                {
+                    region_id = objRingFilter.objRingDetails.SearchbyRegionName;
+                    segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
+                    ring_code = objRingFilter.objRingDetails.SearchbyRingType;
+                }
+                else
+                {
+                    region_id = objRingFilter.objRingDetails.region_name;
+                    segment_code = objRingFilter.objRingDetails.segment_code;
+                    ring_code = objRingFilter.objRingDetails.ring_capacity;
+                }
+
+
+            }
 
             var ringdetails =new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
             DataTable dtReport = new DataTable();
@@ -175,8 +195,8 @@ namespace SmartInventory.Controllers
             dtReport.Columns["AGG2_SITE_ID"].SetOrdinal(6);
             dtReport.Columns["RING_CAPACITY"].SetOrdinal(7);
             dtReport.Columns["DESCRIPTION"].SetOrdinal(8);
-            dtReport.Columns["ring_a_site_distance"].SetOrdinal(9); ;
-            dtReport.Columns["ring_b_site_distance"].SetOrdinal(10);
+            dtReport.Columns["bh_status"].SetOrdinal(9); ;
+            dtReport.Columns["ring_a_site_distance"].SetOrdinal(10);
             dtReport.Columns["ring_b_site_distance"].SetOrdinal(11);
             dtReport.Columns["region_name"].ColumnName = "Region";
             dtReport.Columns["SEGMENT_CODE"].ColumnName = "Segment";
@@ -187,8 +207,6 @@ namespace SmartInventory.Controllers
             dtReport.Columns["AGG2_SITE_ID"].ColumnName = "Aggrigate Site 2";
             dtReport.Columns["RING_CAPACITY"].ColumnName = "Capacity";
             dtReport.Columns["DESCRIPTION"].ColumnName = "Description";
-         
-
             dtReport.Columns["bh_status"].ColumnName = "Site Status of the Access Ring";
             dtReport.Columns["ring_a_site_distance"].ColumnName = "Distances From AGG_A (KM) ";
             dtReport.Columns["ring_b_site_distance"].ColumnName = "Distances From AGG_B (KM)";

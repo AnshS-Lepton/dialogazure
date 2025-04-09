@@ -507,14 +507,14 @@ namespace Models
        // public int created_by { get; set; }
         [NotMapped]
         public IList<DropDownMaster> lstnoofsites { get; set; }
-        [NotMapped]
-        public decimal max_distance_peer { get; set; }
+
+        public decimal? max_distance_peer { get; set; }
         [NotMapped]
         public string topology_type { get; set; }
         [NotMapped]
         public string ring_capacity { get; set; }
-        [NotMapped]
-        public int no_of_sites { get; set; } = 0;
+       
+        public int? no_of_sites { get; set; } = 0;
         //public int region_id { get; set; } = 0;
         [NotMapped]
         public int segment_id { get; set; } = 0;
@@ -579,13 +579,24 @@ namespace Models
 
     }
 
-
     public class SiteMaster
     {
         public int system_id { get; set; }
         public string site_id { get; set; }
         public string network_id { get; set; }
         public string site_name { get; set; }
+        public string top_type { get; set; }
+        public string ring_capacity { get; set; }
+        public string segment_code { get; set; }
+        public string agg1_site_id { get; set; }
+        public string agg2_site_id { get; set; }
+        public string region_name { get; set; }
+        public string ring_code { get; set; }
+        public int ring_id { get; set; }
+        public int? no_of_sites { get; set; }
+        public int max_distance_peer { get; set; }
+        public int? ring_a_site_id { get; set; }
+        public int? ring_b_site_id { get; set; }
     }
 
     public class ADBSubArea
