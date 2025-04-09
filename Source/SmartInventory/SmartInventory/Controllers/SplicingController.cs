@@ -183,7 +183,20 @@ namespace SmartInventory.Controllers
                     }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
                     SendUtilizationEmail(objConnectionInfo);
                 }
+               
+
+                   
+                
             }
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+               var status=new BLOSPSplicing().updatedisplayname();
+                
+            }).ContinueWith(tsk =>
+            {
+                tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Splicing", "SaveConnectionInfo", ex); return true; });
+            }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+           // SendUtilizationEmail(objConnectionInfo);
             return Json(objConnection, JsonRequestBehavior.AllowGet);
         }
 

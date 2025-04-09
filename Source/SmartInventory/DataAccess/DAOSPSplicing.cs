@@ -580,7 +580,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        public bool updatedisplayname()
+        {
+            try
+            {
+                 return repo.ExecuteProcedure<bool>("fn_splicing_update_display_name",
+                    new
+                    {                        
+                    }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+        
         public DbMessage deleteConnection(string listConnection, int user_id)
         {
             try
