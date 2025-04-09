@@ -1,3 +1,4 @@
+
 CREATE OR REPLACE FUNCTION public.fn_get_core_planner_splicing(required_core integer, p_user_id integer, fiber_link_network_id character varying, source_network_id character varying, destination_network_id character varying, buffer integer)
  RETURNS SETOF json
  LANGUAGE plpgsql
@@ -15,13 +16,17 @@ DECLARE
    start_point integer;
   v_status bool;
   v_message  character varying;
-V_IS_CABLE_A_END BOOLEAN;
-p_destination_network_id character varying;
-p_odf_network_id character varying;
+  V_IS_CABLE_A_END BOOLEAN;
+  p_destination_network_id character varying;
+   p_odf_network_id character varying;
+  v_source_ports character varying;
+  v_destination_ports character varying;
+ 
 BEGIN
 V_IS_CABLE_A_END:=FALSE;
- --truncate table TEMP_LINE_MASTER;
- --truncate table TEMP_POINT_MASTER;
+-- truncate table TEMP_LINE_MASTER;
+-- truncate table TEMP_POINT_MASTER;
+
 
 CREATE TEMP TABLE TEMP_LINE_MASTER
 (
@@ -33,18 +38,22 @@ SP_GEOMETRY GEOMETRY
 
 CREATE TEMP TABLE TEMP_POINT_MASTER
 (
+ID serial4 NOT NULL,
 A_SYSTEM_ID INTEGER,
 A_entity_type character varying,
 A_network_id character varying,
-SP_GEOMETRY GEOMETRY
+SP_GEOMETRY GEOMETRY,
+SEQ INTEGER
 )ON COMMIT DROP;
 		
      v_network_id := '';
      v_system_id := 0;
     p_destination_network_id = destination_network_id;
-  --  truncate table temp_connection restart identity;
+   -- truncate table temp_connection restart identity;
+  -- truncate table connection_log_details;
     -- Create a temporary table for connection data
    CREATE TEMP TABLE temp_connection (
+        id serial4 NOT null,
         source_system_id integer,
         source_network_id character varying(100),
         source_entity_type character varying(100),
@@ -59,8 +68,10 @@ SP_GEOMETRY GEOMETRY
         equipment_network_id character varying(100),
         equipment_entity_type character varying(100),
         created_by integer,
-        splicing_source character varying(100)
+        splicing_source character varying(100),
+        is_selected boolean NOT NULL DEFAULT true
     ) ON COMMIT DROP;
+   
      
 	 	CREATE TEMP TABLE isp_port_info_tbl(
         system_id int4 NULL,
@@ -74,33 +85,36 @@ SP_GEOMETRY GEOMETRY
     ) ON COMMIT DROP;
 	
 	-- TEMP TABLE FOR CPF RESULT --
-create temp table temp_cpf_result
-(
-id serial,
-connection_id integer,
-source_system_id integer,
-source_network_id character varying(100),
-source_entity_type character varying(100),
-source_port_no integer,
-destination_system_id integer,
-destination_network_id character varying(100),
-destination_entity_type character varying(100),
-destination_port_no integer
-) on commit drop;
+		create temp table temp_cpf_result
+		(
+		id serial,
+		connection_id integer,
+		source_system_id integer,
+		source_network_id character varying(100),
+		source_entity_type character varying(100),
+		source_port_no integer,
+		destination_system_id integer,
+		destination_network_id character varying(100),
+		destination_entity_type character varying(100),
+		destination_port_no integer
+		) on commit drop;
 
-create temp table temp_connected_cables
-(
-id serial,
-cable_id integer,
-fiber_number integer
-) on commit drop;
+		create temp table temp_connected_cables
+		(
+		id serial,
+		cable_id integer,
+		fiber_number integer
+		) on commit drop;
 
-create temp table temp_connected_FMS
-(
-id serial,
-fms_id integer,
-port_number integer
-) on commit drop;
+		create temp table connection_log_details
+		(
+		id serial,
+		destination_systemid integer,		
+		destination_networkid character varying,source_no integer,
+		destination_port_no integer,
+		destination_entitytype character varying
+		) on commit drop;
+
 
      SELECT 
         (result_json->>'status')::BOOLEAN, 
@@ -128,18 +142,25 @@ port_number integer
      END IF;
     
    --  insert record from core_planner_logs table to temp table TEMP_POINT_MASTER,TEMP_LINE_MASTER
-      INSERT INTO TEMP_POINT_MASTER(A_SYSTEM_ID,A_network_id,A_entity_type,SP_GEOMETRY )
-      select A.a_system_id,P.COMMON_NAME,A.a_entity_type,P.SP_GEOMETRY from (      
-      SELECT a_system_id,a_entity_type FROM core_planner_logs  where user_id = p_user_id and is_valid =TRUE
+      INSERT INTO TEMP_POINT_MASTER(SEQ,A_SYSTEM_ID,A_network_id,A_entity_type,SP_GEOMETRY  )
+      select A.seq, A.a_system_id,P.COMMON_NAME,A.a_entity_type,P.SP_GEOMETRY from (      
+      SELECT seq,a_system_id,a_entity_type  FROM core_planner_logs  where user_id = p_user_id and is_valid =TRUE
       union
-      SELECT b_system_id,b_entity_type FROM core_planner_logs where user_id = p_user_id and is_valid =TRUE )a
+      SELECT seq,b_system_id,b_entity_type FROM core_planner_logs where user_id = p_user_id and is_valid =TRUE )a
       INNER JOIN point_master P ON P.SYSTEM_ID=A.a_system_id AND P.entity_type=A.a_entity_type;
+     
+    delete from TEMP_POINT_MASTER t1 WHERE seq > (
+    SELECT MIN(seq)
+    FROM TEMP_POINT_MASTER t2
+    WHERE t1.a_system_id = t2.a_system_id
+    AND t1.a_network_id = t2.a_network_id
+    ); 
 
       INSERT INTO TEMP_LINE_MASTER(SYSTEM_ID,network_id,entity_type,SP_GEOMETRY)       
       SELECT CABLE_id,CABLE_network_id,'Cable',P.SP_GEOMETRY FROM core_planner_logs A 
       INNER JOIN LINE_master P ON P.SYSTEM_ID=A.CABLE_id AND P.entity_type='Cable'
-      where user_id = p_user_id and is_valid =TRUE ;    
-      
+      where user_id = p_user_id and is_valid =TRUE ; 
+           
     --- get fiberlink into p_link_system_id
       select system_id into p_link_system_id from att_details_fiber_link adfl 
       where upper(network_id) = upper(fiber_link_network_id)
@@ -150,6 +171,7 @@ port_number integer
      AND EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = destination_network_id) 
      THEN
       p_odf_network_id = source_network_id;
+
     ELSIF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = source_network_id) 
     THEN
       p_odf_network_id = source_network_id;
@@ -157,287 +179,508 @@ port_number integer
     THEN
       p_odf_network_id = destination_network_id;
     END IF;
-   
-     -- Populate temporary ISP port info table
-    INSERT INTO isp_port_info_tbl (system_id, network_id, parent_system_id, 
-    parent_network_id, port_status_id, port_number,parent_entity_type)
-    SELECT system_id, network_id, parent_system_id, parent_network_id, 
-    port_status_id, port_number, parent_entity_type 
-    FROM isp_port_info ipt
-    WHERE ipt.parent_network_id = p_odf_network_id AND ipt.parent_entity_type = 'FMS'
-    AND ipt.input_output = 'O'
-    AND ipt.port_status_id = 1 AND ipt.port_number >= (
-      SELECT MIN(port_number) 
-      FROM isp_port_info 
-      WHERE parent_network_id = p_odf_network_id  AND parent_entity_type = 'FMS' AND input_output = 'O'
-        AND port_status_id = 1
-        AND port_number % 2 = 1 
-   ) ORDER BY ipt.port_number ASC  LIMIT required_core;
-	
-        FOR rec IN select * from TEMP_POINT_MASTER  order by a_entity_type
+   	
+        FOR rec IN (select * from TEMP_POINT_MASTER  ORDER BY  CASE WHEN a_entity_type = 'FMS' 
+        AND seq = 1 THEN 0  ELSE 1 END, CASE 
+       WHEN (SELECT COUNT(*) FROM TEMP_POINT_MASTER WHERE a_entity_type = 'FMS') = 1 and 
+       (SELECT seq FROM TEMP_POINT_MASTER WHERE a_entity_type = 'FMS') <> 1
+        THEN -seq  -- simulates DESC
+       ELSE seq     -- ASC
+  END)
         LOOP									
 		    if(rec.a_entity_type='FMS')
 		    then
-		
-			  SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) 
+
+			 SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) 
 			  AS IS_CABLE_A_END INTO v_cable_details_left FROM TEMP_LINE_MASTER A				
 			  WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) or
 			  ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)));				    
-
-					INSERT INTO temp_connection (
-                    source_system_id, source_network_id, source_entity_type, source_port_no, 
-                    destination_system_id, destination_network_id, destination_entity_type,
-                    destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
-                    created_by, splicing_source)
-									
-                    SELECT leftcbl.parent_system_id, leftcbl.parent_network_id, 'FMS', 
-                    leftcbl.port_number, 
-                    rightcbl.cable_id, rightcbl.network_id, 'Cable', 
-                    rightcbl.fiber_number,false,rightcbl.IS_CABLE_A_END, 
-                    p_user_id, 'CorePlanning'
-                FROM (
-			    SELECT parent_system_id,parent_network_id,
-			    false as IS_CABLE_A_END,
-			    port_number, ROW_NUMBER() OVER (ORDER BY port_number) AS rn
-			    FROM isp_port_info where parent_system_id=rec.a_system_id
-   			    AND parent_entity_type = 'FMS'  
-   			    AND input_output = 'O' and link_system_id =0
-				and port_status_id=1 
-    			ORDER BY port_number limit required_core 
-			) leftcbl
-			JOIN (
-			    SELECT cable_id,v_cable_details_left.network_id as network_id,
-			    v_cable_details_left.IS_CABLE_A_END as IS_CABLE_A_END,fiber_number, 
-			    ROW_NUMBER() OVER (ORDER BY fiber_number) AS rn
-			    FROM core_planner_fiber_info where cable_id = v_cable_details_left.system_id
-			    and ((v_cable_details_left.IS_CABLE_A_END=true and a_end_status_id = 1)
-			 	or(v_cable_details_left.IS_CABLE_A_END =false and b_end_status_id = 1)) and is_valid = true
-			) rightcbl
-			ON leftcbl.rn = rightcbl.rn limit required_core;
-		
-						   							           		   
+										
+            raise info 'v_cable_details_left A : %',v_cable_details_left;
+                   		    
+		    
+			WITH recursive table1 AS (
+			    -- Simulating Table-1
+			    SELECT parent_system_id,parent_network_id, port_number FROM temp_isp_port_info 
+			    where parent_system_id=rec.a_system_id and port_status_id =1 and is_valid = true 
+			    ORDER BY port_number limit required_core
+			),
+		   fiber_pairs AS (
+			     select t1.id as id, t1.cable_id,t1.fiber_number AS fiber1,t2.fiber_number AS fiber2,
+				LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id)
+				 AS next_cable, t1.seq
+				FROM core_planner_fiber_info t1
+				inner join core_planner_fiber_info t2 on t1.cable_id=t2.cable_id 
+				and t1.fiber_number=t2.fiber_number-1 where t1.is_valid = true and t2.is_valid = true 
+			    order by t1.id,t1.fiber_number
+			),
+			-- Start the chain from every valid fiber pair
+			chain_start AS (
+			    SELECT 
+			        seq,fiber1, fiber2, cable_id,
+			        1 AS depth,
+			        cable_id AS first_cable
+			    FROM fiber_pairs where cable_id = v_cable_details_left.system_id   
+			),
+			-- Recursively add more cables in the same fiber pair
+			recursive_chain AS (
+			    SELECT * FROM chain_start
+			    UNION ALL
+			    SELECT 
+			        fs.seq,fs.fiber1, fs.fiber2, fs.cable_id,
+			        rc.depth + 1,
+			        rc.first_cable
+			    FROM fiber_pairs fs
+			    JOIN recursive_chain rc
+			        ON fs.fiber1 = rc.fiber1
+			        AND fs.fiber2 = rc.fiber2
+			        AND fs.seq = rc.seq+1  -- move "downward" in cable_id
+			),
+     
+			fiber_availability AS (
+		    SELECT  fiber1,fiber2, first_cable, COUNT(*) AS continuous_count
+            FROM recursive_chain
+            GROUP BY fiber1, fiber2, first_cable
+            ORDER BY continuous_count DESC, fiber1 
+			),
+			match_avialibility AS (
+			select COALESCE( (select inf.continuous_count from (select * from table1 
+			order by port_number limit 1) t1 join 
+			fiber_availability inf on inf.fiber1 = t1.port_number and inf.fiber2 = t1.port_number+1
+			where t1.parent_network_id = p_odf_network_id and inf.fiber1 % 2 = 1),0) >=
+			 COALESCE((SELECT MAX(continuous_count) FROM fiber_availability ), 0) 
+			 as higher_match_avialibility
+			),
+			exact_match AS (
+			SELECT COUNT(*) = required_core AS is_match
+			FROM (
+			    SELECT *
+			    FROM table1 t1
+			    JOIN core_planner_fiber_info inf 
+			        ON inf.fiber_number = t1.port_number
+			    WHERE inf.cable_id = v_cable_details_left.system_id
+			      AND (SELECT higher_match_avialibility FROM match_avialibility) = TRUE
+			) AS selected_fibers_match
+			),
+			downward_match AS (
+			   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+			  SELECT  fiber1, fiber2, continuous_count,
+			  RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+			  FROM fiber_availability F
+			  JOIN table1 d  -- Properly referencing the threshold
+		      on f.fiber1 > d.port_number where f.fiber1 % 2 = 1 and NOT EXISTS (
+		        -- Check if an exact match is available
+		       SELECT 1
+		       FROM exact_match em
+		       WHERE em.is_match = TRUE
+		     ) 
+			 ),	
+			upward_match AS (
+				   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+		      SELECT  fiber1, fiber2, continuous_count,
+			  RANK() OVER (ORDER BY continuous_count DESC, fiber1 asc) AS rank
+			  FROM fiber_availability F
+			  JOIN table1 d  -- Properly referencing the threshold
+              on f.fiber1 <= d.port_number where f.fiber1 % 2 = 1  and  NOT EXISTS (
+	        -- Check if an exact match is available
+	        SELECT 1
+	        FROM downward_match 
+	        ) ),		 
+		   matched_fibers AS (
+           -- Step 5: Match the highest-ranked fiber pairs
+          select distinct t1.parent_system_id, t1.parent_network_id, t1.port_number,
+           t2.cable_id, v_cable_details_left.network_id as network_id,
+           t2.fiber_number, v_cable_details_left.IS_CABLE_A_END as IS_CABLE_A_END,
+           (t1.port_number+t2.fiber_number) as remove_duplicate_seq,
+            ROW_NUMBER() OVER (
+            PARTITION BY t1.port_number 
+            ORDER BY t2.fiber_number
+            ) AS port_rank
+          FROM table1 t1
+          JOIN core_planner_fiber_info t2 
+          ON t2.cable_id = v_cable_details_left.system_id and 
+		  ((v_cable_details_left.IS_CABLE_A_END=true) --and a_end_status_id = 1)
+		  or(v_cable_details_left.IS_CABLE_A_END =false))-- and b_end_status_id = 1))	
+          LEFT JOIN exact_match em 
+           ON TRUE
+            WHERE (CASE WHEN p_odf_network_id <> t1.parent_network_id 
+             THEN 
+               t2.fiber_number IN (
+                SELECT destination_port_no FROM connection_log_details t1 
+                ORDER BY t1.id DESC LIMIT required_core) 
+           WHEN em.is_match = TRUE 
+           THEN 
+            t2.fiber_number = t1.port_number               
+           ELSE 
+            t2.fiber_number IN (
+                SELECT fiber1 FROM downward_match WHERE rank = 1
+                UNION
+                SELECT fiber2 FROM downward_match WHERE rank = 1
+                UNION 
+                SELECT fiber1 FROM upward_match WHERE rank = 1
+                UNION
+                SELECT fiber2 FROM upward_match WHERE rank = 1
+            )  
+    END)
+                   order by t1.port_number
+                   -- LIMIT required_core
+                   ),
+                   final_result AS (
+               SELECT * from (SELECT *, 
+               ROW_NUMBER() OVER (
+               PARTITION BY fiber_number 
+               ORDER BY port_number
+                ) AS fiber_rank
+                FROM matched_fibers)t  WHERE t.port_rank =  t.fiber_rank
+                ),	
+            /*    existing_connections AS (
+	    -- Find already connected fibers in TEMP_ROUTE_CONNECTION
+	      SELECT SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO, 
+	        IS_CABLE_A_END FROM (
+	        SELECT  
+	        SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO, 
+	        IS_CABLE_A_END
+	        FROM TEMP_ROUTE_CONNECTION
+	        WHERE SOURCE_ENTITY_TYPE = 'FMS' and SOURCE_SYSTEM_ID = rec.a_system_id and destination_system_id= v_cable_details_left.SYSTEM_ID and IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END 
+	        UNION
+	        SELECT 
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO,
+	        SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        IS_CABLE_B_END	       
+	        FROM TEMP_ROUTE_CONNECTION
+	        WHERE DESTINATION_ENTITY_TYPE = 'FMS' and DESTINATION_SYSTEM_ID = rec.a_system_id and source_system_id= v_cable_details_left.SYSTEM_ID and IS_CABLE_B_END = v_cable_details_left.IS_CABLE_A_END 
+	     ) AS existing
+	    ),	    
+			check_existing AS (
+		    -- Check if ANY fiber in final_result is already in TEMP_ROUTE_CONNECTION
+		    SELECT source_system_id,source_entity_type,source_port_no,is_cable_a_end,
+		    destination_system_id, DESTINATION_PORT_NO from (SELECT e.source_system_id,e.source_entity_type,e.source_port_no,e.is_cable_a_end,
+		    e.destination_system_id, e.DESTINATION_PORT_NO
+		    FROM (select * from final_result LIMIT required_core) fr1
+		    JOIN existing_connections e
+		      ON e.source_system_id = fr1.parent_system_id 
+		     where e.source_port_no = fr1.port_number and e.IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END )t where t.destination_system_id = v_cable_details_left.system_id   
+			),			
+			
+			filtered_final_result as(
+			 SELECT fr.* FROM (select * from final_result limit required_core ) fr
+				LEFT JOIN check_existing ce 
+				    ON (ce.source_system_id = fr.parent_system_id AND ce.source_port_no = fr.port_number) 				    
+				WHERE ce.source_port_no IS NULL
+			),*/
+				final_insert AS (
+		    -- Insert into temp_connection only if NOT in check_existing
+		    INSERT INTO temp_connection (
+		        source_system_id, source_network_id, source_entity_type, source_port_no, 
+		        destination_system_id, destination_network_id, destination_entity_type,
+		        destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
+		        created_by, splicing_source
+		    ) 
+			    SELECT 
+			        fr.parent_system_id, fr.parent_network_id, 'FMS', fr.port_number, 
+			        fr.cable_id, fr.network_id, 'Cable', fr.fiber_number, 
+			        FALSE, fr.IS_CABLE_A_END, p_user_id, 'CorePlanning'
+			    FROM final_result fr
+			    ORDER BY fr.port_number
+			    LIMIT required_core
+			)
+			--insert_log_filtered AS (
+		    -- Insert records from filtered_final_result
+		   INSERT INTO connection_log_details (
+			    destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+			)
+			SELECT 
+			    fr.cable_id, fr.network_id, fr.fiber_number, 'Cable'
+			FROM final_result fr
+			 where fr.cable_id = v_cable_details_left.SYSTEM_ID
+		    LIMIT required_core;
+		 --  )
+     	 /* INSERT INTO connection_log_details (
+       		 destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        destination_system_id, NULL, DESTINATION_PORT_NO, 'Cable'
+		    FROM check_existing ce
+		    where ce.destination_system_id = v_cable_details_left.system_id	 
+		    ORDER BY source_port_no;*/
+	  
 		else		
 
-	SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) AS IS_CABLE_A_END 
-	INTO v_cable_details_left FROM TEMP_LINE_MASTER A				
-	WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
-	OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) LIMIT 1;
-		
-	SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) AS IS_CABLE_A_END 
-	INTO v_cable_details_right FROM TEMP_LINE_MASTER A				
-	WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
-	OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) 
-	AND SYSTEM_ID NOT IN(v_cable_details_left.SYSTEM_ID)  LIMIT 1;
+			SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			AS IS_CABLE_A_END 
+			INTO v_cable_details_left FROM TEMP_LINE_MASTER A				
+			WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) 
+			and a.system_id in
+		   (select destination_systemid from connection_log_details order by id desc limit 1)  LIMIT 1;
+				
+			SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) 
+			AS IS_CABLE_A_END 
+			INTO v_cable_details_right FROM TEMP_LINE_MASTER A				
+			WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) 
+			AND SYSTEM_ID NOT IN(v_cable_details_left.SYSTEM_ID)  LIMIT 1;
+
+		 raise info 'v_cable_details_left 1 : %',v_cable_details_left;
+
 
 		if (v_cable_details_left is not null and v_cable_details_right is not null)
 		then
+            raise info 'v_cable_details_right 1 : %',v_cable_details_right;
+     
 
-		INSERT INTO temp_connection (
-                    source_system_id, source_network_id, source_entity_type, source_port_no, 
-                    destination_system_id, destination_network_id, destination_entity_type,
-                    destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
-                    created_by, splicing_source,equipment_system_id, equipment_network_id, equipment_entity_type)
+			WITH recursive table1 AS (
+				SELECT cable_id, fiber_number,v_cable_details_left.network_id as network_id,
+				v_cable_details_left.IS_CABLE_A_END as IS_CABLE_A_END
+				FROM core_planner_fiber_info where cable_id = v_cable_details_left.system_id
+				and ((v_cable_details_left.IS_CABLE_A_END=true)-- and a_end_status_id = 1)
+				or(v_cable_details_left.IS_CABLE_A_END =false))-- and b_end_status_id = 1)) 
+				and is_valid = true  and fiber_number IN 
+				(SELECT destination_port_no FROM connection_log_details t1 
+				order by t1.id  desc limit required_core) order by fiber_number  
+				limit required_core 				
+			),
+			  fiber_pairs AS (
+		     select t1.id as id, t1.cable_id,t1.fiber_number AS fiber1,t2.fiber_number AS fiber2,
+		    LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id) 
+		    AS next_cable,  t1.seq
+			FROM core_planner_fiber_info t1
+		    inner join core_planner_fiber_info t2 on t1.cable_id=t2.cable_id 
+			and t1.fiber_number=t2.fiber_number-1 where t1.is_valid = true and t2.is_valid = true 
+			order by t1.id,t1.fiber_number
+		),
+				-- Start the chain from every valid fiber pair
+				chain_start AS (
+				    SELECT 
+				        seq,fiber1, fiber2, cable_id,
+				        1 AS depth,
+				        cable_id AS first_cable
+				    FROM fiber_pairs where cable_id = v_cable_details_right.system_id   
+				),
+				-- Recursively add more cables in the same fiber pair
+				recursive_chain AS (
+					SELECT * FROM chain_start
+					UNION ALL
+					SELECT fs.seq,fs.fiber1, fs.fiber2, fs.cable_id,
+					rc.depth + 1,rc.first_cable
+					FROM fiber_pairs fs
+					JOIN recursive_chain rc
+					ON fs.fiber1 = rc.fiber1
+					AND fs.fiber2 = rc.fiber2
+					AND fs.seq = rc.seq+1 
+					),		  
+			   fiber_availability AS (
+					SELECT fiber1,fiber2, first_cable,COUNT(*) AS continuous_count
+					FROM recursive_chain
+					GROUP BY fiber1, fiber2, first_cable
+					ORDER BY continuous_count DESC, fiber1 
+				),
+				selected_fibers_match AS (
+			    -- Step 3: Select the fiber availability where fiber1 is odd
+			    SELECT t2.*
+			    FROM table1 t1  
+			    JOIN core_planner_fiber_info t2  
+			        ON t2.FIBER_number = t1.FIBER_number 
+			    WHERE t2.cable_id  = v_cable_details_right.system_id
+			    order by t1.FIBER_number 
+			   ),
+				exact_match AS (
+		        SELECT COUNT(*) = required_core AS is_match
+		        FROM selected_fibers_match
+		        ),
+					downward_match AS (						
+				    SELECT distinct fiber1, fiber2, continuous_count,
+				    RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+				    FROM fiber_availability f
+                    JOIN table1 d  -- Properly referencing the threshold
+                   on f.fiber1 > d.fiber_number where f.fiber1 % 2 = 1 and
+				    NOT EXISTS (
+				        -- Check if an exact match is available
+				        SELECT 1
+				        FROM exact_match em
+				        WHERE em.is_match = TRUE
+				    ) 
+				),
+					upward_match AS (
+				   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+				    SELECT distinct fiber1, fiber2, continuous_count,
+				    RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+				    FROM fiber_availability F
+				    JOIN table1 d  -- Properly referencing the threshold
+                    on f.fiber1 <= d.fiber_number where f.fiber1 % 2 = 1  and NOT EXISTS (
+				        SELECT 1
+				        FROM downward_match 
+				    )) ,
+		 
+		      matched_fibers AS (
+				SELECT t1.cable_id as c1_cable_id, t1.network_id as c1_network_id,
+				t1.fiber_number as c1_fiber_number,t1.IS_CABLE_A_END as C1_IS_CABLE_A_END,
+				t2.cable_id as c2_cable_id,v_cable_details_right.network_id as c2_network_id,
+				t2.fiber_number as c2_fiber_number, v_cable_details_right.IS_CABLE_A_END  
+				as C2_IS_CABLE_A_END ,(t1.fiber_number + t2.fiber_number) as remove_duplicate_seq,
+				ROW_NUMBER() OVER (
+	            PARTITION BY t1.fiber_number 
+	            ORDER BY t2.fiber_number
+	            ) AS fiber1_rank
+			    FROM table1 t1
+			    JOIN core_planner_fiber_info t2 ON  t2.cable_id = v_cable_details_right.system_id and 
+			    ((v_cable_details_right.IS_CABLE_A_END=true) -- and a_end_status_id = 1)
+				or(v_cable_details_right.IS_CABLE_A_END =false))-- and b_end_status_id = 1)) 		
+			    LEFT JOIN exact_match em 
+                    ON TRUE
+                WHERE 
+       		     CASE 
+        		    WHEN em.is_match = TRUE THEN 
+    	            t2.fiber_number = t1.fiber_number 
+            	    --AND t2.fiber_number = t1.fiber_number + 1
+           		 ELSE 
+                t2.fiber_number IN (
+                    SELECT fiber1 FROM downward_match WHERE rank = 1
+                    UNION
+                    SELECT fiber2 FROM downward_match WHERE rank = 1
+                    union 
+                    SELECT fiber1 FROM upward_match WHERE rank = 1
+                    UNION
+                    SELECT fiber2 FROM upward_match WHERE rank = 1
+                ) 
+       			 END  
+                order by t1.fiber_number --limit required_core
+			    
+	    	),
+	    	existing_connections AS (
+	    -- Find already connected fibers in TEMP_ROUTE_CONNECTION
+	      SELECT SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO, 
+	        IS_CABLE_A_END FROM (
+	        SELECT  
+	        SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO, 
+	        IS_CABLE_A_END
+	        FROM TEMP_ROUTE_CONNECTION
+	        WHERE SOURCE_ENTITY_TYPE = 'Cable' and SOURCE_SYSTEM_ID = v_cable_details_left.system_id and IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END 
+	        UNION
+	        SELECT 
+	        DESTINATION_SYSTEM_ID , 
+	        DESTINATION_ENTITY_TYPE , 
+	        DESTINATION_PORT_NO,
+	        SOURCE_SYSTEM_ID,
+	        SOURCE_ENTITY_TYPE,
+	        SOURCE_PORT_NO,
+	        IS_CABLE_B_END	       
+	        FROM TEMP_ROUTE_CONNECTION
+	        WHERE DESTINATION_ENTITY_TYPE = 'Cable' and DESTINATION_SYSTEM_ID = v_cable_details_left.system_id and IS_CABLE_B_END = v_cable_details_left.IS_CABLE_A_END
+	     ) AS existing
+	    ),
+	     final_result AS (
+               SELECT * from (SELECT *, 
+               ROW_NUMBER() OVER (
+               PARTITION BY c2_fiber_number 
+               ORDER BY c1_fiber_number
+                ) AS fiber2_rank
+                FROM matched_fibers)t  WHERE t.fiber1_rank =  t.fiber2_rank
+                ),
+
+			check_existing AS (
+		    -- Check if ANY fiber in final_result is already in TEMP_ROUTE_CONNECTION
+		    SELECT source_system_id,source_entity_type,source_port_no,is_cable_a_end,
+		    destination_system_id, DESTINATION_PORT_NO from (SELECT e.source_system_id,e.source_entity_type,e.source_port_no,e.is_cable_a_end,
+		    e.destination_system_id, e.DESTINATION_PORT_NO
+		    FROM (select * from final_result LIMIT required_core) fr1
+		    JOIN existing_connections e
+		      ON e.source_system_id = fr1.c1_cable_id 
+		     where e.source_port_no = fr1.c1_fiber_number 
+		     AND e.is_cable_a_end = fr1.C1_IS_CABLE_A_END)t where t.destination_system_id = v_cable_details_right.system_id  
+			),			
+			
+			filtered_final_result as(
+			 SELECT fr.* FROM (select * from final_result limit required_core ) fr
+				LEFT JOIN check_existing ce 
+				    ON (ce.source_system_id = fr.c1_cable_id AND ce.source_port_no = fr.c1_fiber_number) 				    
+				WHERE ce.source_port_no IS NULL
+			),
+
+			final_insert AS (
+			-- Final selection: prioritize exact match, then downward, then upward
+			INSERT INTO temp_connection (
+            source_system_id, source_network_id, source_entity_type, source_port_no, 
+            destination_system_id, destination_network_id, destination_entity_type,
+            destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
+            created_by, splicing_source,equipment_system_id, equipment_network_id, equipment_entity_type)
 				
-		
-					
-			SELECT leftcbl.cable_id, leftcbl.network_id, 'Cable', 
-            leftcbl.fiber_number,rightcbl.cable_id,  rightcbl.network_id , 'Cable', 
-            rightcbl.fiber_number,leftcbl.IS_CABLE_A_END,rightcbl.IS_CABLE_A_END, 
-            p_user_id, 'CorePlanning',rec.a_system_id,rec.a_network_id,rec.a_entity_type
-                FROM (
-			    SELECT cable_id,v_cable_details_left.network_id as network_id,
-			    v_cable_details_left.IS_CABLE_A_END as IS_CABLE_A_END,
-			    fiber_number, ROW_NUMBER() OVER (ORDER BY fiber_number) AS rn
-			    FROM core_planner_fiber_info where cable_id = v_cable_details_left.system_id
-			    and ((v_cable_details_left.IS_CABLE_A_END=true and a_end_status_id = 1)
-				or(v_cable_details_left.IS_CABLE_A_END =false and b_end_status_id = 1)) and is_valid = true
-			) leftcbl
-			JOIN (
-			    SELECT cable_id,v_cable_details_right.network_id as network_id,
-			    v_cable_details_right.IS_CABLE_A_END as IS_CABLE_A_END,fiber_number, 
-			    ROW_NUMBER() OVER (ORDER BY fiber_number) AS rn
-			    FROM core_planner_fiber_info where cable_id = v_cable_details_right.system_id
-			    and ((v_cable_details_right.IS_CABLE_A_END=true and a_end_status_id = 1)
-			 	or(v_cable_details_right.IS_CABLE_A_END =false and b_end_status_id = 1)) and is_valid = true
-			) rightcbl
-			ON leftcbl.rn = rightcbl.rn limit required_core;							    		                 	
-		end if;   
+			SELECT c1_cable_id,c1_network_id,'Cable', c1_fiber_number,
+			c2_cable_id ,c2_network_id,'Cable',c2_fiber_number,c1_IS_CABLE_A_END,c2_IS_CABLE_A_END,
+			p_user_id, 'CorePlanning',rec.a_system_id,rec.a_network_id,rec.a_entity_type
+			FROM filtered_final_result				  
+			ORDER BY c1_fiber_number 
+		),
+		insert_log_filtered AS (
+		    -- Insert records from filtered_final_result
+		    INSERT INTO connection_log_details (
+		        destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        fr.c2_cable_id, fr.c2_network_id, fr.c2_fiber_number, 'Cable'
+		    FROM filtered_final_result fr
+		    ORDER BY c2_fiber_number 
+		    LIMIT required_core
+		)
+     	  INSERT INTO connection_log_details (
+       		 destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        destination_system_id, NULL, DESTINATION_PORT_NO, 'Cable'
+		    FROM existing_connections ce
+		    where ce.source_system_id = v_cable_details_left.system_id	and source_port_no in (select destination_port_no from connection_log_details order by id desc limit required_core)
+		    and ce.destination_system_id = v_cable_details_right.system_id    
+		    ORDER BY source_port_no;
+		end if;	  
+	   
 	end if;
         END LOOP;
-	
 
-	  /*
-	  update att_details_cable_info set  fiber_status ='Reserved',
+		if (SELECT COUNT(*) FROM temp_connection) > 0
+		then 
+		 raise info 'end splicing 1 : %',p_user_id;
+		  perform(fn_auto_provisioning_save_connections());
+		
+		
+		end if;	
+
+
+		insert into temp_connected_cables(cable_id,fiber_number)
+		select destination_systemid, destination_port_no from connection_log_details;
+					
+					
+		update att_details_cable_info set  fiber_status ='Reserved',
 		link_system_id=coalesce(p_link_system_id,0)
-		from(
-		select * 
-		from isp_port_info_tbl 
-		where --is_valid_for_core_plan=true and 
-		parent_network_id =p_odf_network_id
-		-- and input_output='O' and port_status_id=1					
-		order by port_number -- limit required_core
-		)b
-		where cable_id in (select system_id from TEMP_LINE_MASTER) 
-		and fiber_number=b.port_number;
-
-		update att_details_fiber_link set fiber_link_status='Associated',
-		gis_length = ROUND(
-        COALESCE((SELECT Sum(a.cable_measured_length) FROM att_details_cable a
-        inner join TEMP_LINE_MASTER b on a.system_id =b.system_id and b.entity_type ='Cable' ), 0
-        )::NUMERIC, 3
-    ),
-    total_route_length = ROUND(
-        COALESCE(
-            (SELECT sum(a.cable_calculated_length) FROM att_details_cable a
-            inner join TEMP_LINE_MASTER b on a.system_id =b.system_id and b.entity_type ='Cable' ), 0
-        )::NUMERIC, 3
-    ) 
-		where system_id=coalesce(p_link_system_id,0);
-	
-	*/
-	
-	--- update odf is_valid_for_core_plan,link_system_id
-      /*  IF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = source_network_id) 
-		then
-		 
-		update isp_port_info set link_system_id=coalesce(p_link_system_id,0)
-		where parent_network_id =source_network_id
-		and input_output='O'-- and port_status_id=1 
-		and port_number in (select port_number 
-		from isp_port_info_tbl 
-		---where parent_network_id =source_network_id
-		--and input_output='O' -- and port_status_id=1					
-		order by port_number limit required_core);
-		/*
-		update isp_port_info set is_valid_for_core_plan=false 
-		where parent_network_id =source_network_id
-		and parent_entity_type='FMS' 
-		--and port_number=v_arow.port_number 
-		AND input_output = 'O' 
-		and is_valid_for_core_plan=true;
-	*/
-	
-       end if;
-     
-      IF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = p_destination_network_id) 
-	  then
-	  
-	    update isp_port_info set link_system_id=coalesce(p_link_system_id,0)
-		where parent_network_id =p_destination_network_id
-		and input_output='O' --and port_status_id=1 
-		and port_number in (select port_number 
-		from isp_port_info_tbl 
-		-- where parent_network_id = p_destination_network_id
-		-- and input_output='O' --and port_status_id=1					
-		order by port_number limit required_core);
-		/*
-	   update isp_port_info set is_valid_for_core_plan=false 
-		where parent_network_id = p_destination_network_id
-		and parent_entity_type='FMS' 
-		--and port_number=v_arow.port_number 
-		AND input_output = 'O' 
-		and is_valid_for_core_plan=true;	
-			*/
-       end if;*/
- 
- 
-if (SELECT COUNT(*) FROM temp_connection) > 0
-then 
- raise info 'end splicing 1 : %',p_user_id;
-perform(fn_auto_provisioning_save_connections());
-
--- FOR rec in (select destination_system_id,destination_port_no from temp_connection where destination_entity_type = 'Cable' and created_by = p_user_id
--- union 
--- select source_system_id, source_port_no from temp_connection where source_entity_type = 'Cable' and created_by = p_user_id)
--- loop 
--- 
--- perform fn_associate_fiber_link_cable(rec.destination_system_id,coalesce(p_link_system_id,0),rec.destination_port_no,'A' );
--- 	
--- end loop;
-
-end if;	
-
-/*
-update isp_port_info set link_system_id=coalesce(p_link_system_id,0)
-WHERE parent_network_id=p_odf_network_id
-    AND parent_entity_type = 'FMS'  
-    AND input_output = 'O' and is_valid_for_core_plan=true; 
-	
-	
-update isp_port_info set link_system_id=coalesce(p_link_system_id,0),is_valid_for_core_plan=true
-from isp_port_info_tbl b
-where isp_port_info.parent_entity_type=b.parent_entity_type
-and isp_port_info.parent_system_id=b.parent_system_id
-and isp_port_info.port_number=b.port_number;
-*/
+		from temp_connected_cables b
+		where att_details_cable_info.cable_id=b.cable_id 
+	    and b.fiber_number=att_details_cable_info.fiber_number;
 
 
--- GET CONNECTION DATA BASED ON EQUIPMENT OR DEVICE
-insert into temp_cpf_result(connection_id,source_system_id,source_network_id,source_entity_type,
-source_port_no,destination_system_id,
-destination_network_id,destination_entity_type,destination_port_no
-)
-select con.connection_id,con.source_system_id,con.source_network_id,con.source_entity_type,
-con.source_port_no,con.destination_system_id,
-con.destination_network_id,con.destination_entity_type,con.destination_port_no
-from fn_get_fiberlink_schematicview_date('','',1,100,'','',(select parent_system_id from isp_port_info
-where parent_network_id=p_odf_network_id limit 1),
-(select string_agg(port_number::character varying,',')::character varying from isp_port_info
-where parent_network_id=p_odf_network_id and upper(parent_entity_type)=upper('FMS') and upper(input_output)=upper('O')
-and is_valid_for_core_plan=true and port_number in(select port_number from isp_port_info_tbl))
-,'FMS') con;
-
-insert into temp_connected_cables(cable_id,fiber_number)
-select source_system_id,source_port_no from temp_cpf_result where source_entity_type='Cable'
-union
-select destination_system_id,destination_port_no from temp_cpf_result where destination_entity_type='Cable';
-
--- insert into temp_connected_FMS(fms_id,port_number)
--- select source_system_id,source_port_no from temp_cpf_result where source_entity_type='FMS' and source_network_id!=destination_network_id
--- union
--- select destination_system_id,destination_port_no from temp_cpf_result where destination_entity_type='FMS' 
--- and source_network_id!=destination_network_id;
-
--- update isp_port_info set link_system_id=coalesce(p_link_system_id,0),is_valid_for_core_plan=true
--- from temp_connected_FMS b
--- where isp_port_info.parent_entity_type='FMS'
--- and isp_port_info.parent_system_id=b.source_system_id
--- and isp_port_info.port_number=b.source_port_no;
-
-/*update att_details_cable_info set  fiber_status ='Reserved',
-link_system_id=coalesce(p_link_system_id,0)
-from temp_connected_cables b
-where att_details_cable_info.cable_id=b.cable_id and b.fiber_number=att_details_cable_info.fiber_number;*/
-
-		UPDATE att_details_cable_info 
-		SET fiber_status = 'Reserved',
-		    link_system_id = COALESCE(p_link_system_id, 0)
-		FROM (
-		    SELECT b.cable_id, b.fiber_number, 
-		           ROW_NUMBER() OVER (PARTITION BY b.cable_id ORDER BY b.fiber_number asc) AS rn
-		    FROM core_planner_fiber_info b  
-		    INNER JOIN TEMP_LINE_MASTER tmp 
-		        ON tmp.system_id = b.cable_id 
-		    WHERE b.is_valid = true and link_system_id =0
-		) b
-		WHERE b.rn <= required_core  -- Ensure required_core is properly assigned
-		AND att_details_cable_info.cable_id = b.cable_id 
-		AND att_details_cable_info.fiber_number = b.fiber_number;
-
-    /*   update att_details_cable_info set  fiber_status ='Reserved',
-		link_system_id=coalesce(p_link_system_id,0)
-		from(
-		select * 
-		from isp_port_info_tbl 
-		where --is_valid_for_core_plan=true and 
-		parent_network_id =p_odf_network_id
-		-- and input_output='O' and port_status_id=1					
-		order by port_number -- limit required_core
-		)b
-		where cable_id in (select system_id from TEMP_LINE_MASTER) 
-		and fiber_number=b.port_number;*/
-
-		update att_details_fiber_link set fiber_link_status='Associated',
+  		update att_details_fiber_link set fiber_link_status='Associated',
 		gis_length = ROUND(
         COALESCE((SELECT Sum(a.cable_measured_length) FROM att_details_cable a
         inner join TEMP_LINE_MASTER b on a.system_id =b.system_id and b.entity_type ='Cable' ), 0
@@ -451,30 +694,6 @@ where att_details_cable_info.cable_id=b.cable_id and b.fiber_number=att_details_
     ) 
 		where system_id=coalesce(p_link_system_id,0);
 		
---- update odf is_valid_for_core_plan,link_system_id
-  /*      IF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = source_network_id) 
-		then		
-		
-		update isp_port_info set is_valid_for_core_plan=false 
-		where parent_network_id =source_network_id
-		and parent_entity_type='FMS' 
-		
-		AND input_output = 'O' 
-		and is_valid_for_core_plan=true;
-	
-	
-       end if;
-     
-      IF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = p_destination_network_id) 
-	  then	   
-	   update isp_port_info set is_valid_for_core_plan=false 
-		where parent_network_id = p_destination_network_id
-		and parent_entity_type='FMS' 		
-		AND input_output = 'O' 
-		and is_valid_for_core_plan=true;			
-       end if;*/
-	      
-     --  delete from core_planner_logs where user_id = p_user_id;
 
        return query select row_to_json(row) from ( select true as status, 'The required core has been spliced, and the fiber link has been successfully attached.' as message ) row;
       end if;
@@ -485,9 +704,9 @@ $function$
 
 -- Permissions
 
-ALTER FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) OWNER TO postgres;
-GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) TO public;
-GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) TO postgres;
+ALTER FUNCTION public.fn_get_core_planner_splicing_navika(int4, int4, varchar, varchar, varchar, int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing_navika(int4, int4, varchar, varchar, varchar, int4) TO public;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing_navika(int4, int4, varchar, varchar, varchar, int4) TO postgres;
 
 
 --------------------------------------------------------------------------------------------------
