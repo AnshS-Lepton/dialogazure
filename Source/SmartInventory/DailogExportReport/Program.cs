@@ -7,10 +7,10 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using Npgsql;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+using NPOI.XSSF.Streaming;
 using ProjNet.CoordinateSystems;
+using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -30,21 +30,33 @@ namespace DailogExportReport
     {
         public static void Main(string[] args)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
-            int userId = int.Parse(ConfigurationManager.AppSettings["UserId"]);
-            int roleId = int.Parse(ConfigurationManager.AppSettings["RoleId"]);
-
-            ExportReportFilterNew filter = new ExportReportFilterNew
+            try
             {
-                connectionString = connectionString,
-                userId = userId,
-                roleId = roleId
-            };
-            ReportDownload reportDownload = new ReportDownload();
-            List<EntitySummaryReport> reportSummary = reportDownload.GetExportReportSummary(filter);
-            string entityIds = string.Join(",", reportSummary.Select(report => report.entity_id.ToString()));
+                string connectionString = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+                int userId = int.Parse(ConfigurationManager.AppSettings["UserId"]);
+                int roleId = int.Parse(ConfigurationManager.AppSettings["RoleId"]);
 
-            reportDownload.DownloadEntityReportIntoShapeAllNew(entityIds);
+                ExportReportFilterNew filter = new ExportReportFilterNew
+                {
+                    connectionString = connectionString,
+                    userId = userId,
+                    roleId = roleId
+                };
+                ReportDownload.WriteLogFile($"File uploading started" + DateTime.Now);
+                ReportDownload reportDownload = new ReportDownload();
+                List<EntitySummaryReport> reportSummary = reportDownload.GetExportReportSummary(filter);
+                string entityIds = string.Join(",", reportSummary.Select(report => report.entity_id.ToString()));
+
+                reportDownload.DownloadEntityReportIntoShapeAllNew(entityIds.ToString());
+
+
+            }
+            catch (Exception ex)
+            {
+                ReportDownload.WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
+                throw;
+            }
+
         }
 
     }
@@ -109,6 +121,7 @@ namespace DailogExportReport
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                 throw;
             }
 
@@ -123,12 +136,13 @@ namespace DailogExportReport
                 ExportReportFilterNew objExportReportFilterNew = new ExportReportFilterNew();
                 ExportEntitiesReportNew entityExportSummaryData = new ExportEntitiesReportNew();
 
-                var moduleAbbr = "EXRPT";
-                ConnectionMaster con = new BLLayer().GetConnectionString(moduleAbbr);
-                if (con != null)
-                {
-                    objExportEntitiesReport.objReportFilters.connectionString = con.connection_string;
-                }
+                //var moduleAbbr = "EXRPT";
+                //ConnectionMaster con = new GetConnectionString(moduleAbbr);
+                //if (con != null)
+                //{
+                //    objExportEntitiesReport.objReportFilters.connectionString = con.connection_string;
+                //}
+                objExportEntitiesReport.objReportFilters.connectionString = objExportReportFilterNew.connectionString;//"Host=192.168.1.40;Port=5014;Database=Dialog_Dev;Username=postgres;Password=Lepton@#2022;CommandTimeout=600;";
                 objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportReportFilterNew.SelectedRegionIds;
                 objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportReportFilterNew.SelectedProvinceIds;
                 objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportReportFilterNew.SelectedNetworkStatues;
@@ -150,15 +164,12 @@ namespace DailogExportReport
                 objExportEntitiesReport.objReportFilters.radius = objExportReportFilterNew.radius;
                 objExportEntitiesReport.objReportFilters.SelectedOwnerShipType = objExportReportFilterNew.SelectedOwnerShipType;
                 objExportEntitiesReport.objReportFilters.SelectedThirdPartyVendorIds = objExportReportFilterNew.SelectedThirdPartyVendorIds;
-
-
-
-
                 objExportEntitiesReport.objReportFilters.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportEntitiesReport.objReportFilters.SelectedLayerId;
                 objExportReportFilterNew.SelectedLayerId = (!String.IsNullOrEmpty(entityids)) ? entityids.Split(',').Select(int.Parse).ToList() : objExportReportFilterNew.SelectedLayerId;
 
                 List<int> SelectedLayerId = objExportEntitiesReport.objReportFilters.SelectedLayerId;
                 List<int> SelectedLayerIdSummary = objExportReportFilterNew.SelectedLayerId;
+
 
                 objExportEntitiesReport.lstLayers = new BLLayer().GetReportLayers(2, "ENTITY");
                 var selectedlayerids = objExportEntitiesReport.objReportFilters.SelectedLayerId;
@@ -176,12 +187,15 @@ namespace DailogExportReport
                     string ftpFilePath = ConfigurationManager.AppSettings["FTPAttachment"] + ftpFolder;
                     string ftpUserName = ConfigurationManager.AppSettings["FTPUserNameAttachment"];
                     string ftpPwd = ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+                    string host = ConfigurationManager.AppSettings["SFTPHost"];
+                    int port = int.Parse(ConfigurationManager.AppSettings["SFTPPort"]);
 
-                    string parentFolder = $"Shape_{DateTimeHelper.Now.ToString("ddMMyyyy")}-{DateTimeHelper.Now.ToString("HHmmssfff")}_1";
+
+                    string parentFolder = $"Shape_{DateTime.Now:ddMMyyyy}";
                     string attachmentLocalPath = Path.Combine(ConfigurationManager.AppSettings["AttachmentLocalPath"], ftpFolder);
                     string pathWithParentFolder = Path.Combine(attachmentLocalPath, parentFolder);
-                    //string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    string basePath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName, attachmentLocalPath);
+                    string basePath = AppDomain.CurrentDomain.BaseDirectory;
+                    //string basePath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName, attachmentLocalPath);
                     shapeFilePath = Path.Combine(basePath, parentFolder);
 
                     if (Directory.Exists(shapeFilePath).Equals(false))
@@ -256,7 +270,7 @@ namespace DailogExportReport
 
                             }
 
-                            if (dtReport.Rows.Count > 0 )
+                            if (dtReport.Rows.Count > 0)
                             {
                                 if (dtReport.Rows.Count > ApplicationSettings.ExcelReportLimitCount)
                                 {
@@ -268,13 +282,13 @@ namespace DailogExportReport
                                 fileName = $"{parentFolder}/{layer.layer_title}.xlsx";
                                 var tempshapeFilePath = $"{shapeFilePath}/{layer.layer_title}.xlsx";
                                 ExportDataExcelMergeWithoutCdb(dtReport, null, fileName, tempshapeFilePath);
-                                //NPOIExcelHelper.DataTableToExcel("xlsx", dtReport);
                             }
                             dtReportShape = null;
                             dtReport = null;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
                             throw;
                         }
                     }
@@ -300,16 +314,30 @@ namespace DailogExportReport
                     }
                     FileInfo file = new FileInfo(zipshapePath);
                     tempFileName = Path.GetFileNameWithoutExtension(file.FullName);
+                    Console.WriteLine("file entered for ftp upload");
+                    try
+                    {
 
+                        UploadFileToSFTP(zipshapePath, (tempFileName + ".zip"), ftpFilePath, ftpUserName, ftpPwd, host, port);
 
-                    FTPFileUpload(zipshapePath, (tempFileName + ".zip"), ftpFilePath, ftpUserName, ftpPwd);
+                        //FTPFileUpload(zipshapePath, (tempFileName + ".zip"), ftpFilePath, ftpUserName, ftpPwd);
 
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Console.WriteLine($"Error: {ex.Message}");
+                        WriteLogFile($"Error occurred: {ex.StackTrace} {ex.Message}");
+                    }
+                    Console.WriteLine("file uploaded on ftp");
                     System.IO.File.Delete(zipshapePath);
 
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogHelper.WriteErrorLog("DownloadEntityReportIntoShapeAllNew()", "Report", ex);
+
+                    Console.WriteLine($"Error: {ex.Message}");
+                    WriteLogFile($"Error occurred: {ex.StackTrace} {ex.Message}");
 
                     if (Directory.Exists(shapeFilePath).Equals(true))
                         Directory.Delete(shapeFilePath, true);
@@ -320,153 +348,112 @@ namespace DailogExportReport
                 throw ex;
             }
         }
-        private string CreateNestedDirectoryOnFTP(string strFTPPath, string strUserName, string strPassWord, params string[] directories)
-        {
-            try
-            {
+        //public string FTPFileUpload(string filePathToUpload, string filename, string ftpPath, string sUserName, string sPassword)
+        //{
+        //    Console.WriteLine(filePathToUpload);
+        //    Console.WriteLine(filename);
+        //    Console.WriteLine(ftpPath);
+        //    Console.WriteLine(sUserName);
+        //    Console.WriteLine(sPassword);
 
-                FtpWebRequest reqFTP;
-                string strFTPFilePath = strFTPPath;
-                foreach (string directory in directories)
-                {
-                    if (!string.IsNullOrEmpty(directory) && directory.Trim() != "")
-                    {
-                        strFTPFilePath += directory + "/";
-                        try
-                        {
-                            if (!IsFtpDirectoryExist(strFTPFilePath, strUserName, strPassWord))
-                            {
-                                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(strFTPFilePath));
-                                reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
-                                reqFTP.UseBinary = true;
-                                reqFTP.Credentials = new NetworkCredential(strUserName, strPassWord);
-                                FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
-                                Stream ftpStream = response.GetResponseStream();
-                                ftpStream.Close();
-                                response.Close();
-                            }
-                        }
-                        catch (WebException ex)
-                        {
-                            FtpWebResponse response = (FtpWebResponse)ex.Response;
-                            //Directory already exists
-                            if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable) { response.Close(); }
-                            //Error in creating new directory on FTP..
-                            else { throw new Exception("Error in creating directory/sub-directory!", ex); }
-                        }
-                    }
-                }
-                return strFTPFilePath;
-            }
-            catch { throw; }
-        }
-        public string FTPFileUpload(string filePathToUpload, string filename, string ftpPath, string sUserName, string sPassword)
-        {
+        //    WebClient client = null;
+        //    try
+        //    {
 
-            WebClient client = null;
-            try
-            {
+        //        string _filepath = filePathToUpload;
+        //        string _filename = filename;
+        //        string _ftppath = System.IO.Path.Combine(ftpPath, _filename);
+        //        client = new WebClient();
+        //        client.Credentials = new System.Net.NetworkCredential(sUserName, sPassword);
+        //        Console.WriteLine("Reached at upload stage");
+        //        client.UploadFile(_ftppath, _filepath);
+        //        Console.WriteLine("File uploaded on configured FTP successfully" + filePathToUpload + ftpPath);
 
-                string _filepath = filePathToUpload;
-                string _filename = filename;
-                string _ftppath = System.IO.Path.Combine(ftpPath, _filename);
-                client = new WebClient();
-                client.Credentials = new System.Net.NetworkCredential(sUserName, sPassword);
-                client.UploadFile(_ftppath, _filepath);
-                Console.WriteLine("File uploaded on configured FTP successfully");
+        //    }
 
-            }
+        //    catch (Exception ex)
 
-            catch (Exception)
+        //    {
+        //        Console.WriteLine("Error found while uploading File", "Log");
+        //        WriteLogFile($"Error occurred: {ex.StackTrace + ex.Message}");
 
-            {
+        //    }
 
-                Console.WriteLine("Error found while uploading File", "Log");
 
-            }
-
-            finally { client.Dispose(); }
-            return "";
-        }
+        //    finally { client.Dispose(); }
+        //    return "";
+        //}
         public void GetShapeFileOne(DataTable dtReport, string fileNameValue, string ftpfilePath, string ftpUserName, string ftpPassword, string shapeFilePath, string layerName)
         {
-            string entity = string.Empty;
-            entity = dtReport.TableName;
-            if (dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).ToList().Count > 0)
-            {
-                dtReport = dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).CopyToDataTable();
-            }
-            else
-                dtReport.Clear();
-            if (dtReport.Rows.Count > 0)
-            {
-                var features = new List<Feature>();
-                string columnName = string.Empty, columnNameList = string.Empty;
-
-                foreach (DataRow row in dtReport.Rows)
-                {
-                    //add shape attribute and value
-                    var geomFactory = new GeometryFactory(new PrecisionModel(), 4326);
-                    var wktReader = new WKTReader(geomFactory);
-                    var geometry = wktReader.Read(row["geom"].ToString());
-                    var attributesTable = new AttributesTable();
-                    columnNameList = string.Empty;
-                    foreach (DataColumn column in dtReport.Columns)
-                    {
-                        if (!column.ColumnName.Equals("sp_geometry") && !column.ColumnName.Equals("geom"))
-                        {
-                            columnName = column.ColumnName.Length > 10 ? column.ColumnName.Substring(0, 10) : column.ColumnName; //column name allow only 11 charaters
-                            if (columnNameList.Contains("," + columnName + ","))
-                            {
-                                int i = 1;
-                                while (true)
-                                {
-                                    columnName = column.ColumnName.Substring(0, 9) + i.ToString();
-                                    if (!columnNameList.Contains(columnName))
-                                    {
-                                        break;
-                                    }
-                                    i++;
-                                }
-                            }
-                            columnNameList = columnNameList + "," + columnName + ",";
-                            attributesTable.AddAttribute(columnName, row[column.ColumnName].ToString());
-                        }
-                    }
-                    features.Add(new Feature(geometry, attributesTable));
-                }
-
-                var shapeFileName = shapeFilePath + "\\" + entity;
-                var shapeFilePrjName = Path.Combine(shapeFilePath, entity + ".prj");
-
-                var outGeomFactory = GeometryFactory.Default;
-                var writer = new ShapefileDataWriter(shapeFileName, outGeomFactory);
-                var outDbaseHeader = ShapefileDataWriter.GetHeader(features[0], features.Count);
-                writer.Header = outDbaseHeader;
-                writer.Write(features);
-
-
-                using (var streamWriter = new StreamWriter(shapeFilePrjName))
-                {
-                    streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
-                }
-            }
-
-            dtReport.Clear();
-        }
-        public bool IsFtpDirectoryExist(string dirPath, string strUserName, string strPassWord)
-        {
             try
             {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(dirPath);
-                request.Method = WebRequestMethods.Ftp.ListDirectory;
-                request.Credentials = new NetworkCredential(strUserName, strPassWord);
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                return true;
+                string entity = string.Empty;
+                entity = dtReport.TableName;
+                if (dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).ToList().Count > 0)
+                {
+                    dtReport = dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).CopyToDataTable();
+                }
+                else
+                    dtReport.Clear();
+                if (dtReport.Rows.Count > 0)
+                {
+                    var features = new List<Feature>();
+                    string columnName = string.Empty, columnNameList = string.Empty;
+
+                    foreach (DataRow row in dtReport.Rows)
+                    {
+                        //add shape attribute and value
+                        var geomFactory = new GeometryFactory(new PrecisionModel(), 4326);
+                        var wktReader = new WKTReader(geomFactory);
+                        var geometry = wktReader.Read(row["geom"].ToString());
+                        var attributesTable = new AttributesTable();
+                        columnNameList = string.Empty;
+                        foreach (DataColumn column in dtReport.Columns)
+                        {
+                            if (!column.ColumnName.Equals("sp_geometry") && !column.ColumnName.Equals("geom"))
+                            {
+                                columnName = column.ColumnName.Length > 10 ? column.ColumnName.Substring(0, 10) : column.ColumnName; //column name allow only 11 charaters
+                                if (columnNameList.Contains("," + columnName + ","))
+                                {
+                                    int i = 1;
+                                    while (true)
+                                    {
+                                        columnName = column.ColumnName.Substring(0, 9) + i.ToString();
+                                        if (!columnNameList.Contains(columnName))
+                                        {
+                                            break;
+                                        }
+                                        i++;
+                                    }
+                                }
+                                columnNameList = columnNameList + "," + columnName + ",";
+                                attributesTable.AddAttribute(columnName, row[column.ColumnName].ToString());
+                            }
+                        }
+                        features.Add(new Feature(geometry, attributesTable));
+                    }
+
+                    var shapeFileName = shapeFilePath + "\\" + entity;
+                    var shapeFilePrjName = Path.Combine(shapeFilePath, entity + ".prj");
+
+                    var outGeomFactory = GeometryFactory.Default;
+                    var writer = new ShapefileDataWriter(shapeFileName, outGeomFactory);
+                    var outDbaseHeader = ShapefileDataWriter.GetHeader(features[0], features.Count);
+                    writer.Header = outDbaseHeader;
+                    writer.Write(features);
+
+
+                    using (var streamWriter = new StreamWriter(shapeFilePrjName))
+                    {
+                        streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
+                    }
+                }
+
+                dtReport.Clear();
             }
-            catch (WebException)
+            catch (Exception ex)
             {
-                return false;
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
         public void StreamNewCSVInFolder(DataTable dataTable, string remoteFilePath)
@@ -577,10 +564,10 @@ namespace DailogExportReport
             }
 
             List<int> regionIds = (List<int>)obj.GetType().GetProperty("SelectedRegionId").GetValue(obj, null);
-            var regionName = regionIds == null ? "All" : string.Join(",", new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(5) }).Where(x => regionIds.Contains(x.regionId)).Select(x => x.regionName).ToList());
+            // var regionName = regionIds == null ? "All" : string.Join(",", new BLLayer().GetAllRegion(new RegionIn() { userId = Convert.ToInt32(5) }).Where(x => regionIds.Contains(x.regionId)).Select(x => x.regionName).ToList());
 
             List<int> provinceIds = (List<int>)obj.GetType().GetProperty("SelectedProvinceId").GetValue(obj, null);
-            var provinceName = provinceIds == null ? "All" : string.Join(",", new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = string.Join(",", regionIds), userId = Convert.ToInt32(5) }).Where(x => provinceIds.Contains(x.provinceId)).Select(x => x.provinceName).ToList());
+            //var provinceName = provinceIds == null ? "All" : string.Join(",", new BLLayer().GetProvinceByRegionId(new ProvinceIn() { regionIds = string.Join(",", regionIds), userId = Convert.ToInt32(5) }).Where(x => provinceIds.Contains(x.provinceId)).Select(x => x.provinceName).ToList());
 
             string networkStatus = ""; //textInfo.ToTitleCase(obj.GetType().GetProperty("SelectedNetworkStatues").GetValue(obj, null).ToString().Replace("AS BUILT", "AS-BUILT").ToLower()).Replace("'", "");
 
@@ -588,7 +575,7 @@ namespace DailogExportReport
             //ownershipType = string.IsNullOrEmpty(ownershipType) ? "All" : ownershipType;
 
             List<int> thirdPartyVendorId = (List<int>)obj.GetType().GetProperty("SelectedThirdPartyVendorId").GetValue(obj, null);
-            var thirdPartyVendorName = thirdPartyVendorId == null ? "All" : string.Join(",", BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList().Where(x => thirdPartyVendorId.Contains(Convert.ToInt32(x.key))).Select(x => x.value).ToList());
+            //var thirdPartyVendorName = thirdPartyVendorId == null ? "All" : string.Join(",", BLCable.Instance.GetAllVendorType(VendorType.ThirdParty.ToString()).ToList().Where(x => thirdPartyVendorId.Contains(Convert.ToInt32(x.key))).Select(x => x.value).ToList());
 
             List<int> parentUser = new List<int>();
             List<int> parentUserIds = (List<int>)obj.GetType().GetProperty("SelectedParentUser").GetValue(obj, null);
@@ -600,7 +587,7 @@ namespace DailogExportReport
             //}
             //else
             //{
-            parentUserName = parentUserIds == null ? "All" : new BLUser().GetUserDetailByID(5).user_name;
+            parentUserName = "";//parentUserIds == null ? "All" : new BLUser().GetUserDetailByID(5).user_name;
             //}
 
             List<int> userIds = (List<int>)obj.GetType().GetProperty("SelectedUserId").GetValue(obj, null);
@@ -609,7 +596,7 @@ namespace DailogExportReport
             //rt
             //var userdetails = (User)Session["userDetail"];
             List<int> layerIds = (List<int>)obj.GetType().GetProperty("SelectedLayerId").GetValue(obj, null);
-            var layerName = layerIds == null ? "All" : string.Join(",", new BLLayer().GetReportLayers(2, "ENTITY").Where(x => layerIds.Contains(x.layer_id)).Select(x => x.layer_title).ToList());
+            var layerName = "";//layerIds == null ? "All" : string.Join(",", new BLLayer().GetReportLayers(2, "ENTITY").Where(x => layerIds.Contains(x.layer_id)).Select(x => x.layer_title).ToList());
             var projectStatus = "";
             var projectCodeName = "";
             var planningCodeName = "";
@@ -650,15 +637,15 @@ namespace DailogExportReport
                 networkStatus = networkStatus.Replace("D", "Dormant");
 
             dt.Rows[0][1] = layerName;
-            dt.Rows[1][1] = regionName;
-            dt.Rows[2][1] = provinceName;
+            //dt.Rows[1][1] = regionName;
+            //dt.Rows[2][1] = provinceName;
             dt.Rows[3][1] = String.IsNullOrEmpty(networkStatus) ? "All" : networkStatus;
             dt.Rows[4][1] = parentUserName;
             dt.Rows[5][1] = userName;
             //dt.Rows[5][1] = layerName;
 
             dt.Rows[6][1] = ownershipType;
-            dt.Rows[7][1] = thirdPartyVendorName;
+            //dt.Rows[7][1] = thirdPartyVendorName;
 
             ////if (isAttr.Contains("PROJ"))
             ////{
@@ -677,30 +664,187 @@ namespace DailogExportReport
             //}
             return dt;
         }
+
+        public static bool WriteLogFile(string strMessage)
+        {
+            try
+            {
+                string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+                if (!Directory.Exists(logDirectory))
+                {
+                    Directory.CreateDirectory(logDirectory);
+                }
+                //string strFileName = $"log_{DateTime.UtcNow:yyyyMMdd}.txt";
+                string strFileName = Path.Combine(logDirectory, $"log_{DateTime.UtcNow:yyyyMMdd}.txt");
+
+                using (StreamWriter objStreamWriter = File.AppendText(strFileName))
+                {
+                    string logEntry = $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} - {strMessage}";
+                    objStreamWriter.WriteLine(logEntry);
+                    objStreamWriter.WriteLine();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+               
+                return false;
+            }
+        }
+
         private void ExportDataExcelMergeWithoutCdb(DataTable dtReport, DataTable dtReportAdditional, string fileName, string tempfileName)
         {
-            using (var exportData = new MemoryStream())
+            using (var workbook = new SXSSFWorkbook(500))
             {
-                IWorkbook workbook = new XSSFWorkbook(); // Create a new workbook
-
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
                     if (string.IsNullOrEmpty(dtReport.TableName))
-                        dtReport.TableName = "Gis_Attribute"; // Default table name if empty
+                        dtReport.TableName = "Gis_Attribute";
 
                     ISheet sheet1 = workbook.CreateSheet("Gis_Attribute");
                     NPOIExcelHelper.DataTableToSheet(dtReport, sheet1);
                 }
-                workbook.Write(exportData);
 
-               // Write the MemoryStream to the file
-                //FileStream xfile = new FileStream(tempfileName, FileMode.Create, System.IO.FileAccess.Write);
+                using (var fileStream = new FileStream(tempfileName, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(fileStream);
+                }
 
-                //workbook.Write(xfile);
-                //xfile.Close();
-
+                workbook.Dispose(); // Release memory
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
-        
+
+        ////for_local_sftp////
+        //public static string UploadFileToSFTP(string filePathToUpload, string filename, string sftpPath, string sUserName, string sPassword, string host, int port)
+
+        //{
+        //    try
+        //    {
+        //        Console.WriteLine($"Connecting to SFTP: {host}:{port} with user {sUserName}");
+
+        //        using (var sftp = new SftpClient(host, port, sUserName, sPassword))
+        //        {
+        //            WriteLogFile($"sftp connecting..." + DateTime.Now);
+        //            sftp.Connect();
+        //            WriteLogFile($"sftp connected!" + DateTime.Now);
+        //            Console.WriteLine("Connected to SFTP");
+
+        //            if (!File.Exists(filePathToUpload))
+        //            {
+        //                return $"Error: File '{filePathToUpload}' not found.";
+        //            }
+
+        //            sftpPath = sftpPath.Replace("sftp://", ""); // Remove "sftp://"
+        //            sftpPath = sftpPath.Substring(sftpPath.IndexOf('/')); // Keep only the directory part
+        //            sftpPath = sftpPath.TrimEnd('/'); // Remove trailing slash
+        //            Console.WriteLine($"sftpPath: {sftpPath}");
+        //            if (!sftp.Exists(sftpPath))
+        //            {
+        //                string[] directories = sftpPath.Split('/');
+        //                string path = "";
+
+        //                foreach (var dir in directories)
+        //                {
+        //                    if (string.IsNullOrWhiteSpace(dir)) continue; // Skip empty parts
+        //                    path += "/" + dir;
+        //                    Console.WriteLine($"path: {path}");
+        //                    Console.WriteLine($"Exists: {!sftp.Exists(path)}");
+        //                    if (!sftp.Exists(path))
+        //                    {
+        //                        Console.WriteLine($"Created directory: {path}");
+        //                        sftp.CreateDirectory(path);
+        //                        Console.WriteLine($"Directory creating: {path}");
+
+        //                    }
+        //                }
+        //            }
+
+        //            string remoteFilePath = $"{sftpPath}/{filename}";
+        //            Console.WriteLine($"Created remoteFilePath: {remoteFilePath}");
+        //            byte[] fileBytes = File.ReadAllBytes(filePathToUpload);
+
+        //            Console.WriteLine($"Created fileBytes: {fileBytes}");
+        //            using (MemoryStream ms = new MemoryStream(fileBytes))
+        //            {
+        //                WriteLogFile($"File uploading on sftp...." + DateTime.Now);
+        //                Console.WriteLine(remoteFilePath);
+        //                sftp.UploadFile(ms, remoteFilePath);
+        //                WriteLogFile($"File uploaded on sftp" + DateTime.Now);
+        //            }
+
+        //            Console.WriteLine("File uploaded successfully!");
+        //            sftp.Disconnect();
+        //        }
+
+        //        return "Success";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error: {ex.Message}");
+        //        WriteLogFile($"Error occurred: {ex.StackTrace} {ex.Message}");
+        //        return "Upload failed: " + ex.Message;
+        //    }
+        //}
+
+        // for_production_sftp////
+        public static string UploadFileToSFTP(string filePathToUpload, string filename, string sftpPath, string sUserName, string sPassword, string host, int port)
+        {
+            try
+            {
+                using (var sftp = new SftpClient(host, port, sUserName, sPassword))
+                {
+                    Console.WriteLine("Connecting...... to SFTP");
+                    WriteLogFile($"Connecting...... to SFTP" + DateTime.Now);
+                    sftp.Connect();
+                    WriteLogFile($"Connected to SFTP" + DateTime.Now);
+                    Console.WriteLine("Connected to SFTP");
+
+                    //string basePath = "/home/ofn_data_usr";
+                    //sftpPath = sftpPath.Replace("sftp://", "").Substring(sftpPath.IndexOf('/')).TrimEnd('/');
+                    //sftpPath = $"{basePath}/{sftpPath}".TrimEnd('/');
+
+                    string basePath = "/home/ofn_data_usr";
+                    sftpPath = sftpPath.Replace("sftp://", "");
+                    sftpPath = sftpPath.Substring(sftpPath.IndexOf('/'));
+                    sftpPath = sftpPath.TrimEnd('/');
+                    sftpPath = $"{basePath}/{sftpPath}".TrimEnd('/');
+
+                    // Create missing directories
+                    string path = basePath;
+                    foreach (var dir in sftpPath.Replace(basePath, "").Split('/'))
+                    {
+                        if (string.IsNullOrWhiteSpace(dir)) continue;
+                        path += "/" + dir;
+                        if (!sftp.Exists(path))
+                            sftp.CreateDirectory(path);
+                    }
+
+
+                    string remoteFilePath = $"{sftpPath}/{filename}";
+
+                    using (var ms = new MemoryStream(File.ReadAllBytes(filePathToUpload)))
+                    {
+                        Console.WriteLine("remoteFilePath" + remoteFilePath);
+                        WriteLogFile($"File uploading on sftp...." + DateTime.Now);
+                        sftp.UploadFile(ms, remoteFilePath);
+                        WriteLogFile($"File uploaded on sftp" + DateTime.Now);
+                    }
+
+                    sftp.Disconnect();
+                    return "Success";
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error: {ex.Message}");
+                WriteLogFile($"Error occurred: {ex.StackTrace} {ex.Message}");
+                return "Upload failed: " + ex.Message;
+            }
+        }
+
     }
 }
