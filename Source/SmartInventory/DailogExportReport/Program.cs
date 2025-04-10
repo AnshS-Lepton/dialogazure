@@ -692,7 +692,7 @@ namespace DailogExportReport
             }
         }
 
-        private void ExportDataExcelMergeWithoutCdb(DataTable dtReport, DataTable dtReportAdditional, string fileName, string tempfileName)
+        private void ExportDataExcelMergeWithoutCdb( DataTable dtReport, DataTable dtReportAdditional, string fileName, string tempfileName)
         {
             using (var workbook = new SXSSFWorkbook(500))
             {
