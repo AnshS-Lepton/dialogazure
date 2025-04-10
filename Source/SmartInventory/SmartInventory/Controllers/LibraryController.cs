@@ -6227,8 +6227,16 @@ namespace SmartInventory.Controllers
                 objPM.message = ConvertMultilingual.GetLayerActionMessage(Resources.Resources.SI_OSP_GBL_NET_FRM_177, ApplicationSettings.listLayerDetails, LayerName);
                 model.objPM = objPM;
                 model.formInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name == EntityType.Cable.ToString()).ToList();
+                //----------------optimization of splicing------------------------------------------------
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
+                {
+                    var status = new BLOSPSplicing().updatedisplayname();
 
-
+                }).ContinueWith(tsk =>
+                {
+                    tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Library", "saveSplitCable", ex); return true; });
+                }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+                //--------------------------------------------------------------------------------------------
                 return PartialView("_SplitCable", model);
             }
             catch (Exception) { throw; }
@@ -13376,6 +13384,16 @@ namespace SmartInventory.Controllers
             JsonResponse<string> jResp = new JsonResponse<string>();
             DbMessageConePlanLogic obj = new DbMessageConePlanLogic();
             obj = new BLCable().SaveCorePlanLogic(required_core, Convert.ToInt32(Session["user_id"]), fiber_link_network_id, source_network_id, destination_network_id, buffer);
+            //---for optimization of splicing---------------
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                var status = new BLOSPSplicing().updatedisplayname();
+
+            }).ContinueWith(tsk =>
+            {
+                tsk.Exception.Handle(ex => { ErrorLogHelper.WriteErrorLog("Library", "SaveCorePlanLogic", ex); return true; });
+            }, System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+            //---------------------------------------------------------------------------------------------------------
 
             return Json(obj, JsonRequestBehavior.AllowGet);
 

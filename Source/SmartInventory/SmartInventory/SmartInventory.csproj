@@ -22,6 +22,7 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2444,6 +2445,7 @@
     <Content Include="Views\Library\_CableRingAssociation.cshtml" />
     <Content Include="Views\RingDetails\_SLDdiagramRingDetails.cshtml" />
     <Content Include="Views\Report\AddRingDetails.cshtml" />
+    <Content Include="Views\SpxI49Ftz\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2517,6 +2519,7 @@
     <Compile Include="Controllers\RingDetailsController.cs" />
     <Compile Include="Controllers\RosterManagementController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\SpxI49FtzController.cs" />
     <Compile Include="Controllers\SurveyAreaController.cs" />
     <Compile Include="Controllers\TicketManagerController.cs" />
     <Compile Include="Controllers\UnAuthorizedController.cs" />
