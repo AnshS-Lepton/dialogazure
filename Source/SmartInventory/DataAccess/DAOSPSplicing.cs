@@ -25,6 +25,19 @@ namespace DataAccess
                 throw;
             }
         }
+        public List<SplicingRecord> getSplicingRecord()
+        {
+            try
+            {
+
+                var tst = repo.ExecuteProcedure<SplicingRecord>("get_incorrect_connections_json", new { }, true).ToList();
+                return tst;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public List<SplicingConectionInfo> getSplicingInfo(connectionInput objConInput, string listConnectors)
         {
             try
@@ -591,7 +604,8 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        
+       
+
         public DbMessage deleteConnection(string listConnection, int user_id)
         {
             try
