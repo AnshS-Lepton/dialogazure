@@ -262,6 +262,8 @@ namespace Models
         public int region_id { get; set; }
         public string agg1_site_id { get; set; }
         public string agg2_site_id { get; set; }
+        public int agg1_system_id { get; set; }
+        public int agg2_system_id { get; set; }
 
 
     }
