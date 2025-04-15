@@ -413,7 +413,7 @@
             $("#txtSiteId").val(ui.item.value);   // Set selected site_id
             $("#txtSiteName").val(ui.item.siteName); // Set corresponding site_name
             $("#hdnSystemId").val(ui.item.systemId); // Set system_id in hidden field
-                
+
                 getSegmentDetailsRoutewise(); // To bind segment details;
             }
             return false;
@@ -502,72 +502,16 @@
 
         });
 
-     
+
     $('#ddlregionid').change(function () {
 
-        var regionId = $(this).val(); // Get the selected RegionId
-        var agg1 = $("#txtagg1").val();
-        var agg2 = $("#txtagg2").val();
-
-        if (agg1 === "") {
-            alert("Please select Aggregate Site 1!");
-            return false;
-        }
-        if (agg2 === "") {
-            alert("Please select Aggregate Site 2!");
-            return false;
-        }
-
-        var segmentId = $(this).val(); // Get the selected SegmentId
-        var ringcap = $("#ddlringcapacity").val();
-        var topologyType = $("#ddltopologytype").val();
-        var nofsites = $("#ddlnofsites").val();
-
-        if (ringcap === "") {
-            alert("Please select ring capacity!");
-            return false;
-        }
-        if (topologyType === "") {
-            alert("Please select topology type!");
-            return false;
-        }
-        if (nofsites === "") {
-            alert("Please select number of sites!");
-            return false;
-        }
-
-        if (segmentId) {
-            $.ajax({
-                url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
-                type: 'GET',
-                data: { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap },
-                success: function (data) {
-                    var ringTypeDropdown = $('#ddlringtype');
-                    ringTypeDropdown.empty(); // Clear existing options
-                    ringTypeDropdown.append('<option value="">--Select Ring--</option>');
-
-                    // Append new options from response
-                    $.each(data, function (index, item) {
-                        ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
-                    });
-
-                    // **Update Chosen Dropdown**
-                    ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
-                },
-                error: function () {
-                    alert("Error fetching ring types. Please try again.");
-                }
-            });
-        } else {
-            // Clear the ring type dropdown if no segment is selected
-            $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
-        }
+        bindRingDetails();
     });
 
 
 
                 $('#ddlsegment').off("click").change(function () {
-     
+
                   //  event.preventDefault(); // Prevent form submission (if inside a form)
                     event.stopPropagation();
 
@@ -609,7 +553,7 @@
 
                 var TOPOTYPE = $("#ddltopologytype").val();
                 if (TOPOTYPE == "") {
-                    alert("Please select too type!");
+                    alert("Please select topology type!");
                     return;
                 }
 
@@ -740,11 +684,11 @@
                 }
             $("#dvProgress").show();
             $('#dvProgress').css('display', 'block');
-         
+
             $("#dvProgress").show();
             getAllSitelistItem();
-            
-          
+
+
         });
 
 
@@ -833,6 +777,13 @@
             var segmentid = $("#ddlsegment").val();
             var region = $("#ddlregionid option:selected").text();
             var segment = $("#ddlsegment option:selected").text();
+
+            debugger;
+            if (region == "--Select--") {
+                alert("Please select valid region!");
+                return;
+            }
+
             var ringcapacity = $("#ddlringcapacity").val();
             if (!ringcapacity) {
                 alert("Please select Ring Capacity.");
@@ -918,7 +869,7 @@
             // Hide modal
             $("#segmentModal").hide();
 
-               
+
                 // Now call the second AJAX request
 
 
@@ -955,7 +906,7 @@
 
             });
             $("#btnSaveRing").click(function () {
-            
+
             // Get input values
             var ringcode = $("#txtRingCode").val();
             var segmentid = $("#ddlsegment").val();
@@ -1154,7 +1105,69 @@
 
         });
 
+    function bindRingDetails(ring = null) {
+        var regionId = $('#ddlregionid').val(); // Get the selected RegionId
+ var agg1 = $("#txtagg1").val();
+ var agg2 = $("#txtagg2").val();
 
+ if (agg1 === "") {
+     alert("Please select Aggregate Site 1!");
+     return false;
+ }
+ if (agg2 === "") {
+     alert("Please select Aggregate Site 2!");
+     return false;
+ }
+
+ var segmentId = $('#ddlsegment').val(); // Get the selected SegmentId
+ var ringcap = $("#ddlringcapacity").val();
+ var topologyType = $("#ddltopologytype").val();
+ var nofsites = $("#ddlnofsites").val();
+
+ if (ringcap === "") {
+     alert("Please select ring capacity!");
+     return false;
+ }
+ if (topologyType === "") {
+     alert("Please select topology type!");
+     return false;
+ }
+ if (nofsites === "") {
+     alert("Please select number of sites!");
+     return false;
+ }
+
+ if (segmentId) {
+     $.ajax({
+         url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
+         type: 'GET',
+         data: { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap },
+         success: function (data) {
+             var ringTypeDropdown = $('#ddlringtype');
+             ringTypeDropdown.empty(); // Clear existing options
+             ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+
+             // Append new options from response
+             $.each(data, function (index, item) {
+                 ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+             });
+
+             debugger;
+             if (ring !=null)
+             {
+                 selectByText(ringTypeDropdown, ring);  }
+             // **Update Chosen Dropdown**
+             ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
+         },
+         error: function () {
+             alert("Error fetching ring types. Please try again.");
+         }
+     });
+ } else {
+     // Clear the ring type dropdown if no segment is selected
+     $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+ }
+    };
         function updateGrid() {
             var $dvsiteTable = $("#dvsiteTable");
             var $table = $("#siteTable");
@@ -1173,7 +1186,7 @@
             // Get all visible options
             visibleOptions.each(function () {
                 var fullText = $(this).text();
-                var ringId = $(this).val();
+                var ringId = $(this).data("ringid");
                 var siteid = $(this).data("siteid");
 
                 // Extract values
@@ -1190,10 +1203,10 @@
                     }
 
 
-
+                    debugger;
 
                     // Skip empty/default option
-                    if (ringId !== "") {
+                    if (ringId !== "" && ringId != 0) {
                         var row = "<tr>" +
                             "<td><button type='button' class='action-btn-success' data-id='" + ringId + "' data-siteid='" + siteid + "'>Remove</button></td>" +
                             "<td>" + siteName + "</td>" +
@@ -1261,7 +1274,7 @@
                 if (isfresh) {
                     $dropdown.find("option").each(function () {
                         var ringId = $(this).attr("data-ringid");
-               
+
                         if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === "" || ringId === undefined))
                         {
                             $(this).show();
@@ -1375,7 +1388,7 @@
 
             // Function to populate dropdowns
         function populateDropdowns(sites, isfresh = false) {
-  
+
                 var dropdownA = $("#ddlRingASite");
             var dropdownB = $("#ddlRingBSite");
             var dropdownOther = $("#ddlOtherRingSite");
@@ -1441,7 +1454,7 @@
 
                 function getSegmentDetailsRoutewise() {
 
-                   
+
     var systemId = $("#hdnSystemId").val() || 0;
 
             if (!systemId) {
@@ -1457,7 +1470,7 @@
          success: function (response) {
              if (response && response.lstsegment && response.lstsegment.length > 0) {
                  // Append new options
-         
+
                  var ddlsegment = $("#ddlsegment");
 
                  // Clear existing options
@@ -1469,10 +1482,13 @@
                      var optionHtml = '<option value="' + item.id + '" data-region_id="' + item.region_id + '" data-agg1_site_id="' + item.agg1_site_id + '"  data-agg2_site_id="' + item.agg2_site_id + '">' + item.segment_code+'</option>';
                      ddlsegment.append(optionHtml);
                      if (index == 0) {
+                      
                          var agg1 = item.agg1_site_id;
                          var agg2 = item.agg2_site_id;
                              $("#txtagg1").val(agg1);
-                             $("#txtagg2").val(agg2);
+                         $("#txtagg2").val(agg2);
+                         document.getElementById("hdnAgg1SystemId").value = item.agg1_system_id;
+                         document.getElementById("hdnAgg2SystemId").value = item.agg2_system_id;
                      }
 
                  });
@@ -1483,9 +1499,9 @@
                      $("#ddlsegment").trigger("chosen:updated");
                      selectByText("ddltopologytype", response.topology_type);
                      $("#ddltopologytype").trigger("chosen:updated");
-                     debugger;
+                     
                      if (response.topology_type == "Linear") { $("#ddlRingBSite").prop("disabled", true); }
-                     else { $("#ddlRingBSite").prop("disabled", false); } 
+                     else { $("#ddlRingBSite").prop("disabled", false); }
 
                      selectByText("ddlringcapacity", response.ring_capacity);
                      $("#ddlringcapacity").trigger("chosen:updated");
@@ -1494,34 +1510,42 @@
 
                      var ringTypeDropdown = $('#ddlringtype');
                      ringTypeDropdown.empty(); // Clear existing options
-                     ringTypeDropdown.append('<option value="">--Select Ring--</option>');
-                     // Append new options from response
-                     ringTypeDropdown.append('<option value="' + response.ring_id + '">' + response.ring + '</option>');
 
-                     selectByText("ddlringtype", response.ring);
-                     $("#ddlringtype").trigger("chosen:updated");
-                    
+                     //ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+                     //// Append new options from response
+                     //ringTypeDropdown.append('<option value="' + response.ring_id + '">' + response.ring + '</option>');
+
+                     //selectByText("ddlringtype", response.ring);
+                     //$("#ddlringtype").trigger("chosen:updated");
+
                      selectByText("ddlnofsites", response.no_of_sites.toString());
                      $("#ddlnofsites").trigger("chosen:updated");
 
                      $("#txtmaxdistancepeer").val(response.max_distance_peer);
 
-                     $("#txtagg1").val(response.agg_01);
-                     $("#agg_02").val(response.segment);
+                     //$("#txtagg1").val(response.agg_01);
+                     //$("#agg_02").val(response.segment);
+                     bindRingDetails(response.ring);
                     
                      getAllSitelistItem();
+                     setTimeout(() => {
 
-                     if (response.ring_a_site_id > 0) {
-                         selectByValue("ddlRingASite", response.ring_a_site_id.toString());
-                     }
-                     if (response.ring_b_site_id > 0) {
+                         selectByText("ddlringtype", response.ring);
+                         $("#ddlringtype").trigger("chosen:updated");
 
-                         selectByValue("ddlRingBSite", response.ring_b_site_id.toString());
-                        
-                     }
-                     $("#ddlRingASite").trigger("chosen:updated");
-                     $("#ddlRingBSite").trigger("chosen:updated");
-                     
+                         if (response.ring_a_site_id > 0) {
+                             selectByValue("ddlRingASite", response.ring_a_site_id.toString());
+                         }
+                         if (response.ring_b_site_id > 0) {
+
+                             selectByValue("ddlRingBSite", response.ring_b_site_id.toString());
+
+                         }
+                         $("#ddlRingASite").trigger("chosen:updated");
+                         $("#ddlRingBSite").trigger("chosen:updated");
+                     }, 2000); // This takes 2 seconds
+
+
 
 
                  }
@@ -1549,7 +1573,8 @@
     function selectByText(dropdownId, textToSelect) {
         let dropdown = document.getElementById(dropdownId);
         for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].text === textToSelect) {
+            if (dropdown.options[i].text.toLowerCase().includes(textToSelect.toLowerCase())) {
+
                 dropdown.selectedIndex = i;
                 break;
             }

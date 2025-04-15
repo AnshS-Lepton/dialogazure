@@ -619,7 +619,7 @@ namespace DataAccess.Admin
     {
         public List<TopologySegment> getSegmentDetailByIdList(int id, string aggregate1, string aggregate2)
         {
-            if (aggregate1 != "" && aggregate2 !="")
+            if (aggregate1 != "" && aggregate1 != null && aggregate2 !="" && aggregate2 != null)
             return repo.GetAll(m => m.region_id == id && m.agg1_site_id== aggregate1 && m.agg2_site_id== aggregate2).ToList();
             else
                 return repo.GetAll(m => m.region_id == id).ToList();
@@ -795,6 +795,26 @@ namespace DataAccess.Admin
             return repo.GetAll(m =>  m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToString().ToUpper()).ToList();
 
         }
+        public List<CableDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
+        {
+            if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))
+            {
+                return new List<CableDetails>(); // Return empty list instead of null
+            }
+
+            var sites = repo.ExecuteProcedure<CableDetails>(
+                 "fn_topology_get_cableroute",
+                 new
+                 {
+                     p_agg1site_id = topologySegment.agg1_site_id,
+                     p_agg2site_id = topologySegment.agg2_site_id,
+                     p_user_id = user_id
+                 },
+                 false
+             ).ToList();
+            return sites;
+
+        }
 
         public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
         {
@@ -839,7 +859,7 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper())).ToList();
+            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site != true).ToList();
 
             return sitname;
            

@@ -22,7 +22,8 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -910,6 +911,7 @@
     <Content Include="Content\images\icons\lib\Legend\v_spliceclosure.svg" />
     <Content Include="Content\images\icons\lib\Legend\WallMount.png" />
     <Content Include="Content\images\icons\lib\Legend\WallMount.svg" />
+    <Content Include="Content\images\icons\lib\small\PODag.png" />
     <Content Include="Content\images\icons\lib\small\Cabinet.png" />
     <Content Include="Content\images\icons\lib\small\Competitor.png" />
     <Content Include="Content\images\icons\lib\small\conduit.png" />
@@ -1636,6 +1638,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\15-04-2025.sql" />
     <Content Include="MigrationScripts\04-04-2025-dailog.sql" />
     <Content Include="MigrationScripts\02-04-2025-dailog.sql" />
     <Content Include="MigrationScripts\05-03-2025-dailog.sql" />
@@ -2446,6 +2449,7 @@
     <Content Include="Views\RingDetails\_SLDdiagramRingDetails.cshtml" />
     <Content Include="Views\Report\AddRingDetails.cshtml" />
     <Content Include="Views\SpxI49Ftz\Index.cshtml" />
+    <Content Include="Views\Report\_AddSegment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

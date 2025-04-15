@@ -961,6 +961,15 @@
                             <span class="icon-topology"></span>
                         </a>
                         <ul>
+                            @if (Model.lstUserModule.Contains("TPCS"))
+                            {
+                                <li>
+                                    <a href="#" class="iconBaricomoon" onclick="si.createSegment('','POD')" title="Create Segment">
+                                        <span class="icon-export_report"></span>
+                                    </a>
+                                </li>
+
+                            }
                             @if (Model.lstUserModule.Contains("TPLP"))
                             {
                                 <li>

@@ -242,6 +242,10 @@ namespace BusinessLogics.Admin
         {
             return new DASegment().GetSegment(objTopologyPlan);
         }
+        public List<CableDetails> GetCableRoute(TopologySegment objTopologyPlan, int user_id)
+        {
+            return new DASegment().GetCableRoute(objTopologyPlan, user_id);
+        }
         public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
         {
             return new DASegment().SaveSegment(objTopologyPlan);
