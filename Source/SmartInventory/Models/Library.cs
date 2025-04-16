@@ -274,6 +274,7 @@ namespace Models
         string ring_type { get; set; }
         string link_id { get; set; }
         string alias_name { get; set; }
+        string bh_status { get; set; }
     }
     public class PODMaster : PODTemplateMaster, IProjectSpecification, IOwnershipInfo, IAcquireFrom, IReference, IGeographicDetails, IAdditionalFields, ICustomCoordinate, ISite
     {

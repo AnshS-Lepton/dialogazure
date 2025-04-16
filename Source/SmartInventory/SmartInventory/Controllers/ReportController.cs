@@ -3897,9 +3897,8 @@ namespace SmartInventory.Controllers
                                     string fileName = layer.layer_title;
                                     string TempkmlFileName = fileName + ".kml";
                                     string finalkml = KMLHelper.GetKmlForEntityNew(dtReportKml, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+                                    finalkml = finalkml.Replace("&", "&amp;");
                                     string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
-
-
 
                                     if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
                                     {
@@ -7187,6 +7186,7 @@ namespace SmartInventory.Controllers
 
                                     string TempkmlFileName = fileName + ".kml";
                                     string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objAssociationEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+                                    finalkml = finalkml.Replace("&", "&amp;");
                                     dtReport = null;
                                     string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
                                     System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
