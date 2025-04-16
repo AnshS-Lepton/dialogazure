@@ -252,8 +252,9 @@ namespace Models
         public int ringid { get; set; }
         public string sitename { get; set; }
 		public decimal sitedistance { get; set; }
+        public bool is_agg_site { get; set; }
 
-	}
+    }
 
     public class Topologysegment
     {
