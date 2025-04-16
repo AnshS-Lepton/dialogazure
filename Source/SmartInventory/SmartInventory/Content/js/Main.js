@@ -19592,7 +19592,8 @@ var Main = function () {
         let requiredCoreValue = $("#txtRequiredCore").val().trim();
 
         // Check for invalid values (only zeros or leading zeros)
-        if (/^0+$/.test(requiredCoreValue) || /^0\d+/.test(requiredCoreValue)) {
+        //if (/^0+$/.test(requiredCoreValue) || /^0\d+/.test(requiredCoreValue)) {
+        if (!/^[1-9][0-9]*$/.test(requiredCoreValue)) {
             alert('Invalid Required Core');
             $("#txtRequiredCore").addClass("error-border");
             isValid = false;
