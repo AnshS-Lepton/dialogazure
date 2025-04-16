@@ -580,6 +580,11 @@ namespace Models
 
     }
 
+    public class CableDetails
+    {
+        public string network_id { get; set; }
+        public string cable_name { get; set; }
+    }
     public class SiteMaster
     {
         public int system_id { get; set; }

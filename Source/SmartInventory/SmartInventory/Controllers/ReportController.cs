@@ -13562,13 +13562,39 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(segmentDropdownData, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetSegmentsCode()
-        {
-            // Fetch segments based on regionId
-            var segmentcode = new BLProject().GetSegmentCode();
+        //public JsonResult GetSegmentsCode()
+        //{
+        //    // Fetch segments based on regionId
+        //    var segmentcode = new BLProject().GetSegmentCode();
+        //    return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        //}
 
-            // Return as JSON
-            return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        public ActionResult GetSegmentsCode()
+        {
+            PageMessage objMsg = new PageMessage();
+            PODMaster pODMaster = new PODMaster();
+            try
+            {
+            // Fetch segments based on regionId
+                var segmentcode = new BLProject().GetSegmentCode();
+              //  pODMaster.segment = segmentcode;
+                
+                if (segmentcode == null)
+                {
+
+                    pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                    pODMaster.objPM.message = "Failed to fetch segment code.";
+
+                }
+
+            }
+            catch
+            {
+                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                pODMaster.objPM.message = "Failed to fetch segment code.";
+            }
+
+            return PartialView("_AddSegment", pODMaster);
         }
 
         public JsonResult Gettopologygetsites(int systemId, int ringId, int distance)
@@ -13720,6 +13746,16 @@ namespace SmartInventory.Controllers
             return Json(siteList, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetCableNetworldata(string agg1_site_id, string agg2_site_id)
+        {
+            TopologySegment topologySegment = new TopologySegment();
+            topologySegment.agg1_site_id = agg1_site_id;
+            topologySegment.agg2_site_id = agg2_site_id;
+
+            var cableList = new BLProject().GetCableRoute(topologySegment,Convert.ToInt32(Session["user_id"]));
+           
+            return Json(cableList, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult GetSiteIds(string term)
         {
             var siteList = new BLProject().getSiteIdList(term);
@@ -13755,7 +13791,7 @@ namespace SmartInventory.Controllers
             var result = sitenameList.Select(s => new
             {
                 label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
-                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                Name = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
                 systemId = s.system_id // Handle null system_id
             }).ToList();
 

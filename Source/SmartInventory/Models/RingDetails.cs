@@ -40,7 +40,8 @@ namespace Models
         public decimal ring_a_site_distance { get; set; }
         [NotMapped]
         public decimal ring_b_site_distance { get; set; }
-
+        public string Peer1 { get; set; }
+        public string Peer2 { get; set; }
 
 
 

@@ -152,8 +152,8 @@ namespace SmartInventory.Controllers
             string region_id = "";
             string segment_code = "";
             string ring_code = "";
-            //objRingFilter.objGridAttributes.pageSize = 0;
-            //objRingFilter.objGridAttributes.currentPage = 0;
+            objRingFilter.objGridAttributes.pageSize = 0;
+            objRingFilter.objGridAttributes.currentPage = 0;
             //objRingFilter.objGridAttributes.sort = "";
             //objRingFilter.objGridAttributes.orderBy = "";
             if (objRingFilter.objRingDetails != null)
@@ -195,9 +195,11 @@ namespace SmartInventory.Controllers
             dtReport.Columns["AGG2_SITE_ID"].SetOrdinal(6);
             dtReport.Columns["RING_CAPACITY"].SetOrdinal(7);
             dtReport.Columns["DESCRIPTION"].SetOrdinal(8);
-            dtReport.Columns["bh_status"].SetOrdinal(9); ;
-            dtReport.Columns["ring_a_site_distance"].SetOrdinal(10);
-            dtReport.Columns["ring_b_site_distance"].SetOrdinal(11);
+            dtReport.Columns["bh_status"].SetOrdinal(9);
+            dtReport.Columns["Peer1"].SetOrdinal(10);
+            dtReport.Columns["Peer2"].SetOrdinal(11);
+            dtReport.Columns["ring_a_site_distance"].SetOrdinal(12);
+            dtReport.Columns["ring_b_site_distance"].SetOrdinal(13);
             dtReport.Columns["region_name"].ColumnName = "Region";
             dtReport.Columns["SEGMENT_CODE"].ColumnName = "Segment";
             dtReport.Columns["RING_CODE"].ColumnName = "Ring Code";
@@ -208,8 +210,10 @@ namespace SmartInventory.Controllers
             dtReport.Columns["RING_CAPACITY"].ColumnName = "Capacity";
             dtReport.Columns["DESCRIPTION"].ColumnName = "Description";
             dtReport.Columns["bh_status"].ColumnName = "Site Status of the Access Ring";
-            dtReport.Columns["ring_a_site_distance"].ColumnName = "Distances From AGG_A (KM) ";
-            dtReport.Columns["ring_b_site_distance"].ColumnName = "Distances From AGG_B (KM)";
+            dtReport.Columns["Peer1"].ColumnName = "Peer Site 1";
+            dtReport.Columns["Peer2"].ColumnName = "Peer Site 2";
+            dtReport.Columns["ring_a_site_distance"].ColumnName = "Distances From Peer Site 1 (KM) ";
+            dtReport.Columns["ring_b_site_distance"].ColumnName = "Distances From Peer Site 2 (KM)";
             var filename = "RingDetails";
             
             ExportRingDetails(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));

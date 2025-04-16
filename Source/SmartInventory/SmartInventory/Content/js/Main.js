@@ -10507,10 +10507,10 @@ var Main = function () {
 
                             var ptObj = null;
                             if (resp.lstconnectedelements[i].is_agg_site != null && resp.lstconnectedelements[i].is_agg_site == true) {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.lstconnectedelements[i].connected_entity_type.toUpperCase() + 'ag.png', system_id, en_type, 0, network_id, true);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/small/' + resp.lstconnectedelements[i].connected_entity_type.toUpperCase() + 'ag.png', system_id, en_type, 0, network_id, true);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.lstconnectedelements[i].is_virtual ? 'v_' : '') + resp.lstconnectedelements[i].connected_entity_type + '.png', system_id, en_type, 0, network_id, true);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/small/' + (resp.lstconnectedelements[i].is_virtual ? 'v_' : '') + resp.lstconnectedelements[i].connected_entity_type + '.png', system_id, en_type, 0, network_id, true);
                             }
                             // add info window
                             var contentString = '<div id="content">' +
@@ -20098,6 +20098,7 @@ var Main = function () {
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
     }
+
     this.showRingDetails =function () {
         $(app.DE.InfoDiv).hide();
         $(app.DE.SplicingDiv).hide();
@@ -22126,6 +22127,14 @@ var Main = function () {
         var formURL = "Report/SiteTopology";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = " Topology Plan";
+        popup.LoadModalDialog('PARENT', formURL, {
+            systemId: _systemId, eType: _entityType
+        }, titleText, 'modal-xl');
+    }
+    this.createSegment = function (_systemId, _entityType) {
+
+        var formURL = "Report/GetSegmentsCode";
+        var titleText = " Create Segment";
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType
         }, titleText, 'modal-xl');
