@@ -1155,7 +1155,7 @@
              debugger;
              if (ring !=null)
              {
-                 selectByText(ringTypeDropdown, ring);  }
+                 selectByText("ddlringtype", ring);  }
              // **Update Chosen Dropdown**
              ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
          },
@@ -1187,6 +1187,7 @@
             visibleOptions.each(function () {
                 var fullText = $(this).text();
                 var ringId = $(this).data("ringid");
+                var is_agg_site = $(this).data("is_agg_site");
                 var siteid = $(this).data("siteid");
 
                 // Extract values
@@ -1206,7 +1207,7 @@
                     debugger;
 
                     // Skip empty/default option
-                    if (ringId !== "" && ringId != 0) {
+                    if (ringId !== "" && ringId != 0 && is_agg_site == false) {
                         var row = "<tr>" +
                             "<td><button type='button' class='action-btn-success' data-id='" + ringId + "' data-siteid='" + siteid + "'>Remove</button></td>" +
                             "<td>" + siteName + "</td>" +
@@ -1245,7 +1246,15 @@
             }
         }
 
-        function getSiteListItemRingwise(isfresh = false) {
+    function getSiteListItemRingwise(isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
+        if (ring_a_site_id != null)
+        {
+            ring_b_site_id = ring_a_site_id;
+            ring_a_site_id = isfresh;
+            isfresh = false;
+
+        }
+        debugger;
     var $dvsiteTable = $("#dvsiteTable");
     var $table = $("#siteTable");
     var $tbody = $table.find("tbody");
@@ -1270,20 +1279,25 @@
             var ddltopologytype = $("#ddltopologytype").val();
 
             function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh  = true) {
-
+    
                 if (isfresh) {
                     $dropdown.find("option").each(function () {
                         var ringId = $(this).attr("data-ringid");
-
-                        if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === "" || ringId === undefined))
+                        var is_agg_site = $(this).attr("data-is_agg_site");
+                        if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === undefined))
                         {
                             $(this).show();
                             if (hideOthers) visibleCount++;
                         }
-                        else if (ddltopologytype != "Dual Home" && (ringId === "0" || ringId === "" || ringId === undefined)) {
+                        else if (ddltopologytype != "Dual Home" && (ringId === condition || ringId === undefined)) {
                             $(this).show();
                             if (hideOthers) visibleCount++;
-                        } else {
+                        }
+                        else if (((ringId == "0") && ddltopologytype != "Dual Home" || ringId === undefined)) {
+                            $(this).show();
+                            if (hideOthers) visibleCount++;
+                        }
+                        else {
                             $(this).hide();
                         }
                     });
@@ -1291,14 +1305,24 @@
                 else {
                     $dropdown.find("option").each(function () {
                         var ringId = $(this).attr("data-ringid");
-                        if (ddltopologytype == "Dual Home" && condition !="0" && (ringId === condition || ringId === "" || ringId === undefined)) {
+                        var is_agg_site = $(this).attr("data-is_agg_site");
+                    
+                        if (ddltopologytype == "Dual Home" && condition != "0" && (ringId === condition || ringId === undefined)) {
                             $(this).show();
                             if (hideOthers) visibleCount++;
                         }
-                        else if (ddltopologytype != "Dual Home" && (ringId === condition || ringId === "0" || ringId === "" || ringId === undefined)) {
+                        else if (ddltopologytype != "Dual Home" && (ringId === condition || ringId === undefined)) {
+
+                            
                             $(this).show();
                             if (hideOthers) visibleCount++;
-                        } else {
+                        }
+                        else if (((ringId == "0") && is_agg_site === "true" || ringId === undefined)) {
+                            $(this).show();
+                            if (hideOthers) visibleCount++;
+                        }
+
+                        else {
                             $(this).hide();
                         }
                     });
@@ -1309,25 +1333,32 @@
     //--- Start Case First ---
             if (!isfresh) {
                 filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
+                filterDropdownOptions($dropdownB, selectedRingId, true, isfresh);
             }
             else {
                 filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
-            }
+                filterDropdownOptions($dropdownB, selectedRingId, true, isfresh);
+        }
+
+        debugger;
     //--- End Case First ---
     //--- Start Case Second ---
     if (visibleCount === 1 && !isfresh) {
-        filterDropdownOptions($dropdownA, "0", true, isfresh);
-        filterDropdownOptions($dropdownB, "0", false, isfresh);
+        //filterDropdownOptions($dropdownA, "00.0", true, isfresh);
+        //filterDropdownOptions($dropdownB, "00.0", true, isfresh);
         if (visibleCount==2)
         secondaryVisibleCount++;
-    }
+        }
+
+        debugger;
     //--- End Case Second ---
     //--- Start Case Third ---
-            if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (secondaryVisibleCount === 1 || isfresh)) {
+        if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh))
+        {
         $ddlOtherRingSite.find("option").each(function () {
             var ringId = $(this).attr("data-ringid");
+            var is_agg_site = $(this).attr("data-is_agg_site");
+            debugger;
             if (ringId !== selectedRingId && ringId !== "0" && ringId !== "" || ringId === undefined) {
                 $(this).show();
                 thirdCount++;
@@ -1337,13 +1368,23 @@
         });
 
     }
-
+        debugger;
             if (thirdCount > 1 && selectedRingId !== null || isfresh) {
 
         updateGrid();
     }
     //--- End Case Third ---
 
+       
+
+        if (ring_a_site_id > 0) {
+            selectByValue("ddlRingASite", ring_a_site_id.toString());
+        }
+        if (ring_b_site_id > 0) {
+
+            selectByValue("ddlRingBSite", ring_b_site_id.toString());
+
+        }
     // Refresh dropdowns
     $dropdownA.trigger("chosen:updated");
             $dropdownB.trigger("chosen:updated");
@@ -1351,8 +1392,7 @@
 }
 
 
-    function getAllSitelistItem() {
-
+    function getAllSitelistItem(ring_a_site_id=null, ring_b_site_id=null) {
 
     // Get selected values
             var topologytype = $("#ddltopologytype").val();
@@ -1373,7 +1413,7 @@
          success: function (response) {
              $("#dvProgress").hide();
             if (response && response.lsttopologygetsites && response.lsttopologygetsites.length > 0) {
-                populateDropdowns(response.lsttopologygetsites);
+                populateDropdowns(response.lsttopologygetsites, ring_a_site_id, ring_b_site_id);
             } else {
                 resetDropdowns();
             }
@@ -1387,7 +1427,7 @@
 }
 
             // Function to populate dropdowns
-        function populateDropdowns(sites, isfresh = false) {
+    function populateDropdowns(sites, isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
 
                 var dropdownA = $("#ddlRingASite");
             var dropdownB = $("#ddlRingBSite");
@@ -1403,13 +1443,14 @@
                 dropdownB.append('<option value="">--Select--</option>');
                 // Append new options
                 $.each(sites, function (index, item) {
-                    var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"  data-siteid="' + item.siteid + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
+                    var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"   data-siteid="' + item.siteid + '" data-is_agg_site="' + item.is_agg_site + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
                     dropdownA.append(optionHtml);
                     dropdownB.append(optionHtml);
                     dropdownOther.append(optionHtml);
                 });
 
-            getSiteListItemRingwise(isfresh);
+        debugger;   
+        getSiteListItemRingwise(isfresh, ring_a_site_id, ring_b_site_id);
                 // Refresh dropdowns
                 dropdownA.trigger("chosen:updated");
             dropdownB.trigger("chosen:updated");
@@ -1527,7 +1568,7 @@
                      //$("#agg_02").val(response.segment);
                      bindRingDetails(response.ring);
                     
-                     getAllSitelistItem();
+                     getAllSitelistItem(response.ring_a_site_id, response.ring_b_site_id);
                      setTimeout(() => {
 
                          selectByText("ddlringtype", response.ring);
