@@ -963,7 +963,6 @@ $function$
 
 -----------------------------------------------------------------------------------------------------------
 
-
 CREATE OR REPLACE FUNCTION public.fn_get_core_planner_validation(source_network_id character varying, destination_network_id character varying, buffer integer, required_core integer, p_user_id integer)
  RETURNS SETOF json
  LANGUAGE plpgsql
@@ -991,11 +990,11 @@ BEGIN
 	P_DESTINATION_SYSTEM_ID:=0;
 	FIBER_ODF_COUNT:=0;
     FIBER_CABLE_COUNT:=0;
-     --TRUNCATE TABLE TEMP_CABLE_ROUTES; 
+    -- TRUNCATE TABLE TEMP_CABLE_ROUTES; 
      --TRUNCATE TABLE TEMP_ISP_PORT_INFO;
      --TRUNCATE TABLE TEMP_ISP_PORT_INFO; 
      -- TRUNCATE TABLE TEMP_ROUTE_CONNECTION; 
-     -- TRUNCATE table connected_fiberlink_cable;
+      --TRUNCATE table connected_fiberlink_cable;
     
 -- CREATE TEMPORARY TABLES
         CREATE TEMP TABLE  TEMP_CABLE_ROUTES(
@@ -1054,7 +1053,8 @@ BEGIN
      is_valid boolean default true,
      link_system_id INTEGER,
 	 a_end_status_id INTEGER,
-	 b_end_status_id INTEGER
+	 b_end_status_id INTEGER,
+	 error_msg VARCHAR null
 	) ON COMMIT DROP;
 
     -- CLEAR PREVIOUS LOGS FOR THE USER
@@ -1112,12 +1112,9 @@ BEGIN
 		FROM POINT_MASTER
 		WHERE COMMON_NAME IN(DESTINATION_NETWORK_ID) AND ENTITY_TYPE in('SpliceClosure');
 	end if;
-	RAISE NOTICE 'P_DESTINATION_SYSTEM_ID1: %', P_DESTINATION_SYSTEM_ID;
-RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
+
 
       IF P_DESTINATION_SYSTEM_ID <> 0 and P_SOURCE_SYSTEM_ID <> 0 then
-      	RAISE NOTICE 'P_DESTINATION_SYSTEM_ID2: %', P_DESTINATION_SYSTEM_ID;
-        RAISE NOTICE 'P_SOURCE_SYSTEM_ID2: %', P_SOURCE_SYSTEM_ID;
        
 	    INSERT INTO TEMP_ISP_PORT_INFO (SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, 
 	    PARENT_NETWORK_ID,   PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE)
@@ -1281,12 +1278,8 @@ RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
 		WHERE 
 		    FIBER_NUMBER = PREV_FIBER + 1 OR FIBER_NUMBER = NEXT_FIBER - 1
 		ORDER BY 
-		    tcr.SEQ, FIBER_NUMBER
-		;
+		    tcr.SEQ, FIBER_NUMBER;
 
-		/*SELECT CABLE_ID, FIBER_NUMBER, A_END_STATUS_ID, B_END_STATUS_ID, IS_A_END_THROUGH_CONNECTIVITY, IS_B_END_THROUGH_CONNECTIVITY, P_USER_ID ,LINK_SYSTEM_ID
-		FROM ATT_DETAILS_CABLE_INFO WHERE CABLE_ID IN (SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES WHERE USER_ID = P_USER_ID) AND LINK_SYSTEM_ID = 0
-		ORDER BY FIBER_NUMBER;*/
 
 		--GET THE CONNECTION OF CABLE FROM THIS ROUTE
 		INSERT INTO TEMP_ROUTE_CONNECTION(
@@ -1334,15 +1327,15 @@ RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
 		FROM TEMP_ROUTE_CONNECTION A
 		WHERE core_planner_fiber_info.FIBER_NUMBER=A.SOURCE_PORT_NO AND A.SOURCE_ENTITY_TYPE='Cable'
 		AND core_planner_fiber_info.CABLE_ID = A.SOURCE_SYSTEM_ID
-		AND A.SOURCE_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) and core_planner_fiber_info.USER_ID = P_USER_ID; 
+		AND A.SOURCE_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 
 
 		UPDATE core_planner_fiber_info SET IS_VALID=FALSE
 		FROM TEMP_ROUTE_CONNECTION A
 		WHERE core_planner_fiber_info.FIBER_NUMBER=A.DESTINATION_PORT_NO 
 		AND A.DESTINATION_ENTITY_TYPE='Cable' AND core_planner_fiber_info.CABLE_ID = A.DESTINATION_SYSTEM_ID
-		AND A.DESTINATION_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) and core_planner_fiber_info.USER_ID = P_USER_ID; 
+		AND A.DESTINATION_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 
 	
---update TEMP_ISP_PORT_INFO is_valid FALSE which already connected to others cable
+        --update TEMP_ISP_PORT_INFO is_valid FALSE which already connected to others cable
 
 		UPDATE TEMP_ISP_PORT_INFO SET IS_VALID=FALSE
 		FROM TEMP_ROUTE_CONNECTION A
@@ -1401,10 +1394,10 @@ RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
 	      ON subqu.DESTINATION_SYSTEM_ID = adi.cable_id and subqu.DESTINATION_port_no = adi.fiber_number
 	    WHERE adi.link_system_id <> 0
 	  ) outqu
-	WHERE tpi.parent_system_id = outqu.parent_system_id
+	  WHERE tpi.parent_system_id = outqu.parent_system_id
 	  AND tpi.PORT_NUMBER = outqu.source_port_no;
 
-		UPDATE TEMP_ISP_PORT_INFO AS even
+		 UPDATE TEMP_ISP_PORT_INFO AS even
 		 SET is_valid = false
 		 FROM TEMP_ISP_PORT_INFO AS odd
 		 WHERE 
@@ -1423,8 +1416,6 @@ RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
 	    AND odd.port_number = even.port_number - 1
 	    AND odd.parent_system_id = even.parent_system_id
 	    AND odd.is_valid = true;
-
-------------------------------------------------------------------------------------------
 	   
 	 	 INSERT INTO connected_fiberlink_cable (cable_id, fiber_number,link_system_id,
 	 	 a_end_status_id,b_end_status_id )
@@ -1436,68 +1427,51 @@ RAISE NOTICE 'P_SOURCE_SYSTEM_ID1: %', P_SOURCE_SYSTEM_ID;
 		 and ( a_end_status_id = 2 or b_end_status_id =2 );
 		 
 		for v_rec in (select edge_targetid  from TEMP_CABLE_ROUTES order by seq) 
-		loop
-		 		
-			
-		/*update connected_fiberlink_cable set is_valid = false
-		where cable_id||'Cable'||fiber_number 
-		in(select destination_system_id||destination_entity_type||destination_port_no
-		from TEMP_ROUTE_CONNECTION 
-		where source_system_id=v_rec.edge_targetid and
-		source_system_id||source_entity_type||source_port_no=
-		cable_id||'Cable'||fiber_number and is_valid=false);
-		
-		update connected_fiberlink_cable set is_valid = false
-		where cable_id||'Cable'||fiber_number 
-		in(select destination_system_id||destination_entity_type||destination_port_no
-		from TEMP_ROUTE_CONNECTION 
-		where source_system_id=v_rec.edge_targetid and
-		source_system_id||source_entity_type||source_port_no=
-		cable_id||'Cable'||fiber_number and is_valid=false);*/
+		loop		 		
 			
 		WITH invalid_sources AS (
-       SELECT ci.destination_system_id,
+        SELECT ci.destination_system_id,
            ci.destination_port_no,
-           ci.destination_entity_type
-    FROM temp_route_connection ci
-    JOIN connected_fiberlink_cable src
-      ON src.cable_id = ci.source_system_id
-     AND src.fiber_number = ci.source_port_no
-     AND src.is_valid = false
-    WHERE ci.source_entity_type = 'Cable' and ci.source_system_id = v_rec.edge_targetid
-)
-UPDATE connected_fiberlink_cable dst
-SET is_valid = false
-FROM invalid_sources t
-WHERE dst.cable_id = t.destination_system_id
-  AND dst.fiber_number = t.destination_port_no
-  AND t.destination_entity_type = 'Cable';
- 
- WITH invalid_destinations AS (
-       SELECT ci.source_system_id,
-           ci.source_port_no,
-           ci.source_entity_type
-    FROM temp_route_connection ci
-    JOIN connected_fiberlink_cable src
-      ON src.cable_id = ci.destination_system_id
-     AND src.fiber_number = ci.source_port_no
-     AND src.is_valid = false
-    WHERE ci.destination_entity_type = 'Cable' and ci.destination_system_id = v_rec.edge_targetid
-)
-UPDATE connected_fiberlink_cable dst
-SET is_valid = false
-FROM invalid_destinations t
-WHERE dst.cable_id = t.source_system_id
-  AND dst.fiber_number = t.source_port_no
-  AND t.source_entity_type = 'Cable';
+		   ci.destination_entity_type
+		    FROM temp_route_connection ci
+		    JOIN connected_fiberlink_cable src
+		      ON src.cable_id = ci.source_system_id
+		     AND src.fiber_number = ci.source_port_no
+		     AND src.is_valid = false
+		    WHERE ci.source_entity_type = 'Cable' and ci.source_system_id = v_rec.edge_targetid
+		)
+		UPDATE connected_fiberlink_cable dst
+		SET is_valid = false, error_msg ='Occupied Connection'
+		FROM invalid_sources t
+		WHERE dst.cable_id = t.destination_system_id
+		  AND dst.fiber_number = t.destination_port_no
+		  AND t.destination_entity_type = 'Cable';
+		 
+		 WITH invalid_destinations AS (
+		       SELECT ci.source_system_id,
+		           ci.source_port_no,
+		           ci.source_entity_type
+		    FROM temp_route_connection ci
+		    JOIN connected_fiberlink_cable src
+		      ON src.cable_id = ci.destination_system_id
+		     AND src.fiber_number = ci.source_port_no
+		     AND src.is_valid = false
+		    WHERE ci.destination_entity_type = 'Cable' and ci.destination_system_id = v_rec.edge_targetid
+		)
+		UPDATE connected_fiberlink_cable dst
+		SET is_valid = false,error_msg ='Occupied Connection'
+		FROM invalid_destinations t
+		WHERE dst.cable_id = t.source_system_id
+		  AND dst.fiber_number = t.source_port_no
+		  AND t.source_entity_type = 'Cable';
 	   
 		end loop;
 	
-		  update CORE_PLANNER_FIBER_INFO t1 set is_valid = false 
+		  update CORE_PLANNER_FIBER_INFO t1 set is_valid = false ,error_msg = t2.error_msg 
 		  from connected_fiberlink_cable t2 where t1.cable_id = t2.cable_id and 
 		  t1.fiber_number = t2.fiber_number and t2.is_valid = false 
 		  and t1.user_id =p_user_id;
-		 
+		 				 
 		 
      	 SELECT (SELECT COUNT(*)FROM (
       	 SELECT parent_system_id  FROM TEMP_ISP_PORT_INFO 
@@ -1512,9 +1486,11 @@ WHERE dst.cable_id = t.source_system_id
 		END IF;		   		 		   
           
 	 
-		WITH CABLECTE AS(
+		 WITH CABLECTE AS(
 		SELECT CABLE_ID,SUM(CASE WHEN link_system_id = 0 THEN 1 ELSE 0 END) AS AVAILABLE_CORE
-		FROM CORE_PLANNER_FIBER_INFO WHERE USER_ID = P_USER_ID and is_valid = true GROUP BY CABLE_ID
+		FROM att_details_cable_info adi
+		join TEMP_CABLE_ROUTES tcr on tcr.edge_targetid = adi.cable_id WHERE USER_ID = P_USER_ID
+		GROUP BY CABLE_ID
 		)
 		UPDATE TEMP_CABLE_ROUTES 
 		SET IS_VALID = FALSE, 
@@ -1530,18 +1506,34 @@ WHERE dst.cable_id = t.source_system_id
 			V_MESSAGE:='Required Core is not available';
 		END IF;	
 	
+	    UPDATE TEMP_CABLE_ROUTES tcr
+		SET is_valid = false,
+		MESSAGE = 'Adjacent Cores are not available in C1 Or C2!'
+		FROM att_details_cable_info adi
+		LEFT JOIN CORE_PLANNER_FIBER_INFO cpfi
+		    ON cpfi.cable_id = adi.cable_id AND cpfi.is_valid = true and cpfi.user_id = p_user_id
+		WHERE tcr.edge_targetid = adi.cable_id
+		  AND  cpfi.cable_id IS NULL ;
 		 
-	 	IF V_IS_VALID AND NOT EXISTS(SELECT 1 FROM CORE_PLANNER_FIBER_INFO 
-	 	WHERE IS_VALID = true and user_id= p_user_id)
-		THEN
+	 	IF V_IS_VALID AND EXISTS(SELECT cable_id FROM CORE_PLANNER_FIBER_INFO
+              WHERE user_id = p_user_id
+			  GROUP BY cable_id
+				HAVING SUM(CASE 
+             	WHEN is_valid = false AND error_msg = 'Occupied Connection' THEN 1 
+             ELSE 0 
+           END) = COUNT(*))
+		then
+		
 			V_IS_VALID:=FALSE;
 			V_MESSAGE:='Unable to Find Connectivity Cores in the Specified Cables!';
-		END IF;	
+		END IF;
+	
 	  	   
-	 IF V_IS_VALID AND ((select COUNT(DISTINCT cable_id) from CORE_PLANNER_FIBER_INFO where is_valid = true and user_id= p_user_id ) != (SELECT COUNT(*) FROM TEMP_CABLE_ROUTES )) 
+	 IF V_IS_VALID AND ((select COUNT(DISTINCT cable_id) from CORE_PLANNER_FIBER_INFO 
+	 where is_valid = true  and user_id = p_user_id) != (SELECT COUNT(*) FROM TEMP_CABLE_ROUTES )) 
 	 THEN
 	        V_IS_VALID := FALSE;
-	        V_MESSAGE := 'Adjacent Cores are not available in C1 Or C2 or BOTH!';
+	        V_MESSAGE := 'Adjacent Cores are not available in C1 Or C2!';
 	 END IF;
 
 		INSERT INTO 
@@ -1571,10 +1563,11 @@ ALTER FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int
 GRANT ALL ON FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int4, int4) TO public;
 GRANT ALL ON FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int4, int4) TO postgres;
 
-
 -----------------------------------------------------------------------------------------------------
 
 alter table core_planner_fiber_info add column seq int4 not NULL;
+
+update global_settings set value=0 where key='IsGeometryUpdateOnAssociationAllowed';
 
 
 --------------------------------------------------------------------------------------------------------
