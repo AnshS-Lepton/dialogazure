@@ -410,7 +410,7 @@ function validate() {
     */
     var number = Number($("#txtRequiredCore").val());
 
-    if (!/^[1-9][0-9]*$/.test(value) || isNaN(number)) {
+    if (!/^[1-9][0-9]*$/.test(number) || isNaN(number)) {
         $("#btnSubmit").prop("disabled", false);
         $("#txtRequiredCore").addClass("error-border");
         alert("Invalid input: " + "Please enter a valid number.");
