@@ -223,7 +223,7 @@
             @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
             <!-- Filters Section -->
             <div class="filter-container">
-                <label>Region <i class="clsMandatory">*</i> :</label>
+                <label>Region:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
                     new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Region--",
@@ -239,7 +239,7 @@
 
 
 
-                <label class="white-space">Ring ID:</label>
+                <label class="white-space">Ring Code:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
                     new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
                     "--Select Ring--",
@@ -247,7 +247,7 @@
 
                 <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
                 <button id="btnExportLinks" class="btn btn-success ml-auto">Export</button>
-                <input type="button" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+                <input type="submit" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
 
             </div>
 
@@ -319,13 +319,15 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
 
     $("#btnRingReset").on("click", function () {
         document.getElementById("ddllstRingName").selectedIndex = 0;
+        $("#ddllstRingName").trigger("chosen:updated");
         document.getElementById("ddllstSegmentName").selectedIndex = 0;
+        $("#ddllstSegmentName").trigger("chosen:updated");
         document.getElementById("ddllstRegionName").selectedIndex = 0;
-        si.showRingDetails();
+        $("#ddllstRegionName").trigger("chosen:updated");
     });
 
     $("#btnExportLinks").on("click", function () {
-        window.location = appRoot + 'RingDetails/ExportRingDetails';        
+        window.location = appRoot + 'RingDetails/ExportRingDetails';
     });
     function validateSearch(event) {
         debugger;
@@ -341,7 +343,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
         }
         return true;
     }
- 
+
 
 </script>
 

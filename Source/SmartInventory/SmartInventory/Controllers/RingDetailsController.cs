@@ -54,7 +54,7 @@ namespace SmartInventory.Controllers
             }
             if (objRingFilter.objRingDetails != null)
             {
-                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType)) 
+                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName)) 
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
