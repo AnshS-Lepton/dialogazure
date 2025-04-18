@@ -226,7 +226,7 @@
                 <label>Region:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
                     new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select Region--",
+                    "--Select--",
                     new { @class = "chosen-select", @id = "ddllstRegionName" })
 
 
@@ -234,7 +234,7 @@
                 <label>Segment:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
                     new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select Segment--",
+                    "--Select--",
                     new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
 
 
@@ -242,7 +242,7 @@
                 <label class="white-space">Ring Code:</label>
                 @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
                     new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select Ring--",
+                    "--Select--",
                     new { @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
 
                 <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
