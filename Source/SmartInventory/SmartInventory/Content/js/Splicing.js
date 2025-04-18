@@ -1432,110 +1432,68 @@
     this.deleteConnection = function (connections, source, target) {
         var source = source;
         var target = target;
-        var datalinkid = source.attr('data-link-id');
-
-        if (datalinkid != 0 && datalinkid != '') {
-            confirm("Fiber link also will be disconnected when un spliced do you want to continue?", function () {
-                ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
-                    app.isMoved = false;
-                    if (resp.status == "OK") {
-                        $('#SlideMessage').text(resp.message);
-                        var vacantColor = $('#hdnVacantColor').val();
-                        source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                        target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                        source.parent().parent().children('.customer').css('background-color', vacantColor);
-                        target.parent().parent().children('.customer').css('background-color', vacantColor);
-                        var sourceAttributes = source.data();
-                        var targetAttributes = target.data();
-                        var currentIndex = app.currentConnections.findIndex(function (m) {
-                            return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
-                                || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
-                        });
-                        app.currentConnections.splice(currentIndex, 1);
-                        
-                        if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
-                            app.getAvailablePorts();
-                        }
-                        $(".alert-info").slideDown(300);
-                        setTimeout(function () {
-                            $(".alert-info").slideUp(300);
-                        }, 3000)
-                        app.updateTrayPort(false);
-                        if (isp != null && app.isCPEWindow) {
-                            isp.getCPEConnections();
-                        }
-                    }
-                }, true, true);
-            }, function () {
-                app.createConnection(source[0]?.id, target[0].id);
-            });
-        } else {
-            ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
-                app.isMoved = false;
-                if (resp.status == "OK") {
-                    $('#SlideMessage').text(resp.message);
-                    var vacantColor = $('#hdnVacantColor').val();
-                    source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                    target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                    source.parent().parent().children('.customer').css('background-color', vacantColor);
-                    target.parent().parent().children('.customer').css('background-color', vacantColor);
-                    var sourceAttributes = source.data();
-                    var targetAttributes = target.data();
-                    var currentIndex = app.currentConnections.findIndex(function (m) {
-                        return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
-                            || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
-                    });
-                    app.currentConnections.splice(currentIndex, 1);
-                    //$.each(connections, function (index, item) {
-                    //    var sourceId = item.source_system_id + '_' + item.source_entity_type.toUpperCase() + '_' + item.source_port_no;
-                    //    var targetId = item.destination_system_id + '_' + item.destination_entity_type.toUpperCase() + '_' + item.destination_port_no;
-                    //    if (app.isODFTOCableWindow) {
-                    //        if (sourceId.indexOf('CABLE') > 0) {
-                    //            sourceId = 'Right_' + sourceId;
-                    //        }
-                    //        if (targetId.indexOf('CABLE') > 0) {
-                    //            targetId = 'Right_' + targetId;
-                    //        }
-                    //    } else {
-                    //        if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.SourceCable).val())) {
-                    //            sourceId = 'Left_' + sourceId;
-                    //        } else if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.DestinationCable).val())) {
-                    //            sourceId = 'Right_' + sourceId;
-                    //        }
-                    //        if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.DestinationCable).val())) {
-                    //            targetId = 'Right_' + targetId;
-                    //        } else if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.SourceCable).val())) {
-                    //            targetId = 'Left_' + targetId;
-                    //        }
-                    //    }
+        ajaxReq('Splicing/deleteConnection', { objConnectionInfo: connections }, true, function (resp) {
+            app.isMoved = false;
+            if (resp.status == "OK") {
+                $('#SlideMessage').text(resp.message);
+                var vacantColor = $('#hdnVacantColor').val();
+                source.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                target.attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                source.parent().parent().children('.customer').css('background-color', vacantColor);
+                target.parent().parent().children('.customer').css('background-color', vacantColor);
+                var sourceAttributes = source.data();
+                var targetAttributes = target.data();
+                var currentIndex = app.currentConnections.findIndex(function (m) {
+                    return (parseInt(m.source_system_id) == parseInt(sourceAttributes.systemId) && m.source_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(sourceAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(targetAttributes.portNo))
+                        || (parseInt(m.destination_system_id) == parseInt(targetAttributes.systemId) && m.destination_entity_type.toUpperCase() == targetAttributes.entityType.toUpperCase() && parseInt(m.source_port_no) == parseInt(targetAttributes.portNo) && parseInt(m.destination_system_id) == parseInt(sourceAttributes.systemId) && m.destination_entity_type.toUpperCase() == sourceAttributes.entityType.toUpperCase() && parseInt(m.destination_port_no) == parseInt(sourceAttributes.portNo))
+                });
+                app.currentConnections.splice(currentIndex, 1);
+                //$.each(connections, function (index, item) {
+                //    var sourceId = item.source_system_id + '_' + item.source_entity_type.toUpperCase() + '_' + item.source_port_no;
+                //    var targetId = item.destination_system_id + '_' + item.destination_entity_type.toUpperCase() + '_' + item.destination_port_no;
+                //    if (app.isODFTOCableWindow) {
+                //        if (sourceId.indexOf('CABLE') > 0) {
+                //            sourceId = 'Right_' + sourceId;
+                //        }
+                //        if (targetId.indexOf('CABLE') > 0) {
+                //            targetId = 'Right_' + targetId;
+                //        }
+                //    } else {
+                //        if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.SourceCable).val())) {
+                //            sourceId = 'Left_' + sourceId;
+                //        } else if (item.source_entity_type == 'Cable' && parseInt(item.source_system_id) == parseInt($(app.DE.DestinationCable).val())) {
+                //            sourceId = 'Right_' + sourceId;
+                //        }
+                //        if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.DestinationCable).val())) {
+                //            targetId = 'Right_' + targetId;
+                //        } else if (item.destination_entity_type == 'Cable' && parseInt(item.destination_system_id) == parseInt($(app.DE.SourceCable).val())) {
+                //            targetId = 'Left_' + targetId;
+                //        }
+                //    }
 
 
-                    //    $('#' + sourceId).attr('data-is-connected', '0');
-                    //    $('#' + targetId).attr('data-is-connected', '0');
-                    //    var currentIndex = app.currentConnections.findIndex(function (m) {
-                    //        return (parseInt(m.source_system_id) == parseInt(item.source_system_id) && m.source_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.source_port_no && parseInt(m.destination_system_id) == parseInt(item.destination_system_id) && m.destination_entity_type.toUpperCase() == item.destination_entity_type.toUpperCase() && m.destination_port_no == item.destination_port_no)
-                    //        || (parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.destination_port_no && parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.destination_port_no == item.source_port_no)
-                    //    });
-                    //    app.currentConnections.splice(currentIndex, 1);
-                    //})
+                //    $('#' + sourceId).attr('data-is-connected', '0');
+                //    $('#' + targetId).attr('data-is-connected', '0');
+                //    var currentIndex = app.currentConnections.findIndex(function (m) {
+                //        return (parseInt(m.source_system_id) == parseInt(item.source_system_id) && m.source_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.source_port_no && parseInt(m.destination_system_id) == parseInt(item.destination_system_id) && m.destination_entity_type.toUpperCase() == item.destination_entity_type.toUpperCase() && m.destination_port_no == item.destination_port_no)
+                //        || (parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.source_port_no == item.destination_port_no && parseInt(m.destination_system_id) == parseInt(item.source_system_id) && m.destination_entity_type.toUpperCase() == item.source_entity_type.toUpperCase() && m.destination_port_no == item.source_port_no)
+                //    });
+                //    app.currentConnections.splice(currentIndex, 1);
+                //})
 
-                    if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
-                        app.getAvailablePorts();
-                    }
-                    $(".alert-info").slideDown(300);
-                    setTimeout(function () {
-                        $(".alert-info").slideUp(300);
-                    }, 3000)
-                    app.updateTrayPort(false);
-                    if (isp != null && app.isCPEWindow) {
-                        isp.getCPEConnections();
-                    }
+                if ($(app.DE.ConnectingEntity).val() != '0' && $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type') != 'FMS') {
+                    app.getAvailablePorts();
                 }
-            }, true, true);
-        }
-
-
-        
+                $(".alert-info").slideDown(300);
+                setTimeout(function () {
+                    $(".alert-info").slideUp(300);
+                }, 3000)
+                app.updateTrayPort(false);
+                if (isp != null && app.isCPEWindow) {
+                    isp.getCPEConnections();
+                }
+            }
+        }, true, true);
     }
     this.getAvailablePorts = function () {
         $('#divConnectionAlert').removeClass('alert-danger');
@@ -2275,14 +2233,20 @@
                     });
                     if (resp.result.lstCableInfo != null || resp.result.lstCableInfo != undefined) {
                         var cableNetworkFiberMap = {};
+                        var coreNumber = [];
+                        let cableSystemId = null;
+
                         for (var i = 0; i < resp.result.lstCableInfo.length; i++) {
+                            coreNumber = cableSystemId === resp.result.lstCableInfo[i].cable_system_id ? coreNumber : [];
+                            coreNumber.push(resp.result.lstCableInfo[i].fiber_number);
+                            cableSystemId = resp.result.lstCableInfo[i].cable_system_id;
 
                             if (resp.result.lstCableInfo[i].cable_geom != null) {
                                 var geometry = getLatLongArr(resp.result.lstCableInfo[i].cable_geom);
                                 for (var z = 0; z < geometry.length; z++) {
                                     bounds.extend(geometry[z]);
                                 }
-                                var lineObj = si.createLineWithCore(geometry, resp.result.lstCableInfo[i].core_number);
+                                var lineObj = si.createLineWithCore(geometry, coreNumber);
                                 lineObj.strokeColor = 'blue';
                                 var _lineIcon = [{
                                     icon: {
