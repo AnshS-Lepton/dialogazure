@@ -4,10 +4,34 @@
 
 
 <link href="~/Content/css/FiberLink.css" rel="stylesheet" />
-<style>
+@*<style>
     .mr-01 .chosen-container {
         width: 200px !important;
     }
+</style>*@
+
+<style>
+    .resizable {
+        min-height: 300px; /* Minimum height */
+        min-width: 500px; /* Minimum width */
+        width: 800px;
+        height: 560px;
+        /*    border: 1px solid #000;*/
+        /*    position: relative;*/
+        resize: both;
+        overflow: auto;
+    }
+
+        .resizable:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            /*    background-color: #000;*/
+            cursor: se-resize; /* This makes the cursor show resizing direction */
+        }
 </style>
 @{
     var userModuleList = (List<string>)Session["ApplicableModuleList"];
@@ -138,7 +162,7 @@
 
                     @if (Model.lstFiberLinkDetails.Count > 0)
                     {
-                        <div id="VwFiberLinkGrid">
+                        <div id="VwFiberLinkGrid" resize: none;>
                             <div class="tablePad--tn"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
                             <div class="tablePad--tn">
                                 <div class="table-responsive scrollmh">
@@ -202,7 +226,94 @@
             return false;
         });
         $("#liAddFiberLink a").html("Create Link");
+
+
+        $(function () {
+            debugger;
+            let isResizing = false;
+            const modal = document.querySelector('.modal-content');
+            // modal.classList.add('resizable');
+            const resizableDiv = $(modal);//modal;//$('#ModalPopUp');
+            const minWidth = 630.976;
+            const minHeight = 567.976;
+          
+            const corner = $('<div>').css({
+                width: '10px',
+                height: '10px',
+                backgroundColor: 'transparent',
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                cursor: 'se-resize'
+            }).appendTo(resizableDiv);
+
+            corner.mousedown(function (e) {
+                isResizing = true;
+                const initialWidth = resizableDiv.width();
+                const initialHeight = resizableDiv.height();
+                const initialMouseX = e.clientX;
+                const initialMouseY = e.clientY;
+
+                $(document).on('mousemove.resize', function (e) {
+                    if (!isResizing) return;
+
+                    const widthDiff = e.clientX - initialMouseX;
+                    const heightDiff = e.clientY - initialMouseY;
+
+                    let newWidth = initialWidth + widthDiff;
+                    let newHeight = initialHeight + heightDiff;
+
+                    resizableDiv.width(Math.max(minWidth, newWidth));
+                    resizableDiv.height(Math.max(minHeight, newHeight));
+                });
+
+                $(document).on('mouseup.resize', function () {
+                    isResizing = false;
+                    $(document).off('.resize');
+                });
+            });
+
+        });
     });
 
+    
+
+
+    $('#closeModalPopup').on('click', function () {
+        const dargetedDiv = document.querySelector('.modal-content');
+        dargetedDiv.classList.remove('resizable');
+        dargetedDiv.removeAttribute('style');
+        const corner = dargetedDiv.querySelector('div[style*="cursor: se-resize"]'); // Find the corner div
+        if (corner) {
+            corner.remove();
+        }
+    });
+
+    $('.close.minmizeModel.ml-auto.mr-05').on('click', function (event) {
+        const dargetedDiv = document.querySelector('.modal-content');
+        if (dargetedDiv.className != 'modal-content resizable') {
+            if (event.target.className == 'close minmizeModel ml-auto mr-05') {
+                dargetedDiv.classList.remove('resizable');
+
+                dargetedDiv.classList.add('minimize');
+                const iconElement = document.querySelector('.close .fa');
+                iconElement.classList.add('fa-plus', 'fa-clone');
+            }
+            else if (event.target.className == 'fa fa-minus fa-plus fa-clone') {
+
+                dargetedDiv.classList.add('resizable');
+                dargetedDiv.classList.remove('minimize');
+                const iconElement = document.querySelector('.close .fa');
+                iconElement.classList.remove('fa-plus', 'fa-clone');
+
+            }
+            else if (event.target.className == 'fa fa-minus') {
+                dargetedDiv.classList.remove('resizable');
+                dargetedDiv.classList.remove('minimize');
+                const iconElement = document.querySelector('.close .fa');
+                iconElement.classList.add('fa-plus', 'fa-clone');
+            }
+        }
+    });
 
 </script>
