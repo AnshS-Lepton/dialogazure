@@ -36,20 +36,28 @@
             </div>
         </div>
         <div class="form-group row">
+
+            <label class="control-label col-sm-2" for="searchby">Region <i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtregion", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+                
+
+            </div>
             <label class="control-label col-sm-2" for="searchby">Segment Code<i class="clsMandatory">*</i>:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
 
             </div>
 
-            <label class="control-label col-sm-2" for="txtSearchtext">Route<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.DropDownListFor(m => m.network_id, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlCable" })
-                
-            </div>
+           
         </div>
 
         <div class="form-group row">
+            <label class="control-label col-sm-2" for="txtSearchtext">Route<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(m => m.network_id, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlCable" })
+
+            </div>
             <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
             <div class="col-sm-4">
                 @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdescRing", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Enter Description", @maxlength = 500, @rows = 4, @cols = 50, @style = "resize: none;" })
