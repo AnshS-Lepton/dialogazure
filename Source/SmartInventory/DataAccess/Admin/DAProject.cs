@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI;
 using static Mono.Security.X509.X520;
@@ -166,11 +167,31 @@ namespace DataAccess.Admin
 
         }
 
-        public List<TopologyGetSites> Bindtopologygetsites(int system_id,int ring_id,int user_id)
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id,int distance, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id= ring_id, p_user_id=user_id }, false);
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id = ring_id, p_distance= distance, p_user_id =user_id }, false);
+
+            }
+            catch { throw; }
+
+        }
+        public List<Topologysegment> getSegmentDetailsRoutewise(int system_id,int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<Topologysegment>("fn_topology_get_segmentdetailssitewise", new { p_system_id = system_id, p_user_id = user_id }, false);
+
+            }
+            catch { throw; }
+
+        }
+        public List<TopologyGetSites> Bindtopologygetsitessitedissociation(int basesystem_id, int system_id, int ring_id, int distance, int user_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_sites_dissociation", new { p_base_site_id= basesystem_id, p_system_id = system_id, p_ring_id = ring_id, p_distance = distance, p_user_id = user_id }, false);
 
             }
             catch { throw; }
@@ -311,7 +332,7 @@ namespace DataAccess.Admin
             catch { throw; }
 
         }
-        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId)
+        public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId,int segmentId,string top_type,int system_id)
         {
             try
             {
@@ -321,7 +342,9 @@ namespace DataAccess.Admin
                     p_agg2_system_id = Agg2SystemId,
                     p_user_id = userId,
                     p_ring_id = ringId,
-                    p_segment_id = segmentId
+                    p_segment_id = segmentId,
+                    p_top_type= top_type,
+                    p_system_id = system_id
 
                 }, false);
 
@@ -594,9 +617,12 @@ namespace DataAccess.Admin
   }
     public class DAToplologySegment : Repository<TopologySegment>
     {
-        public List<TopologySegment> getSegmentDetailByIdList(int id)
+        public List<TopologySegment> getSegmentDetailByIdList(int id, string aggregate1, string aggregate2)
         {
-            return repo.GetAll(m => m.region_id == id).ToList();
+            if (aggregate1 != "" && aggregate1 != null && aggregate2 !="" && aggregate2 != null)
+            return repo.GetAll(m => m.region_id == id && m.agg1_site_id== aggregate1 && m.agg2_site_id== aggregate2).ToList();
+            else
+                return repo.GetAll(m => m.region_id == id).ToList();
         }
         public TopologySegment GetSegmentCode()
         {
@@ -639,11 +665,13 @@ namespace DataAccess.Admin
     {
 
        
-        public List<ringinfo> getRingDetailByIdList(int segment_Id)
+        public List<ringinfo> getRingDetailByIdList(int segment_Id, int numberofsites,string ringcapacity)
         {
             var res = repo.ExecuteProcedure<ringinfo>("fn_get_ring_details", new
             {
-                p_segment_id = segment_Id
+                p_segment_id = segment_Id,
+                p_numberofsites = numberofsites,
+                p_ringcapacity = ringcapacity
             }, false);
             return res;
 
@@ -654,48 +682,68 @@ namespace DataAccess.Admin
             return repo.GetAll(m => m.segment_id == segment_Id).ToList();
 
         }
-        public TopologyRingMaster GetRingCode()
+        public TopologyRingMaster GetRingCode(int ring, int segmentid)
         {
             TopologyRingMaster objTopologyPlan = new TopologyRingMaster();
-
-            // Step 1: Get the max segment_id
-            int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
-
-            // Step 2: Find the latest ring_code for that segment
-            string lastRingCode = repo.GetAll()
-                                      .Where(r => r.segment_id == maxSegmentId)
-                                      .OrderByDescending(r => r.sequence)
-                                      .Select(r => r.ring_code)
-                                      .FirstOrDefault();
-
-            // Step 3: Extract the last sequence number from the ring_code (e.g., "CMBN-ACC34-R3" → 3)
-            int lastSequence = 0;
-            if (!string.IsNullOrEmpty(lastRingCode))
+           // int segment_Id = repo.GetAll().Where(a=>a.id== ring).Select(a=>a.segment_id).FirstOrDefault();
+            var SequenceNum=  1 + repo.GetAll()
+            .Where(r => r.ring_code != null && r.segment_id== segmentid)
+            .Select(r => new
             {
-                var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
-                if (match.Success)
-                {
-                    lastSequence = int.Parse(match.Groups[1].Value);
-                }
-            }
-
-            // Step 4: Increment the sequence number
-            int newSequence = lastSequence + 1;
+                ring_code = r.ring_code,
+                RingNumber = int.Parse(Regex.Match(r.ring_code, @"\d+$").Value) // Extract the last integer
+            })
+            .OrderByDescending(r => r.RingNumber)
+            .Select(r => r.RingNumber)
+            .FirstOrDefault();
+           
             string ringCode = "";
-            // Step 5: Generate the new ring code
-            if (maxSegmentId == 0)
-            {
-                 ringCode = $"R{newSequence}";
-            }
-            else { 
-                ringCode = $"R{newSequence}"; 
-            }
-                // Step 6: Assign values and return the object
-                objTopologyPlan.ring_code = ringCode;
-            objTopologyPlan.sequence = newSequence;
-            objTopologyPlan.segment_id = maxSegmentId;
-
+            ringCode = $"R{SequenceNum}";
+            objTopologyPlan.ring_code = ringCode;
+            objTopologyPlan.sequence = SequenceNum;
+            objTopologyPlan.segment_id = segmentid;
             return objTopologyPlan;
+
+
+
+
+
+            //int maxSegmentId = repo.GetAll().Max(m => (int?)m.segment_id) ?? 0;
+            //string lastRingCode = repo.GetAll()
+            //                          .Where(r => r.segment_id == maxSegmentId)
+            //                          .OrderByDescending(r => r.sequence)
+            //                          .Select(r => r.ring_code)
+            //                          .FirstOrDefault();
+
+            //int lastSequence = 0;
+            //if (!string.IsNullOrEmpty(lastRingCode))
+            //{
+            //    var match = System.Text.RegularExpressions.Regex.Match(lastRingCode, @"R(\d+)$");
+            //    if (match.Success)
+            //    {
+
+            //        lastSequence = int.Parse(match.Groups[1].Value);
+            //    }        
+            //}
+            //if (ring == 1)
+            //    lastSequence = 0;
+            
+            //int newSequence = lastSequence + 1;
+            //string ringCode = "";
+          
+            //if (maxSegmentId == 0)
+            //{
+            //     ringCode = $"R{newSequence}";
+            //}
+            //else { 
+            //    ringCode = $"R{newSequence}"; 
+            //}
+              
+            //objTopologyPlan.ring_code = ringCode;
+            //objTopologyPlan.sequence = newSequence;
+            //objTopologyPlan.segment_id = maxSegmentId;
+
+            //return objTopologyPlan;
         }
 
 
@@ -747,6 +795,26 @@ namespace DataAccess.Admin
             return repo.GetAll(m =>  m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToString().ToUpper()).ToList();
 
         }
+        public List<CableDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
+        {
+            if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))
+            {
+                return new List<CableDetails>(); // Return empty list instead of null
+            }
+
+            var sites = repo.ExecuteProcedure<CableDetails>(
+                 "fn_topology_get_cableroute",
+                 new
+                 {
+                     p_agg1site_id = topologySegment.agg1_site_id,
+                     p_agg2site_id = topologySegment.agg2_site_id,
+                     p_user_id = user_id
+                 },
+                 false
+             ).ToList();
+            return sites;
+
+        }
 
         public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
         {
@@ -791,7 +859,7 @@ namespace DataAccess.Admin
     {
         public List<PODMaster> getSiteIdList(string  siteId)
         {
-            var sitname = repo.GetAll(m => m.site_name.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site == false).ToList();
+            var sitname = repo.GetAll(m => m.site_id.ToUpper().Contains(siteId.ToUpper()) && m.is_agg_site != true).ToList();
 
             return sitname;
            
@@ -808,6 +876,20 @@ namespace DataAccess.Admin
 
             return siteList;
         }
+        public List<SiteMaster> getSiteDetails(int siteid, int user_id)
+        {
+            var sites = repo.ExecuteProcedure<SiteMaster>(
+                "fn_topology_get_siteDetails",
+                new
+                {
+                    p_site_id = siteid,
+                    p_user_id = user_id
+                },
+                false
+            ).ToList();
+            return sites;
+          
+        }
 
 
         public List<PODMaster> getSiteNameList(string site_name)
@@ -816,8 +898,26 @@ namespace DataAccess.Admin
 
             return sitname;
         }
+
+        public List<SiteMaster> getAllAGGListRoutewise(int siteid, int user_id,string site_name)
+        {
+            // Execute stored procedure and get list
+            var sitname = repo.ExecuteProcedure<SiteMaster>(
+                "fn_get_agg_sitedetail_routewise",
+                new
+                {
+                    p_site_id = siteid,
+                    p_user_id = user_id,
+                      p_site_name = site_name
+                },
+                false
+            ).ToList();
+            return sitname;
+        }
+
         public List<PODMaster> getAGG1List(string site)
         {
+
             var sitname = repo.GetAll(m =>
                 (m.site_id.ToString().Contains(site.ToUpper()) ||
                 m.site_name.ToUpper().Contains(site.ToUpper())) &&
@@ -845,6 +945,13 @@ namespace DataAccess.Admin
             var agg2SystemId = repo.Get(x => x.agg_02 == objPODMaster.agg_02)?.system_id;
 
             var objPOD = repo.Get(x => x.system_id == objPODMaster.system_id);
+            var objPODring = repo.Get(x => x.system_id == objPODMaster.system_id && x.ring_id == objPODMaster.ring_id);
+            if(objPODring !=null)
+            {
+                PODMaster ObjPODMaster = new PODMaster();
+                ObjPODMaster.ring_id = objPODring.ring_id;
+              return ObjPODMaster;
+            }
 
             if (objPOD == null)
             {
@@ -856,12 +963,14 @@ namespace DataAccess.Admin
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
             objPOD.site_id = objPODMaster.site_id;
             objPOD.site_name = objPODMaster.site_name;
-            objPOD.agg_01 = objPODMaster.agg_01;
-            objPOD.agg_02 = objPODMaster.agg_02;
+            objPOD.agg_01 = objPODMaster.agg_01; 
+            objPOD.agg_02 = objPODMaster.agg_02; 
             objPOD.ring_a_site_id = objPODMaster.ring_a_site_id;
             objPOD.ring_b_site_id = objPODMaster.ring_b_site_id;
             objPOD.ring_a_site_distance = objPODMaster.ring_a_site_distance;
             objPOD.ring_b_site_distance = objPODMaster.ring_b_site_distance;
+            objPOD.no_of_sites = objPODMaster.no_of_sites;
+            objPOD.max_distance_peer = objPODMaster.max_distance_peer;
             objPOD.top_type = objPODMaster.top_type;
             objPOD.ring_id = objPODMaster.ring_id;
 

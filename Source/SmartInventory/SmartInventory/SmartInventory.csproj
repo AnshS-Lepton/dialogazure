@@ -21,8 +21,9 @@
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -650,6 +651,7 @@
     <Content Include="Content\images\icons\lib\circle\HTB.png" />
     <Content Include="Content\images\icons\lib\circle\ONT.png" />
     <Content Include="Content\images\icons\lib\circle\OpticalRepeater.png" />
+    <Content Include="Content\images\icons\lib\circle\podag.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_ADB.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_BDB.png" />
     <Content Include="Content\images\icons\lib\circle\Primary_CDB.png" />
@@ -909,6 +911,7 @@
     <Content Include="Content\images\icons\lib\Legend\v_spliceclosure.svg" />
     <Content Include="Content\images\icons\lib\Legend\WallMount.png" />
     <Content Include="Content\images\icons\lib\Legend\WallMount.svg" />
+    <Content Include="Content\images\icons\lib\small\PODag.png" />
     <Content Include="Content\images\icons\lib\small\Cabinet.png" />
     <Content Include="Content\images\icons\lib\small\Competitor.png" />
     <Content Include="Content\images\icons\lib\small\conduit.png" />
@@ -1635,6 +1638,10 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\16-04-2025.sql" />
+    <Content Include="MigrationScripts\15-04-2025.sql" />
+    <Content Include="MigrationScripts\04-04-2025-dailog.sql" />
+    <Content Include="MigrationScripts\02-04-2025-dailog.sql" />
     <Content Include="MigrationScripts\05-03-2025-dailog.sql" />
     <Content Include="MigrationScripts\19-03-2025_dialog.sql" />
     <Content Include="MigrationScripts\25-01-2025_siteAwardProcess_SIT.sql" />
@@ -2440,6 +2447,10 @@
     <Content Include="Views\BOMBOQ\_ItemSiteAwarding.cshtml" />
     <Content Include="Views\Report\_ItemSiteAwarding.cshtml" />
     <Content Include="Views\Library\_CableRingAssociation.cshtml" />
+    <Content Include="Views\RingDetails\_SLDdiagramRingDetails.cshtml" />
+    <Content Include="Views\Report\AddRingDetails.cshtml" />
+    <Content Include="Views\SpxI49Ftz\Index.cshtml" />
+    <Content Include="Views\Report\_AddSegment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2513,6 +2524,7 @@
     <Compile Include="Controllers\RingDetailsController.cs" />
     <Compile Include="Controllers\RosterManagementController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
+    <Compile Include="Controllers\SpxI49FtzController.cs" />
     <Compile Include="Controllers\SurveyAreaController.cs" />
     <Compile Include="Controllers\TicketManagerController.cs" />
     <Compile Include="Controllers\UnAuthorizedController.cs" />

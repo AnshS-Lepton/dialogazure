@@ -249,11 +249,27 @@ namespace Models
 	public class TopologyGetSites
 	{
 		public int siteid { get; set; }
-		public string sitename { get; set; }
+        public int ringid { get; set; }
+        public string sitename { get; set; }
 		public decimal sitedistance { get; set; }
+        public bool is_agg_site { get; set; }
 
-	}
-	public class TopologySegmentCables
+    }
+
+    public class Topologysegment
+    {
+        public int id { get; set; }
+        public string segment_code { get; set; }
+        public int region_id { get; set; }
+        public string agg1_site_id { get; set; }
+        public string agg2_site_id { get; set; }
+        public int agg1_system_id { get; set; }
+        public int agg2_system_id { get; set; }
+
+
+    }
+
+    public class TopologySegmentCables
 	{
 
 		public string cable_name { get; set; }

@@ -1042,7 +1042,12 @@ namespace Models
         public DateTime created_on { get; set; }
         [NotMapped]
         public string fiber_link_id { get; set; }
+        [NotMapped]
+        public int ring_id { get; set; }
+        [NotMapped]
+        public string ring_code { get; set; }
     }
+
     public class AddConnection
     {
         public List<DropDownMaster> cardList { get; set; }

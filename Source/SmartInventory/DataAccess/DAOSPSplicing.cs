@@ -25,6 +25,19 @@ namespace DataAccess
                 throw;
             }
         }
+        public List<SplicingRecord> getSplicingRecord()
+        {
+            try
+            {
+
+                var tst = repo.ExecuteProcedure<SplicingRecord>("get_incorrect_connections_json", new { }, true).ToList();
+                return tst;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public List<SplicingConectionInfo> getSplicingInfo(connectionInput objConInput, string listConnectors)
         {
             try
@@ -308,6 +321,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public SLDModel GetSLDDiagrambyRingId(int ring_id,string ring_code)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<SLDModel>("fn_get_ring_schematicview", new
+                {
+                   p_ring_id = ring_id
+                   //p_ring_code = ring_code
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
 
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
@@ -568,6 +593,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public bool updatedisplayname()
+        {
+            try
+            {
+                 return repo.ExecuteProcedure<bool>("fn_splicing_update_display_name",
+                    new
+                    {                        
+                    }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
+       
 
         public DbMessage deleteConnection(string listConnection, int user_id)
         {

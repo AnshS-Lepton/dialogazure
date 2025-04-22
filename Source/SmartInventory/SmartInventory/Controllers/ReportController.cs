@@ -29,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -3896,9 +3897,8 @@ namespace SmartInventory.Controllers
                                     string fileName = layer.layer_title;
                                     string TempkmlFileName = fileName + ".kml";
                                     string finalkml = KMLHelper.GetKmlForEntityNew(dtReportKml, objExportEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+                                    finalkml = finalkml.Replace("&", "&amp;");
                                     string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
-
-
 
                                     if (lstExportEntitiesDetail != null && lstExportEntitiesDetail.Count > 0)
                                     {
@@ -7186,6 +7186,7 @@ namespace SmartInventory.Controllers
 
                                     string TempkmlFileName = fileName + ".kml";
                                     string finalkml = KMLHelper.GetKmlForEntityNew(dtReport, objAssociationEntitiesReport.lstLayers, dtFilter, TempkmlFileName, directoryPath);
+                                    finalkml = finalkml.Replace("&", "&amp;");
                                     dtReport = null;
                                     string kmlDesFullPath = directoryPath + "\\" + TempkmlFileName;
                                     System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
@@ -13521,18 +13522,21 @@ namespace SmartInventory.Controllers
         {
             try
             {
-                objToplogyPlan.system_id = Convert.ToInt32(systemid); // Store in ViewBag to access in View
+                    objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
+                    objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
+                    objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
+                    objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
+                    objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
 
+                if (systemid != "")
+                {
+                    objToplogyPlan.system_id = Convert.ToInt32(systemid); // Store in ViewBag to access in View
 
-                objToplogyPlan.lsttopologytype = new BLMisc().GetToplogyDropDownList(DropDownType.Topology_Type.ToString());
-                objToplogyPlan.lstringtype = new BLMisc().GetToplogyDropDownList(DropDownType.Ring_Capacity.ToString());
-                objToplogyPlan.lstnoofsites = new BLMisc().GetToplogyDropDownList(DropDownType.NoOf_Sites.ToString());
-                objToplogyPlan.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
-                objToplogyPlan.max_distance_peer = ApplicationSettings.MaxSitePeerDisatence;
-                //objToplogyPlan.lsttopologygetsites = new BLProject().Bindtopologygetsites(objToplogyPlan.system_id, 1, Convert.ToInt32(Session["user_id"])).ToList();
-                var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
-                objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
-                objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
+                    var siteInfo = new BLProject().getSiteIdName(objToplogyPlan.system_id);
+                    objToplogyPlan.site_id = siteInfo.FirstOrDefault().site_id;
+                    objToplogyPlan.site_name = siteInfo.FirstOrDefault().site_name;
+                }
+               
 
             }
             catch (Exception ex)
@@ -13543,10 +13547,10 @@ namespace SmartInventory.Controllers
 
             return PartialView("_SiteTopologyPlan", objToplogyPlan);
         }
-        public JsonResult GetSegmentsByRegion(int id)
+        public JsonResult GetSegmentsByRegion(int id,string aggregate1, string aggregate2)
         {
             // Fetch segments based on regionId
-            var segments = new BLProject().getSegmentDetailByIdList(id);
+            var segments = new BLProject().getSegmentDetailByIdList(id, aggregate1, aggregate2);
             //var segmentcode = new BLProject().GetSegmentCode();
             // Transform into key-value pairs for dropdown
             var segmentDropdownData = segments.Select(s => new
@@ -13558,36 +13562,121 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(segmentDropdownData, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetSegmentsCode()
-        {
-            // Fetch segments based on regionId
-            var segmentcode = new BLProject().GetSegmentCode();
+        //public JsonResult GetSegmentsCode()
+        //{
+        //    // Fetch segments based on regionId
+        //    var segmentcode = new BLProject().GetSegmentCode();
+        //    return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        //}
 
-            // Return as JSON
-            return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        public ActionResult GetSegmentsCode()
+        {
+            PageMessage objMsg = new PageMessage();
+            PODMaster pODMaster = new PODMaster();
+            try
+            {
+            // Fetch segments based on regionId
+                var segmentcode = new BLProject().GetSegmentCode();
+              //  pODMaster.segment = segmentcode;
+                
+                if (segmentcode == null)
+                {
+
+                    pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                    pODMaster.objPM.message = "Failed to fetch segment code.";
+
+                }
+
+            }
+            catch
+            {
+                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                pODMaster.objPM.message = "Failed to fetch segment code.";
+            }
+
+            return PartialView("_AddSegment", pODMaster);
         }
 
-        public JsonResult Gettopologygetsites(int systemId, int ringId)
+        public JsonResult Gettopologygetsites(int systemId, int ringId, int distance)
         {
+            distance = distance * 1000;// Converting killometer into meter
+            PODMaster pODMaster = new PODMaster();
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
+            return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getSegmentDetailsRoutewise(int systemId)
+        {
+
+            PODMaster pODMaster = new PODMaster();
+            pODMaster.lstsegment = new BLProject().getSegmentDetailsRoutewise(systemId, Convert.ToInt32(Session["user_id"])).ToList();
+            
+                var siteInfo = new BLProject().getSiteDetails(systemId, Convert.ToInt32(Session["user_id"]));
+                if(siteInfo.Count>0)
+                {
+                    pODMaster.site_id = siteInfo.FirstOrDefault().site_id;
+                    pODMaster.site_name = siteInfo.FirstOrDefault().site_name;
+                    pODMaster.topology_type = siteInfo.FirstOrDefault().top_type;
+                    pODMaster.ring_id = siteInfo.FirstOrDefault().ring_id;
+                    pODMaster.ring = siteInfo.FirstOrDefault().ring_code;
+                    pODMaster.ring_capacity = siteInfo.FirstOrDefault().ring_capacity;
+                    pODMaster.region_name = siteInfo.FirstOrDefault().region_name;
+                    pODMaster.segment = siteInfo.FirstOrDefault().segment_code;
+                    pODMaster.agg_01 = siteInfo.FirstOrDefault().agg1_site_id;
+                    pODMaster.agg_02 = siteInfo.FirstOrDefault().agg2_site_id;
+                    pODMaster.no_of_sites = siteInfo.FirstOrDefault().no_of_sites;
+                    pODMaster.max_distance_peer = siteInfo.FirstOrDefault().max_distance_peer;
+                    pODMaster.ring_a_site_id = siteInfo.FirstOrDefault().ring_a_site_id;
+                    pODMaster.ring_b_site_id = siteInfo.FirstOrDefault().ring_b_site_id;
+                }
+         
+            
+            return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Removetopologygetsitedissociation(int basesystem_id, int systemId, int ringId, int distance)
+        {
+            distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
             // Fetch segments based on regionId
-            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, Convert.ToInt32(Session["user_id"])).ToList();
-
-
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsitessitedissociation(basesystem_id,systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
             // Return as JSON
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetRingCode()
+        //public JsonResult GetRingCode(int ring)
+        //{
+           
+        //    var ringCode = new BLProject().GetRingCode(ring);
+        //    return Json(ringCode, JsonRequestBehavior.AllowGet);
+        //}
+        public ActionResult GetRingCode(int ring,int segmentid,string segment,string partialringcode)
         {
-            // Fetch segments based on regionId
-            var ringCode = new BLProject().GetRingCode();
+            PageMessage objMsg = new PageMessage();
+            PODMaster pODMaster = new PODMaster();
+            try
+            {
+                var ringCode = new BLProject().GetRingCode(ring, segmentid);
+                pODMaster.site_id = segment;
+                pODMaster.agg_02 = partialringcode + Convert.ToString(ringCode.ring_code);
+                pODMaster.sequence = ringCode.sequence;
+                if (ringCode == null)
+                {
 
-            // Return as JSON
-            return Json(ringCode, JsonRequestBehavior.AllowGet);
+                    pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                    pODMaster.objPM.message = "Failed to fetch segment code.";
+
+                }
+                
+            }catch
+            {
+                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                pODMaster.objPM.message = "Failed to fetch segment code.";
+            }
+
+            return PartialView("AddRingDetails", pODMaster);
         }
-        public JsonResult GetRingTypesByRegion(int segmentId)
+        public JsonResult GetRingTypesByRegion(int segmentId, int numberofsites, string ringcapacity = "")
         {
-            var ringsdata = new BLProject().getRingDetailByIdList(segmentId);
+            var ringsdata = new BLProject().getRingDetailByIdList(segmentId, numberofsites, ringcapacity);
             // Transform into key-value pairs for dropdown
             //var ringsDropdownData = ringsdata
             // .OrderBy(s => s.ring_code) // Sorts by ring_code in ascending order
@@ -13623,15 +13712,18 @@ namespace SmartInventory.Controllers
             ModelState.Clear();
             var response = new { Success = false, Message = "Save failed" }; // Default failure response
 
-            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id);
+            new BLProject().Savetopsegmentringcablemapping(pODMaster.agg1SystemId,pODMaster.agg2SystemId,Convert.ToInt32(Session["user_id"]),pODMaster.ring_id ?? 0, pODMaster.segment_id, pODMaster.top_type, pODMaster.system_id);
 
-
+            int ring_id = pODMaster.ring_id ?? 0;
             pODMaster = new BLProject().updatetopology(pODMaster);
 
                 // Check if the save operation was successful
                 if (pODMaster != null)
                 {
-                    response = new { Success = true, Message = "Topology Plan saved successfully" };
+                if(pODMaster.ring_id== ring_id && pODMaster.site_id==null)
+                    response = new { Success = false, Message = "Selected ring already associated !" };
+                else
+                response = new { Success = true, Message = "The site has been connected to the selected topology." };
                 }
             
 
@@ -13654,6 +13746,16 @@ namespace SmartInventory.Controllers
             return Json(siteList, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetCableNetworldata(string agg1_site_id, string agg2_site_id)
+        {
+            TopologySegment topologySegment = new TopologySegment();
+            topologySegment.agg1_site_id = agg1_site_id;
+            topologySegment.agg2_site_id = agg2_site_id;
+
+            var cableList = new BLProject().GetCableRoute(topologySegment,Convert.ToInt32(Session["user_id"]));
+           
+            return Json(cableList, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult GetSiteIds(string term)
         {
             var siteList = new BLProject().getSiteIdList(term);
@@ -13667,14 +13769,29 @@ namespace SmartInventory.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetAGG1(string term)
+        public JsonResult AllAGGListRoutewise(int siteid, string term)
         {
+            var sitelist = new BLProject().getAllAGGListRoutewise(siteid, Convert.ToInt32(Session["user_id"]), term).ToList();
+
+            var result = sitelist.Select(s => new
+            {
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
+            }).ToList();
+
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetAGG1(string term)
+        {           
             var sitenameList = new BLProject().getAGG1List(term);
 
             var result = sitenameList.Select(s => new
             {
                 label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
-                value = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                Name = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
                 systemId = s.system_id // Handle null system_id
             }).ToList();
 

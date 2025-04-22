@@ -89,6 +89,10 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetSLDDiagrambyLinkSystemId(link_system_id);
         }
+        public SLDModel GetSLDDiagrambyRingId(int ring_id,string ring_code)
+        {
+            return new DAOSPSplicing().GetSLDDiagrambyRingId(ring_id, ring_code);
+        }
         public List<ConnectionInfo> GetConnectionInfo(ConnectionInfoFilter objFilterAttributes)
         {
             return new DAOSPSplicing().GetConnectionInfo(objFilterAttributes);
@@ -110,6 +114,10 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetCPFElement(objFilterAttributes);
         }
+        public List<SplicingRecord> getSplicingRecord()
+        {
+            return new DAOSPSplicing().getSplicingRecord();
+        }
         public DbMessage SaveConnectionInfo(string connections)
         {
             return new DAConnectionInfo().SaveConnectionInfo(connections);
@@ -118,6 +126,11 @@ namespace BusinessLogics
         {
             return new DAConnectionInfo().SaveUtilizationNotification(objConection);
         }
+        public bool updatedisplayname()
+        {
+             return new DAConnectionInfo().updatedisplayname();
+        }
+        
         public DbMessage deleteConnection(string listConnection, int user_id)
         {
             return new DAConnectionInfo().deleteConnection(listConnection,  user_id);

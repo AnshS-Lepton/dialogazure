@@ -294,7 +294,7 @@
             $(app.DE.tickIcon).css('display', 'block');
         }
         $(app.DE.hdnLinkSystemId).val($(app.DE.hdnModelLinkSystemId).val());
-        $(app.DE.txtFiberLinkId).autocomplete({
+        $(app.DE.txtFiberLinkId).autocomplete({      
             source: function (request, response) {
                 var res = ajaxReq('main/GetAutoFiberLinkId', { SearchText: request.term }, true, function (data) {
                     if (data.geonames.length == 0) {
@@ -386,7 +386,7 @@
             //Fiber link Deletion disabled due to its occupation to another entity
             rowAction = rowAction + '<span title="' + (fiber_link_status == "Free" ? MultilingualKey.SI_GBL_GBL_GBL_GBL_002 : MultilingualKey.SI_OSP_GBL_NET_RPT_419) + '"><i class="cptr icon-Delete ml-05' + (fiber_link_status == "Free" ? "" : " dvdisabled") + '" onclick="fiberLink.deleteFiberLinkById(' + systemId + ')"></i></span>';
             rowAction = rowAction + '<i class="cptr icon-map-view ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconShowlinkOnMapp" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '" style="padding-left: 7px " onclick="splicing.showFiberLinkOnMap(' + systemId + ')" ></i></a>';
-            rowAction = rowAction + '<a href="#" data-value="' + systemId + '"  class="cptr fa  fa-edit" id="iconViewDetails" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_003 + '" onclick="fiberLink.editFiberLinkById(' + systemId + ')" style="padding-left: 7px;"></a>';
+            rowAction = rowAction + '<a href="#" data-value="' + systemId + '"  class="cptr fa  fa-edit" id="iconViewDetails" title="' + MultilingualKey.SI_GBL_GBL_GBL_GBL_003 + '" onclick="fiberLink.editFiberLinkById(' + systemId + ',\'' + fiber_link_status + '\')" style="padding-left: 7px;"></a>';
             rowAction = rowAction + '<i class="cptr icon-CUSTOMER ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconAssociateCustomer" onclick="fiberLink.GetFiberLinkCustomer(' + systemId + ')" title="' + MultilingualKey.SI_OSP_GBL_NET_FRM_430 + '" style="padding-left: 7px;"></i>';
             rowAction = rowAction + '<i class="cptr fa fa-history m-r-xs" title="' + MultilingualKey.SF_GBL_GBL_JQ_HIS_001 + '" onclick="fiberLink.GetFiberLinkHistory(' + systemId + ')" style="color: #1b9461; font-size: 14px; padding-left: 7px"></i>';
             rowAction = rowAction + '<i class="cptr fa fa-bullseye m-r-xs  ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" title="Schematic View" onclick="fiberLink.GetSLDDaigramFiberLink(' + systemId + ', \'' + fiberlinkid + '\')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>';
@@ -580,7 +580,7 @@
     }
 
 
-    this.editFiberLinkById = function (system_id) {
+    this.editFiberLinkById = function (system_id,status=null) {
         showConfirm(app.StatusMessages.CONFIRM_EDIT_LINK, function () {
             ajaxReq('FiberLink/AddFiberLink', { system_id: system_id }, true, function (resp) {
                 $(app.DE.CreateFiberLink).html(resp);
@@ -590,6 +590,9 @@
                 app.GetStartPointNetworkId();
                 app.GetEndPointNetworkId();
                 app.bindCreateLinkEvents();
+                if (status == 'Associated') { $('#ddlLinkPrifixType').prop("disabled", true).trigger("chosen:updated"); }
+                else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); }
+
             }, false, true);
         });
     }
@@ -1059,6 +1062,7 @@
         $(app.DE.tickIcon).css('display', 'none');
     }
     this.btncreatelink = function () {
+        debugger;
         app.CableFiberButton = true;
         var linkPrefixes = $(app.DE.hdnLinkPrefixes).val();
         // Ensure the linkPrefixes is a string and split it into an array 
@@ -1077,7 +1081,8 @@
             alert(MultilingualKey.SI_OSP_GBL_NET_GBL_290 + linkPrefixes);
         }
         else {
-            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            //popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: _linkId }, "Create Link", 'modal-xl');
+            popup.LoadModalDialog('CHILD', 'FiberLink/CreateFiberLink', { system_id: 0, link_id: '' }, "Create Link", 'modal-xl');
         }
     }
     this.closepopup = function () {

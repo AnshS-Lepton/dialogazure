@@ -119,8 +119,11 @@ function SearchLinkIds(event) {
 
                         // Access the FiberLinkDetails array
                         let fiberLinkData = JSON.parse(parsedResponse.result).FiberLinkDetails;
-
-                        let maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count));
+     
+                        //let maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count));
+                        let maxLinkCount = 0;
+                        if (linkdata != null) { maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count)); }
+                        
                         var strGeom = '';
                         if (linkdata != null) {
                             linkdata.forEach(function (value, index) {

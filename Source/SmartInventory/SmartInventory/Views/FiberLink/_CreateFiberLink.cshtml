@@ -27,7 +27,7 @@
                 <div class="form-group row">
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_001:</label>
                     <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId" })
+                        @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly", @id = "txtNetworkId", @disabled = "disabled" })
                     </div>
                     <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_102:</label>
                     <div class="col-md-4">
@@ -447,14 +447,12 @@
         debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
-        if ($('txtLinkId').val() !== 'undefined' && $('ddlLinkPrifixType').val() !== 'undefined') {
-            $("#liAddFiberLink a").html('Update Link');
-            //$('#ddlLinkPrifixType').prop("disabled", true).trigger("chosen:updated");
+        if ($('#txtLinkId').val() !== undefined && $('#ddlLinkPrifixType').val() !== undefined) {
             $('#txtLinkId').prop("disabled", true);
-            $('link_id').val($('txtLinkId').val())
-            $('link_prefix').val($('ddlLinkPrifixType').val())
+            $('#link_id').val($('txtLinkId').val())
+            $('#link_prefix').val($('ddlLinkPrifixType').val())
         }
-        else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
+       // else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
         
       
     });

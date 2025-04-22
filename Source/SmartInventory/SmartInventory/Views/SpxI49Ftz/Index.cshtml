@@ -1,0 +1,133 @@
+﻿@model IEnumerable<Models.SplicingRecord>
+@{
+    Layout = null;
+    var count = Model.Count();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Splicinging Monitoring Dashboard</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .count-badge {
+            background-color: #0078D4;
+            color: white;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #0078D4;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            /*background-color: #eef4ff;*/
+        }
+
+        th {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <h2>
+            Splicinging Monitoring Dashboard
+            <span class="count-badge">Total: @count</span>
+        </h2>
+
+        @if (count > 0)
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Splicing Source</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
+                        <th>Source System ID</th>
+                        <th>Source Entity Type</th>
+                        <th>Source Network ID</th>
+                        <th>Source Port No</th>
+                        <th>Destination System ID</th>
+                        <th>Destination Entity Type</th>
+                        <th>Destination Network ID</th>
+                        <th>Destination Port No</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.splicing_source</td>
+                            <td>@item.created_by</td>
+                            <td>@item.created_on</td>
+                            <td>@item.source_system_id</td>
+                            <td>@item.source_entity_type</td>
+                            <td>@item.source_network_id</td>
+                            <td>@item.source_port_no</td>
+                            <td>@item.destination_system_id</td>
+                            <td>@item.destination_entity_type</td>
+                            <td>@item.destination_network_id</td>
+                            <td>@item.destination_port_no</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No records found.</p>
+        }
+    </div>
+
+    <script>
+        setInterval(function () {
+            location.reload();
+        }, 120000);
+    </script>
+
+</body>
+</html>

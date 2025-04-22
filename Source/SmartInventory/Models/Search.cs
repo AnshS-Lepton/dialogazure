@@ -77,12 +77,44 @@ namespace Models
         public string site_name { get; set; }
     }
 
+    public class cableinfo
+    {
+
+        public string cable_geom { get; set; }
+        public int cable_system_id { get; set; }
+        public string cable_network_id { get; set; }
+        public string cable_type { get; set; }
+        
+    }
+    public class connectedelements
+    {
+
+        public string connected_entity_geom { get; set; }
+        public int connected_system_id { get; set; }
+        public string connected_network_id { get; set; }
+        public string connected_entity_type { get; set; }
+        public bool is_virtual { get; set; }
+        public bool is_agg_site { get; set; }
+
+    }
+
     public class vmGeomRingDetailIn
     {
         public List<GeomRingDetailIn> lstSitedetails { get; set; }
         public vmGeomRingDetailIn()
         {
             lstSitedetails = new List<GeomRingDetailIn>();
+        }
+    }
+
+    public class vmRingConnectedElementDetails
+    {
+        public List<cableinfo> lstcableinfo { get; set; }
+        public List<connectedelements> lstconnectedelements { get; set; }
+        public vmRingConnectedElementDetails()
+        {
+            lstcableinfo = new List<cableinfo>();
+            lstconnectedelements = new List<connectedelements>();
         }
     }
 

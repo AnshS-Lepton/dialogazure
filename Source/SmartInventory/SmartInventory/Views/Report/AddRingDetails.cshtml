@@ -1,0 +1,123 @@
+﻿@using SmartInventory.Settings;
+@model Models.PODMaster
+
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+
+@Html.HiddenFor(m => m.sequence, new { @id = "hdnsequence" })
+<div class="space-pad">
+    <form id="segmentForm">
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Segment Code<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+
+                @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+            </div>
+            <label class="control-label col-sm-2" for="txtSearchtext">Ring Code<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtRingCode", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
+            <div class="col-sm-4">
+                @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdescRing", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Enter Description", @maxlength = 500, @rows = 4, @cols = 50, @style = "resize: none;" })
+            </div>
+        </div>
+    </form>
+</div>
+<div class="ModalFooter d-flex --gap05">
+    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnringCancel">
+        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#hdnringsiteseq").val($("#hdnsequence").val());
+        $("#btnSaveRing").click(function () {
+            debugger;
+ var ringcode = $("#txtRingCode").val();
+ var segmentid = $("#ddlsegment").val();
+ var segmentcode = $("#txtsegmentcode").val();
+            var ringdesc = $("#txtdescRing").val();
+ var ringcapacity = $("#ddlringcapacity").val();
+             
+ if (!segmentid ) {
+ alert("Please select segment.");
+ return;
+ }
+
+ // AJAX call to save data
+ $.ajax({
+
+ url: '@Url.Action("SaveRing", "Report")', // Save the ring data
+ type: 'POST',
+ data: {
+ segmentcode: segmentid,
+ ringcode: ringcode,
+     description: ringdesc,
+     ringcapacity: ringcapacity
+
+ },
+ success: function (response) {
+ if (response) {
+     alert("Ring saved successfully!");
+     $('#closeChildPopup').trigger("click");
+     debugger;
+     var nbrOfsites = $("#ddlnofsites").val();
+
+     if (nbrOfsites === "") {
+         alert("Please select no of sites !");
+     }
+
+     var ringcap = $("#ddlringcapacity").val();
+ // Now fetch updated ring types
+ $.ajax({
+ url: '@Url.Action("GetRingTypesByRegion", "Report")',
+ type: 'GET',
+     data: { segmentId: segmentid, numberofsites: nbrOfsites, ringcapacity: ringcap }, // Pass the selected segment ID
+ success: function (data) {
+ var ringTypeDropdown = $('#ddlringtype');
+ ringTypeDropdown.empty(); // Clear previous options
+ ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+
+ // Append new options
+ $.each(data, function (index, item) {
+     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+ });
+     let $select = $("#ddlringtype");
+     if ($select.children("option").length > 0) {
+         let lastValue = $select.children("option:last").val(); 
+         $select.val(lastValue).trigger("chosen:updated"); 
+     }
+     
+
+ // Update Chosen.js Dropdown (if used)
+     ringTypeDropdown.trigger("chosen:updated");
+ },
+ error: function () {
+ alert("Error fetching ring types. Please try again.");
+ }
+ });
+
+ } else {
+ alert(response.Message);
+ }
+ },
+ error: function () {
+ alert('An error occurred while saving the topology.');
+ }
+ });
+
+ });
+    });
+
+</script>

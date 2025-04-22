@@ -110,7 +110,7 @@ $(document).ready(function () {
         rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
         /* rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="icon-topology"></i></a>';*/
-        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="fa fa-user-plus"></i></a>';
+        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><span class="icon-topology"></span></a>';
 
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
     });
@@ -167,30 +167,30 @@ $(document).ready(function () {
             alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
             return false;
         }
-        else if ($('#ddlLayerDurationBasedColumns').val() == '') {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
-            return false;
-        }
-        else if ($('#customedate').val() == '0') {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
-            return false;
-        }
-        else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
-            return false;
-        }
+        //else if ($('#ddlLayerDurationBasedColumns').val() == '') {
+        //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+        //    return false;
+        //}
+        //else if ($('#customedate').val() == '0') {
+        //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+        //    return false;
+        //}
+        //else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9) {
+        //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+        //    return false;
+        //}
 
-        else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9) {
-            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
-            return false;
-        }
+        //else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9) {
+        //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+        //    return false;
+        //}
 
-        else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
-            var startDate = new Date($('#txtDateFrom').val());
-            var endDate = new Date($('#txtDateTo').val());
-            var configuredDay = 365;
-            return si.GetDaysDifference(startDate, endDate, configuredDay);
-        }
+        //else if ( $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+        //    var startDate = new Date($('#txtDateFrom').val());
+        //    var endDate = new Date($('#txtDateTo').val());
+        //    var configuredDay = 365;
+        //    return si.GetDaysDifference(startDate, endDate, configuredDay);
+        //}
         else {
             return true;
         }

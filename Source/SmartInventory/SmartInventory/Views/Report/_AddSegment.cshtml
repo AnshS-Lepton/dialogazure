@@ -1,0 +1,217 @@
+﻿
+@using SmartInventory.Settings;
+@model Models.PODMaster
+
+@helper pageMessage()
+{
+    { Html.RenderPartial("_PageMessage", Model.objPM); }
+
+}
+
+@Html.HiddenFor(m => m.sequence, new { @id = "hdnsequence" })
+<div class="space-pad">
+    <form id="segmentForm">
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                <div class="pose-plus">
+                    <a href="javascript:void(0);"
+                       class="AsiterowShowOnMap"
+                       title="Show on Map">
+                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                    </a>
+                </div>
+            </div>
+            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                <div class="pose-plus">
+                    <a href="javascript:void(0);"
+                       class="BsiterowShowOnMap"
+                       title="Show on Map">
+                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Segment Code<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+
+            </div>
+
+            <label class="control-label col-sm-2" for="txtSearchtext">Route<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(m => m.network_id, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlCable" })
+                
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
+            <div class="col-sm-4">
+                @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdescRing", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Enter Description", @maxlength = 500, @rows = 4, @cols = 50, @style = "resize: none;" })
+            </div>
+        </div>
+    </form>
+</div>
+<div class="ModalFooter d-flex --gap05">
+    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnringCancel">
+        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+</div>
+
+
+
+<script>
+
+    $("#txtagg1").autocomplete({
+source: function (request, response) {
+    $.ajax({
+        url: '@Url.Action("GetAGG1", "Report")',
+        type: "GET",
+        dataType: "json",
+        data: { term: request.term },
+        success: function (data) {
+        if (data.length === 0) {
+        response([{ label: "No results found", value: "", siteName: "", systemId: "" }]);
+        } else {
+        response($.map(data, function (item) {
+        return {
+        label: item.label,   // Display site_id in dropdown
+        value: item.value,   // Set site_id in input
+        siteName: item.siteName, // Set site_name
+        systemId: item.systemId  // Store system_id
+        };
+        }));
+        }
+        }
+        });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+        if (ui.item.value !== "") {
+            $("#txtagg1").val(ui.item.value);   // Set selected site_id
+      
+        }
+        return false;
+        }
+    });
+
+    $("#txtagg2").autocomplete({
+source: function (request, response) {
+    $.ajax({
+        url: '@Url.Action("GetAGG2", "Report")',
+        type: "GET",
+        dataType: "json",
+        data: { term: request.term },
+        success: function (data) {
+        if (data.length === 0) {
+            response([{ label: "No results found", value: "", Name: "", systemId: "" }]);
+        } else {
+            debugger;
+        response($.map(data, function (item) {
+        return {
+            value: item.value, // Set site_name
+        systemId: item.systemId  // Store system_id
+        };
+        }));
+        }
+        }
+        });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+        if (ui.item.value !== "") {
+            debugger;
+            $("#txtagg2").val(ui.item.value); // Set corresponding site_name
+      
+        }
+        return false;
+        }
+        });
+
+    $(document).ready(function () {
+        $("#hdnringsiteseq").val($("#hdnsequence").val());
+        $("#btnSaveRing").click(function () {
+            debugger;
+ var ringcode = $("#txtRingCode").val();
+ var segmentid = $("#ddlsegment").val();
+ var segmentcode = $("#txtsegmentcode").val();
+            var ringdesc = $("#txtdescRing").val();
+ var ringcapacity = $("#ddlringcapacity").val();
+
+ if (!segmentid ) {
+ alert("Please select segment.");
+ return;
+ }
+
+ // AJAX call to save data
+ $.ajax({
+
+ url: '@Url.Action("SaveRing", "Report")', // Save the ring data
+ type: 'POST',
+ data: {
+ segmentcode: segmentid,
+ ringcode: ringcode,
+     description: ringdesc,
+     ringcapacity: ringcapacity
+
+ },
+ success: function (response) {
+ if (response) {
+     alert("Ring saved successfully!");
+     $('#closeChildPopup').trigger("click");
+     debugger;
+     var nbrOfsites = $("#ddlnofsites").val();
+
+     if (nbrOfsites === "") {
+         alert("Please select no of sites !");
+     }
+
+     var ringcap = $("#ddlringcapacity").val();
+ // Now fetch updated ring types
+ $.ajax({
+ url: '@Url.Action("GetRingTypesByRegion", "Report")',
+ type: 'GET',
+     data: { segmentId: segmentid, numberofsites: nbrOfsites, ringcapacity: ringcap }, // Pass the selected segment ID
+ success: function (data) {
+ var ringTypeDropdown = $('#ddlringtype');
+ ringTypeDropdown.empty(); // Clear previous options
+ ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+
+ // Append new options
+ $.each(data, function (index, item) {
+     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+ });
+     let $select = $("#ddlringtype");
+     if ($select.children("option").length > 0) {
+         let lastValue = $select.children("option:last").val();
+         $select.val(lastValue).trigger("chosen:updated");
+     }
+
+
+ // Update Chosen.js Dropdown (if used)
+     ringTypeDropdown.trigger("chosen:updated");
+ },
+ error: function () {
+ alert("Error fetching ring types. Please try again.");
+ }
+ });
+
+ } else {
+ alert(response.Message);
+ }
+ },
+ error: function () {
+ alert('An error occurred while saving the topology.');
+ }
+ });
+
+ });
+    });
+
+</script>
