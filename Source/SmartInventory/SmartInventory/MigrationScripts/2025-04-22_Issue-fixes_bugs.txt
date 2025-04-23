@@ -1,0 +1,1956 @@
+CREATE OR REPLACE FUNCTION public.fn_get_fiber_link_details(p_systemid integer, p_searchby character varying, p_searchtext character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_userid integer, p_searchfrom timestamp without time zone, p_searchto timestamp without time zone)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+
+ DECLARE
+   sql TEXT; 
+   StartSNo    INTEGER;   
+   EndSNo      INTEGER;
+   TotalRecords INTEGER; 
+   LowerStart  character varying;
+   LowerEnd  character varying;
+   v_user_role_id integer;
+   s_layer_columns_val text; 
+
+BEGIN
+
+sql:='';
+LowerStart:='';
+LowerEnd:='';
+
+ --IF (coalesce(P_SORTCOLNAME,'')!='') THEN  
+    -- LowerStart:='LOWER(';
+    -- LowerEnd:=')';
+--END IF;
+  if(p_sortcolname='OP_ALIAS')then p_sortcolname:='Service Id'; end if;
+select role_id into v_user_role_id from user_master where user_id=p_userId;
+
+-- FETCH ALL COLUMNS FROM COLUMN SETTINGS TABLE
+	 
+	SELECT STRING_AGG(COLUMN_NAME||' as "'||case when COALESCE(res_field_key,'') ='' then DISPLAY_NAME else res_field_key  end||'"', ',') INTO S_LAYER_COLUMNS_VAL FROM(
+	 SELECT  COLUMN_NAME,DISPLAY_NAME,res_field_key  FROM fiber_link_columns_settings WHERE is_active=true and UPPER(column_name) not in('TOTAL_ROUTE_LENGTH','GIS_LENGTH') order by Column_sequence) A;
+	 
+
+--- TO GET TOTAL_ROUTE_LENGTH & GIS_LENGTH
+CREATE TEMP TABLE TEMP_CABLE_INFO(
+ LINK_SYSTEM_ID INTEGER,
+ CABLE_ID INTEGER
+)ON COMMIT DROP;
+ 
+CREATE TEMP TABLE TEMP_FIBER_LINK_DETAILS(
+  LINK_SYSTEM_ID INTEGER,
+  TOTAL_ROUTE_LENGTH DOUBLE PRECISION,
+  GIS_LENGTH DOUBLE PRECISION
+ )ON COMMIT DROP;
+
+INSERT INTO TEMP_CABLE_INFO(LINK_SYSTEM_ID,CABLE_ID)
+SELECT DISTINCT LINK_SYSTEM_ID,CABLE_ID FROM ATT_DETAILS_CABLE_INFO C
+JOIN ATT_DETAILS_FIBER_LINK FIBER ON FIBER.SYSTEM_ID=C.LINK_SYSTEM_ID WHERE LINK_SYSTEM_ID>0;
+
+ 
+INSERT INTO TEMP_FIBER_LINK_DETAILS(LINK_SYSTEM_ID,TOTAL_ROUTE_LENGTH,GIS_LENGTH)
+ 
+SELECT DISTINCT T.LINK_SYSTEM_ID,ROUND((SUM(COALESCE(CABLE.CABLE_MEASURED_LENGTH,0)) + SUM(COALESCE(LOOP.LOOP_LENGTH,0)))::NUMERIC,2) AS TOTAL_ROUTE_LENGTH ,
+ROUND((SUM(COALESCE(CABLE.CABLE_MEASURED_LENGTH,0)))::NUMERIC,2) AS CABLE_MEASURED_LENGTH
+FROM TEMP_CABLE_INFO T
+JOIN ATT_DETAILS_CABLE CABLE ON CABLE.SYSTEM_ID=T.CABLE_ID
+LEFT JOIN( SELECT SUM(Loop_length) as loop_length,cable_system_id from ATT_DETAILS_LOOP LOOP group by LOOP.cable_system_id)loop ON LOOP.CABLE_SYSTEM_ID= CABLE.SYSTEM_ID
+group by T.link_system_id
+ORDER BY T.link_system_id DESC;
+
+ 
+-- MANAGE SORT COLUMN NAME
+IF (coalesce(TRIM(P_SORTCOLNAME,''))!='') THEN 
+
+SELECT TRIM( trailing '	' from ''||P_SORTCOLNAME||'') into P_SORTCOLNAME;
+select column_name into P_SORTCOLNAME from fiber_link_columns_settings WHERE UPPER(DISPLAY_NAME)=UPPER(P_SORTCOLNAME);
+End IF;
+
+ raise info'P_SORTCOLNAME% ',P_SORTCOLNAME;
+  raise info'S_LAYER_COLUMNS_VAL% ',S_LAYER_COLUMNS_VAL;
+
+-- DYNAMIC QUERY
+sql:= 'SELECT ROW_NUMBER() OVER (ORDER BY '|| LowerStart || CASE WHEN (P_SORTCOLNAME) = '' THEN 'fl.system_id' ELSE P_SORTCOLNAME END ||LowerEnd|| ' ' ||CASE WHEN (P_SORTTYPE) ='' THEN 'desc' else P_SORTTYPE end||')::Integer AS S_No, 
+fl.system_id,'||S_LAYER_COLUMNS_VAL||', f2.TOTAL_ROUTE_LENGTH AS "Total Route Length(meter)",f2.GIS_LENGTH AS "GIS Length(meter)"
+FROM vw_att_details_fiber_link fl
+left join TEMP_FIBER_LINK_DETAILS f2 on fl.system_id=f2.link_system_id WHERE 1=1  ';
+	
+
+ IF(p_systemid >0 )THEN 
+	sql:= sql ||'and fl.system_id='||p_systemid||'';
+ END IF;
+--  IF(v_user_role_id!=1)THEN
+-- 	sql:= sql ||'and fl.created_by_id='||p_userId||'';
+--  END IF;
+ raise info'sql2% ',sql;
+
+ IF ((p_searchtext) != '' and (p_searchby) != '') THEN
+sql:= sql ||' AND lower('||p_searchby||'::text) LIKE lower(''%'||TRIM(p_searchtext)||'%'')';
+END IF;
+   
+IF(p_searchfrom IS NOT NULL and p_searchto IS NOT NULL) THEN
+sql:= sql ||' AND fl.created_on::Date>= to_date('''||p_searchfrom||''', ''YYYY-MM-DD'') and fl.created_on::Date<=to_date('''||p_searchto||''', ''YYYY-MM-DD'')';
+
+END IF;
+	-- GET TOTAL RECORD COUNT
+EXECUTE   'SELECT COUNT(1)  FROM ('||sql||') as a ' INTO TotalRecords;
+ 
+--GET PAGE WISE RECORD (FOR PARTICULAR PAGE)
+ IF((P_PAGENO) <> 0) THEN
+	StartSNo:=  P_PAGERECORD * (P_PAGENO - 1 ) + 1;
+	EndSNo:= P_PAGENO * P_PAGERECORD;
+	sql:= 'SELECT '||TotalRecords||' as totalRecords,*
+                FROM (' || sql || ' ) T 
+                WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+
+ ELSE
+         sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ') T';                  
+ END IF; 
+RAISE INFO '%', sql;
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||sql||') row';
+
+END ;
+
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_get_fiber_link_details(int4, varchar, varchar, int4, int4, varchar, varchar, int4, timestamp, timestamp) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_fiber_link_details(int4, varchar, varchar, int4, int4, varchar, varchar, int4, timestamp, timestamp) TO postgres;
+
+----------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_trg_audit_att_details_cable()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+ _value integer;
+ _ignorecol character varying;
+ _ignorecol1 character varying;
+tempjson text; --for additional attributes
+sql text;  --for additional attributes
+
+BEGIN
+
+IF (TG_OP = 'INSERT' ) THEN  
+         INSERT INTO public.audit_att_details_cable(
+            system_id, network_id, cable_name, a_location, b_location, total_core, 
+            no_of_tube, no_of_core_per_tube, cable_measured_length, cable_calculated_length, 
+            cable_type, coreaccess, wavelength, optical_output_power, frequency, 
+            attenuation_db, resistance_ohm, construction, activation, accessibility, 
+            specification, category, subcategory1, subcategory2, subcategory3, 
+            item_code, vendor_id, type, brand, model, network_status, status, 
+            pin_code, province_id, region_id, utilization, totalattenuationloss, 
+            chromaticdb, chromaticdispersion, totalchromaticloss, remarks,route_id,
+            created_by, created_on, modified_by, modified_on, a_system_id, 
+            a_network_id, a_entity_type, b_system_id, b_network_id, b_entity_type, 
+            sequence_id, duct_id, trench_id, project_id, planning_id, purpose_id, 
+            workorder_id, structure_id, cable_category, total_loop_length, 
+            total_loop_count,action,start_reading,end_reading,cable_sub_category,parent_system_id,parent_network_id,parent_entity_type,execution_method,acquire_from,circuit_id,thirdparty_circuit_id,ownership_type,third_party_vendor_id,source_ref_type,source_ref_id,source_ref_description,audit_item_master_id,status_remark,status_updated_by,status_updated_on,is_visible_on_map,primary_pod_system_id,secondary_pod_system_id,inner_dimension,outer_dimension,calculated_length_remark,is_acquire_from,other_info,origin_from,origin_ref_id,origin_ref_code,origin_ref_description,request_ref_id,requested_by,request_approved_by,subarea_id,area_id,dsa_id,csa_id,bom_sub_category ,gis_design_id,route_name)   
+         select  new.system_id, new.network_id, new.cable_name, new.a_location, new.b_location, new.total_core, 
+            new.no_of_tube, new.no_of_core_per_tube, new.cable_measured_length, new.cable_calculated_length, 
+            new.cable_type, new.coreaccess, new.wavelength, new.optical_output_power, new.frequency, 
+            new.attenuation_db, new.resistance_ohm, new.construction, new.activation, new.accessibility, 
+            new.specification, new.category, new.subcategory1, new.subcategory2, new.subcategory3, 
+            new.item_code, new.vendor_id, new.type, new.brand, new.model, new.network_status, new.status, 
+            new.pin_code, new.province_id, new.region_id, new.utilization, new.totalattenuationloss, 
+            new.chromaticdb, new.chromaticdispersion, new.totalchromaticloss, new.remarks,new.route_id,
+            new.created_by, new.created_on, new.modified_by, new.modified_on, new.a_system_id, 
+            new.a_network_id, new.a_entity_type, new.b_system_id, new.b_network_id, new.b_entity_type, 
+            new.sequence_id, new.duct_id, new.trench_id, new.project_id, new.planning_id, new.purpose_id, 
+            new.workorder_id, new.structure_id, new.cable_category, new.total_loop_length, 
+            new.total_loop_count, 'I' as action,new.start_reading,new.end_reading,new.cable_sub_category,new.parent_system_id,new.parent_network_id,new.parent_entity_type,new.execution_method, new.acquire_from,new.circuit_id,new.thirdparty_circuit_id,new.ownership_type,new.third_party_vendor_id,new.source_ref_type,new.source_ref_id,new.source_ref_description,new.audit_item_master_id,new.status_remark,new.status_updated_by,new.status_updated_on,new.is_visible_on_map,new.primary_pod_system_id,new.secondary_pod_system_id,new.inner_dimension,new.outer_dimension,new.calculated_length_remark,new.is_acquire_from,new.other_info,new.origin_from,new.origin_ref_id,new.origin_ref_code,new.origin_ref_description,new.request_ref_id,new.requested_by,new.request_approved_by,new.subarea_id,new.area_id,new.dsa_id,new.csa_id,new.bom_sub_category ,new.gis_design_id,new.route_name from att_details_cable where system_id=new.system_id;
+      
+	--raise info 'new.system_id %',new.system_id; 
+          tempjson:='''"'||new.system_id||'"''';
+         --raise info 'tempjson %',tempjson; 
+   
+	--Update value of the key 'record_system_id' for additional attributes    
+   	sql:='UPDATE att_details_cable SET other_info = jsonb_set(other_info::jsonb , ''{record_system_id}'','||tempjson||') where system_id = '||new.system_id||';';
+   
+  	 --raise info 'sql %',sql; 
+	execute sql;
+
+END IF;
+IF (TG_OP = 'UPDATE' ) THEN  
+_ignorecol := 'modified_on,gis_design_id,codification_sequence,area_system_id,area_id,subarea_system_id,subarea_id,dsa_system_id,dsa_id,csa_system_id,csa_id';
+_ignorecol1 := 'modified_by';
+select fn_check_history_record(OLD, NEW,_ignorecol,_ignorecol1) into _value;
+if(_value = 1)then
+          INSERT INTO public.audit_att_details_cable(
+            system_id, network_id, cable_name, a_location, b_location, total_core, 
+            no_of_tube, no_of_core_per_tube, cable_measured_length, cable_calculated_length, 
+            cable_type, coreaccess, wavelength, optical_output_power, frequency, 
+            attenuation_db, resistance_ohm, construction, activation, accessibility, 
+            specification, category, subcategory1, subcategory2, subcategory3, 
+            item_code, vendor_id, type, brand, model, network_status, status, 
+            pin_code, province_id, region_id, utilization, totalattenuationloss, 
+            chromaticdb, chromaticdispersion, totalchromaticloss, remarks,route_id,
+            created_by, created_on, modified_by, modified_on, a_system_id, 
+            a_network_id, a_entity_type, b_system_id, b_network_id, b_entity_type, 
+            sequence_id, duct_id, trench_id, project_id, planning_id, purpose_id, 
+            workorder_id, structure_id, cable_category, total_loop_length, 
+            total_loop_count,action,start_reading,end_reading,cable_sub_category,parent_system_id,parent_network_id,parent_entity_type,execution_method,barcode,acquire_from,circuit_id,thirdparty_circuit_id,ownership_type,third_party_vendor_id,source_ref_type,source_ref_id,source_ref_description,audit_item_master_id,status_remark,status_updated_by,status_updated_on,is_visible_on_map,primary_pod_system_id,secondary_pod_system_id,inner_dimension,outer_dimension,calculated_length_remark,is_acquire_from,other_info,origin_from,origin_ref_id,origin_ref_code,origin_ref_description,request_ref_id,requested_by,request_approved_by,subarea_id,area_id,dsa_id,csa_id,bom_sub_category ,gis_design_id,route_name) 
+         select  new.system_id, new.network_id, new.cable_name, new.a_location, new.b_location, new.total_core, 
+            new.no_of_tube, new.no_of_core_per_tube, new.cable_measured_length, new.cable_calculated_length, 
+            new.cable_type, new.coreaccess, new.wavelength, new.optical_output_power, new.frequency, 
+            new.attenuation_db, new.resistance_ohm, new.construction, new.activation, new.accessibility, 
+            new.specification, new.category, new.subcategory1, new.subcategory2, new.subcategory3, 
+            new.item_code, new.vendor_id, new.type, new.brand, new.model, new.network_status, new.status, 
+            new.pin_code, new.province_id, new.region_id, new.utilization, new.totalattenuationloss, 
+            new.chromaticdb, new.chromaticdispersion, new.totalchromaticloss, new.remarks,new.route_id,
+            new.created_by, new.created_on, new.modified_by, new.modified_on, new.a_system_id, 
+            new.a_network_id, new.a_entity_type, new.b_system_id, new.b_network_id, new.b_entity_type, 
+            new.sequence_id, new.duct_id, new.trench_id, new.project_id, new.planning_id, new.purpose_id, 
+            new.workorder_id, new.structure_id, new.cable_category, new.total_loop_length, 
+            new.total_loop_count,'U' as action ,new.start_reading,new.end_reading,new.cable_sub_category ,new.parent_system_id,new.parent_network_id,new.parent_entity_type,new.execution_method,new.barcode
+            ,new.acquire_from,new.circuit_id,new.thirdparty_circuit_id,new.ownership_type,new.third_party_vendor_id,new.source_ref_type,new.source_ref_id,new.source_ref_description,new.audit_item_master_id,new.status_remark,new.status_updated_by,new.status_updated_on,new.is_visible_on_map,new.primary_pod_system_id,new.secondary_pod_system_id,new.inner_dimension,new.outer_dimension,new.calculated_length_remark,new.is_acquire_from,new.other_info,new.origin_from,new.origin_ref_id,new.origin_ref_code,new.origin_ref_description,new.request_ref_id,new.requested_by,new.request_approved_by,new.subarea_id,new.area_id,new.dsa_id,new.csa_id,new.bom_sub_category ,new.gis_design_id,new.route_name from att_details_cable where system_id=new.system_id;
+End if;
+
+If (old.total_loop_length != new.total_loop_length or old.cable_measured_length != new.cable_measured_length or old.cable_calculated_length != new.cable_calculated_length)
+then
+
+with cte as(select distinct link_system_id,cable_id from att_details_cable_info where cable_id=new.system_id and link_system_id>0),
+cte2 as(select distinct link_system_id,cable_id from att_details_cable_info)
+,cte3 as(select  cable_system_id,sum(loop_length) as loop_length from att_details_loop group by cable_system_id )
+
+update att_details_fiber_link a 
+set total_route_length=b.cable_measured_length+b.total_loop_length,
+gis_length=coalesce(b.cable_measured_length,0)
+from(
+select a.link_system_id,
+sum(coalesce(c.cable_calculated_length,0)) as cable_calculated_length,
+sum(coalesce(c.cable_measured_length,0)) as cable_measured_length,
+sum(coalesce(l.loop_length,0)) as total_loop_length
+from cte a
+inner join cte2 b on b.link_system_id=a.link_system_id 
+inner join att_details_cable c on c.system_id=b.cable_id 
+left join cte3 l on l.cable_system_id=c.system_id
+group by a.link_system_id	
+)b
+where a.system_id=b.link_system_id;
+
+End if;	
+	
+END IF; 				
+IF (TG_OP = 'DELETE' ) THEN  
+
+          INSERT INTO public.audit_att_details_cable(
+            system_id, network_id, cable_name, a_location, b_location, total_core, 
+            no_of_tube, no_of_core_per_tube, cable_measured_length, cable_calculated_length, 
+            cable_type, coreaccess, wavelength, optical_output_power, frequency, 
+            attenuation_db, resistance_ohm, construction, activation, accessibility, 
+            specification, category, subcategory1, subcategory2, subcategory3, 
+            item_code, vendor_id, type, brand, model, network_status, status, 
+            pin_code, province_id, region_id, utilization, totalattenuationloss, 
+            chromaticdb, chromaticdispersion, totalchromaticloss, remarks,route_id,
+            created_by, created_on, modified_by, modified_on, a_system_id, 
+            a_network_id, a_entity_type, b_system_id, b_network_id, b_entity_type, 
+            sequence_id, duct_id, trench_id, project_id, planning_id, purpose_id, 
+            workorder_id, structure_id, cable_category, total_loop_length, 
+            total_loop_count,action,start_reading,end_reading,cable_sub_category,parent_system_id,parent_network_id,parent_entity_type,execution_method,barcode,acquire_from,circuit_id,thirdparty_circuit_id,ownership_type,third_party_vendor_id,source_ref_type,source_ref_id,source_ref_description,audit_item_master_id,status_remark,status_updated_by,status_updated_on,is_visible_on_map,primary_pod_system_id,secondary_pod_system_id,inner_dimension,outer_dimension,calculated_length_remark,is_acquire_from,other_info,origin_from,origin_ref_id,origin_ref_code,origin_ref_description,request_ref_id,requested_by,request_approved_by,subarea_id,area_id,dsa_id,csa_id,bom_sub_category ,gis_design_id,route_name) 
+         values(old.system_id, old.network_id, old.cable_name, old.a_location, old.b_location, old.total_core, 
+            old.no_of_tube, old.no_of_core_per_tube, old.cable_measured_length, old.cable_calculated_length, 
+            old.cable_type, old.coreaccess, old.wavelength, old.optical_output_power, old.frequency, 
+            old.attenuation_db, old.resistance_ohm, old.construction, old.activation, old.accessibility, 
+            old.specification, old.category, old.subcategory1, old.subcategory2, old.subcategory3, 
+            old.item_code, old.vendor_id, old.type, old.brand, old.model, old.network_status, old.status, 
+            old.pin_code, old.province_id, old.region_id, old.utilization, old.totalattenuationloss, 
+            old.chromaticdb, old.chromaticdispersion, old.totalchromaticloss, old.remarks,old.route_id,
+            old.created_by, old.created_on, old.modified_by, old.modified_on, old.a_system_id, 
+            old.a_network_id, old.a_entity_type, old.b_system_id, old.b_network_id, old.b_entity_type, 
+            old.sequence_id, old.duct_id, old.trench_id, old.project_id, old.planning_id, old.purpose_id, 
+            old.workorder_id, old.structure_id, old.cable_category, old.total_loop_length, 
+            old.total_loop_count, 'D',old.start_reading,old.end_reading,old.cable_sub_category,old.parent_system_id,old.parent_network_id,old.parent_entity_type,old.execution_method,old.barcode
+            ,old.acquire_from,old.circuit_id,old.thirdparty_circuit_id,old.ownership_type,old.third_party_vendor_id,old.source_ref_type,old.source_ref_id,old.source_ref_description,old.audit_item_master_id,old.status_remark,old.status_updated_by,old.status_updated_on,old.is_visible_on_map,old.primary_pod_system_id,old.secondary_pod_system_id,old.inner_dimension,old.outer_dimension,old.calculated_length_remark,old.is_acquire_from,old.other_info,old.origin_from,old.origin_ref_id,old.origin_ref_code,old.origin_ref_description,old.request_ref_id,old.requested_by,old.request_approved_by,old.subarea_id,old.area_id,old.dsa_id,old.csa_id,old.bom_sub_category ,old.gis_design_id,old.route_name);
+           
+           update ATT_DETAILS_FIBER_LINK set fiber_link_status='Free' 
+			where system_id in(with recursive fiberlink as (select  cable_id,link_system_id 
+			from att_details_cable_info where cable_id=old.SYSTEM_ID and link_system_id>0 group by cable_id,link_system_id
+			union
+			select B.cable_id,B.link_system_id  from att_details_cable_info B 
+			inner join fiberlink A on A.link_system_id=B.link_system_id)
+			select link_system_id from fiberlink group by link_system_id having count(1)=1);
+
+           IF NOT EXISTS(select 1 from att_details_cable_info where link_system_id=(select link_system_id from att_details_cable_info where cable_id=old.system_id limit 1) limit 1) THEN                   
+				update ATT_DETAILS_FIBER_LINK set fiber_link_status='Free' where system_id in(select link_system_id from att_details_cable_info where cable_id=old.system_id);
+		   END IF;
+
+	  Delete from line_master where system_id=old.SYSTEM_ID and UPPER(entity_type)='CABLE';
+	  delete from att_details_cable_info where cable_id=old.SYSTEM_ID;
+
+END IF; 		
+
+RETURN NEW;
+END;
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_trg_audit_att_details_cable() OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_trg_audit_att_details_cable() TO public;
+GRANT ALL ON FUNCTION public.fn_trg_audit_att_details_cable() TO postgres;
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION public.fn_get_core_planner_validation(source_network_id character varying, destination_network_id character varying, buffer integer, required_core integer, p_user_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE     
+    P_SOURCE CHARACTER VARYING;
+    P_DESTINATION CHARACTER VARYING;    
+    P_SOURCE_SYSTEM_ID INTEGER;
+    P_DESTINATION_SYSTEM_ID INTEGER;
+    P_SOURCE_NETWORK_ID CHARACTER VARYING;
+	P_DESTINATION_NETWORK_ID CHARACTER VARYING;
+	V_IS_VALID BOOLEAN;
+	V_MESSAGE CHARACTER VARYING;
+	FIBER_ODF_COUNT INTEGER;
+    FIBER_CABLE_COUNT INTEGER;
+   Is_AvailableODF BOOLEAN;
+  v_rec RECORD;
+BEGIN
+	V_IS_VALID:=TRUE;
+	V_MESSAGE:='Required Core available';
+	P_SOURCE_NETWORK_ID:=SOURCE_NETWORK_ID;
+	P_DESTINATION_NETWORK_ID:=DESTINATION_NETWORK_ID;
+	P_SOURCE_SYSTEM_ID:=0;
+	P_DESTINATION_SYSTEM_ID:=0;
+	FIBER_ODF_COUNT:=0;
+    FIBER_CABLE_COUNT:=0;
+     --TRUNCATE TABLE TEMP_CABLE_ROUTES; 
+     --TRUNCATE TABLE TEMP_ISP_PORT_INFO;
+     --TRUNCATE TABLE TEMP_ISP_PORT_INFO; 
+     --TRUNCATE TABLE TEMP_ROUTE_CONNECTION; 
+      --TRUNCATE table connected_fiberlink_cable;
+
+-- CREATE TEMPORARY TABLES
+        CREATE TEMP TABLE TEMP_CABLE_ROUTES(
+        SEQ INTEGER,
+        PATH_SEQ INTEGER, 
+        EDGE_TARGETID INTEGER, 
+        ROADLINE_GEOMTEXT TEXT, 
+        START_POINT CHARACTER VARYING,
+        END_POINT CHARACTER VARYING,
+        MESSAGE VARCHAR NULL,
+        IS_VALID BOOLEAN DEFAULT TRUE,
+        AVAIABLE_CORE_COUNT INTEGER DEFAULT 0,
+        USER_ID INTEGER,
+        A_SYSTEM_ID INTEGER,
+        A_ENTITY_TYPE CHARACTER VARYING,
+        A_NETWORK_ID CHARACTER VARYING,
+        B_SYSTEM_ID INTEGER,
+        B_ENTITY_TYPE CHARACTER VARYING,
+        B_NETWORK_ID CHARACTER VARYING,
+        A_POINT_Geom geometry,
+        B_POINT_Geom geometry,
+        IS_MULTIPLE_ODF BOOLEAN DEFAULT TRUE
+    ) ON COMMIT DROP;
+
+   CREATE TEMP TABLE TEMP_ISP_PORT_INFO(
+        SYSTEM_ID INT4 NULL,
+        NETWORK_ID VARCHAR NULL,
+        PARENT_SYSTEM_ID INT4 NULL,
+        PARENT_NETWORK_ID VARCHAR NULL,
+        PORT_STATUS_ID INT4 NULL,
+       -- IS_VALID BOOLEAN DEFAULT TRUE,
+        PORT_NUMBER INT4 NULL,
+        PARENT_ENTITY_TYPE VARCHAR NULL,
+		IS_VALID BOOLEAN NOT NULL DEFAULT TRUE
+    ) ON COMMIT DROP;
+
+	CREATE TEMP TABLE TEMP_ROUTE_CONNECTION (
+		ID SERIAL,
+		CONNECTION_ID INT4,
+		SOURCE_SYSTEM_ID INT4 NULL,
+		SOURCE_NETWORK_ID VARCHAR(100) NULL,
+		SOURCE_ENTITY_TYPE VARCHAR(100) NULL,
+		SOURCE_PORT_NO INT4 NULL,
+		DESTINATION_SYSTEM_ID INT4 NULL,
+		DESTINATION_NETWORK_ID VARCHAR(100) NULL,
+		DESTINATION_ENTITY_TYPE VARCHAR(100) NULL,
+		DESTINATION_PORT_NO INT4 null,
+		IS_CABLE_A_END BOOLEAN,
+		IS_CABLE_B_END BOOLEAN,
+		IS_VALID boolean default true
+
+	)ON COMMIT DROP;
+
+
+  	 create TEMP TABLE connected_fiberlink_cable (
+     id SERIAL PRIMARY KEY,
+     cable_id INTEGER NOT NULL,
+     fiber_number INTEGER NOT NULL,
+     is_valid boolean default true,
+     link_system_id INTEGER,
+	 a_end_status_id INTEGER,
+	 b_end_status_id INTEGER,
+	 error_msg VARCHAR null
+	) ON COMMIT DROP;
+
+    -- CLEAR PREVIOUS LOGS FOR THE USER
+    DELETE FROM CORE_PLANNER_LOGS WHERE USER_ID = P_USER_ID;
+    DELETE  FROM CORE_PLANNER_FIBER_INFO WHERE USER_ID = P_USER_ID;
+    
+    IF V_IS_VALID and REQUIRED_CORE > 2
+    THEN 
+	V_IS_VALID:=FALSE;
+	V_MESSAGE:='A maximum of two ports is permitted!';        
+    END IF;
+   
+    IF V_IS_VALID and NOT EXISTS(SELECT 1 FROM POINT_MASTER WHERE COMMON_NAME IN(SOURCE_NETWORK_ID) and entity_type in('FMS','SpliceClosure'))
+    THEN 
+	V_IS_VALID:=FALSE;
+	V_MESSAGE:='Please enter a valid ODF/Splice Closure at start!';        
+    END IF;
+
+    IF V_IS_VALID and NOT EXISTS(SELECT 1 FROM POINT_MASTER WHERE COMMON_NAME IN(DESTINATION_NETWORK_ID) and entity_type in('FMS','SpliceClosure'))
+    THEN 
+	V_IS_VALID:=FALSE;
+	V_MESSAGE:='Please enter a valid ODF/Splice Closure at end!';        
+    END IF;
+
+    IF V_IS_VALID AND (SELECT COUNT(1)=0 FROM ATT_DETAILS_FMS WHERE NETWORK_ID IN(SOURCE_NETWORK_ID,DESTINATION_NETWORK_ID))
+    THEN
+	V_IS_VALID:=FALSE;
+	V_MESSAGE:='AT LEAST ONE ODF IS REQUIRED. PLEASE PROVIDE A VALID ODF.!'  ;      
+    END IF;
+        
+  if(V_IS_VALID)
+  then           
+	  SELECT LONGITUDE || ' ' || LATITUDE AS GEOM, SYSTEM_ID
+	  INTO P_SOURCE, P_SOURCE_SYSTEM_ID
+	  FROM POINT_MASTER
+	  WHERE COMMON_NAME IN(SOURCE_NETWORK_ID) AND ENTITY_TYPE in('FMS');
+
+	  SELECT LONGITUDE || ' ' || LATITUDE AS GEOM, SYSTEM_ID
+	  INTO P_DESTINATION, P_DESTINATION_SYSTEM_ID 
+	  FROM POINT_MASTER
+	  WHERE COMMON_NAME IN(DESTINATION_NETWORK_ID) AND ENTITY_TYPE in('FMS');
+
+	IF COALESCE(P_SOURCE_SYSTEM_ID,0)=0
+	THEN		
+		SELECT LONGITUDE || ' ' || LATITUDE AS GEOM, SYSTEM_ID
+		INTO P_SOURCE
+		FROM POINT_MASTER
+		WHERE COMMON_NAME IN(SOURCE_NETWORK_ID) AND ENTITY_TYPE in('SpliceClosure');
+	end if;
+
+	IF COALESCE(P_DESTINATION_SYSTEM_ID,0)=0
+	THEN
+		SELECT LONGITUDE || ' ' || LATITUDE AS GEOM, SYSTEM_ID
+		INTO P_DESTINATION
+		FROM POINT_MASTER
+		WHERE COMMON_NAME IN(DESTINATION_NETWORK_ID) AND ENTITY_TYPE in('SpliceClosure');
+	end if;
+
+
+      IF P_DESTINATION_SYSTEM_ID <> 0 and P_SOURCE_SYSTEM_ID <> 0 then
+       
+	    INSERT INTO TEMP_ISP_PORT_INFO (SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, 
+	    PARENT_NETWORK_ID,   PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE)
+	    SELECT SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, PARENT_NETWORK_ID, 
+	    PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE
+	    FROM ISP_PORT_INFO A 
+	    WHERE A.PARENT_SYSTEM_ID = P_DESTINATION_SYSTEM_ID 
+	    AND A.PARENT_ENTITY_TYPE = 'FMS' AND INPUT_OUTPUT = 'O' --and port_status_id = 1 
+	   ORDER BY SYSTEM_ID;
+	 end if;
+	 
+	  WITH SORTED_DATA AS (
+		            SELECT SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, PARENT_NETWORK_ID, 
+	    PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE,
+		            LAG(PORT_NUMBER) OVER (PARTITION BY PARENT_SYSTEM_ID ORDER BY PORT_NUMBER) AS PREV_FIBER
+		            FROM ISP_PORT_INFO 
+		            WHERE  PARENT_SYSTEM_ID = (CASE WHEN P_SOURCE_SYSTEM_ID <> 0 THEN P_SOURCE_SYSTEM_ID
+                   ELSE P_DESTINATION_SYSTEM_ID END) AND 
+		            PORT_NUMBER % 2 = 1 AND	INPUT_OUTPUT = 'O' and PARENT_ENTITY_TYPE = 'FMS' 
+		            --and port_status_id = 1
+		        ),
+		        FILTERED_DATA AS (
+		            SELECT A.SYSTEM_ID, A.NETWORK_ID, A.PARENT_SYSTEM_ID, A.PARENT_NETWORK_ID, 
+	    A.PORT_STATUS_ID, A.PORT_NUMBER,A.PARENT_ENTITY_TYPE
+		            FROM ISP_PORT_INFO A
+		            INNER JOIN SORTED_DATA B 
+		                ON A.PARENT_SYSTEM_ID = B.PARENT_SYSTEM_ID 
+		                AND (A.PORT_NUMBER = B.PORT_NUMBER + 1 OR A.PORT_NUMBER = B.PORT_NUMBER)
+		            WHERE A.INPUT_OUTPUT = 'O' and A.PARENT_ENTITY_TYPE = 'FMS'
+		            --and A.port_status_id = 1
+		        ),
+		        FIBER_DATA AS (
+		            SELECT SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, PARENT_NETWORK_ID, 
+	                 PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE,
+		            LAG(PORT_NUMBER) OVER (PARTITION BY PARENT_SYSTEM_ID ORDER BY PORT_NUMBER) AS PREV_FIBER,
+		            LEAD(PORT_NUMBER) OVER (PARTITION BY PARENT_SYSTEM_ID ORDER BY PORT_NUMBER) AS NEXT_FIBER        
+		            FROM FILTERED_DATA 
+		            WHERE PARENT_SYSTEM_ID = (CASE WHEN P_SOURCE_SYSTEM_ID <> 0 THEN P_SOURCE_SYSTEM_ID
+                   ELSE P_DESTINATION_SYSTEM_ID END)
+		        )		        
+       INSERT INTO TEMP_ISP_PORT_INFO (SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, 
+	   PARENT_NETWORK_ID,   PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE)
+	   
+	    SELECT SYSTEM_ID, NETWORK_ID, PARENT_SYSTEM_ID, PARENT_NETWORK_ID, 
+	                 PORT_STATUS_ID, PORT_NUMBER,PARENT_ENTITY_TYPE FROM FIBER_DATA
+		WHERE PORT_NUMBER = PREV_FIBER + 1 OR PORT_NUMBER = NEXT_FIBER - 1;
+		        		        
+          -- Populate temporary cable routes table
+	  INSERT INTO TEMP_CABLE_ROUTES(SEQ, PATH_SEQ, EDGE_TARGETID, USER_ID)		  
+	  SELECT SEQ, PATH_SEQ, EDGE,P_USER_ID FROM PGR_DIJKSTRA('SELECT ID, SOURCE, TARGET, COST, REVERSE_COST 
+	  FROM ROUTING_DATA_CORE_PLAN', (SELECT ID
+	  FROM ROUTING_DATA_CORE_PLAN_VERTICES_PGR
+	  WHERE ST_WITHIN( THE_GEOM, ST_BUFFER_METERS(ST_GEOMFROMTEXT('POINT(' || P_SOURCE || ')', 4326), 3))
+	  LIMIT 1 ),(SELECT ID FROM ROUTING_DATA_CORE_PLAN_VERTICES_PGR
+	  WHERE ST_WITHIN( THE_GEOM, 
+	  ST_BUFFER_METERS(ST_GEOMFROMTEXT('POINT('|| P_DESTINATION ||')', 4326), 3)) 
+	  LIMIT 1));
+	
+	  DELETE FROM TEMP_CABLE_ROUTES WHERE EDGE_TARGETID = -1 AND USER_ID = P_USER_ID;
+
+	IF NOT EXISTS(SELECT 1 FROM TEMP_CABLE_ROUTES)
+	THEN
+		V_IS_VALID:=false;
+		V_MESSAGE:='Route not found between ODF/Splice Closure!';
+	END IF;
+
+	-----------UPDATE THE A END ID
+	WITH STARTCTE AS(
+	SELECT PM.SYSTEM_ID,PM.ENTITY_TYPE,PM.COMMON_NAME,EDGE_TARGETID as CABLE_ID,
+	ST_ENDPOINT(LM.SP_GEOMETRY) AS ENDPOINT,PM.sp_geometry as point_geom
+	FROM TEMP_CABLE_ROUTES RS
+	INNER JOIN LINE_MASTER LM 
+	ON LM.SYSTEM_ID = RS.EDGE_TARGETID AND UPPER(LM.ENTITY_TYPE) = 'CABLE' 
+	INNER JOIN  POINT_MASTER PM  
+	ON ST_WITHIN(PM.SP_GEOMETRY, ST_BUFFER_METERS(ST_STARTPOINT(LM.SP_GEOMETRY), 3)) 
+	AND UPPER(PM.ENTITY_TYPE) IN ('BDB','FDB','SPLICECLOSURE','FMS'))
+			
+	UPDATE TEMP_CABLE_ROUTES 
+	SET 
+	A_SYSTEM_ID = STARTCTE.SYSTEM_ID,
+	A_ENTITY_TYPE = STARTCTE.ENTITY_TYPE,
+	A_NETWORK_ID=STARTCTE.COMMON_NAME,
+	A_POINT_Geom = STARTCTE.point_geom
+	FROM STARTCTE
+	WHERE TEMP_CABLE_ROUTES.EDGE_TARGETID=STARTCTE.CABLE_ID;
+
+	-----------UPDATE THE B END ID
+	WITH ENDCTE AS(
+	SELECT PM.SYSTEM_ID,PM.ENTITY_TYPE,PM.COMMON_NAME,EDGE_TARGETID as CABLE_ID, ST_ENDPOINT(LM.SP_GEOMETRY) AS ENDPOINT ,PM.sp_geometry as point_geom
+	FROM TEMP_CABLE_ROUTES RS
+	INNER JOIN LINE_MASTER LM 
+	ON LM.SYSTEM_ID = RS.EDGE_TARGETID AND UPPER(LM.ENTITY_TYPE) = 'CABLE' 
+	INNER JOIN  POINT_MASTER PM  
+	ON ST_WITHIN(PM.SP_GEOMETRY, ST_BUFFER_METERS(ST_ENDPOINT(LM.SP_GEOMETRY), 3)) 
+	AND UPPER(PM.ENTITY_TYPE) IN ('BDB','FDB','SPLICECLOSURE','FMS'))
+			
+	UPDATE TEMP_CABLE_ROUTES 
+	SET 
+	B_SYSTEM_ID = ENDCTE.SYSTEM_ID,
+	B_ENTITY_TYPE = ENDCTE.ENTITY_TYPE,
+	B_NETWORK_ID=ENDCTE.COMMON_NAME,
+	B_POINT_Geom = ENDCTE.point_geom
+	FROM ENDCTE
+	WHERE TEMP_CABLE_ROUTES.EDGE_TARGETID=ENDCTE.CABLE_ID;
+
+	UPDATE TEMP_CABLE_ROUTES t
+       SET IS_MULTIPLE_ODF = false, is_valid = false,
+         message = 'Extra ODF fount!'
+    WHERE (
+        (
+        t.a_entity_type = 'FMS'
+        AND t.a_network_id NOT IN (SOURCE_NETWORK_ID, DESTINATION_NETWORK_ID)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM TEMP_CABLE_ROUTES
+            WHERE a_network_id = SOURCE_NETWORK_ID AND a_entity_type = 'FMS'
+              AND ST_Equals(t.a_point_geom, a_point_geom)
+            UNION ALL
+            SELECT 1
+            FROM TEMP_CABLE_ROUTES
+            WHERE b_network_id = DESTINATION_NETWORK_ID AND b_entity_type = 'FMS'
+              AND ST_Equals(t.a_point_geom, b_point_geom)
+          )
+       )
+       OR
+       (
+        t.b_entity_type = 'FMS'
+        AND t.b_network_id NOT IN (SOURCE_NETWORK_ID, DESTINATION_NETWORK_ID)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM TEMP_CABLE_ROUTES
+            WHERE a_network_id = SOURCE_NETWORK_ID AND a_entity_type = 'FMS'
+              AND ST_Equals(t.b_point_geom, a_point_geom)
+            UNION ALL
+            SELECT 1
+            FROM TEMP_CABLE_ROUTES
+            WHERE b_network_id = DESTINATION_NETWORK_ID AND b_entity_type = 'FMS'
+              AND ST_Equals(t.b_point_geom, b_point_geom)
+         )
+        )
+     );
+
+ 
+	IF V_IS_VALID AND exists (select 1 from TEMP_CABLE_ROUTES where IS_MULTIPLE_ODF = false and (A_ENTITY_TYPE = 'FMS' or B_ENTITY_TYPE = 'FMS'))
+	then     
+		V_IS_VALID:=FALSE;
+		V_MESSAGE:='Multiple ODF found on this route!';
+	END IF;
+
+	IF V_IS_VALID AND (SELECT COUNT(1)>0 FROM TEMP_CABLE_ROUTES WHERE COALESCE(B_ENTITY_TYPE,'')=''
+	OR COALESCE(A_ENTITY_TYPE,'')='')
+	THEN
+		UPDATE TEMP_CABLE_ROUTES SET IS_VALID=false,
+		MESSAGE='Splice Closure is missing at end point of cables'
+		WHERE COALESCE(B_ENTITY_TYPE,'')='' OR COALESCE(A_ENTITY_TYPE,'')='';		 
+	
+		V_IS_VALID:=FALSE;
+		V_MESSAGE:='SpliceClosure is missing at end point of cables';
+	END IF;
+
+    IF(V_IS_VALID = FALSE)
+    THEN 
+    
+     INSERT INTO CORE_PLANNER_LOGS (cable_network_id,CABLE_ID,CABLE_NAME,NETWORK_STATUS,
+	  TOTAL_CORE,CABLE_LENGTH,ERROR_MSG,USER_ID,IS_VALID,a_system_id,b_system_id)
+	  SELECT AC.NETWORK_ID,trc.edge_targetid  ,AC.CABLE_NAME ,AC.NETWORK_STATUS ,
+	  AC.TOTAL_CORE,AC.CABLE_CALCULATED_LENGTH,TRC.MESSAGE,P_USER_ID,TRC.is_valid,0,0  FROM TEMP_CABLE_ROUTES TRC 
+      JOIN ATT_DETAILS_CABLE AC ON AC.SYSTEM_ID = TRC.EDGE_TARGETID AND TRC.USER_ID = P_USER_ID;
+     
+    END IF;
+   
+	IF(V_IS_VALID)
+	THEN
+		--GET THE ALL CABLE FIBER DETAILS	
+		WITH SORTED_DATA AS (
+		    SELECT CABLE_ID, FIBER_NUMBER, A_END_STATUS_ID, B_END_STATUS_ID, 
+		           IS_A_END_THROUGH_CONNECTIVITY, IS_B_END_THROUGH_CONNECTIVITY, LINK_SYSTEM_ID,
+		           LAG(FIBER_NUMBER) OVER (PARTITION BY CABLE_ID ORDER BY FIBER_NUMBER) AS PREV_FIBER
+		    FROM ATT_DETAILS_CABLE_INFO 
+		    WHERE CABLE_ID IN (SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) 
+		          AND FIBER_NUMBER % 2 = 1
+		          AND LINK_SYSTEM_ID = 0  ORDER BY FIBER_NUMBER
+		),
+		FILTERED_DATA AS (
+		    SELECT A.CABLE_ID, A.FIBER_NUMBER, A.A_END_STATUS_ID, A.B_END_STATUS_ID, 
+		           A.IS_A_END_THROUGH_CONNECTIVITY, A.IS_B_END_THROUGH_CONNECTIVITY, 
+		            A.LINK_SYSTEM_ID
+		    FROM ATT_DETAILS_CABLE_INFO A
+		    INNER JOIN SORTED_DATA B 
+		        ON A.CABLE_ID = B.CABLE_ID 
+		        AND (A.FIBER_NUMBER = B.FIBER_NUMBER + 1 OR A.FIBER_NUMBER = B.FIBER_NUMBER)
+		    WHERE A.LINK_SYSTEM_ID = 0 
+		),
+		FIBER_DATA AS (
+		    SELECT CABLE_ID, FIBER_NUMBER, A_END_STATUS_ID, B_END_STATUS_ID, 
+		           IS_A_END_THROUGH_CONNECTIVITY, IS_B_END_THROUGH_CONNECTIVITY, 
+		            LINK_SYSTEM_ID,  -- Fixed missing comma
+		           LAG(FIBER_NUMBER) OVER (PARTITION BY CABLE_ID ORDER BY FIBER_NUMBER) AS PREV_FIBER,
+		           LEAD(FIBER_NUMBER) OVER (PARTITION BY CABLE_ID ORDER BY FIBER_NUMBER) AS NEXT_FIBER        
+		    FROM FILTERED_DATA 
+		    WHERE CABLE_ID IN (SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) ORDER BY FIBER_NUMBER
+		)		
+		-- Use correct INSERT INTO format
+		INSERT INTO CORE_PLANNER_FIBER_INFO 
+		    (CABLE_ID, FIBER_NUMBER, A_END_STATUS_ID, B_END_STATUS_ID, 
+		     IS_A_END_THROUGH_CONNECTIVITY, IS_B_END_THROUGH_CONNECTIVITY, USER_ID, LINK_SYSTEM_ID,seq)
+		SELECT CABLE_ID, FIBER_NUMBER, A_END_STATUS_ID, B_END_STATUS_ID, 
+		IS_A_END_THROUGH_CONNECTIVITY, IS_B_END_THROUGH_CONNECTIVITY, P_USER_ID, LINK_SYSTEM_ID, tcr.SEQ
+		FROM FIBER_DATA
+		JOIN TEMP_CABLE_ROUTES tcr 
+	    ON CABLE_ID = tcr.EDGE_TARGETID
+		--WHERE 
+		--    FIBER_NUMBER = PREV_FIBER + 1 OR FIBER_NUMBER = NEXT_FIBER - 1
+		ORDER BY 
+		    tcr.SEQ, FIBER_NUMBER;
+
+
+		--GET THE CONNECTION OF CABLE FROM THIS ROUTE
+		INSERT INTO TEMP_ROUTE_CONNECTION(
+		SOURCE_SYSTEM_ID,SOURCE_NETWORK_ID,SOURCE_ENTITY_TYPE,SOURCE_PORT_NO,DESTINATION_SYSTEM_ID,
+		DESTINATION_NETWORK_ID,DESTINATION_ENTITY_TYPE,DESTINATION_PORT_NO,IS_CABLE_A_END,IS_CABLE_B_END)
+
+		select A.SOURCE_SYSTEM_ID,A.SOURCE_NETWORK_ID,A.SOURCE_ENTITY_TYPE,A.SOURCE_PORT_NO,
+		B.DESTINATION_SYSTEM_ID,B.DESTINATION_NETWORK_ID,B.DESTINATION_ENTITY_TYPE,
+		B.DESTINATION_PORT_NO,A.IS_CABLE_A_END,B.IS_CABLE_A_END 
+		FROM CONNECTION_INFO A
+		INNER JOIN CONNECTION_INFO B 
+		ON A.DESTINATION_SYSTEM_ID=B.SOURCE_SYSTEM_ID AND A.DESTINATION_ENTITY_TYPE=B.SOURCE_ENTITY_TYPE
+		AND A.DESTINATION_PORT_NO=B.SOURCE_PORT_NO WHERE A.SOURCE_SYSTEM_ID 
+		in (SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) 
+		AND A.SOURCE_ENTITY_TYPE='Cable' AND B.DESTINATION_ENTITY_TYPE='Cable'
+
+		UNION 
+		SELECT A.DESTINATION_SYSTEM_ID,A.DESTINATION_NETWORK_ID,A.DESTINATION_ENTITY_TYPE,
+		A.DESTINATION_PORT_NO,B.SOURCE_SYSTEM_ID, B.SOURCE_NETWORK_ID,B.SOURCE_ENTITY_TYPE,
+		B.SOURCE_PORT_NO,A.IS_CABLE_A_END,B.is_cable_a_end
+		FROM CONNECTION_INFO A
+		INNER JOIN CONNECTION_INFO B 
+		ON B.DESTINATION_SYSTEM_ID=A.SOURCE_SYSTEM_ID AND B.DESTINATION_ENTITY_TYPE=A.SOURCE_ENTITY_TYPE
+		AND B.DESTINATION_PORT_NO=A.SOURCE_PORT_NO WHERE A.DESTINATION_SYSTEM_ID in 
+		(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES) AND A.DESTINATION_ENTITY_TYPE='Cable' AND B.SOURCE_ENTITY_TYPE='Cable'	
+		
+		UNION 
+		SELECT A.DESTINATION_SYSTEM_ID,A.DESTINATION_NETWORK_ID,A.DESTINATION_ENTITY_TYPE,
+		A.DESTINATION_PORT_NO,
+		A.SOURCE_SYSTEM_ID, A.SOURCE_NETWORK_ID,A.SOURCE_ENTITY_TYPE,A.SOURCE_PORT_NO,false,A.IS_CABLE_A_END
+		FROM CONNECTION_INFO A
+		WHERE A.SOURCE_ENTITY_TYPE='FMS' and
+		A.SOURCE_NETWORK_ID IN(P_SOURCE_NETWORK_ID,P_DESTINATION_NETWORK_ID) 
+		AND A.DESTINATION_ENTITY_TYPE='Cable'
+		UNION 
+		SELECT A.DESTINATION_SYSTEM_ID,A.DESTINATION_NETWORK_ID,A.DESTINATION_ENTITY_TYPE,
+		A.DESTINATION_PORT_NO,
+		A.SOURCE_SYSTEM_ID, A.SOURCE_NETWORK_ID,A.SOURCE_ENTITY_TYPE,A.SOURCE_PORT_NO,A.IS_CABLE_A_END,false
+		FROM CONNECTION_INFO A
+		WHERE A.DESTINATION_ENTITY_TYPE='FMS' AND 
+		A.DESTINATION_NETWORK_ID IN(P_SOURCE_NETWORK_ID,P_DESTINATION_NETWORK_ID)
+		AND A.SOURCE_ENTITY_TYPE='Cable';
+	
+		--VALIDAT THE CONNECTION IS EXIST IN SAME ROUTE OR NOT
+		UPDATE core_planner_fiber_info SET IS_VALID=FALSE
+		FROM TEMP_ROUTE_CONNECTION A
+		WHERE core_planner_fiber_info.FIBER_NUMBER=A.SOURCE_PORT_NO AND A.SOURCE_ENTITY_TYPE='Cable'
+		AND core_planner_fiber_info.CABLE_ID = A.SOURCE_SYSTEM_ID
+		AND A.SOURCE_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 
+
+		UPDATE core_planner_fiber_info SET IS_VALID=FALSE
+		FROM TEMP_ROUTE_CONNECTION A
+		WHERE core_planner_fiber_info.FIBER_NUMBER=A.DESTINATION_PORT_NO 
+		AND A.DESTINATION_ENTITY_TYPE='Cable' AND core_planner_fiber_info.CABLE_ID = A.DESTINATION_SYSTEM_ID
+		AND A.DESTINATION_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 
+	
+        --update TEMP_ISP_PORT_INFO is_valid FALSE which already connected to others cable
+
+		UPDATE TEMP_ISP_PORT_INFO SET IS_VALID=FALSE
+		FROM TEMP_ROUTE_CONNECTION A
+		WHERE TEMP_ISP_PORT_INFO.PORT_NUMBER = A.SOURCE_PORT_NO AND A.SOURCE_ENTITY_TYPE='FMS' 
+		AND  A.DESTINATION_ENTITY_TYPE='Cable' AND 
+		TEMP_ISP_PORT_INFO.parent_system_id = A.SOURCE_SYSTEM_ID
+		AND A.DESTINATION_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 
+
+		UPDATE TEMP_ISP_PORT_INFO SET IS_VALID=FALSE
+		FROM TEMP_ROUTE_CONNECTION A
+		WHERE  TEMP_ISP_PORT_INFO.PORT_NUMBER = A.DESTINATION_PORT_NO 
+		AND A.DESTINATION_ENTITY_TYPE='FMS'
+		AND A.SOURCE_ENTITY_TYPE='Cable' AND TEMP_ISP_PORT_INFO.parent_system_id 
+		= A.DESTINATION_SYSTEM_ID
+		AND A.SOURCE_SYSTEM_ID NOT IN(SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES); 	
+	
+	   UPDATE TEMP_ISP_PORT_INFO tpi SET IS_VALID = FALSE
+       FROM (
+	    SELECT adi.fiber_number, subqu.parent_system_id,subqu.DESTINATION_port_no
+	    FROM (
+	         SELECT distinct A.SOURCE_SYSTEM_ID,A.source_port_no ,
+	        A.DESTINATION_SYSTEM_ID as parent_system_id,A.DESTINATION_port_no 
+	        FROM TEMP_ROUTE_CONNECTION A
+	        JOIN TEMP_ISP_PORT_INFO
+	          ON --TEMP_ISP_PORT_INFO.PORT_NUMBER = A.DESTINATION_PORT_NO
+	          TEMP_ISP_PORT_INFO.parent_system_id = A.DESTINATION_SYSTEM_ID 
+	          AND A.DESTINATION_ENTITY_TYPE = 'FMS'
+	         AND A.SOURCE_ENTITY_TYPE = 'Cable'
+	        WHERE A.SOURCE_SYSTEM_ID IN (
+	            SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES
+	        ) 
+	    ) subqu
+	    JOIN att_details_cable_info adi
+	      ON subqu.SOURCE_SYSTEM_ID = adi.cable_id and subqu.source_port_no = adi.fiber_number
+	    WHERE adi.link_system_id <> 0
+		  ) outqu
+		WHERE tpi.parent_system_id = outqu.parent_system_id
+		  AND tpi.PORT_NUMBER = outqu.DESTINATION_port_no;
+
+	  UPDATE TEMP_ISP_PORT_INFO tpi SET IS_VALID = FALSE
+       FROM (
+	    SELECT adi.fiber_number, subqu.parent_system_id,subqu.source_port_no
+	    FROM (
+	        SELECT distinct A.DESTINATION_SYSTEM_ID,A.DESTINATION_port_no,
+	        A.SOURCE_SYSTEM_ID as parent_system_id,A.source_port_no 
+	        FROM TEMP_ROUTE_CONNECTION A
+	        JOIN TEMP_ISP_PORT_INFO
+	          ON TEMP_ISP_PORT_INFO.parent_system_id = A.SOURCE_SYSTEM_ID 
+	          AND A.SOURCE_ENTITY_TYPE = 'FMS'
+	         AND A.DESTINATION_ENTITY_TYPE = 'Cable'
+	        WHERE A.DESTINATION_SYSTEM_ID IN (
+	            SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES
+	        ) 
+	    ) subqu
+	    JOIN att_details_cable_info adi
+	      ON subqu.DESTINATION_SYSTEM_ID = adi.cable_id and subqu.DESTINATION_port_no = adi.fiber_number
+	    WHERE adi.link_system_id <> 0
+	  ) outqu
+	  WHERE tpi.parent_system_id = outqu.parent_system_id
+	  AND tpi.PORT_NUMBER = outqu.source_port_no;
+
+	 WITH combined AS (
+    SELECT 
+        id, source_system_id AS system_id, source_entity_type AS entity_type,source_port_no 
+        AS port_no, is_cable_a_end, is_cable_b_end 
+    FROM TEMP_ROUTE_CONNECTION
+    UNION ALL
+
+    SELECT 
+        id, destination_system_id AS system_id, destination_entity_type AS entity_type,
+        destination_port_no AS port_no, is_cable_a_end,is_cable_b_end 
+      FROM TEMP_ROUTE_CONNECTION
+    ),
+    ranked AS (
+    SELECT *,
+           ROW_NUMBER() OVER (
+               PARTITION BY system_id, entity_type, port_no, is_cable_a_end, is_cable_b_end
+               ORDER BY id
+           ) AS rn
+    FROM combined
+	),
+	duplicates AS (
+	    SELECT id
+	    FROM ranked
+	    WHERE rn > 1
+	)
+	DELETE FROM TEMP_ROUTE_CONNECTION
+	WHERE id IN (SELECT id FROM duplicates);
+
+		 UPDATE TEMP_ISP_PORT_INFO AS even
+		 SET is_valid = false
+		 FROM TEMP_ISP_PORT_INFO AS odd
+		 WHERE 
+	    odd.port_number % 2 = 1
+	    AND odd.is_valid = false
+	    AND even.port_number = odd.port_number + 1
+	    AND even.parent_system_id = odd.parent_system_id
+    	 AND even.is_valid = true;
+    
+	    UPDATE TEMP_ISP_PORT_INFO AS odd
+		SET is_valid = false
+		FROM TEMP_ISP_PORT_INFO AS even
+		WHERE 
+	    even.port_number % 2 = 0
+	    AND even.is_valid = false
+	    AND odd.port_number = even.port_number - 1
+	    AND odd.parent_system_id = even.parent_system_id
+	    AND odd.is_valid = true;
+	   
+	 	 INSERT INTO connected_fiberlink_cable (cable_id, fiber_number,link_system_id,
+	 	 a_end_status_id,b_end_status_id )
+	     select cable_id ,fiber_number,link_system_id,a_end_status_id,b_end_status_id 
+	     from att_details_cable_info where cable_id in 
+	     (SELECT EDGE_TARGETID FROM TEMP_CABLE_ROUTES);
+	
+		 update connected_fiberlink_cable set is_valid = false where link_system_id > 0
+		 and ( a_end_status_id = 2 or b_end_status_id =2 ) ;
+		 
+		for v_rec in (select edge_targetid  from TEMP_CABLE_ROUTES order by seq) 
+		loop		 		
+			
+		WITH invalid_sources AS (
+        SELECT ci.destination_system_id,
+           ci.destination_port_no,
+		   ci.destination_entity_type
+		    FROM temp_route_connection ci
+		    JOIN connected_fiberlink_cable src
+		      ON src.cable_id = ci.source_system_id
+		     AND src.fiber_number = ci.source_port_no
+		     AND src.is_valid = false
+		    WHERE ci.source_entity_type = 'Cable' and ci.source_system_id = v_rec.edge_targetid
+		)
+		UPDATE connected_fiberlink_cable dst
+		SET is_valid = false, error_msg ='Occupied Connection'
+		FROM invalid_sources t
+		WHERE dst.cable_id = t.destination_system_id
+		  AND dst.fiber_number = t.destination_port_no
+		  AND t.destination_entity_type = 'Cable';
+		 
+		 WITH invalid_destinations AS (
+		       SELECT ci.source_system_id,
+		           ci.source_port_no,
+		           ci.source_entity_type
+		    FROM temp_route_connection ci
+		    JOIN connected_fiberlink_cable src
+		      ON src.cable_id = ci.destination_system_id
+		     AND src.fiber_number = ci.destination_port_no
+		     AND src.is_valid = false
+		    WHERE ci.destination_entity_type = 'Cable' and ci.destination_system_id = v_rec.edge_targetid
+		)
+		UPDATE connected_fiberlink_cable dst
+		SET is_valid = false,error_msg ='Occupied Connection'
+		FROM invalid_destinations t
+		WHERE dst.cable_id = t.source_system_id
+		  AND dst.fiber_number = t.source_port_no
+		  AND t.source_entity_type = 'Cable';
+	   
+		end loop;
+	
+		  update CORE_PLANNER_FIBER_INFO t1 set is_valid = false ,error_msg = t2.error_msg 
+		  from connected_fiberlink_cable t2 where t1.cable_id = t2.cable_id and 
+		  t1.fiber_number = t2.fiber_number and t2.is_valid = false 
+		  and t1.user_id =p_user_id;
+
+		 
+     	 SELECT (SELECT COUNT(*)FROM (
+      	 SELECT parent_system_id  FROM TEMP_ISP_PORT_INFO 
+      	 WHERE IS_VALID = true GROUP BY parent_system_id HAVING COUNT(*) >= REQUIRED_CORE
+      	  ) AS t1) <> (SELECT COUNT(distinct PARENT_SYSTEM_ID) FROM ISP_PORT_INFO 
+      	 WHERE PARENT_SYSTEM_ID IN (P_SOURCE_SYSTEM_ID, P_DESTINATION_SYSTEM_ID)) into Is_AvailableODF;
+       
+		IF V_IS_VALID and Is_AvailableODF
+		THEN
+			V_IS_VALID:=FALSE;
+			V_MESSAGE:='All the ports of the ODF are connected to different routes, or adjacent ports are not available in the source/destination ODF!';
+		END IF;	
+	
+     if (REQUIRED_CORE = 2) then    
+	    WITH CABLECTE AS (
+		    SELECT 
+		        tcr.edge_targetid AS CABLE_ID,
+		        COALESCE(2 * COUNT(next_fiber.fiber_number), 0) AS AVAILABLE_CORE
+		    FROM TEMP_CABLE_ROUTES tcr
+		    LEFT JOIN CORE_PLANNER_FIBER_INFO adi
+		        ON tcr.edge_targetid = adi.cable_id
+		        AND adi.USER_ID = P_USER_ID
+		        AND adi.link_system_id = 0
+		        AND adi.fiber_number % 2 = 1
+		    LEFT JOIN CORE_PLANNER_FIBER_INFO next_fiber 
+		        ON next_fiber.cable_id = adi.cable_id
+		        AND next_fiber.fiber_number = adi.fiber_number + 1
+		        AND next_fiber.link_system_id = 0
+		    GROUP BY tcr.edge_targetid
+		)
+		UPDATE TEMP_CABLE_ROUTES 
+		SET IS_VALID = FALSE, 
+		    MESSAGE = 'Unavailable Core'
+		FROM CABLECTE
+		WHERE TEMP_CABLE_ROUTES.EDGE_TARGETID = CABLECTE.CABLE_ID 
+		  AND CABLECTE.AVAILABLE_CORE < REQUIRED_CORE;
+	end if;
+
+		if (REQUIRED_CORE = 1) then
+		WITH CABLECTE AS (
+		    SELECT 
+		        tcr.edge_targetid AS CABLE_ID,
+		        SUM(CASE WHEN adi.link_system_id = 0 THEN 1 ELSE 0 END) AS AVAILABLE_CORE
+		    FROM CORE_PLANNER_FIBER_INFO adi
+		    JOIN TEMP_CABLE_ROUTES tcr ON tcr.edge_targetid = adi.cable_id
+		    WHERE adi.USER_ID = P_USER_ID
+		    GROUP BY tcr.edge_targetid
+		)
+		UPDATE TEMP_CABLE_ROUTES 
+		SET IS_VALID = FALSE, 
+		    MESSAGE = 'Unavailable Core'
+		FROM CABLECTE
+		WHERE TEMP_CABLE_ROUTES.EDGE_TARGETID = CABLECTE.CABLE_ID 
+		  AND CABLECTE.AVAILABLE_CORE < REQUIRED_CORE;
+		end if;
+	 
+		
+		IF V_IS_VALID AND EXISTS(SELECT 1 FROM TEMP_CABLE_ROUTES WHERE IS_VALID = FALSE AND
+		MESSAGE = 'Unavailable Core')
+		THEN
+			V_IS_VALID:=FALSE;
+			V_MESSAGE:='Required/Adjacent Cores are Unavailable';
+		END IF;	
+	
+	    UPDATE TEMP_CABLE_ROUTES tcr
+		SET is_valid = false,
+		MESSAGE = 'Required/Adjacent Cores are Unavailable!'
+		FROM att_details_cable_info adi
+		LEFT JOIN CORE_PLANNER_FIBER_INFO cpfi
+		    ON cpfi.cable_id = adi.cable_id AND cpfi.is_valid = true and cpfi.user_id = p_user_id
+		WHERE tcr.edge_targetid = adi.cable_id
+		  AND  cpfi.cable_id IS NULL ;
+		
+		 if V_IS_VALID AND EXISTS(SELECT 1 FROM TEMP_CABLE_ROUTES WHERE IS_VALID = false)
+		then 
+			V_IS_VALID := FALSE;
+	        V_MESSAGE := 'Required/Adjacent Cores are Unavailable!';
+		 end if;
+		 
+	 	IF V_IS_VALID AND EXISTS(SELECT cable_id FROM CORE_PLANNER_FIBER_INFO
+              WHERE user_id = p_user_id
+			  GROUP BY cable_id
+				HAVING SUM(CASE 
+             	WHEN is_valid = false AND error_msg = 'Occupied Connection' THEN 1 
+             ELSE 0 
+           END) = COUNT(*))
+		then
+		
+			V_IS_VALID:=FALSE;
+			V_MESSAGE:='Unable to Find Connectivity Cores in the Specified Cables!';
+		END IF;
+	
+
+		INSERT INTO 
+		CORE_PLANNER_LOGS(CABLE_ID, CABLE_NAME, NETWORK_STATUS, TOTAL_CORE, CABLE_LENGTH,ERROR_MSG, IS_VALID, USER_ID,CABLE_NETWORK_ID, AVAIABLE, USED_CORE,B_SYSTEM_ID,A_SYSTEM_ID,a_entity_type ,b_entity_type,SEQ)
+		
+		SELECT  ATT.SYSTEM_ID, ATT.CABLE_NAME, ATT.NETWORK_STATUS, ATT.TOTAL_CORE, ATT.CABLE_CALCULATED_LENGTH,INFO.MESSAGE, INFO.IS_VALID,
+		P_USER_ID,ATT.NETWORK_ID, 
+		(SELECT COUNT(*) FROM ATT_DETAILS_CABLE_INFO ACI WHERE ACI.CABLE_ID = ATT.SYSTEM_ID AND (ACI.LINK_SYSTEM_ID=0)) AS AVAILABLE_CORES,
+		(SELECT COUNT(*) FROM ATT_DETAILS_CABLE_INFO ACI WHERE ACI.CABLE_ID = INFO.EDGE_TARGETID AND (ACI.LINK_SYSTEM_ID > 0 ) ) AS USED_CORE,
+		INFO.B_SYSTEM_ID,INFO.A_SYSTEM_ID,
+		INFO.a_entity_type ,INFO.b_entity_type ,INFO.seq 
+		FROM ATT_DETAILS_CABLE ATT 
+		INNER JOIN TEMP_CABLE_ROUTES INFO ON ATT.SYSTEM_ID = INFO.EDGE_TARGETID AND  INFO.USER_ID = P_USER_ID order by INFO.seq ;		
+				 				 		 
+	END IF;
+END IF;
+
+RETURN QUERY SELECT row_to_json(row) 
+        FROM (SELECT V_IS_VALID AS status, V_MESSAGE AS message) row;
+END;
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int4, int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int4, int4) TO public;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_validation(varchar, varchar, int4, int4, int4) TO postgres;
+
+
+----------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION public.fn_get_core_planner_splicing(required_core integer, p_user_id integer, fiber_link_network_id character varying, source_network_id character varying, destination_network_id character varying, buffer integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE 
+    rec RECORD;
+   v_arow RECORD;
+    v_network_id character varying;
+    v_system_id integer;
+    v_cable_details_left record;
+    v_cable_details_right record;
+    v_cable_details record;
+   p_link_system_id integer;
+   start_point integer;
+  v_status bool;
+  v_message  character varying;
+  V_IS_CABLE_A_END BOOLEAN;
+  p_destination_network_id character varying;
+   p_odf_network_id character varying;
+  v_source_ports character varying;
+  v_destination_ports character varying;
+ 
+BEGIN
+V_IS_CABLE_A_END:=FALSE;
+ --truncate table TEMP_LINE_MASTER;
+ --truncate table TEMP_POINT_MASTER;
+
+
+CREATE TEMP TABLE TEMP_LINE_MASTER
+(
+SYSTEM_ID INTEGER,
+entity_type character varying,
+network_id character varying,
+SP_GEOMETRY GEOMETRY
+)ON COMMIT DROP; 
+
+CREATE TEMP TABLE TEMP_POINT_MASTER
+(
+ID serial4 NOT NULL,
+A_SYSTEM_ID INTEGER,
+A_entity_type character varying,
+A_network_id character varying,
+SP_GEOMETRY GEOMETRY,
+SEQ INTEGER
+)ON COMMIT DROP;
+		
+     v_network_id := '';
+     v_system_id := 0;
+    p_destination_network_id = destination_network_id;
+   -- truncate table temp_connection restart identity;
+   -- truncate table connection_log_details;
+    -- Create a temporary table for connection data
+   CREATE TABLE temp_connection (
+        id serial4 NOT null,
+        source_system_id integer,
+        source_network_id character varying(100),
+        source_entity_type character varying(100),
+        source_port_no integer,
+        destination_system_id integer,
+        destination_network_id character varying(100),
+        destination_entity_type character varying(100),
+        destination_port_no integer,
+        is_source_cable_a_end boolean NOT NULL DEFAULT false,
+        is_destination_cable_a_end boolean NOT NULL DEFAULT false,
+        equipment_system_id integer,
+        equipment_network_id character varying(100),
+        equipment_entity_type character varying(100),
+        created_by integer,
+        splicing_source character varying(100),
+        is_selected boolean NOT NULL DEFAULT true
+    ) ON COMMIT DROP; 
+   
+     
+	 	CREATE TEMP TABLE isp_port_info_tbl(
+        system_id int4 NULL,
+        network_id varchar NULL,
+        parent_system_id int4 NULL,
+        parent_network_id varchar NULL,
+        port_status_id int4 NULL,
+        is_valid boolean DEFAULT true,
+        port_number int4 null,
+        parent_entity_type varchar NULL
+       ) ON COMMIT DROP;
+	
+	-- TEMP TABLE FOR CPF RESULT --
+		create temp table temp_cpf_result
+		(
+		id serial,
+		connection_id integer,
+		source_system_id integer,
+		source_network_id character varying(100),
+		source_entity_type character varying(100),
+		source_port_no integer,
+		destination_system_id integer,
+		destination_network_id character varying(100),
+		destination_entity_type character varying(100),
+		destination_port_no integer
+		) on commit drop;
+
+		create temp table temp_connected_cables
+		(
+		id serial,
+		cable_id integer,
+		fiber_number integer
+		) on commit drop;
+
+		create temp table connection_log_details
+		(
+		id serial,
+		destination_systemid integer,		
+		destination_networkid character varying,source_no integer,
+		destination_port_no integer,
+		destination_entitytype character varying
+		) on commit drop;
+
+
+     SELECT 
+        (result_json->>'status')::BOOLEAN, 
+        result_json->>'message'
+     INTO v_status, v_message
+     FROM fn_get_core_planner_validation(source_network_id, destination_network_id, buffer, 
+     required_core, p_user_id) AS result_json;
+   
+     IF v_status = false  THEN
+        RETURN QUERY SELECT row_to_json(row) 
+        FROM (SELECT v_status AS status, v_message AS message) row;
+       
+     else
+     
+     -- check if fiber link does not exist 
+     IF NOT EXISTS (SELECT 1 FROM att_details_fiber_link 
+      WHERE upper(network_id) = upper(fiber_link_network_id) OR upper(link_id) = upper(fiber_link_network_id)) 
+      THEN 
+      RETURN QUERY 
+      SELECT row_to_json(row) 
+      FROM (
+        SELECT false AS status, 
+               'The FiberLink does not exist. Please enter a valid FiberLink.' AS message) row;
+              return ;
+     END IF;
+    
+   --  insert record from core_planner_logs table to temp table TEMP_POINT_MASTER,TEMP_LINE_MASTER
+      INSERT INTO TEMP_POINT_MASTER(SEQ,A_SYSTEM_ID,A_network_id,A_entity_type,SP_GEOMETRY  )
+      select A.seq, A.a_system_id,P.COMMON_NAME,A.a_entity_type,P.SP_GEOMETRY from (      
+      SELECT seq,a_system_id,a_entity_type  FROM core_planner_logs  where user_id = p_user_id and is_valid =TRUE
+      union
+      SELECT seq,b_system_id,b_entity_type FROM core_planner_logs where user_id = p_user_id and is_valid =TRUE )a
+      INNER JOIN point_master P ON P.SYSTEM_ID=A.a_system_id AND P.entity_type=A.a_entity_type;
+     
+    delete from TEMP_POINT_MASTER t1 WHERE seq > (
+    SELECT MIN(seq)
+    FROM TEMP_POINT_MASTER t2
+    WHERE t1.a_system_id = t2.a_system_id
+    AND t1.a_network_id = t2.a_network_id
+    ); 
+
+      INSERT INTO TEMP_LINE_MASTER(SYSTEM_ID,network_id,entity_type,SP_GEOMETRY)       
+      SELECT CABLE_id,CABLE_network_id,'Cable',P.SP_GEOMETRY FROM core_planner_logs A 
+      INNER JOIN LINE_master P ON P.SYSTEM_ID=A.CABLE_id AND P.entity_type='Cable'
+      where user_id = p_user_id and is_valid =TRUE ; 
+           
+    --- get fiberlink into p_link_system_id
+      select system_id into p_link_system_id from att_details_fiber_link adfl 
+      where upper(network_id) = upper(fiber_link_network_id)
+      or upper(link_id)=upper(fiber_link_network_id);  
+     
+    -- check if odf exists in source or destination store value into p_odf_network_id
+    IF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = source_network_id)
+     AND EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = destination_network_id) 
+     THEN
+      p_odf_network_id = source_network_id;
+
+    ELSIF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = source_network_id) 
+    THEN
+      p_odf_network_id = source_network_id;
+    ELSIF EXISTS (SELECT 1 FROM att_details_fms WHERE network_id = destination_network_id)
+    THEN
+      p_odf_network_id = destination_network_id;
+    END IF;
+   	
+        FOR rec IN (select * from TEMP_POINT_MASTER  ORDER BY  CASE WHEN a_entity_type = 'FMS' 
+        AND seq = 1 THEN 0  ELSE 1 END, CASE 
+       WHEN (SELECT COUNT(*) FROM TEMP_POINT_MASTER WHERE a_entity_type = 'FMS') = 1 and 
+       (SELECT seq FROM TEMP_POINT_MASTER WHERE a_entity_type = 'FMS') <> 1
+        THEN -seq  -- simulates DESC
+       ELSE seq     -- ASC
+  END)
+        LOOP									
+		    if(rec.a_entity_type='FMS')
+		    then
+
+			 SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) 
+			  AS IS_CABLE_A_END INTO v_cable_details_left FROM TEMP_LINE_MASTER A				
+			  WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) or
+			  ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)));				    
+										
+            raise info 'v_cable_details_left A : %',v_cable_details_left;
+                   		    
+		    
+			WITH recursive table1 AS (
+			    -- Simulating Table-1			    
+			   ( SELECT parent_system_id,parent_network_id, port_number FROM temp_isp_port_info 
+			    where parent_system_id=rec.a_system_id --and port_status_id =1 
+			    and is_valid = true and p_odf_network_id = parent_network_id 
+			    ORDER BY port_number limit required_core
+			    )
+			    union all
+			    
+			    (SELECT parent_system_id,parent_network_id, port_number FROM temp_isp_port_info 
+			    where parent_system_id=rec.a_system_id --and port_status_id =1 
+			    and is_valid = true and p_odf_network_id <> parent_network_id
+			    ORDER BY port_number )
+			    
+			),
+		   fiber_pairs AS (
+			     /*select t1.id as id, t1.cable_id,t1.fiber_number AS fiber1,t2.fiber_number AS fiber2,
+				LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id)
+				 AS next_cable, CASE 
+           WHEN t2.fiber_number IS NULL THEN 0  -- If pair is missing
+           WHEN t2.fiber_number != t1.fiber_number + 1 THEN 0  -- If next fiber is not a valid pair
+           ELSE t1.seq
+       END AS seq 
+				FROM core_planner_fiber_info t1
+				inner join core_planner_fiber_info t2 on t1.cable_id=t2.cable_id 
+				and t1.fiber_number=t2.fiber_number-1 and t2.is_valid = true and t2.user_id = p_user_id where t1.is_valid = true  and t1.user_id = p_user_id 
+			    order by t1.id,t1.fiber_number*/
+		   
+		   	select * from(SELECT 
+			    t1.id AS id, 
+			    t1.cable_id,
+			    t1.fiber_number AS fiber1,
+			    COALESCE(t2.fiber_number, 0) AS fiber2,  -- If no pair, set fiber2 to 0
+			    LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id) AS next_cable,
+			    CASE 
+			        WHEN t2.fiber_number IS NULL THEN 0  -- If pair is missing (no even-numbered fiber for odd)
+			        WHEN t2.fiber_number != t1.fiber_number + 1 THEN 0  -- If next fiber is not a valid pair
+			        ELSE t1.seq
+			    END AS seq 
+			FROM core_planner_fiber_info t1
+			LEFT JOIN core_planner_fiber_info t2 
+			    ON t1.cable_id = t2.cable_id 
+			    AND t2.fiber_number = t1.fiber_number + 1  -- Pair with the next fiber (even-numbered)
+			    AND t2.user_id = p_user_id
+			WHERE t1.user_id = p_user_id 
+			ORDER BY t1.id, t1.fiber_number) t where NOT (fiber2 = 0 AND fiber1 % 2 = 0)
+			    
+			),
+			-- Start the chain from every valid fiber pair
+			chain_start AS (
+			    SELECT 
+			        seq,fiber1, fiber2, cable_id,
+			        1 AS depth,
+			        cable_id AS first_cable
+			    FROM fiber_pairs where cable_id = v_cable_details_left.system_id   
+			),
+			-- Recursively add more cables in the same fiber pair
+			recursive_chain AS (
+			    SELECT * FROM chain_start
+			    UNION ALL
+			    SELECT 
+			        fs.seq,fs.fiber1, fs.fiber2, fs.cable_id,
+			        rc.depth + 1,
+			        rc.first_cable
+			    FROM fiber_pairs fs
+			    JOIN recursive_chain rc
+			        ON fs.fiber1 = rc.fiber1
+			        AND fs.fiber2 = rc.fiber2
+			        AND fs.seq = rc.seq+1  -- move "downward" in cable_id
+			),
+     	   existing_connections AS (
+		    -- Find already connected fibers in TEMP_ROUTE_CONNECTION
+		      SELECT SOURCE_SYSTEM_ID,
+		        SOURCE_ENTITY_TYPE,
+		        SOURCE_PORT_NO,
+		        DESTINATION_SYSTEM_ID , 
+		        DESTINATION_ENTITY_TYPE , 
+		        DESTINATION_PORT_NO, 
+		        IS_CABLE_A_END FROM (
+		        SELECT  
+		        SOURCE_SYSTEM_ID,
+		        SOURCE_ENTITY_TYPE,
+		        SOURCE_PORT_NO,
+		        DESTINATION_SYSTEM_ID , 
+		        DESTINATION_ENTITY_TYPE , 
+		        DESTINATION_PORT_NO, 
+		        IS_CABLE_A_END
+		        FROM TEMP_ROUTE_CONNECTION
+		        WHERE SOURCE_ENTITY_TYPE = 'FMS' and SOURCE_SYSTEM_ID = rec.a_system_id 
+		        and destination_ENTITY_TYPE = 'Cable' and destination_system_id= 
+		        v_cable_details_left.SYSTEM_ID and IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END 
+		        UNION
+		        SELECT 
+		        DESTINATION_SYSTEM_ID , 
+		        DESTINATION_ENTITY_TYPE , 
+		        DESTINATION_PORT_NO,
+		        SOURCE_SYSTEM_ID,
+		        SOURCE_ENTITY_TYPE,
+		        SOURCE_PORT_NO,
+		        IS_CABLE_B_END	       
+		        FROM TEMP_ROUTE_CONNECTION
+		        WHERE DESTINATION_ENTITY_TYPE = 'FMS' and DESTINATION_SYSTEM_ID = rec.a_system_id 
+		        and SOURCE_ENTITY_TYPE = 'Cable' and source_system_id= 
+		        v_cable_details_left.SYSTEM_ID  and IS_CABLE_B_END = v_cable_details_left.IS_CABLE_A_END 
+		     ) AS existing
+	      ),
+			    right_existing_connection as(
+			    select * from existing_connections ec where 
+			    ec.source_system_id = rec.a_system_id  and  ec.source_port_no not in (select port_number from table1 order by port_number limit required_core) and ec.DESTINATION_SYSTEM_ID = v_cable_details_left.system_id  and p_odf_network_id = (select parent_network_id from table1 limit 1)  			    			
+			    ),
+			    checking_right_existing_connection as(
+			    SELECT port_number
+					FROM (
+						SELECT b.port_number, 1 AS priority
+						FROM existing_connections ec
+						JOIN table1 b ON ec.source_system_id = b.parent_system_id
+						WHERE ec.DESTINATION_SYSTEM_ID = v_cable_details_LEFT.system_id
+						  AND ec.DESTINATION_ENTITY_TYPE = 'Cable'
+						  AND ec.DESTINATION_PORT_NO IN (
+							  SELECT destination_port_no 
+							  FROM connection_log_details 
+							  ORDER BY id DESC 
+							  LIMIT required_core
+						  )
+						  AND ec.source_port_no = b.port_number
+
+						UNION ALL
+
+						SELECT b2.port_number, 2 AS priority
+						FROM table1 b2
+						WHERE NOT EXISTS (
+							SELECT 1
+							FROM existing_connections ec
+							WHERE ec.source_system_id = b2.parent_system_id
+							  AND ec.DESTINATION_SYSTEM_ID = v_cable_details_LEFT.system_id
+							  AND ec.DESTINATION_ENTITY_TYPE = 'Cable'
+							  AND ec.DESTINATION_PORT_NO IN (
+								  SELECT destination_port_no 
+								  FROM connection_log_details 
+								  ORDER BY id DESC 
+								  LIMIT required_core
+							  )
+							  AND ec.source_port_no = b2.port_number
+						) and port_number not in (select source_port_no from existing_connections ec where 
+			    ec.source_system_id =  rec.a_system_id and ec.DESTINATION_port_no not in (
+		                    SELECT destination_port_no 
+		                    FROM connection_log_details 
+		                    ORDER BY id DESC 
+		                    LIMIT required_core ) and ec.DESTINATION_SYSTEM_ID = v_cable_details_LEFT.system_id  )
+					) AS combined
+					ORDER BY priority, port_number
+					LIMIT required_core
+
+			    ),
+			    
+			    
+			fiber_availability AS (
+		    SELECT  fiber1,fiber2, first_cable, continuous_count from 
+		   (SELECT  fiber1,fiber2, first_cable, COUNT(*) AS continuous_count
+            FROM recursive_chain
+            GROUP BY fiber1, fiber2, first_cable
+            ORDER BY continuous_count DESC, fiber1 
+			) t1 where (t1.fiber1 in				
+				(
+				(select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on (a.port_number=b.source_port_no
+				and a.parent_network_id = p_odf_network_id 	))
+				/*union 
+				(select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on (a.port_number=b.source_port_no
+				and a.parent_network_id <> p_odf_network_id ))*/
+				)
+				or 				
+				t1.fiber1 not in				
+				(
+				select b.DESTINATION_port_no from right_existing_connection b 
+				)
+				)
+				AND 
+				( t1.fiber2 IS NULL OR t1.fiber2 = 0 or t1.fiber2 in				
+				(
+				(select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on (a.port_number=b.source_port_no
+				and a.parent_network_id = p_odf_network_id 	)) 
+				/*union 
+				(select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on (a.port_number=b.source_port_no
+				and a.parent_network_id <> p_odf_network_id 	))*/
+				) 
+				or 				
+				t1.fiber2 not in				
+				(
+				select b.DESTINATION_port_no from right_existing_connection b
+				)
+				)
+				ORDER BY t1.continuous_count DESC, t1.fiber1
+           ),
+           
+			match_avialibility AS (
+			select COALESCE( (select inf.continuous_count from (select * from table1 
+			order by port_number limit 1) t1 join 
+			fiber_availability inf on inf.fiber1 = t1.port_number or inf.fiber2 = t1.port_number+1
+			where t1.parent_network_id = p_odf_network_id and inf.fiber1 % 2 = 1),0) >=
+			 COALESCE((SELECT MAX(continuous_count) FROM fiber_availability ), 0) 
+			 as higher_match_avialibility
+			),
+			exact_match AS (
+			SELECT COUNT(*) = required_core AS is_match
+			FROM (
+			    SELECT distinct *
+			    FROM table1 t1
+			    JOIN core_planner_fiber_info inf 
+			        ON inf.fiber_number = t1.port_number
+			    WHERE inf.cable_id = v_cable_details_left.system_id and inf.user_id = p_user_id
+			      and true = (select higher_match_avialibility from match_avialibility)
+			 ) AS selected_fibers_match
+			),
+			downward_match AS (
+			   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+			  SELECT  fiber1, fiber2, continuous_count,
+			  RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+			  FROM fiber_availability F
+			  JOIN table1 d  -- Properly referencing the threshold
+		      on f.fiber1 > d.port_number where f.fiber1 % 2 = 1 
+			 ),	
+			upward_match AS (
+				   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+		      SELECT  fiber1, fiber2, continuous_count,
+			  RANK() OVER (ORDER BY continuous_count DESC, fiber1 asc) AS rank
+			  FROM fiber_availability F
+			  JOIN table1 d  -- Properly referencing the threshold
+              on f.fiber1 <= d.port_number where f.fiber1 % 2 = 1  and  NOT EXISTS (
+	        -- Check if an exact match is available
+	        SELECT 1
+	        FROM downward_match 
+	        ) ),
+
+		   matched_fibers AS (			
+			SELECT DISTINCT 
+			    t1.parent_system_id, 
+			    t1.parent_network_id, 
+			    t1.port_number,
+			    t2.cable_id, 
+			    v_cable_details_left.network_id AS network_id,
+			    t2.fiber_number, 
+			    v_cable_details_left.IS_CABLE_A_END AS IS_CABLE_A_END,
+			    ROW_NUMBER() OVER (
+			        PARTITION BY t1.port_number 
+			        ORDER BY t2.fiber_number
+			    ) AS port_rank
+				from (SELECT * FROM table1 WHERE
+                CASE 
+                WHEN p_odf_network_id <> parent_network_id THEN 
+                port_number in (select * from checking_right_existing_connection)
+                ELSE TRUE
+            END
+        ORDER BY port_number
+        LIMIT required_core) t1
+					JOIN core_planner_fiber_info t2 
+					    ON t2.cable_id = v_cable_details_left.system_id 
+					   AND (
+					        (v_cable_details_left.IS_CABLE_A_END = TRUE)
+					        OR 
+					        (v_cable_details_left.IS_CABLE_A_END = FALSE)
+					   ) and t2.user_id = p_user_id
+					LEFT JOIN exact_match em ON TRUE
+					WHERE (  case 
+					            WHEN p_odf_network_id <> t1.parent_network_id THEN 
+		                t2.fiber_number IN (
+		                    SELECT destination_port_no 
+		                    FROM connection_log_details 
+		                    ORDER BY id DESC 
+		                    LIMIT required_core )
+		            WHEN em.is_match = TRUE THEN 
+		                t2.fiber_number = t1.port_number
+		            ELSE 
+		                t2.fiber_number IN (
+		                    SELECT fiber1 FROM downward_match WHERE rank = 1
+		                    UNION
+		                    SELECT fiber2 FROM downward_match WHERE rank = 1
+		                    UNION 
+		                    SELECT fiber1 FROM upward_match WHERE rank = 1
+		                    UNION
+		                    SELECT fiber2 FROM upward_match WHERE rank = 1 )
+		        END )
+		
+				ORDER BY t1.port_number		
+				--LIMIT required_core
+              ),
+              
+             final_result AS (
+               SELECT * from (SELECT *, 
+               ROW_NUMBER() OVER (
+               PARTITION BY fiber_number 
+               ORDER BY port_number
+                ) AS fiber_rank
+                FROM matched_fibers)t  WHERE t.port_rank =  t.fiber_rank
+             ),	
+          
+			check_existing AS (
+		    -- Check if ANY fiber in final_result is already in TEMP_ROUTE_CONNECTION
+	        SELECT  source_system_id,source_entity_type,source_port_no,is_cable_a_end,
+		    destination_system_id, DESTINATION_PORT_NO from 
+		    (SELECT e.source_system_id,e.source_entity_type,e.source_port_no,e.is_cable_a_end,
+		    e.destination_system_id, e.DESTINATION_PORT_NO
+		    FROM (select * from final_result ) fr1
+		    JOIN existing_connections e
+		      ON e.source_system_id = fr1.parent_system_id and
+				    e.destination_system_id = v_cable_details_left.system_id and 
+				    (e.DESTINATION_PORT_NO = fr1.fiber_number or e.source_port_no = fr1.port_number)
+			)t	   
+			
+			),			
+			filtered_final_result as(
+			 SELECT fr.* FROM (select * from final_result ) fr
+				LEFT JOIN check_existing ce 
+				    ON ce.source_system_id = fr.parent_system_id AND ce.source_port_no = fr.port_number				    
+				WHERE ce.source_port_no IS null 
+				limit required_core
+			),
+				final_insert AS (
+		    -- Insert into temp_connection only if NOT in check_existing
+		    INSERT INTO temp_connection (
+		        source_system_id, source_network_id, source_entity_type, source_port_no, 
+		        destination_system_id, destination_network_id, destination_entity_type,
+		        destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
+		        created_by, splicing_source
+		    ) 
+			    SELECT 
+			        fr.parent_system_id, fr.parent_network_id, 'FMS', fr.port_number, 
+			        fr.cable_id, fr.network_id, 'Cable', fr.fiber_number, 
+			        FALSE, fr.IS_CABLE_A_END, p_user_id, 'CorePlanning'
+			    FROM filtered_final_result fr
+			    ORDER BY fr.port_number
+			    LIMIT required_core
+			),
+			insert_log_filtered AS (
+		    -- Insert records from filtered_final_result
+		   INSERT INTO connection_log_details (
+			    destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+			)
+			SELECT 
+			    fr.cable_id, fr.network_id, fr.fiber_number, 'Cable'
+			FROM filtered_final_result fr
+			 where fr.cable_id = v_cable_details_left.SYSTEM_ID
+		    LIMIT required_core
+		  )
+     	  INSERT INTO connection_log_details (
+       		 destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        distinct destination_system_id, NULL, DESTINATION_PORT_NO, 'Cable'
+		    FROM check_existing ce
+		    where ce.destination_system_id = v_cable_details_left.system_id	 ;
+		   -- ORDER BY source_port_no;
+	  
+		else		
+
+			SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			AS IS_CABLE_A_END 
+			INTO v_cable_details_left FROM TEMP_LINE_MASTER A				
+			WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) 
+			and a.system_id in
+		   (select destination_systemid from connection_log_details order by id desc limit 1)  LIMIT 1;
+				
+			SELECT a.*,ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2)) 
+			AS IS_CABLE_A_END 
+			INTO v_cable_details_right FROM TEMP_LINE_MASTER A				
+			WHERE (ST_Within(ST_STARTPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))
+			OR ST_Within(ST_ENDPOINT(A.SP_GEOMETRY), ST_BUFFER_METERS(REC.SP_GEOMETRY, 2))) 
+			AND SYSTEM_ID NOT IN(v_cable_details_left.SYSTEM_ID)  LIMIT 1;
+
+		 raise info 'v_cable_details_left 1 : %',v_cable_details_left;
+
+
+		if (v_cable_details_left is not null and v_cable_details_right is not null)
+		then
+            raise info 'v_cable_details_right 1 : %',v_cable_details_right;
+     
+
+			WITH recursive table1 AS (
+				SELECT cable_id, fiber_number,v_cable_details_left.network_id as network_id,
+				v_cable_details_left.IS_CABLE_A_END as IS_CABLE_A_END
+				FROM core_planner_fiber_info where cable_id = v_cable_details_left.system_id
+				and ((v_cable_details_left.IS_CABLE_A_END=true)-- and a_end_status_id = 1)
+				or(v_cable_details_left.IS_CABLE_A_END =false))-- and b_end_status_id = 1)) 
+				and is_valid = true  and fiber_number IN 
+				(SELECT destination_port_no FROM connection_log_details t1 
+				order by t1.id  desc limit required_core) and core_planner_fiber_info.user_id =p_user_id order by fiber_number  
+				limit required_core 				
+			) ,
+			  fiber_pairs AS (
+		     /*select t1.id as id, t1.cable_id,t1.fiber_number AS fiber1,t2.fiber_number AS fiber2,
+		    LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id) 
+		    AS next_cable,  t1.seq
+			FROM core_planner_fiber_info t1
+		    inner join core_planner_fiber_info t2 on t1.cable_id=t2.cable_id  and t2.is_valid = true and t2.user_id = p_user_id
+			and t1.fiber_number=t2.fiber_number-1 where t1.is_valid = true 
+			and t1.user_id = p_user_id  order by t1.id,t1.fiber_number*/
+			
+			select * from(SELECT 
+			    t1.id AS id, 
+			    t1.cable_id,
+			    t1.fiber_number AS fiber1,
+			    COALESCE(t2.fiber_number, 0) AS fiber2,  -- If no pair, set fiber2 to 0
+			    LEAD(t1.cable_id) OVER (PARTITION BY t1.fiber_number ORDER BY t1.cable_id) AS next_cable,
+			    CASE 
+			        WHEN t2.fiber_number IS NULL THEN 0  -- If pair is missing (no even-numbered fiber for odd)
+			        WHEN t2.fiber_number != t1.fiber_number + 1 THEN 0  -- If next fiber is not a valid pair
+			        ELSE t1.seq
+			    END AS seq 
+			FROM core_planner_fiber_info t1
+			LEFT JOIN core_planner_fiber_info t2 
+			    ON t1.cable_id = t2.cable_id 
+			    AND t2.fiber_number = t1.fiber_number + 1  -- Pair with the next fiber (even-numbered)
+			    AND t2.user_id = p_user_id
+			WHERE t1.user_id = p_user_id 
+			ORDER BY t1.id, t1.fiber_number) t where NOT (fiber2 = 0 AND fiber1 % 2 = 0)
+		),
+				-- Start the chain from every valid fiber pair
+				chain_start AS (
+				    SELECT 
+				        seq,fiber1, fiber2, cable_id,
+				        1 AS depth,
+				        cable_id AS first_cable
+				    FROM fiber_pairs where cable_id = v_cable_details_right.system_id  
+				),
+				-- Recursively add more cables in the same fiber pair
+				recursive_chain AS (
+					SELECT * FROM chain_start
+					UNION ALL
+					SELECT fs.seq,fs.fiber1, fs.fiber2, fs.cable_id,
+					rc.depth + 1,rc.first_cable
+					FROM fiber_pairs fs
+					JOIN recursive_chain rc
+					ON fs.fiber1 = rc.fiber1
+					AND fs.fiber2 = rc.fiber2
+					AND fs.seq = rc.seq+1 
+					),	
+				  existing_connections AS (
+			    -- Find already connected fibers in TEMP_ROUTE_CONNECTION
+			      SELECT SOURCE_SYSTEM_ID,
+			        SOURCE_ENTITY_TYPE,
+			        SOURCE_PORT_NO,
+			        DESTINATION_SYSTEM_ID , 
+			        DESTINATION_ENTITY_TYPE , 
+			        DESTINATION_PORT_NO, 
+			        IS_CABLE_A_END FROM (
+			        SELECT  
+			        SOURCE_SYSTEM_ID,
+			        SOURCE_ENTITY_TYPE,
+			        SOURCE_PORT_NO,
+			        DESTINATION_SYSTEM_ID , 
+			        DESTINATION_ENTITY_TYPE , 
+			        DESTINATION_PORT_NO, 
+			        IS_CABLE_A_END
+			        FROM TEMP_ROUTE_CONNECTION
+			        WHERE SOURCE_ENTITY_TYPE = 'Cable' and SOURCE_SYSTEM_ID = v_cable_details_left.system_id  and IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END 
+			        and destination_system_id=  v_cable_details_right.system_id  --and IS_CABLE_B_END = v_cable_details_RIGHT.IS_CABLE_A_END 
+			        UNION
+			        SELECT 
+			        DESTINATION_SYSTEM_ID , 
+			        DESTINATION_ENTITY_TYPE , 
+			        DESTINATION_PORT_NO,
+			        SOURCE_SYSTEM_ID,
+			        SOURCE_ENTITY_TYPE,
+			        SOURCE_PORT_NO,
+			        IS_CABLE_B_END	       
+			        FROM TEMP_ROUTE_CONNECTION
+			        WHERE DESTINATION_ENTITY_TYPE = 'Cable' and DESTINATION_SYSTEM_ID = v_cable_details_left.system_id  and IS_CABLE_A_END = v_cable_details_left.IS_CABLE_A_END 
+			        and SOURCE_SYSTEM_ID= v_cable_details_right.system_id-- and IS_CABLE_B_END = v_cable_details_RIGHT.IS_CABLE_A_END 
+			     ) AS existing
+			    ),
+			    right_existing_connection as(
+			    select * from existing_connections  ec where ec.SOURCE_SYSTEM_ID = v_cable_details_left.system_id and SOURCE_ENTITY_TYPE ='Cable' AND source_PORT_NO not in (SELECT destination_port_no FROM connection_log_details t1 
+				order by t1.id  desc limit required_core) and ec.DESTINATION_SYSTEM_ID = v_cable_details_right.system_id
+			    ),			     
+				fiber_availability AS (
+			    SELECT distinct  fiber1,fiber2, first_cable, continuous_count from (  
+			    SELECT  fiber1,fiber2, first_cable, COUNT(*) AS continuous_count
+	            FROM recursive_chain
+	            GROUP BY fiber1, fiber2, first_cable
+	            ORDER BY continuous_count DESC, fiber1 
+				) t1 where (t1.fiber1 in				
+				(
+				select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on a.fiber_number=b.SOURCE_PORT_NO 		
+				)
+				or 				
+				t1.fiber1 not in				
+				(
+				select b.DESTINATION_port_no from right_existing_connection b
+				)
+				)
+				AND 
+				(t1.fiber2 in				
+				(
+				select b.DESTINATION_port_no from table1 a
+				inner join right_existing_connection b on a.fiber_number=b.SOURCE_PORT_NO			
+				) 
+				or 				
+				t1.fiber2 not in				
+				(
+				select b.DESTINATION_port_no from right_existing_connection b
+				)
+				) or t1.fiber2 IS NULL OR t1.fiber2 = 0
+				ORDER BY t1.continuous_count DESC, t1.fiber1  
+				),
+				selected_fibers_match AS (
+			    -- Step 3: Select the fiber availability where fiber1 is odd
+			    SELECT distinct t2.FIBER_number,t1.FIBER_number as C1_FIBER_NUMBER
+			    FROM table1 t1  
+			    JOIN core_planner_fiber_info t2  
+			        ON t2.FIBER_number = t1.FIBER_number and t2.cable_id  = v_cable_details_right.system_id and t2.user_id = p_user_id
+			    WHERE  t2.FIBER_number in				
+				(
+				select a.fiber_number from table1 a
+				inner join right_existing_connection b on a.fiber_number=b.source_port_no			
+				)
+				or 				
+				t2.FIBER_number not in				
+				(
+				select b.DESTINATION_port_no from right_existing_connection b
+				)
+					
+			    order by t1.FIBER_number 
+			   ),
+				exact_match AS (
+		        SELECT COUNT(*) = required_core AS is_match
+		        FROM selected_fibers_match
+		        ),
+					downward_match AS (						
+				    SELECT distinct fiber1, fiber2, continuous_count,
+				    RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+				    FROM fiber_availability f
+                    JOIN table1 d  -- Properly referencing the threshold
+                   on f.fiber1 > d.fiber_number where f.fiber1 % 2 = 1 
+				),
+					upward_match AS (
+				   -- Rank fiber pairs based on availability (highest first), then by fiber1 descending
+				    SELECT distinct fiber1, fiber2, continuous_count,
+				    RANK() OVER (ORDER BY continuous_count DESC, fiber1 ASC) AS rank
+				    FROM fiber_availability F
+				    JOIN table1 d  -- Properly referencing the threshold
+                    on f.fiber1 <= d.fiber_number where f.fiber1 % 2 = 1  and NOT EXISTS (
+				        SELECT 1
+				        FROM downward_match 
+				    )) ,				  
+		 
+		      matched_fibers AS (
+				SELECT t1.cable_id as c1_cable_id, t1.network_id as c1_network_id,
+				t1.fiber_number as c1_fiber_number,t1.IS_CABLE_A_END as C1_IS_CABLE_A_END,
+				t2.cable_id as c2_cable_id,v_cable_details_right.network_id as c2_network_id,
+				t2.fiber_number as c2_fiber_number, v_cable_details_right.IS_CABLE_A_END  
+				as C2_IS_CABLE_A_END ,(t1.fiber_number + t2.fiber_number) as remove_duplicate_seq,
+				ROW_NUMBER() OVER (
+	            PARTITION BY t1.fiber_number 
+	            ORDER BY t2.fiber_number
+	            ) AS fiber1_rank
+			    FROM table1 t1
+			    JOIN core_planner_fiber_info t2 ON  t2.cable_id = v_cable_details_right.system_id and 
+			    ((v_cable_details_right.IS_CABLE_A_END=true) -- and a_end_status_id = 1)
+				or(v_cable_details_right.IS_CABLE_A_END =false))-- and b_end_status_id = 1))
+				and t2.user_id = p_user_id 		
+			    LEFT JOIN exact_match em 
+                    ON TRUE
+                WHERE 
+       		     (CASE 
+        		    WHEN em.is_match = TRUE THEN 
+    	            t2.fiber_number = t1.fiber_number 
+            	    --AND t2.fiber_number = t1.fiber_number + 1
+           		 ELSE 
+                t2.fiber_number IN (
+                    SELECT fiber1 FROM downward_match WHERE rank = 1
+                    UNION
+                    SELECT fiber2 FROM downward_match WHERE rank = 1
+                    union 
+                    SELECT fiber1 FROM upward_match WHERE rank = 1
+                    UNION
+                    SELECT fiber2 FROM upward_match WHERE rank = 1
+                ) 
+       			 END  
+       			 )
+                order by t1.fiber_number --limit required_core
+			    
+	    	),
+	    	
+	     final_result AS (
+               SELECT * from (SELECT *, 
+               ROW_NUMBER() OVER (
+               PARTITION BY c2_fiber_number 
+               ORDER BY c1_fiber_number
+                ) AS fiber2_rank
+                FROM matched_fibers)t  WHERE t.fiber1_rank =  t.fiber2_rank
+                ),
+
+			check_existing AS (
+		    -- Check if ANY fiber in final_result is already in TEMP_ROUTE_CONNECTION
+		    SELECT source_system_id,source_entity_type,source_port_no,is_cable_a_end,
+		    destination_system_id, DESTINATION_PORT_NO from (SELECT e.source_system_id,e.source_entity_type,e.source_port_no,e.is_cable_a_end,
+		    e.destination_system_id, e.DESTINATION_PORT_NO
+		    FROM (select * from final_result LIMIT required_core) fr1
+		    JOIN existing_connections e
+		      ON e.source_system_id = fr1.c1_cable_id 
+		     where e.source_port_no = fr1.c1_fiber_number 
+		     AND e.is_cable_a_end = fr1.C1_IS_CABLE_A_END) t where t.destination_system_id = v_cable_details_right.system_id --and t.DESTINATION_PORT_NO = c2_fiber_number
+			),			
+			
+			filtered_final_result as(
+			 SELECT fr.* FROM (select * from final_result limit required_core ) fr
+				LEFT JOIN check_existing ce 
+				    ON (ce.source_system_id = fr.c1_cable_id AND ce.source_port_no = fr.c1_fiber_number) 				    
+				WHERE ce.source_port_no IS NULL
+			),
+
+			final_insert AS (
+			-- Final selection: prioritize exact match, then downward, then upward
+			INSERT INTO temp_connection (
+            source_system_id, source_network_id, source_entity_type, source_port_no, 
+            destination_system_id, destination_network_id, destination_entity_type,
+            destination_port_no, is_source_cable_a_end, is_destination_cable_a_end, 
+            created_by, splicing_source,equipment_system_id, equipment_network_id, equipment_entity_type)
+				
+			SELECT c1_cable_id,c1_network_id,'Cable', c1_fiber_number,
+			c2_cable_id ,c2_network_id,'Cable',c2_fiber_number,c1_IS_CABLE_A_END,c2_IS_CABLE_A_END,
+			p_user_id, 'CorePlanning',rec.a_system_id,rec.a_network_id,rec.a_entity_type
+			FROM filtered_final_result				  
+			ORDER BY c1_fiber_number 
+		),
+		insert_log_filtered AS (
+		    -- Insert records from filtered_final_result
+		    INSERT INTO connection_log_details (
+		        destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        fr.c2_cable_id, fr.c2_network_id, fr.c2_fiber_number, 'Cable'
+		    FROM filtered_final_result fr
+		    ORDER BY c2_fiber_number 
+		    LIMIT required_core
+		)
+     	  INSERT INTO connection_log_details (
+       		 destination_systemid, destination_networkid, destination_port_no, destination_entitytype
+		    )
+		    SELECT 
+		        distinct destination_system_id, NULL, DESTINATION_PORT_NO, 'Cable'
+		    FROM existing_connections ce
+		    where ce.source_system_id = v_cable_details_left.system_id	and source_port_no in (select destination_port_no from connection_log_details order by id desc limit required_core)
+		    and ce.destination_system_id = v_cable_details_right.system_id;    
+		    --ORDER BY source_port_no;
+		end if;	  
+	   
+	end if;
+        END LOOP;
+
+		if (SELECT COUNT(*) FROM temp_connection) > 0
+		then 
+		 raise info 'end splicing 1 : %',p_user_id;
+	    perform(fn_auto_provisioning_save_connections());
+		
+		
+		end if;	
+	
+		update att_details_cable_info  set a_end_status_id=2
+		from temp_connection tc
+		where cable_id=tc.source_system_id and tc.source_entity_type='Cable'
+		and fiber_number=tc.source_port_no
+		and tc.is_source_cable_a_end =true;
+		
+		update att_details_cable_info  set b_end_status_id=2 
+		from temp_connection tc
+		where cable_id=tc.source_system_id and tc.source_entity_type='Cable'
+		and fiber_number=tc.source_port_no
+		and tc.is_source_cable_a_end=false;
+		
+		update att_details_cable_info set a_end_status_id=2 
+		from temp_connection tc
+		where cable_id=tc.destination_system_id and tc.destination_entity_type='Cable'
+		and fiber_number=tc.destination_port_no
+		and tc.is_destination_cable_a_end=true;
+		
+		update att_details_cable_info  set b_end_status_id=2 
+		from temp_connection tc
+		where cable_id=tc.destination_system_id and tc.destination_entity_type='Cable'
+		and fiber_number=tc.destination_port_no
+		and tc.is_destination_cable_a_end=false;
+	
+	    update isp_port_info  set port_status_id=2 
+		from temp_connection tc
+		where parent_system_id=tc.destination_system_id 
+		and upper(parent_entity_type)=upper(tc.destination_entity_type)
+		and port_number = tc.destination_port_no ;
+	
+	    update isp_port_info  set port_status_id=2 
+		from temp_connection tc
+		where parent_system_id=tc.source_system_id 
+		and upper(parent_entity_type)=upper(tc.source_entity_type)
+		and port_number = tc.source_port_no ;
+
+		insert into temp_connected_cables(cable_id,fiber_number)
+		select destination_systemid, destination_port_no from connection_log_details;					
+					
+		update att_details_cable_info set  fiber_status ='Reserved',
+		link_system_id=coalesce(p_link_system_id,0)
+		from temp_connected_cables b
+		where att_details_cable_info.cable_id=b.cable_id 
+	    and b.fiber_number=att_details_cable_info.fiber_number;
+
+
+  		update att_details_fiber_link set fiber_link_status='Associated',
+		gis_length = ROUND(
+        COALESCE((SELECT Sum(a.cable_measured_length) FROM att_details_cable a
+        inner join TEMP_LINE_MASTER b on a.system_id =b.system_id and b.entity_type ='Cable' ), 0
+        )::NUMERIC, 3
+    ),
+    total_route_length = ROUND(
+        COALESCE(
+            (SELECT sum(a.cable_calculated_length) FROM att_details_cable a
+            inner join TEMP_LINE_MASTER b on a.system_id =b.system_id and b.entity_type ='Cable' ), 0
+        )::NUMERIC, 3
+    ) 
+		where system_id=coalesce(p_link_system_id,0);
+		
+
+       return query select row_to_json(row) from ( select true as status, 'The required core has been spliced, and the fiber link has been successfully attached.' as message ) row;
+      end if;
+  END;
+ 
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) TO public;
+GRANT ALL ON FUNCTION public.fn_get_core_planner_splicing(int4, int4, varchar, varchar, varchar, int4) TO postgres;
