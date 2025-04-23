@@ -5,10 +5,10 @@
 
 <link href="~/Content/css/FiberLink.css" rel="stylesheet" />
 @*<style>
-    .mr-01 .chosen-container {
-        width: 200px !important;
-    }
-</style>*@
+        .mr-01 .chosen-container {
+            width: 200px !important;
+        }
+    </style>*@
 
 <style>
     .resizable {
@@ -153,7 +153,7 @@
                             @Html.DropDownListFor(x => x.SearchbyText, new SelectList(Model.lstSearchByColumns.Select(x => new { value = x.column_name, text = x.display_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSearchBy", @onchange = "fiberLink.enableSearchtext();", @style = "width:300px" })
                         </div>
                         <div class="d-flex">
-                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "20", @class = "form-control input-mr search--padding", @style = "height:26px; width:300px", @readonly = true })
+                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "20", @class = "form-control input-mr search--padding", @style = "", @readonly = true })
                             <i class="glyphicon glyphicon-search"></i>
                         </div>
                         <button type="submit" class="btn btn-success ml-auto" id="btnLinkData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
@@ -165,7 +165,7 @@
                         <div id="VwFiberLinkGrid" resize: none;>
                             <div class="tablePad--tn"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b></div>
                             <div class="tablePad--tn">
-                                <div class="table-responsive scrollmh">
+                                <div class="table-responsive" id="dvfiberlinkGrid">
                                     @grid.GetHtml(tableStyle: "stickyTh",
 
                             htmlAttributes: new { id = "tblFiberLinkGrid" },
@@ -234,9 +234,9 @@
             const modal = document.querySelector('.modal-content');
             // modal.classList.add('resizable');
             const resizableDiv = $(modal);//modal;//$('#ModalPopUp');
-            const minWidth = 630.976;
-            const minHeight = 567.976;
-          
+            const minWidth = 370.976;
+            const minHeight = 210.976;
+
             const corner = $('<div>').css({
                 width: '10px',
                 height: '10px',
@@ -265,6 +265,7 @@
 
                     resizableDiv.width(Math.max(minWidth, newWidth));
                     resizableDiv.height(Math.max(minHeight, newHeight));
+                    $('#dvfiberlinkGrid').height(newHeight - 210);
                 });
 
                 $(document).on('mouseup.resize', function () {
@@ -276,7 +277,7 @@
         });
     });
 
-    
+
 
 
     $('#closeModalPopup').on('click', function () {
