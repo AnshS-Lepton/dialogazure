@@ -230,6 +230,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public DbMessage disconnectFiberLinkById(int system_id)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<DbMessage>("fn_disconnect_fiber_link_by_id", new { p_linkSystemId = system_id }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
 
         public List<FiberLink> getFiberLinkROWAuthority(string searchText)
         {

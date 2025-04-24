@@ -4,6 +4,7 @@
     this.CableFiberButton = false;
     this.StatusMessages = {
         CONFIRM_DELETE_LINK: MultilingualKey.SI_GBL_GBL_JQ_FRM_061,
+        CONFIRM_DISCONNECT_LINK: 'Are you sure to disconnect link ? Disconnecting the link will remove it from all associated cables.',
         CONFIRM_EDIT_LINK: MultilingualKey.SI_GBL_GBL_JQ_FRM_062,
         SELECT_FROM_DATE: MultilingualKey.SI_OSP_GBL_JQ_RPT_010,
         SELECT_TO_DATE: MultilingualKey.SI_OSP_GBL_JQ_RPT_011,
@@ -390,6 +391,8 @@
             rowAction = rowAction + '<i class="cptr icon-CUSTOMER ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" id="iconAssociateCustomer" onclick="fiberLink.GetFiberLinkCustomer(' + systemId + ')" title="' + MultilingualKey.SI_OSP_GBL_NET_FRM_430 + '" style="padding-left: 7px;"></i>';
             rowAction = rowAction + '<i class="cptr fa fa-history m-r-xs" title="' + MultilingualKey.SF_GBL_GBL_JQ_HIS_001 + '" onclick="fiberLink.GetFiberLinkHistory(' + systemId + ')" style="color: #1b9461; font-size: 14px; padding-left: 7px"></i>';
             rowAction = rowAction + '<i class="cptr fa fa-bullseye m-r-xs  ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" title="Schematic View" onclick="fiberLink.GetSLDDaigramFiberLink(' + systemId + ', \'' + fiberlinkid + '\')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>';
+            //rowAction = rowAction + '<span title="' + (fiber_link_status != "Free" ? "" : "dvdisabled") + '"><i class="con_disconnect ml-05' + (fiber_link_status != "Free" ? "" : " dvdisabled") + '" onclick="fiberLink.disconnectFiberLinkById(' + systemId + ')"></i></span>';
+            rowAction = rowAction + '<i class="cptr con_disconnect ml-05 ' + (fiber_link_status == "Free" ? "dvdisabled" : "") + '" title="Disconnect" onclick="fiberLink.disconnectFiberLinkById(' + systemId + ')" style=" padding-left: 7px"></i>';
             $(app.DE.tblFiberLinkGrid + ' tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
         });
     }
@@ -501,7 +504,20 @@
             }, false, false)
         });
     }
+    this.disconnectFiberLinkById = function (system_id) {
+        showConfirm(app.StatusMessages.CONFIRM_DISCONNECT_LINK, function () {
+            ajaxReq('FiberLink/disconnectFiberLinkById', { system_id: system_id, }, true, function (resp) {
 
+                if (resp.status == "OK") {
+                    alert(resp.message);
+                    $(app.DE.frmViewLink).submit();
+                }
+                else {
+                    alert(resp.message);
+                }
+            }, false, false)
+        });
+    }
 
     this.onChangeCustomDate = function () {
         var value = $(app.DE.customedate + ' option:selected').val();
@@ -1174,4 +1190,5 @@
             }
         });
     }
+    
 }

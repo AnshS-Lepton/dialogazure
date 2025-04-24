@@ -22,8 +22,7 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -593,6 +592,7 @@
     <Content Include="Content\images\client_logo.png" />
     <Content Include="Content\images\close.png" />
     <Content Include="Content\images\continuos_floor_sign.svg" />
+    <Content Include="Content\images\con_disconnnect.svg" />
     <Content Include="Content\images\cross.gif" />
     <Content Include="Content\images\current.gif" />
     <Content Include="Content\images\Customer.png" />
