@@ -17394,7 +17394,6 @@ var Main = function () {
         $('#searchNBEntities').hide();
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
-        debugger;
         si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
