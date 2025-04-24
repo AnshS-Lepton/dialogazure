@@ -638,7 +638,9 @@
                             }
                             app.updateTrayPort(true);
                         }
-                        catch (err) { app.isAutoDeleteConnection = false; setTimeout(function () { alert(err.message); }, 200); }
+                        catch (err) {
+                            app.isAutoDeleteConnection = false; app.connectionObjects = [];
+                            app.currentConnections = []; setTimeout(function () { alert(err.message); }, 200); }
                     }
 
                 }, true, true);
@@ -723,11 +725,13 @@
                                     });
                                     if (filerObject.length > 0) {
                                         $.each(filerObject, function (index, item) {
-                                            jsPlumb.detach(item);
-                                            var vacantColor = $('#hdnVacantColor').val();
-                                            $('#' + item.sourceId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                                            $('#' + item.targetId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
-                                             app.connectionObjects.splice(index, 1);
+                                            if (item.sourceId != undefined || item.targetId != undefined) {
+                                                jsPlumb.detach(item);
+                                                var vacantColor = $('#hdnVacantColor').val();
+                                                $('#' + item.sourceId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                                                $('#' + item.targetId).attr('data-is-connected', '0').attr('data-status-id', '1').css('background', vacantColor);
+                                                app.connectionObjects.splice(index, 1);
+                                            }
                                         })
                                     }
                                 })
@@ -744,6 +748,8 @@
                             }
                             catch (err) {
                                 app.isAutoDeleteConnection = false;
+                                app.filteredConnections = [];
+
                                 setTimeout(function () { alert(err.message); }, 200);
                             }
                         }
