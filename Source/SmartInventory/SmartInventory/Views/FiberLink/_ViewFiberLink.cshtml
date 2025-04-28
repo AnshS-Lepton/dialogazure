@@ -288,6 +288,9 @@
         if (corner) {
             corner.remove();
         }
+        if (si.previousInfoWindow !== null) {
+            si.previousInfoWindow.close();
+        }
     });
 
     $('.close.minmizeModel.ml-auto.mr-05').on('click', function (event) {
