@@ -447,6 +447,7 @@ var Main = function () {
     this.provinceListData = [];
     this.IsZoomInTriggered = false;
     this.provinceDeltaFetchTime = new Map();
+    this.previousInfoWindow = null; 
     this.ShowHideVectorLayerByZoomSetting = function () {
         let _Zoom = app.map.getZoom();
         const _OldlayerChekedState = app.layerChekedState;// new Map([...app.layerChekedState]);
@@ -10901,10 +10902,13 @@ var Main = function () {
 
         // Calculate the accurate midpoint of the polyline
         var midLatLng = getMidpoint(_path);
-
+        if (app.previousInfoWindow) {
+            //app.previousInfoWindow=null;
+            app.previousInfoWindow.close();
+        }
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
-        var infoWindow = new google.maps.InfoWindow({
+         infoWindow = new google.maps.InfoWindow({
             content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
                    Core: ${core_number}
                </div>`,
@@ -10913,7 +10917,7 @@ var Main = function () {
 
         // Open the tooltip immediately so it stays fixed
         infoWindow.open(si.map);
-
+        app.previousInfoWindow = infoWindow;
         ShowLineLength(_path);
         return tmpLine;
     };
@@ -12748,7 +12752,7 @@ var Main = function () {
         }
     }
     this.GetNearByEntitiesByLatLong = function (latLng, objId) {
-
+      
 
         app.collapseRemove();
         var _zoom = app.map.getZoom();
@@ -12780,7 +12784,7 @@ var Main = function () {
                         }
                         else {
                             $('#searchNBEntities').css('top', (app.currentMousePos.y));
-                        }
+                        }                     
                         $('#searchNBEntities').show();
                     }
                 },
@@ -17394,18 +17398,20 @@ var Main = function () {
         $('#searchNBEntities').hide();
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
-
-        si.ClearMapAddressTool();
+      
+        //si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
         $('#searchNBEntities').hide();
-        objEntity.toggleClass('activeToolBar');
-        $(popup.DE.Maxi).trigger("click");
+        //objEntity.toggleClass('activeToolBar');
+       // $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
+            $(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
+            $(popup.DE.MinimizeModel).trigger("click");
         }
     }
     this.addTerminationPoint = function (_data) {

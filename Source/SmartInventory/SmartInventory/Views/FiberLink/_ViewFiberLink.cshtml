@@ -153,7 +153,7 @@
                             @Html.DropDownListFor(x => x.SearchbyText, new SelectList(Model.lstSearchByColumns.Select(x => new { value = x.column_name, text = x.display_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSearchBy", @onchange = "fiberLink.enableSearchtext();", @style = "width:300px" })
                         </div>
                         <div class="d-flex">
-                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "20", @class = "form-control input-mr search--padding", @style = "", @readonly = true })
+                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "30", @class = "form-control input-mr search--padding", @style = "", @readonly = true })
                             <i class="glyphicon glyphicon-search"></i>
                         </div>
                         <button type="submit" class="btn btn-success ml-auto" id="btnLinkData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
@@ -287,6 +287,9 @@
         const corner = dargetedDiv.querySelector('div[style*="cursor: se-resize"]'); // Find the corner div
         if (corner) {
             corner.remove();
+        }
+        if (si.previousInfoWindow !== null) {
+            si.previousInfoWindow.close();
         }
     });
 
