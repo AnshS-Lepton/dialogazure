@@ -2211,14 +2211,17 @@
 
     this.showFiberLinkOnMap = function (_linkSystemID) {
       
-        var highlightLineList = [];
-        //si.createLineWithCore(1, null,true);
-       // si.previousInfoWindow = null;
-        if (si.previousInfoWindow !== null) {
-            si.previousInfoWindow.close();
+        if (si.previousInfoWindow && si.previousInfoWindow.length > 0) {
+            si.previousInfoWindow.forEach(function (infoWindowss) {
+                infoWindowss.close();
+            });
+            // Clear the array to make sure no info windows are left open
+            si.previousInfoWindow = [];
         }
+
         ajaxReq('FiberLink/showFiberLinkOnMap', { linkSystemID: _linkSystemID }, true, function (resp) {
             if (resp.status = 'OK') {
+                var highlightLineList = [];
 
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
