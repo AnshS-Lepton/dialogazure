@@ -447,7 +447,7 @@ var Main = function () {
     this.provinceListData = [];
     this.IsZoomInTriggered = false;
     this.provinceDeltaFetchTime = new Map();
-    this.previousInfoWindow = null; 
+    this.previousInfoWindow = []; 
     this.ShowHideVectorLayerByZoomSetting = function () {
         let _Zoom = app.map.getZoom();
         const _OldlayerChekedState = app.layerChekedState;// new Map([...app.layerChekedState]);
@@ -10902,10 +10902,6 @@ var Main = function () {
 
         // Calculate the accurate midpoint of the polyline
         var midLatLng = getMidpoint(_path);
-        if (app.previousInfoWindow) {
-            //app.previousInfoWindow=null;
-            app.previousInfoWindow.close();
-        }
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
          infoWindow = new google.maps.InfoWindow({
@@ -10917,7 +10913,7 @@ var Main = function () {
 
         // Open the tooltip immediately so it stays fixed
         infoWindow.open(si.map);
-        app.previousInfoWindow = infoWindow;
+        app.previousInfoWindow.push(infoWindow);
         ShowLineLength(_path);
         return tmpLine;
     };
@@ -17407,11 +17403,11 @@ var Main = function () {
        // $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
-            $(popup.DE.MinimizeModel).trigger("click");
+            //$(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
-            $(popup.DE.MinimizeModel).trigger("click");
+           // $(popup.DE.MinimizeModel).trigger("click");
         }
     }
     this.addTerminationPoint = function (_data) {
@@ -18851,6 +18847,7 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
+        let selectedUsers = $("#ddlUsers").val().join(',');
         var rootid = $("#ddl_RootId").val();
         var _data = {
             geom: $('#objFilterAttributes_geom').val(),
@@ -18861,6 +18858,7 @@ var Main = function () {
             entity_sub_type: _entitySubtype,
             system_id: parseInt(system_id),
             rootid: rootid,
+            selectedUsers: selectedUsers
         };
         ////;
         //var confirmAlertMsg = '<b>In the selected region, All the '+_entitytype+' Entities will be deleted permanently</b>,<br> Do you Want to Continue?</br>';
@@ -18920,11 +18918,16 @@ var Main = function () {
                 }
                 else {
                     // $('#closeModalPopup').trigger("click");
+                    if (resp.message === "No Entites Found!"){
+                        alert(resp.message);
+                        app.loadLayerOnEntity();
+                    }
+                    else{
                     alert(resp.message);
                     app.loadLayerOnEntity();
                     window.location = appRoot + 'Main/DownloadBulkDeleteProcessLogs?';
+                     }
                 }
-
 
             }, true, true);
         });

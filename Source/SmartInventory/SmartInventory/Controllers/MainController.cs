@@ -3933,6 +3933,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             try
             {
                 List<bulkDeleteOperation> objBulkDeleteOperation = new List<bulkDeleteOperation>();
+                objBulkDelete.selectedUsers = string.IsNullOrEmpty(objBulkDelete.selectedUsers) ? Session["user_id"].ToString() : objBulkDelete.selectedUsers;
                 objBulkDelete.user_id = Convert.ToInt32(Session["user_id"]);
                 objBulkDeleteOperation = new BLMisc().BulkDeleteProcess(objBulkDelete);
                 Session["objBulkDeleteOperation"] = objBulkDeleteOperation;
@@ -3955,6 +3956,11 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 {
                     objResp.status = ResponseStatus.FAILED.ToString();
                     objResp.message = Resources.Resources.SI_GBL_GBL_NET_FRM_063;// "The selected entites deleted partially. Please check the downloaded logs.";
+                }
+                else if ( result.failureCount >= 0)
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = "No Entites Found!";// "The selected entites deleted partially. Please check the downloaded logs.";
                 }
             }
             catch (Exception ex)

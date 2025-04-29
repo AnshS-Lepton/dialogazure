@@ -288,9 +288,14 @@
         if (corner) {
             corner.remove();
         }
-        if (si.previousInfoWindow !== null) {
-            si.previousInfoWindow.close();
+        if (si.previousInfoWindow && si.previousInfoWindow.length > 0) {
+            si.previousInfoWindow.forEach(function (infoWindowss) {
+                infoWindowss.close();
+            });
+            // Clear the array to make sure no info windows are left open
+            si.previousInfoWindow = [];
         }
+
     });
 
     $('.close.minmizeModel.ml-auto.mr-05').on('click', function (event) {
