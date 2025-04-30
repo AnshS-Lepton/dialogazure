@@ -2,6 +2,56 @@
 @using SmartInventory.Settings;
 @model Models.PODMaster
 
+<style>
+
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+
+    .icon-kmldownload {
+        font-size: 20px;
+    }
+
+    .sitePlan_fieldset {
+        padding: 0.5rem 1rem 1rem;
+        border: 1px solid #CCCCCC;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+        .sitePlan_fieldset legend {
+            width: auto;
+            border-bottom: none;
+            padding-block: 0.5rem;
+            margin-bottom: 0;
+        }
+
+    .pose-plus {
+        position: absolute;
+        right: 9px;
+        top: 1px;
+        z-index: 9;
+    }
+
+    .txtdesc {
+        width: 469px;
+    }
+
+    #dvregionId .chosen-container, #dvringId .chosen-container {
+        width: 84% !important;
+        margin-left: 20px;
+    }
+
+    #dvregionId .btn, #dvringId .btn {
+        padding: 4px 6px;
+    }
+
+    .disabledChosenBox {
+        cursor: not-allowed;
+    }
+</style>
+
 @helper pageMessage()
 {
     { Html.RenderPartial("_PageMessage", Model.objPM); }
@@ -9,67 +59,121 @@
 }
 
 @Html.HiddenFor(m => m.sequence, new { @id = "hdnsequence" })
-<div class="space-pad">
-    <form id="segmentForm">
-        <div class="form-group row">
-            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                <div class="pose-plus">
-                    <a href="javascript:void(0);"
-                       class="AsiterowShowOnMap"
-                       title="Show on Map">
-                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
-                    </a>
+<div class="libDetail" id="topologyid">
+
+
+    @using (Ajax.BeginForm("SaveSegment", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
+                                                    new { id = "frmsittopology", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        <input type="hidden" id="networkIdField" name="network_id" />
+        @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
+       
+        <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
+        <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
+       
+
+        @Html.HiddenFor(m => m.agg1SystemId, new { id = "hdnAgg1SystemId" })
+        @Html.HiddenFor(m => m.agg2SystemId, new { id = "hdnAgg2SystemId" })
+
+      
+        @Html.HiddenFor(m => m.ring_a_site_distance, new { id = "hdnRingASiteDistance" })
+        @Html.HiddenFor(m => m.ring_b_site_distance, new { id = "hdnRingBSiteDistance" })
+        @*<input type="hidden" id="hdnRingBSiteId" name="hdnRingBSiteId" />*@
+        @*<input type="hidden" id="hdnRingBSiteDistance" name="hdnRingBSiteDistance" />*@
+
+
+        @*@Html.HiddenFor(m => m.system_id)*@
+        <input type="hidden" id="hdnApproveCount" value="0">
+        <div class="libTabContent" id="segmentModal">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+
+                    <fieldset class="sitePlan_fieldset">
+                        <legend>Create Segment</legend>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter text", @maxlength = 100 })
+                                <div class="pose-plus">
+                                    <a href="javascript:void(0);"
+                                       class="txtagg1ShowOnMap"
+                                       title="Show on Map">
+                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter text", @maxlength = 100 })
+                                <div class="pose-plus">
+                                    <a href="javascript:void(0);"
+                                       class="txtagg2ShowOnMap"
+                                       title="Show on Map">
+                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="dvregionId" style="display: block;">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                                @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
+
+                            </div>
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+
+                            <label class="control-label col-sm-2" for="searchby">Route <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlroute" })
+                                <div class="pose-plus">
+                                    <a href="javascript:void(0);"
+                                       class="routeShowOnMap"
+                                       title="Show on Map">
+                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
+                            <div class="col-sm-4">
+                                @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
+                            </div>
+
+                        </div>
+
+                        
+                        
+                    </fieldset>
+                  
                 </div>
             </div>
-            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                <div class="pose-plus">
-                    <a href="javascript:void(0);"
-                       class="BsiterowShowOnMap"
-                       title="Show on Map">
-                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
-                    </a>
-                </div>
-            </div>
+
         </div>
-        <div class="form-group row">
-
-            <label class="control-label col-sm-2" for="searchby">Region <i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtregion", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
-                
-
-            </div>
-            <label class="control-label col-sm-2" for="searchby">Segment Code<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegmentcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
-
-            </div>
-
-           
+        <div class="ModalFooter d-flex --gap05">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel" onclick="si.clearTPRelatedObjects();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            <input type="button" formmethod="post" class="btn btn-primary" name="actionTab" id="btnSaveSegment" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
         </div>
 
-        <div class="form-group row">
-            <label class="control-label col-sm-2" for="txtSearchtext">Route<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-4">
-                @Html.DropDownListFor(m => m.network_id, new SelectList(Model.lsttopologygetsites.Select(x => new { Value = x.siteid, Text = x.sitename }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlCable" })
+    }
 
-            </div>
-            <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
-            <div class="col-sm-4">
-                @Html.TextAreaFor(m => m.Ring_desc, new { @id = "txtdescRing", @title = "Search text", @tabindex = "4", @class = "form-control txtdesc", @placeholder = "Enter Description", @maxlength = 500, @rows = 4, @cols = 50, @style = "resize: none;" })
-            </div>
-        </div>
-    </form>
 </div>
-<div class="ModalFooter d-flex --gap05">
-    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnringCancel">
-        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
-    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnSaveRing" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
 
+<div id="dvProgress" style="display: none;">
+    <div id="blur" class="progresblur">
+        &nbsp;
+    </div>
+    <div id="progressbar" style="width: 247px; height: 152px; top: 40%; left: 40%;">
+        <img alt="Loading..." src="~/content/images/loading.gif" /><br />
+
+    </div>
 </div>
 
 
@@ -77,7 +181,8 @@
 <script>
 
     $("#txtagg1").autocomplete({
-source: function (request, response) {
+        source: function (request, response) {
+            debugger;
     $.ajax({
         url: '@Url.Action("GetAGG1", "Report")',
         type: "GET",
@@ -85,7 +190,8 @@ source: function (request, response) {
         data: { term: request.term },
         success: function (data) {
         if (data.length === 0) {
-        response([{ label: "No results found", value: "", siteName: "", systemId: "" }]);
+            response([{ label: "No results found", value: "", siteName: "", systemId: "" }]);
+            $(".txtagg1ShowOnMap").hide();  // hide if no data found
         } else {
         response($.map(data, function (item) {
         return {
@@ -103,7 +209,8 @@ source: function (request, response) {
         select: function (event, ui) {
         if (ui.item.value !== "") {
             $("#txtagg1").val(ui.item.value);   // Set selected site_id
-      
+            $("#hdnAgg1SystemId").val(ui.item.systemId); // Set system_id in hidden field
+            $(".txtagg1ShowOnMap").show();  // Show if selected
         }
         return false;
         }
@@ -119,6 +226,7 @@ source: function (request, response) {
         success: function (data) {
         if (data.length === 0) {
             response([{ label: "No results found", value: "", Name: "", systemId: "" }]);
+            $(".txtagg2ShowOnMap").hide();  // hide if no data found
         } else {
             debugger;
         response($.map(data, function (item) {
@@ -136,90 +244,330 @@ source: function (request, response) {
         if (ui.item.value !== "") {
             debugger;
             $("#txtagg2").val(ui.item.value); // Set corresponding site_name
-      
+            $("#hdnAgg2SystemId").val(ui.item.systemId); // Set system_id in hidden field
+            $(".txtagg2ShowOnMap").show();  // Show if selected
         }
         return false;
         }
         });
 
     $(document).ready(function () {
-        $("#hdnringsiteseq").val($("#hdnsequence").val());
-        $("#btnSaveRing").click(function () {
+
+        var cable_id = $("#ddlroute option:selected").val();
+        if (cable_id == undefined) {
+            var ddlroute = $('#ddlroute');
+            ddlroute.empty(); // Clear existing options
+            ddlroute.append('<option value="">--Select Rounte--</option>');
+        }
+        toggleMapLink();
+
+
+    });
+
+    function toggleMapLink() {
+        if ($("#txtagg1").val()) {
+            $(".txtagg1ShowOnMap").show();  // Show if selected
+        } else {
+            $(".txtagg1ShowOnMap").hide();  // Hide if nothing is selected
+        }
+
+        if ($("#txtagg2").val()) {
+            $(".txtagg2ShowOnMap").show();  // Show if selected
+        } else {
+            $(".txtagg2ShowOnMap").hide();  // Hide if nothing is selected
+        }
+
+        var cable_id = $("#ddlroute option:selected").val();
+      
+        if (cable_id === "") {
+            $(".routeShowOnMap").hide();  // Hide if nothing is selected
+        }
+        else {
+            $(".routeShowOnMap").show();  // Show if selected
+        }
+    }
+
+    // Show On Map
+    $('.txtagg1ShowOnMap').on("click", function () {
+
+        var systemId = $("#hdnAgg1SystemId").val(); // Select the active option
+
+        si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+
+    // Show On Map
+    $('.txtagg2ShowOnMap').on("click", function () {
+
+        var systemId = $("#hdnAgg2SystemId").val();// Select the active option
+
+        si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+
+    $('.routeShowOnMap').on("click", function () {
+
+        var systemId = $("#ddlroute option:selected").val();
+
+        si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+
+    $('#ddlregionid').change(function () {
+
+        debugger;
+        getSegmentDetails();
+    });
+
+    function selectByText(dropdownId, textToSelect) {
+        let dropdown = document.getElementById(dropdownId);
+        for (let i = 0; i < dropdown.options.length; i++) {
+            if (dropdown.options[i].text.toLowerCase().includes(textToSelect.toLowerCase())) {
+
+                dropdown.selectedIndex = i;
+                break;
+            }
+        }
+    }
+    function getSegmentDetails(route = null) {
+        var regionId = $('#ddlregionid').val(); // Get the selected RegionId
+        var agg1 = $("#hdnAgg1SystemId").val();
+        var agg2 = $("#hdnAgg2SystemId").val();
+
+        if (agg1 === "") {
+            alert("Please select Aggregate Site 1!");
+            return false;
+        }
+        if (agg2 === "") {
+            alert("Please select Aggregate Site 2!");
+            return false;
+        }
+
+        $("#dvProgress").show();
+        $('#dvProgress').css('display', 'block');
+
+        var regionname = "";
+        var segmentcode = "";
+        var routename = "";
+        var description = "";
+        var SelectedRoute = "";
+       
+        $.ajax({
+            url: '@Url.Action("getExistingSegmentDetails", "Report")', // Fetch Route details
+            type: 'GET',
+            data: { regionId: regionId, agg1_site_id: agg1, agg2_site_id: agg2, route: route },
+            success: function (data) {
+                debugger;
+                var SegmentId = data.id;
+                var sequence = data.sequence;
+                var regionname = data.region_name;
+                var segmentcode = data.segment_code;
+                var routename = data.route_name;
+                var description = data.description;
+                $("#txtsegcode").val(segmentcode);
+                $("#txtdesc").val(description);
+                $("#hdnsegmentid").val(SegmentId);
+                $("#hdnSequenceId").val(sequence);
+                $("#dvProgress").hide();
+                if (routename == null) {
+                    getSegmentCode();
+                }
+                if (route == null) {
+                    bindSegmentRouteDetails(regionname, segmentcode, routename);
+                }
+               
+            },
+            error: function () {
+                $("#dvProgress").hide();
+                alert("Error fetching ring types. Please try again.");
+            }
+        });
+    }
+
+    function bindSegmentRouteDetails(regionname=null, segmentcode=null, routename=null) {
+        
+       var regionId = $('#ddlregionid').val(); // Get the selected RegionId
+        var agg1 = $("#hdnAgg1SystemId").val();
+        var agg2 = $("#hdnAgg2SystemId").val();
+
+if (agg1 === "") {
+    alert("Please select Aggregate Site 1!");
+    return false;
+}
+if (agg2 === "") {
+    alert("Please select Aggregate Site 2!");
+    return false;
+}
+
+        $("#dvProgress").show();
+        $('#dvProgress').css('display', 'block');
+
+    $.ajax({
+        url: '@Url.Action("getCableRouteDetails", "Report")', // Fetch Route details
+        type: 'GET',
+        data: { regionId: regionId, agg1_site_id: agg1, agg2_site_id: agg2 },
+        success: function (data) {
+            $("#dvProgress").hide();
             debugger;
- var ringcode = $("#txtRingCode").val();
- var segmentid = $("#ddlsegment").val();
- var segmentcode = $("#txtsegmentcode").val();
-            var ringdesc = $("#txtdescRing").val();
- var ringcapacity = $("#ddlringcapacity").val();
+            var routeDropdown = $('#ddlroute');
+            routeDropdown.empty(); // Clear existing options
+            routeDropdown.append('<option value="">--Select Route--</option>');
 
- if (!segmentid ) {
- alert("Please select segment.");
- return;
- }
+            // Append new options from response
+            $.each(data, function (index, item) {
+                routeDropdown.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
+            });
+            routeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
 
- // AJAX call to save data
- $.ajax({
+            if (segmentcode == null) {
+                getSegmentCode();
+            }
+        
+          /*Auto Select*/
+            if (routename != null) {
+                selectByText("ddlroute", routename);
+                // **Update Chosen Dropdown**
+                routeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
+            }
 
- url: '@Url.Action("SaveRing", "Report")', // Save the ring data
- type: 'POST',
- data: {
- segmentcode: segmentid,
- ringcode: ringcode,
-     description: ringdesc,
-     ringcapacity: ringcapacity
+            if (regionname != null) {
+                var regionid = $('#ddlregionid');
+                selectByText("ddlregionid", routename);
+                // **Update Chosen Dropdown**
+                regionid.trigger("chosen:updated"); // Ensure chosen dropdown updates
+            }
+            /*Auto Select*/
+            
+        },
+        error: function () {
+            $("#dvProgress").hide();
+            alert("Error fetching ring types. Please try again.");
+        }
+    });
 
- },
- success: function (response) {
- if (response) {
-     alert("Ring saved successfully!");
-     $('#closeChildPopup').trigger("click");
-     debugger;
-     var nbrOfsites = $("#ddlnofsites").val();
+        
+    };
 
-     if (nbrOfsites === "") {
-         alert("Please select no of sites !");
-     }
+    function getSegmentCode() {
 
-     var ringcap = $("#ddlringcapacity").val();
- // Now fetch updated ring types
- $.ajax({
- url: '@Url.Action("GetRingTypesByRegion", "Report")',
- type: 'GET',
-     data: { segmentId: segmentid, numberofsites: nbrOfsites, ringcapacity: ringcap }, // Pass the selected segment ID
- success: function (data) {
- var ringTypeDropdown = $('#ddlringtype');
- ringTypeDropdown.empty(); // Clear previous options
- ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+        $("#dvProgress").show();
+        $('#dvProgress').css('display', 'block');
+          $.ajax({
+  url: '@Url.Action("GetSegmentsCode", "Report")',
+  type: "GET",
+  dataType: "json",
+  data: {  },
 
- // Append new options
- $.each(data, function (index, item) {
-     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
- });
-     let $select = $("#ddlringtype");
-     if ($select.children("option").length > 0) {
-         let lastValue = $select.children("option:last").val();
-         $select.val(lastValue).trigger("chosen:updated");
-     }
+  success: function (response) {
+  if (response && response.segment_code) {
+  $("#txtsegcode").val(response.segment_code);
+  if (response.sequence) {  // Assuming "sequence_id" is the key in the response
+      $("#hdnSequenceId").val(response.sequence);
+      $("#dvProgress").hide();
+    //  $("#segmentModal").modal("show");
+  }
+  } else {
+      $("#dvProgress").hide();
+  alert("Failed to fetch segment code.");
+  }
+  },
+              error: function () {
+                  $("#dvProgress").hide();
+  alert("An error occurred while fetching segment code.");
+  }
+  });
+    };
+
+       $("#btnSaveSegment").click(function () {
+
+           // Get input values
+           var regionid = $("#ddlregionid option:selected").val();
+
+   var description = $("#txtdesc").val();
+   var segmentcode = $("#txtsegcode").val();
+   var Agg1SystemId = $("#hdnAgg1SystemId").val();
+           var SequenceId = $("#hdnSequenceId").val();
+           var SegmentId = $("#hdnsegmentid").val();
+           
+           var Agg2SystemId = $("#hdnAgg2SystemId").val();
+           var route_id = $("#ddlroute option:selected").val();
+           if (Agg1SystemId === "" || Agg1SystemId === "0") {
+               alert("Please select Aggregate Site 1!");
+               return false;
+           }
+           if (Agg2SystemId === "" || Agg2SystemId === "0") {
+               alert("Please select Aggregate Site 2!");
+               return false;
+           }
+           if (regionid === "") {
+               alert("Please select a region!");
+               return false;
+           }
+
+           if (route_id === "") {
+               alert("Please select a route!");
+               return false;
+           }
+
+           confirm("Are you sure you want to save this with selected aggregate sites ?", function () {
+               debugger;
+                   $("#dvProgress").show();
+    $('#dvProgress').css('display', 'block');
+               debugger;
+$.ajax({
+url: '@Url.Action("SaveSegment", "Report")',
+type: "POST",
+dataType: "json",
+data: {
+segmentcode: segmentcode,
+region_code: regionid,
+description: description,
+Agg1SystemId: Agg1SystemId,
+Agg2SystemId: Agg2SystemId,
+    route_id: route_id,
+    SegmentId: SegmentId,
+    SequenceId: SequenceId
+},
+success: function (response) {
+    if (response) {
+        $("#dvProgress").hide();
+        $('#dvProgress').css('display', 'none');
+        alert("Segment saved successfully!");
+        $("#txtdesc").val('');
+        $("#txtsegcode").val('');
+        $("#hdnAgg1SystemId").val('');
+        $("#txtagg1").val('');
+        $("#txtagg2").val('');
+        $(".txtagg1ShowOnMap").hide();  // hide if no data found
+        $(".txtagg2ShowOnMap").hide();  // hide if no data found
+        $(".routeShowOnMap").hide();  // Hide if nothing is selected
+
+        $("#hdnSequenceId").val('');
+        $("#hdnsegmentid").val('');
+       $("#hdnAgg2SystemId").val('');
+        var ddlregionid = $('#ddlregionid');
+        ddlregionid.prop('selectedIndex', 0).trigger("chosen:updated");
+        var ddlroute = $('#ddlroute');
+        ddlroute.empty(); // Clear existing options
+        ddlroute.append('<option value="">--Select Rounte--</option>');
+
+} else {
+alert(response.Message);
+}
+},
+error: function () {
+alert('An error occurred while saving the topology.');
+}
+});
+           });
 
 
- // Update Chosen.js Dropdown (if used)
-     ringTypeDropdown.trigger("chosen:updated");
- },
- error: function () {
- alert("Error fetching ring types. Please try again.");
- }
- });
 
- } else {
- alert(response.Message);
- }
- },
- error: function () {
- alert('An error occurred while saving the topology.');
- }
- });
+       });
 
- });
+    $('#ddlroute').change(function () {
+        toggleMapLink();
+
+        var route = $("#ddlroute option:selected").text();
+        debugger;
+        getSegmentDetails(route);
     });
 
 </script>

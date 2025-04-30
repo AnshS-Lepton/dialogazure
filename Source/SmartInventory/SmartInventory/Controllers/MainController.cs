@@ -255,7 +255,29 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult getGeometryDetailbyRoute(int route_id, string geomType)
+        {
+            JsonResponse<GeometryDetail> objResp = new JsonResponse<GeometryDetail>();
+            var objGeometryDetail = new BLSearch().GetGeometryDetailsbyroute(route_id, geomType);
 
+
+            if (objGeometryDetail.geometry_extent != null)
+            {
+                var extent = objGeometryDetail.geometry_extent.TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+                string[] bounds = extent.Split(',');
+                string[] southWest = bounds[0].Split(' ');
+                string[] northEast = bounds[1].Split(' ');
+                objGeometryDetail.southWest = new latlong { Lat = southWest[1], Long = southWest[0] };
+                objGeometryDetail.northEast = new latlong { Lat = northEast[1], Long = northEast[0] };
+                objResp.result = objGeometryDetail;
+                objResp.status = ResponseStatus.OK.ToString();
+            }
+            else
+            {
+                objResp.status = ResponseStatus.ZERO_RESULTS.ToString();
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult getGeometryDetailbyGeom(int audit_id, string geomType)
         {
             JsonResponse<GeometryDetail> objResp = new JsonResponse<GeometryDetail>();

@@ -10546,7 +10546,19 @@ var Main = function () {
             }
         }, true, true);
     }
-
+    this.ShowEntityOnMapbyRoute = function (route_id, gType) {
+        ajaxReq('main/getGeometryDetailbyRoute', { route_id: route_id, geomType: gType }, false, function (resp) {
+            ;
+            if (resp.status = 'OK') {
+                //;
+                if (resp.result != null && resp.result != undefined) {
+                    app.HighlightEntityOnMap(gType, resp.result);
+                    //app.printPolygonEntityArea(resp.result);
+                    app.fitElementOnMap(resp.result)
+                }
+            }
+        }, true, false);
+    }
     this.ShowEntityOnMapbyGeom = function (audit_id, gType) {
         ajaxReq('main/getGeometryDetailbygeom', { audit_id: audit_id, geomType: gType }, false, function (resp) {
             ;
@@ -22134,7 +22146,7 @@ var Main = function () {
     }
     this.createSegment = function (_systemId, _entityType) {
 
-        var formURL = "Report/GetSegmentsCode";
+        var formURL = "Report/CreateSegment";
         var titleText = " Create Segment";
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType
