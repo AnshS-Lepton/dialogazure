@@ -328,6 +328,7 @@ namespace Models
 		public string entity_sub_type { get; set; }
 		public int system_id { get; set; }
 		public int rootid { get; set; }
+		public string selectedUsers { get; set; }
 	}
 	public class ProjectSpecificView : IProjectSpecification, IOwnershipInfo
 	{

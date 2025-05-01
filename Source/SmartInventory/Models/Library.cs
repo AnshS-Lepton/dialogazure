@@ -541,7 +541,8 @@ namespace Models
         public string Seg_desc { get; set; }
         [NotMapped]
         public string Ring_desc { get; set; }
-        public bool? is_agg_site { get; set; }
+
+        public bool is_agg_site { get; set; }
         [NotMapped]
         public int sequence { get; set; }
 
@@ -580,10 +581,21 @@ namespace Models
 
     }
 
-    public class CableDetails
+    public class routeDetails
     {
-        public string network_id { get; set; }
-        public string cable_name { get; set; }
+        public int route_id { get; set; }
+        public string route_name { get; set; }
+    }
+
+
+    public class segmentMaster
+    {
+        public int id { get; set; }
+        public int sequence { get; set; }
+        public string region_name { get; set; }
+        public string segment_code { get; set; }
+        public string route_name { get; set; }
+        public string description { get; set; }
     }
     public class SiteMaster
     {

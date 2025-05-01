@@ -447,6 +447,7 @@ var Main = function () {
     this.provinceListData = [];
     this.IsZoomInTriggered = false;
     this.provinceDeltaFetchTime = new Map();
+    this.previousInfoWindow = []; 
     this.ShowHideVectorLayerByZoomSetting = function () {
         let _Zoom = app.map.getZoom();
         const _OldlayerChekedState = app.layerChekedState;// new Map([...app.layerChekedState]);
@@ -10546,7 +10547,19 @@ var Main = function () {
             }
         }, true, true);
     }
-
+    this.ShowEntityOnMapbyRoute = function (route_id, gType) {
+        ajaxReq('main/getGeometryDetailbyRoute', { route_id: route_id, geomType: gType }, false, function (resp) {
+            ;
+            if (resp.status = 'OK') {
+                //;
+                if (resp.result != null && resp.result != undefined) {
+                    app.HighlightEntityOnMap(gType, resp.result);
+                    //app.printPolygonEntityArea(resp.result);
+                    app.fitElementOnMap(resp.result)
+                }
+            }
+        }, true, false);
+    }
     this.ShowEntityOnMapbyGeom = function (audit_id, gType) {
         ajaxReq('main/getGeometryDetailbygeom', { audit_id: audit_id, geomType: gType }, false, function (resp) {
             ;
@@ -10901,10 +10914,9 @@ var Main = function () {
 
         // Calculate the accurate midpoint of the polyline
         var midLatLng = getMidpoint(_path);
-
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
-        var infoWindow = new google.maps.InfoWindow({
+         infoWindow = new google.maps.InfoWindow({
             content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
                    Core: ${core_number}
                </div>`,
@@ -10913,7 +10925,7 @@ var Main = function () {
 
         // Open the tooltip immediately so it stays fixed
         infoWindow.open(si.map);
-
+        app.previousInfoWindow.push(infoWindow);
         ShowLineLength(_path);
         return tmpLine;
     };
@@ -12748,7 +12760,7 @@ var Main = function () {
         }
     }
     this.GetNearByEntitiesByLatLong = function (latLng, objId) {
-
+      
 
         app.collapseRemove();
         var _zoom = app.map.getZoom();
@@ -12780,7 +12792,7 @@ var Main = function () {
                         }
                         else {
                             $('#searchNBEntities').css('top', (app.currentMousePos.y));
-                        }
+                        }                     
                         $('#searchNBEntities').show();
                     }
                 },
@@ -17394,18 +17406,20 @@ var Main = function () {
         $('#searchNBEntities').hide();
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
-
-        si.ClearMapAddressTool();
+      
+        //si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
         $('#searchNBEntities').hide();
-        objEntity.toggleClass('activeToolBar');
-        $(popup.DE.Maxi).trigger("click");
+        //objEntity.toggleClass('activeToolBar');
+       // $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
+            //$(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
+           // $(popup.DE.MinimizeModel).trigger("click");
         }
     }
     this.addTerminationPoint = function (_data) {
@@ -18845,6 +18859,7 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
+        let selectedUsers = $("#ddlUsers").val().join(',');
         var rootid = $("#ddl_RootId").val();
         var _data = {
             geom: $('#objFilterAttributes_geom').val(),
@@ -18855,6 +18870,7 @@ var Main = function () {
             entity_sub_type: _entitySubtype,
             system_id: parseInt(system_id),
             rootid: rootid,
+            selectedUsers: selectedUsers
         };
         ////;
         //var confirmAlertMsg = '<b>In the selected region, All the '+_entitytype+' Entities will be deleted permanently</b>,<br> Do you Want to Continue?</br>';
@@ -18914,11 +18930,16 @@ var Main = function () {
                 }
                 else {
                     // $('#closeModalPopup').trigger("click");
+                    if (resp.message === "No Entites Found!"){
+                        alert(resp.message);
+                        app.loadLayerOnEntity();
+                    }
+                    else{
                     alert(resp.message);
                     app.loadLayerOnEntity();
                     window.location = appRoot + 'Main/DownloadBulkDeleteProcessLogs?';
+                     }
                 }
-
 
             }, true, true);
         });
@@ -22134,7 +22155,7 @@ var Main = function () {
     }
     this.createSegment = function (_systemId, _entityType) {
 
-        var formURL = "Report/GetSegmentsCode";
+        var formURL = "Report/CreateSegment";
         var titleText = " Create Segment";
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType

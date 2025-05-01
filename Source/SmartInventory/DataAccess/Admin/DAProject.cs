@@ -313,7 +313,7 @@ namespace DataAccess.Admin
 
         }
 
-        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id)
+        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id, int route_id)
         {
             try
             {
@@ -321,7 +321,8 @@ namespace DataAccess.Admin
                     {
                         p_agg1_system_id = Agg1SystemId,
                         p_agg2_system_id = Agg2SystemId,
-                        p_user_id = userId,
+                    p_route_id = route_id,
+                    p_user_id = userId,
                        p_segment_id=segment_id
 
                 }, false);
@@ -795,19 +796,19 @@ namespace DataAccess.Admin
             return repo.GetAll(m =>  m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToString().ToUpper()).ToList();
 
         }
-        public List<CableDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
+        public List<routeDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
         {
             if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))
             {
-                return new List<CableDetails>(); // Return empty list instead of null
+                return new List<routeDetails>(); // Return empty list instead of null
             }
 
-            var sites = repo.ExecuteProcedure<CableDetails>(
+            var sites = repo.ExecuteProcedure<routeDetails>(
                  "fn_topology_get_cableroute",
                  new
                  {
-                     p_agg1site_id = topologySegment.agg1_site_id,
-                     p_agg2site_id = topologySegment.agg2_site_id,
+                     p_agg1site_id = Convert.ToInt32(topologySegment.agg1_site_id),
+                     p_agg2site_id = Convert.ToInt32(topologySegment.agg2_site_id),
                      p_user_id = user_id
                  },
                  false
@@ -818,37 +819,30 @@ namespace DataAccess.Admin
 
         public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
         {
-            // Get the latest segment_code from the database
-            //var lastSegment = repo.GetAll()
-            //                      .Where(s => s.segment_code.StartsWith("ACC")) // Ensure it's an ACC code
-            //                      .OrderByDescending(s => s.segment_code)
-            //                      .FirstOrDefault();
+            if (objTopologyPlan.id != 0)
+            {
 
-            //if (lastSegment != null && lastSegment.segment_code.Length >= 5)
-            //{
-            //    // Extract numeric part of segment_code (e.g., "04" from "ACC04")
-            //    string numberPart = lastSegment.segment_code.Substring(3); // Get last two digits
+            
 
-            //    if (int.TryParse(numberPart, out int numericCode))
-            //    {
-            //        // Increment numeric part
-            //        numericCode++;
+                return repo.Update(objTopologyPlan);
 
-            //        // Format back to "ACC05", "ACC06", etc.
-            //        objTopologyPlan.segment_code = "ACC" + numericCode.ToString("D2");
-            //    }
-            //}
-            //else
-            //{
-            //    // If no previous segment exists, start from ACC01
-            //    objTopologyPlan.segment_code = "ACC01";
-            //}
-            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
-            int newSequence = maxSequence + 1;
-            objTopologyPlan.sequence = newSequence;
-            // Insert the new segment into the database
-            var topologyResp = repo.Insert(objTopologyPlan);
-            return topologyResp;
+
+
+            }
+
+            else
+            {
+                int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+                int newSequence = maxSequence + 1;
+                objTopologyPlan.sequence = newSequence;
+                // Insert the new segment into the database
+                var topologyResp = repo.Insert(objTopologyPlan);
+                return topologyResp;
+
+            }
+
+            
+            
         }
 
 
@@ -889,6 +883,24 @@ namespace DataAccess.Admin
             ).ToList();
             return sites;
           
+        }
+
+        public List<segmentMaster> getExistingSegmentDetails(int regionId, int agg1_site_id, int agg2_site_id, string route, int user_id)
+        {
+            var sites = repo.ExecuteProcedure<segmentMaster>(
+                "fn_topology_get_existingsegmentdetails",
+                new
+                {
+                    p_regionId = regionId,
+                    p_agg1_site_id = agg1_site_id,
+                    p_agg2_site_id = agg2_site_id,
+                    p_route= route,
+                    p_user_id = user_id
+                },
+                false
+            ).ToList();
+            return sites;
+
         }
 
 

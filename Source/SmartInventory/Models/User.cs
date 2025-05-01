@@ -1034,6 +1034,7 @@ namespace Models
         [NotMapped]
         public List<int> lstSegment { get; set; }
 
+        public int? route_id { get; set; }
     }
          public class TopSegmentCableMapping
     {

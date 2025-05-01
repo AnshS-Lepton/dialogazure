@@ -125,6 +125,7 @@ namespace DataAccess
                     objPOD.dti_circuit = objPODMaster.dti_circuit;
                     objPOD.agg_01 = objPODMaster.agg_01;
                     objPOD.agg_02 = objPODMaster.agg_02;
+                    objPOD.is_agg_site = objPODMaster.is_agg_site;
                     objPOD.bandwidth = objPODMaster.bandwidth;
                     objPOD.ring_type = objPODMaster.ring_type;
                     objPOD.link_id = objPODMaster.link_id;
