@@ -124,6 +124,9 @@
                 edges = new vis.DataSet(newEdge);
                 drawDiagram();
             });
+            $('#chkDuct').prop('checked', false).trigger('change');
+            $('#chkTrench').prop('checked', false).trigger('change');
+            $('#chkCable').prop('checked', true).trigger('change');
         });
 
         function getVisIcons(legendJSON) {
