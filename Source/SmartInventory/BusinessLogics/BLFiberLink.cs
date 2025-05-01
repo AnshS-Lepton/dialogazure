@@ -42,6 +42,10 @@ namespace BusinessLogics
         {
             return new DAFiberLink().deleteFiberLinkById(system_id);
         }
+        public DbMessage disconnectFiberLinkById(int system_id)
+        {
+            return new DAFiberLink().disconnectFiberLinkById(system_id);
+        }
         public List<FiberLink> getFiberLinkROWAuthority(string searchText)
         {
             return new DAFiberLink().getFiberLinkROWAuthority(searchText);

@@ -541,6 +541,31 @@ namespace SmartInventory.Controllers
 
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult disconnectFiberLinkById(int system_id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+            try
+            {
+                var result = new BLFiberLink().disconnectFiberLinkById(system_id);
+                if (result.status)
+                {
+                    objResp.status = ResponseStatus.OK.ToString();
+                    objResp.message = result.message;
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = result.message;
+                }
+            }
+            catch (Exception ex)
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = "Somthing went wrong when disconnecting link";
+            }
+
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult validateLinkIdByText(string searchText, string columnName)
         {
             JsonResponse<Dictionary<string, string>> objResp = new JsonResponse<Dictionary<string, string>>();
@@ -1406,6 +1431,7 @@ namespace SmartInventory.Controllers
             obj.fiber_link_id = fiber_link_id;
             return PartialView("_SLDdiagramFiberLink", obj);
         }
+        
 
     }
 }

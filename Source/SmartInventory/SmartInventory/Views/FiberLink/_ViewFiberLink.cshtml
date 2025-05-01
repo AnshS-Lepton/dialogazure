@@ -32,6 +32,12 @@
             /*    background-color: #000;*/
             cursor: se-resize; /* This makes the cursor show resizing direction */
         }
+    .con_disconnect {
+        height:14px;
+        width: 14px;
+        display: inline-block;
+        background: url(../../Content/images/con_disconnnect.svg) no-repeat center center;
+    }
 </style>
 @{
     var userModuleList = (List<string>)Session["ApplicableModuleList"];
@@ -42,6 +48,7 @@
     {
         grid.PageIndex = Model.currentPage - 1;
     }
+    
 }
 @helper CreateFiberLink()
 {
