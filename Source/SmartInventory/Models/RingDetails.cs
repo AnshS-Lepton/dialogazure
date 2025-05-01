@@ -31,6 +31,7 @@ namespace Models
         public string SearchbyRegionName { get; set; } 
         public string SearchbySegmentName { get; set; } 
         public string SearchbyRingType { get; set; }
+        public List<string> SearchbyRingTypes { get; set; }
         [NotMapped]
         public string site_id { get; set; }
         public string description { get; set; }

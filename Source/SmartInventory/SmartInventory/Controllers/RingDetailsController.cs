@@ -45,6 +45,7 @@ namespace SmartInventory.Controllers
             objRingFilter.objGridAttributes.currentPage = page == 0 ? 1 : page;
             objRingFilter.objGridAttributes.sort = sort;
             objRingFilter.objGridAttributes.orderBy = sortdir;
+            
             if ((objRingFilter.objGridAttributes.searchBy == "region_name" || objRingFilter.objGridAttributes.searchBy == "ring_code")
                 && !string.IsNullOrEmpty(objRingFilter.objGridAttributes.searchText))
             {
@@ -54,11 +55,11 @@ namespace SmartInventory.Controllers
             }
             if (objRingFilter.objRingDetails != null)
             {
-                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType)|| !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName)) 
+                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName)|| objRingFilter.objRingDetails.SearchbyRingTypes != null || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName)) 
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    ring_code = objRingFilter.objRingDetails.SearchbyRingType;
+                    ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else {
                     region_id = objRingFilter.objRingDetails.region_name;
@@ -72,6 +73,7 @@ namespace SmartInventory.Controllers
             var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
 
             objRingFilter.lstRingDetails = ringdetails;
+           // objRingFilter.objRingDetails.SearchbyRingType = objRingFilter.objRingDetails.SearchbyRingTypes != null && objRingFilter.objRingDetails.SearchbyRingTypes.Count > 0 ? string.Join(",", objRingFilter.objRingDetails.SearchbyRingTypes.ToArray()) : "";
             objRingFilter.objGridAttributes.totalRecord = objRingFilter.lstRingDetails != null && objRingFilter.lstRingDetails.Count > 0 ? SearchVar != "" ? objRingFilter.lstRingDetails.Count : objRingFilter.lstRingDetails[0].totalRecords : 0;
             objRingFilter.lstRegionName = new BLRingDetails().GetRegionDetails();
             objRingFilter.lstSegmentName = new BLRingDetails().GetSegmentDetails();
@@ -158,11 +160,11 @@ namespace SmartInventory.Controllers
             //objRingFilter.objGridAttributes.orderBy = "";
             if (objRingFilter.objRingDetails != null)
             {
-                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName) || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType) || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRingType))
+                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName) || objRingFilter.objRingDetails.SearchbyRingType != null || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName))
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    ring_code = objRingFilter.objRingDetails.SearchbyRingType;
+                    ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingType);
                 }
                 else
                 {

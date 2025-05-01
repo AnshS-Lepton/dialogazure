@@ -64,6 +64,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public GeometryDetail GetGeometryDetailsbyroute(int route_id, string geomType)
+        {
+            try
+            {
+                var lstGeomDetails = repo.ExecuteProcedure<GeometryDetail>("fn_get_geometrydetailbyroute", new { p_route_id = route_id, p_geomType = geomType });
+                return lstGeomDetails != null && lstGeomDetails.Count > 0 ? lstGeomDetails[0] : new GeometryDetail();
+            }
+            catch { throw; }
+        }
         public GeometryDetail GetGeometryByLatlang(string geom)
         {
             try

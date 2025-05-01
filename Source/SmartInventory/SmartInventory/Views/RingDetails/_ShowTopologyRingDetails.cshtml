@@ -2,18 +2,41 @@
 @using Models;
 @using Utility;
 
+
+
 <!DOCTYPE html>
-<script type="text/javascript">
+
+@if (Model.objRingDetails != null && Model.objRingDetails.SearchbyRingTypes.Any() == true)
+{
+    var ringIdsCsv = string.Join(",", Model.objRingDetails.SearchbyRingTypes);
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var SelectedRingIds = '@ringIdsCsv';
+            $("#ddllstRingName").val(SelectedRingIds.split(',')).trigger("chosen:updated");
+
+            $('.chosen-select').chosen({ width: '100%' });
+            $('th a, tfoot a').on("click", function () {
+                // onGridHeaderClick('tblFiberLinkGrid');
+                $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
+                return false;
+            });
+        });
+    </script>
+}
+else
+{
+    <script type="text/javascript">
     $(document).ready(function () {
-      
 
-
+        
         $('.chosen-select').chosen({ width: '100%' });
         $('th a, tfoot a').on("click", function () {
             // onGridHeaderClick('tblFiberLinkGrid');
             $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
             return false;
         });
+
+
     });
     this.clearUserTempOverlay = function (lyrObj) {
         debugger;
@@ -48,7 +71,7 @@
         var bounds = new google.maps.LatLngBounds();
         ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
-              
+
 
                 if (resp.lstSitedetails != null || resp.lstSitedetails != undefined) {
 
@@ -62,7 +85,7 @@
                         markersWontMove: true,
                         markersWontHide: true,
                         keepSpiderfied: true,
-                        circleFootSeparation: 35, // radius of circle 
+                        circleFootSeparation: 35, // radius of circle
                         nearbyDistance: 30, // distance in which it include the markers in spiderfier..
                         circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
                         legWeight: 2.4
@@ -77,7 +100,7 @@
 
                         var en_type = 'POD';
                         var system_id = resp.lstSitedetails[i].system_id;
-                       // var port_no = resp.lstSitedetails[i].connected_port_no;
+                        // var port_no = resp.lstSitedetails[i].connected_port_no;
                         var network_id = resp.lstSitedetails[i].network_id;
                         var is_virtual_port_allowed = false;
                         var geometry = getLatLongArr(resp.lstSitedetails[i].geom);
@@ -88,7 +111,7 @@
                         //}
                         //else {
                         ptObj = si.createMarkerForPathFinder(geometry[0], 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
-                            //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                        //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
 
                         //}
                         // add info window
@@ -124,17 +147,21 @@
     }
 
 
-  
+
 
     this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
         debugger;
         var ringId = ringId.toString();
-        ajaxReq('main/Encrypt', { systemId: ringId +'/'+ ring_code  }, false, function (resp) {
-           
+        ajaxReq('main/Encrypt', { systemId: ringId + '/' + ring_code }, false, function (resp) {
+
             window.open(appRoot + 'RingDetails/GetSchematicView?key=' + resp + '&ring_id=' + ringId + '&ring_code=' + ring_code, '_blank');
         }, false, false);
     }
-</script>
+    </script>
+
+
+}
+
 
 <style>
     /* Main Container */
@@ -195,6 +222,7 @@
 <div id="dvViewRingDetails">
     <div class="update_panel fullWidth">
 
+
         @{
 
 
@@ -218,67 +246,74 @@
                 InsertionMode = InsertionMode.Replace
             }, new { id = "frmViewRingDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
             {
-            @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
-            @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
-            @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
-            <!-- Filters Section -->
-            <div class="filter-container">
-                <label>Region:</label>
-                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
-                    new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select--",
-                    new { @class = "chosen-select", @id = "ddllstRegionName" })
+                @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
+                @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
+                @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
+                <!-- Filters Section -->
+                <div class="filter-container">
+                    <label>Region:</label>
+                    @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
+                        new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                        "--Select--",
+                        new { @class = "chosen-select", @id = "ddllstRegionName" })
 
 
 
-                <label>Segment:</label>
-                @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
-                    new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select--",
-                    new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
+                    <label>Segment:</label>
+                    @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
+                        new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                        "--Select--",
+                        new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
 
 
 
-                <label class="white-space">Ring Code:</label>
-                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingType,
-                    new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                    "--Select--",
-                    new { @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
+                    <label class="white-space">Ring Code:</label>
+                    @*@Html.dropdownlistfor(m => m.objringdetails.searchbyringtype,
+                        new SelectList(model.lstringtype.select(x => new { value = x.value.tostring(), text = x.value.tostring() }), "value", "text"),
+                        "--select--",
+                        new { @class = "chosen-select col-sm-12", @id = "ddllstringname", multiple = "multiple" })*@
 
-                <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
-                <button id="btnExportLinks" class="btn btn-success ml-auto">Export</button>
-                <input type="submit" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
-
-            </div>
+                    @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingTypes, new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
 
 
-            if (Model.lstRingDetails.Count > 0)
-            {
-        <div class="table-responsive">
-            <div class="d-flex mb-15">
-                <div class="div_totalRecord">
-                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
+
+
+
+
+                    <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
+                    <button id="btnExportLinks" class="btn btn-success ml-auto">Export</button>
+                    <input type="submit" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+
                 </div>
-            </div>
-            @grid.GetHtml(tableStyle: "grid",
-                    htmlAttributes: new { id = "tblRingDetail" },
-                    mode: WebGridPagerModes.All,
-                    columns: grid.Columns(
-                               grid.Column("", "Action", format:@<text>
-                                        <a href="javascript:void(0);"
-                                           class="ShowEntityOnMap"
-                                           title="Show on Map"
-                                           onclick="si.showRingDetailsOnMap(@item.id);">
-                                            <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
-                                            @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
-                                        </a>
+
+
+                if (Model.lstRingDetails.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <div class="d-flex mb-15">
+                            <div class="div_totalRecord">
+                                <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
+                            </div>
+                        </div>
+                        @grid.GetHtml(tableStyle: "grid",
+                                htmlAttributes: new { id = "tblRingDetail" },
+                                mode: WebGridPagerModes.All,
+                                columns: grid.Columns(
+                                           grid.Column("", "Action", format:@<text>
+                                                    <a href="javascript:void(0);"
+                                                       class="ShowEntityOnMap"
+                                                       title="Show on Map"
+                                                       onclick="si.showRingDetailsOnMap(@item.id);">
+                                                        <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                                        @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
+                                                    </a>
 
 
 
-                            </text>, canSort: false
+                                        </text>, canSort: false
 ),
 
-        @*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
+@*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
 grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
 grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
 grid.Column("site_id", "Site Id", format: @<text>@item.site_id</text>, canSort: true),
@@ -297,19 +332,19 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
 
 ))
 
-            @Html.Hidden("dir", grid.SortDirection)
-            @Html.Hidden("col", grid.SortColumn)
-            @Html.HiddenFor(m => m.objGridAttributes.searchBy)
-            @Html.HiddenFor(m => m.objGridAttributes.searchText)
-        </div>
+                        @Html.Hidden("dir", grid.SortDirection)
+                        @Html.Hidden("col", grid.SortColumn)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+                        @Html.HiddenFor(m => m.objGridAttributes.searchText)
+                    </div>
 
-            }
-            else
-            {
-            <div class="nr-found">
-                <strong>No Records Found.</strong>
-            </div>
-            }
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <strong>No Records Found.</strong>
+                    </div>
+                }
             }
         </div>
 
@@ -331,7 +366,8 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
     });
     function validateSearch(event) {
         debugger;
-        var ringCode = $("#ddllstRingName").val()?.trim();
+        /* var ringCode = $("#ddllstRingName").val()?.trim();*/
+        var ringCodes = $("#ddllstRingName").val(); // array
         var segName = $("#ddllstSegmentName").val()?.trim();
         var regName = $("#ddllstRegionName").val()?.trim();
 

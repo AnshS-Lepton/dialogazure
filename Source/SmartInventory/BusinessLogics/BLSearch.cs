@@ -34,6 +34,10 @@ namespace BusinessLogics
         {
             return new DASearch().GetGeometryDetailsbygeom(audit_id, geomType);
         }
+        public GeometryDetail GetGeometryDetailsbyroute(int route_id, string geomType)
+        {
+            return new DASearch().GetGeometryDetailsbyroute(route_id, geomType);
+        }
         public GeometryDetail GetLBLayerGeometryDetails(GeomDetailIn objGeomDetailIn)
         {
             return new DASearch().GetLBLayerGeometryDetails(objGeomDetailIn);
