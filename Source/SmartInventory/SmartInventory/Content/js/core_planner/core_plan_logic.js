@@ -462,7 +462,7 @@ function core_planner_info_tool(obj) {
     si.ClearMapAddressTool();
     $('.infoSwitch').removeClass('activeToolBar');
     si.map.setOptions({ draggableCursor: 'crosshair' });
-    $(popup.DE.MinimizeModel).trigger("click");
+    //$(popup.DE.MinimizeModel).trigger("click");
     google.maps.event.addListener(si.map, 'click', function (LatLong) {
         
         if (si.lineBufferObj != null) {
@@ -470,5 +470,6 @@ function core_planner_info_tool(obj) {
         }
         si.clearInfoRelatedObjects();
         si.GetNearByEntitiesByLatLong(LatLong.latLng, obj.id);
-    });   
+    });  
+    $(popup.DE.MinimizeModel).trigger("click");
 }

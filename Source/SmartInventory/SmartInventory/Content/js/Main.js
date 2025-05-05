@@ -17395,15 +17395,15 @@ var Main = function () {
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
       
-        //si.ClearMapAddressTool();
+        si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
         $('#searchNBEntities').hide();
-        //objEntity.toggleClass('activeToolBar');
-       // $(popup.DE.Maxi).trigger("click");
+        objEntity.toggleClass('activeToolBar');
+        $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
-            //$(popup.DE.MinimizeModel).trigger("click");
+           // $(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
