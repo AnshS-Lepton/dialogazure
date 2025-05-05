@@ -107,28 +107,6 @@
                                 @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.top_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
-                            </div>
-                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" id="lblddlsegment" for="ddlsegment">@*@Resources.Resources.SI_OSP_GBL_NET_RPT_464*@ Segment/Region  <i class="clsMandatory">*</i>:</label>
-
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
-                            </div>
-                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
-                                <div class="pose-plus" id="btncreateringdiv"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
-                            </div>
-                        </div>
 
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
@@ -140,16 +118,46 @@
                                 @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100, @readonly = "readonly" })
                             </div>
                         </div>
-                        <div class="row form-group">
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_457 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.top_type, new SelectList(Model.lsttopologytype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12 ", id = "ddltopologytype" })
+                            </div>
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_461 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.no_of_sites, new SelectList(Model.lstnoofsites.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlnofsites" })
                             </div>
+
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_458 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_capacity, new SelectList(Model.lstringtype.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "-- Select --", new { @class = "chosen-select col-sm-12", id = "ddlringcapacity" })
+                            </div>
+                            <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_465 <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.ring_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlringtype" })
+                                <div class="pose-plus" id="btncreateringdiv"><button class="btn btn-primary" id="btncreatering" title="Create Ring"><i class="fa fa-plus"></i></button> </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" id="lblddlsegment" for="ddlsegment">@*@Resources.Resources.SI_OSP_GBL_NET_RPT_464*@ Segment/Region  <i class="clsMandatory">*</i>:</label>
+
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                            </div>
+
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (km)<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 4 })
                             </div>
+
                         </div>
+
+
+
                         <div class="row">
                             <div class="col-sm-12 d-flex">
                                 <button type="button" class="ml-auto btn btn-primary" id="bdnsearch">Search</button>
@@ -167,8 +175,8 @@
 
                                 </div>
                             </div>
-                            
-                            
+
+
 
                         </div>
                         <div class="form-group row" id="dvringId" style="display:block;">
@@ -358,7 +366,7 @@
         $("#txtSiteId").autocomplete({
 
             source: function (request, response) {
-                $(".SiteShowOnMap").hide(); 
+                $(".SiteShowOnMap").hide();
         $.ajax({
             url: '@Url.Action("GetSiteIds", "Report")',
             type: "GET",
@@ -390,6 +398,16 @@
                 toggleMapLink();
                 debugger;
                 getSegmentDetailsRoutewise(); // To bind segment details;
+
+                var $dvsiteTable = $("#dvsiteTable");
+                var $table = $("#siteTable");
+                var $tbody = $table.find("tbody");
+
+                // Clear previous data
+                $tbody.empty();
+
+                $table.addClass("hidden");
+                $dvsiteTable.addClass("hidden");
             }
             return false;
             }
@@ -409,6 +427,15 @@
                     var ddlringcapacity = $('#ddlringcapacity');
                     ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
+
+                    var RingBSite = $('#ddlRingBSite');
+                    RingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
+
+                    var RingASite = $('#ddlRingASite');
+                    RingASite.prop('selectedIndex', 0).trigger("chosen:updated");
+                    $("#ddlRingASite").prop("disabled", false).trigger("chosen:updated");
+
 
                     $("#txtagg2").css("display", "block").prop("disabled", false);
                     $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
@@ -481,9 +508,31 @@
 
         });
 
+        $('#ddlringcapacity').change(function () {
+
+            bindRingDetails();
+            var segment = $("#ddlsegment option:selected").text();
+            debugger;
+            var agg1 = $("#ddlsegment option:selected").data("agg1_site_id");
+            var agg2 = $("#ddlsegment option:selected").data("agg2_site_id");
+            if (segment != '--Select--') {
+                if (agg1 == " ()")
+                    agg1 = "";
+                if (agg2 == " ()")
+                    agg2 = "";
+                $("#txtagg1").val(agg1);
+                $("#txtagg2").val(agg2);
+            }
+            else {
+                $("#txtagg1").val('');
+                $("#txtagg2").val('');
+            }
+
+        });
+
         //$('#ddlsegment').change(function () {
 
-            
+
         //});
 
     //$('#ddlregionid').change(function () {
@@ -558,7 +607,7 @@
 
             var regionid = $("#ddlregionid").val();
             var segment = $("#ddlsegment").val();
-           
+
             validateField("#txtSiteId");
             validateField("#txtSiteName")
                 validateField("#txtagg1");
@@ -624,6 +673,9 @@
             var topologyType = $("#ddltopologytype").val();
 
             toggleMapLink();
+
+            debugger;
+
             $("#lbdringsiteId").text('').css("display", "none");
             var ddlregionid = $('#ddlregionid');
             ddlregionid.prop('selectedIndex', 0).trigger("chosen:updated");
@@ -640,6 +692,11 @@
             var ddlRingBSite = $('#ddlRingBSite');
             ddlRingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
 
+           
+            if (topologyType === "") {
+                alert("Please select Topology type !");
+                return;
+            }
 
             var ddlnofsites = $("#ddlnofsites").val();
             if (ddlnofsites === "" && topologyType == "Ring") {
@@ -650,13 +707,13 @@
             // var segmentName = $("#txtSegmentName").val();
             if (topologyType == "Ring") {
                 if (agg1SiteId === "" || agg2SiteId === "") {
-                    alert("Please select both Aggregate Site 1 & Aggregate Site 2");
+                    alert("Aggregate Site 1 & Aggregate Site 2 are required!");
                     return;
                 }
             }
             else if (topologyType == "Linear") {
                     if (agg1SiteId === "") {
-                        alert("Please select Aggregate Site 1.");
+                        alert("Aggregate Site 1 is required.");
                         return;
                     }
                 }
@@ -759,7 +816,7 @@
             const parts = selectedsegment.split('/');
             var segment = parts[0];  // segment
             var region = parts[1];  // region
-            
+
             debugger;
             if (region == "") {
                 alert("Please select valid region!");
@@ -1100,14 +1157,14 @@
  var agg1 = $("#txtagg1").val();
  var agg2 = $("#txtagg2").val();
 
- if (agg1 === "") {
-     alert("Please select Aggregate Site 1!");
-     return false;
- }
- if (agg2 === "") {
-     alert("Please select Aggregate Site 2!");
-     return false;
- }
+ //if (agg1 === "") {
+ //    alert("Please select Aggregate Site 1!");
+ //    return false;
+ //}
+ //if (agg2 === "") {
+ //    alert("Please select Aggregate Site 2!");
+ //    return false;
+ //}
 
  var segmentId = $('#ddlsegment').val(); // Get the selected SegmentId
  var ringcap = $("#ddlringcapacity").val();
@@ -1182,15 +1239,18 @@
                 var siteid = $(this).data("siteid");
 
                 // Extract values
+                //let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
+
                 let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
+                debugger;
                 if (parts.length > 1) {
 
-                    let siteName = parts[0]; // "siteN-2"
-                    let extractedValue = parts[1].replace(")", ""); // Remove ")"
+                    let siteName = parts[0] + parts[1].replace(")", ""); // Remove ")"; // "siteN-2"
+                    let extractedValue = parts[2].replace(")", ""); // Remove ")"
                     let RingName = "";
-                    if (parts.length == 3) {
-                        RingName = parts[1].replace(/\)\s*$/, ""); // Remove trailing ")"
-                        extractedValue = parts[2].replace(")", ""); // Remove ")"
+                    if (parts.length == 4) {
+                        RingName = parts[2].replace(/\)\s*$/, ""); // Remove trailing ")"
+                        extractedValue = parts[3].replace(")", ""); // Remove ")"
                       //  extractedValue = (extractedValue / 1000).toFixed(3); // Convert and format to 3 decimal places;
                     }
 
@@ -1237,6 +1297,7 @@
             }
         }
 
+   
     function getSiteListItemRingwise(isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
         if (ring_a_site_id != null)
         {
@@ -1245,7 +1306,6 @@
             isfresh = false;
 
         }
-        debugger;
     var $dvsiteTable = $("#dvsiteTable");
     var $table = $("#siteTable");
     var $tbody = $table.find("tbody");
@@ -1260,8 +1320,7 @@
             var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
             if (selectedRing !="--Select Ring--")
             $("#lbdringsiteId").text(selectedRing).css("display", "none");
-    var visibleCount = 0;
-    var secondaryVisibleCount = 0;
+        let visibleCount = 0;
     var thirdCount = 0;
 
     var $dropdownA = $("#ddlRingASite");
@@ -1269,80 +1328,109 @@
             var $ddlOtherRingSite = $("#ddlOtherRingSite");
             var ddltopologytype = $("#ddltopologytype").val();
 
-            function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh  = true) {
-    
-                if (isfresh) {
-                    $dropdown.find("option").each(function () {
-                        var ringId = $(this).attr("data-ringid");
-                        var is_agg_site = $(this).attr("data-is_agg_site");
-                        if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === undefined))
-                        {
+        function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh = true) {
+
+            if (isfresh) {
+                $dropdown.find("option").each(function () {
+                    var ringId = $(this).attr("data-ringid");
+                    var is_agg_site = $(this).attr("data-is_agg_site");
+                    debugger;
+                    if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === undefined)) {
+                        $(this).show();
+                        if (hideOthers) visibleCount++;
+                    }
+                    else if (((ringId == "0") && is_agg_site === "true" && ddltopologytype != "Dual Home" || ringId === undefined)) {
+                        $(this).show();
+                        if (hideOthers) visibleCount++;
+                    }
+                    else if (ddltopologytype != "Dual Home" && (is_agg_site === "true" || ringId === condition|| ringId === undefined)) {
+                        $(this).show();
+                        if (hideOthers) visibleCount++;
+                    }
+
+                    else {
+                        $(this).hide();
+                    }
+                });
+            }
+            else {
+
+                const $options = $dropdown.find("option");
+                let allAreAggRing0 = false;
+                let hasMatchingNonAgg = false;
+                debugger;
+                // ---------------- CASE 1: Check if all items have ringId == "0" and are aggregate ----------------
+                $options.each(function () {
+                    const ringId = $(this).attr("data-ringid");
+                    const isAgg = $(this).attr("data-is_agg_site") === "true";
+                    if (ringId == "0" && isAgg == true) {
+                        allAreAggRing0 = true;
+                        return false; // break loop
+                    }
+                });
+                if (allAreAggRing0) {
+                    $options.each(function () {
+                        const isAgg = $(this).attr("data-is_agg_site") === "true";
+                        const ringId = $(this).attr("data-ringid");
+                        debugger;
+                        if (isAgg) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                    return false; // break loop
+                }
+
+                // ---------------- CASE 2: Show aggregates (ringId !== 0) and non-aggs with ringId == 0 or selectedRingId ----------------
+                $options.each(function () {
+                    const ringId = $(this).attr("data-ringid");
+                    const isAgg = $(this).attr("data-is_agg_site") === "true";
+                    debugger;
+                    const showThis =
+                        (isAgg && ringId !== "0") ||
+                        (!isAgg && (ringId === condition));
+
+                    if (showThis) {
+                        $(this).show();
+                        if (!isAgg) hasMatchingNonAgg = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // ---------------- CASE 3: If no matching non-agg site, show only aggregates with ringId !== 0 ----------------
+                if (!hasMatchingNonAgg) {
+                    $options.each(function () {
+                        const ringId = $(this).attr("data-ringid");
+                        const isAgg = $(this).attr("data-is_agg_site") === "true";
+                        debugger;
+                        if (isAgg && ringId !== "0") {
                             $(this).show();
                             if (hideOthers) visibleCount++;
-                        }
-                        else if (ddltopologytype != "Dual Home" && (ringId === condition || ringId === undefined)) {
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        }
-                        else if (((ringId == "0") && ddltopologytype != "Dual Home" || ringId === undefined)) {
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        }
-                        else {
+                        } else {
                             $(this).hide();
                         }
                     });
                 }
-                else {
-                    $dropdown.find("option").each(function () {
-                        var ringId = $(this).attr("data-ringid");
-                        var is_agg_site = $(this).attr("data-is_agg_site");
-                    
-                        if (ddltopologytype == "Dual Home" && condition != "0" && (ringId === condition || ringId === undefined)) {
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        }
-                        else if (ddltopologytype != "Dual Home" && (ringId === condition || ringId === undefined)) {
 
-                            
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        }
-                        else if (((ringId == "0") && is_agg_site === "true" || ringId === undefined)) {
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        }
 
-                        else {
-                            $(this).hide();
-                        }
-                    });
-                }
+            }
 
-    }
+        }
 
     //--- Start Case First ---
             if (!isfresh) {
                 filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, true, isfresh);
+                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
             }
             else {
                 filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, true, isfresh);
+                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
         }
 
         debugger;
-    //--- End Case First ---
-    //--- Start Case Second ---
-    if (visibleCount === 1 && !isfresh) {
-        //filterDropdownOptions($dropdownA, "00.0", true, isfresh);
-        //filterDropdownOptions($dropdownB, "00.0", true, isfresh);
-        if (visibleCount==2)
-        secondaryVisibleCount++;
-        }
-
-        debugger;
-    //--- End Case Second ---
+   
     //--- Start Case Third ---
         if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh))
         {
@@ -1366,7 +1454,7 @@
     }
     //--- End Case Third ---
 
-       
+
 
         if (ring_a_site_id > 0) {
             selectByValue("ddlRingASite", ring_a_site_id.toString());
@@ -1386,7 +1474,8 @@
     function getAllSitelistItem(ring_a_site_id=null, ring_b_site_id=null) {
 
     // Get selected values
-            var topologytype = $("#ddltopologytype").val();
+        var topologytype = $("#ddltopologytype").val();
+        var segmentid = $("#ddlsegment").val();
             var maxdistancepeer = $("#txtmaxdistancepeer").val();
     var ringid = $("#ddlringtype").val() || 0; // Fallback to 0 if null/undefined
     var systemId = $("#hdnSystemId").val() || 0;
@@ -1400,7 +1489,7 @@
          url: '@Url.Action("Gettopologygetsites", "Report")',
          type: "GET",
          dataType: "json",
-         data: { systemId: systemId, ringId: ringid, distance: maxdistancepeer },
+         data: { systemId: systemId, ringId: ringid, distance: maxdistancepeer, segment_id: segmentid },
          success: function (response) {
              $("#dvProgress").hide();
             if (response && response.lsttopologygetsites && response.lsttopologygetsites.length > 0) {
@@ -1434,13 +1523,13 @@
                 dropdownB.append('<option value="">--Select--</option>');
                 // Append new options
                 $.each(sites, function (index, item) {
-                    var optionHtml = '<option value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"   data-siteid="' + item.siteid + '" data-is_agg_site="' + item.is_agg_site + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
+                    var optionHtml = '<option style="display:none;" value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"   data-siteid="' + item.siteid + '" data-is_agg_site="' + item.is_agg_site + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
                     dropdownA.append(optionHtml);
                     dropdownB.append(optionHtml);
                     dropdownOther.append(optionHtml);
                 });
 
-        debugger;   
+        debugger;
         getSiteListItemRingwise(isfresh, ring_a_site_id, ring_b_site_id);
                 // Refresh dropdowns
                 dropdownA.trigger("chosen:updated");
@@ -1481,7 +1570,7 @@
             } else {
                 $(".BsiterowShowOnMap").hide();  // Hide if nothing is selected
             }
-         
+
 
             if ($("#hdnSystemId").val()) {
                 $(".SiteShowOnMap").show();  // Show if selected
@@ -1516,12 +1605,12 @@
                  ddlsegment.empty();
 
                  // Append default option
-                 ddlsegment.append('<option value="">--Select--</option>');
+               //  ddlsegment.append('<option value="">--Select--</option>');
                  $.each(response.lstsegment, function (index, item) {
                      var optionHtml = '<option value="' + item.id + '" data-region_id="' + item.region_id + '" data-agg1_site_id="' + item.agg1_site_id + '"  data-agg2_site_id="' + item.agg2_site_id + '">' + item.segment_code+'</option>';
                      ddlsegment.append(optionHtml);
                      if (index == 0) {
-                      
+
                          var agg1 = item.agg1_site_id;
                          var agg2 = item.agg2_site_id;
                          if (agg1 == " ()")
@@ -1543,7 +1632,7 @@
                      $("#ddlsegment").trigger("chosen:updated");
                      selectByText("ddltopologytype", response.topology_type);
                      $("#ddltopologytype").trigger("chosen:updated");
-                     
+
                      if (response.topology_type == "Linear") { $("#ddlRingBSite").prop("disabled", true); }
                      else { $("#ddlRingBSite").prop("disabled", false); }
 
@@ -1570,7 +1659,7 @@
                      //$("#txtagg1").val(response.agg_01);
                      //$("#agg_02").val(response.segment);
                      bindRingDetails(response.ring);
-                    
+
                      getAllSitelistItem(response.ring_a_site_id, response.ring_b_site_id);
                      setTimeout(() => {
 
@@ -1595,7 +1684,7 @@
                  }
                  else {
                      $("#btncreateringdiv").css("display", "block");
-                   
+
                  }
             } else {
                  var ddlsegment = $("#ddlsegment");

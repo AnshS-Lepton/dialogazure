@@ -211,6 +211,12 @@
             $("#txtagg1").val(ui.item.value);   // Set selected site_id
             $("#hdnAgg1SystemId").val(ui.item.systemId); // Set system_id in hidden field
             $(".txtagg1ShowOnMap").show();  // Show if selected
+            if ($("#txtagg1").val() == $("#txtagg2").val()) {
+                $("#txtagg1").val("");   // Set selected site_id
+                $("#hdnAgg1SystemId").val(0); // Set system_id in hidden field
+                $(".txtagg1ShowOnMap").hide();  // Show if selected
+                alert("The source and destination aggregate sites must be different.");
+            }
         }
         return false;
         }
@@ -246,6 +252,14 @@ source: function (request, response) {
             $("#txtagg2").val(ui.item.value); // Set corresponding site_name
             $("#hdnAgg2SystemId").val(ui.item.systemId); // Set system_id in hidden field
             $(".txtagg2ShowOnMap").show();  // Show if selected
+
+            if ($("#txtagg1").val() == $("#txtagg2").val()) {
+                $("#txtagg2").val("");   // Set selected site_id
+                $("#hdnAgg2SystemId").val(0); // Set system_id in hidden field
+                $(".txtagg2ShowOnMap").hide();  // Show if selected
+                alert("The source and destination aggregate sites must be different.");
+            }
+
         }
         return false;
         }
@@ -257,7 +271,7 @@ source: function (request, response) {
         if (cable_id == undefined) {
             var ddlroute = $('#ddlroute');
             ddlroute.empty(); // Clear existing options
-            ddlroute.append('<option value="">--Select Rounte--</option>');
+            ddlroute.append('<option value="">--Select Route--</option>');
         }
         toggleMapLink();
 
@@ -546,7 +560,7 @@ success: function (response) {
         ddlregionid.prop('selectedIndex', 0).trigger("chosen:updated");
         var ddlroute = $('#ddlroute');
         ddlroute.empty(); // Clear existing options
-        ddlroute.append('<option value="">--Select Rounte--</option>');
+        ddlroute.append('<option value="">--Select Route--</option>');
 
 } else {
 alert(response.Message);

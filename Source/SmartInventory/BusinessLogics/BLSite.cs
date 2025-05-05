@@ -39,5 +39,9 @@ namespace BusinessLogics
         {
             return new DASite().GetExportReportDataKML(objReportFilter);
         }
+        public List<Dictionary<string, string>> GetSegmentReportData(ExportReportFilter objReportFilter)
+        {
+            return new DASite().GetSegmentReportData(objReportFilter);
+        }
     }
 }

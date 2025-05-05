@@ -1,0 +1,171 @@
+﻿@model Models.ExportEntitiesReport
+@using Utility;
+@using SmartInventory.Settings;
+@{
+
+
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objReportFilters.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewROWExportData",
+        ajaxUpdateCallback: "onGridHeaderClick('tblSegmentReport');");
+    grid.Bind(Model.lstReportData, autoSortAndPage: false, rowCount: Model.objReportFilters.totalRecord);
+    if (Model.objReportFilters.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objReportFilters.currentPage - 1;
+    }
+
+}
+
+<style>
+
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+
+    .icon-kmldownload {
+        font-size: 20px;
+    }
+</style>
+
+<div class="libDetail">
+    @using (Ajax.BeginForm("ShowSegmentReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvProgress" },
+                                                            new { id = "frmROWExportEntities", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+
+        @Html.HiddenFor(m => m.objReportFilters.geom)
+        @Html.HiddenFor(m => m.objReportFilters.geomType)
+        @Html.HiddenFor(m => m.objReportFilters.radius)
+        @Html.HiddenFor(m => m.objReportFilters.layerName, new { id = "hdnLayerName" })
+        <input type="hidden" id="hdnApproveCount" value="0">
+        <div class="libTabContent">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="GISInfo">
+                   
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_FRM_100 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.SearchbyColumnName, new List<SelectListItem>{
+new SelectListItem { Text = "-Select-", Value = "0"},
+new SelectListItem { Text = "Segment Code", Value = "segment_code"},
+}, new { @class = "chosen-select col-sm-12", @id = "ddlLayerColumns" })
+
+                            @*@Html.DropDownListFor(m => m.objReportFilters.SearchbyColumnName, new SelectList(Model.lstLayerColumns.Where(m => m.value != "system_id").Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"), Resources.Resources.SI_OSP_GBL_NET_RPT_307, new { @class = "chosen-select col-sm-12", @id = "ddlLayerColumns" })*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_101 :</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.SearchbyText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_FRM_071 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.DurationBasedColumnName, new List<SelectListItem>{
+new SelectListItem { Text = "-Select-", Value = "0"},
+new SelectListItem { Text = "Created On", Value = "created_on"},
+}, new { @class = "chosen-select col-sm-12", @id = "ddlLayerDurationBasedColumns" })
+
+                            @*@Html.DropDownListFor(m => m.objReportFilters.DurationBasedColumnName,
+                           new SelectList(Model.lstLayerDurationBasedColumns.Select(x => new { Value = x.key.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                           Resources.Resources.SI_OSP_GBL_NET_RPT_307, new { @class = "chosen-select col-sm-12", @id = "ddlLayerDurationBasedColumns" })*@
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_072 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.objReportFilters.customDate, new List<SelectListItem>
+                            {
+
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_307, Value = "0"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_GBL_GBL_037, Value = "9"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_138, Value = "1"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_139, Value = "2"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_140, Value = "3"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_141, Value = "4"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_142, Value = "5"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_143, Value = "6"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_GBL_286, Value = "7"},
+                            new SelectListItem { Text = @Resources.Resources.SI_OSP_GBL_NET_RPT_144, Value = "8"},
+
+                            },
+                            new { @class = "chosen-select", @onchange = "onChangeCustomDate();", @id = "customedate" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="txtDatefrom">@Resources.Resources.SI_OSP_GBL_NET_FRM_130<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.fromDate, new { @id = "txtDateFrom", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_096, @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgFromDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                        <label class="control-label col-sm-2" for="txtDateTo">@Resources.Resources.SI_OSP_GBL_NET_FRM_131<i class="clsMandatory">*</i>:</label>
+                        <div class="col-sm-4">
+                            @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true })
+                            <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ModalFooter d-flex pos-rel" id="dvBtnAction">
+            <button type="submit" class="btn btn-success ml-auto" id="btnShowSegmentReportData">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+
+            @if (Model.objReportFilters.totalRecord > 0)
+            {
+                <button type="button" class="exp--btn ml-10" id="btnExport">
+                    @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="FlowDiv">
+                    <div class="arrow-up"></div>
+                    <span class="excel"><a id="btnSegmentReportIntoExcel" href="#"><i class="fa fa-file-excel-o mr-05" aria-hidden="true"></i> @Resources.Resources.SI_OSP_GBL_NET_GBL_006</a> </span>
+                    
+                </div>
+            }
+            else
+            {
+                <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-default ml-10" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+            }
+            <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
+        </div>
+
+        if (Model.lstReportData.Count > 0)
+        {
+            <div id="dvViewROWExportData" class="space-pad">
+                <div class="d-flex mb-15">
+                    <div class="div_totalRecord">
+                        <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objReportFilters.totalRecord</span></b>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    @grid.GetHtml(tableStyle: "grid",
+                     htmlAttributes: new { id = "tblSegmentReport" },
+                     mode: WebGridPagerModes.All)
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.objReportFilters.fromDate))
+        {
+            <div id="divNoRecordFound" class="nr-found filtersBg">
+                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+            </div>
+        }
+        else
+        {
+            <div id="divNoRecordFound" class="nr-found filtersBg">
+                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_355</span>
+            </div>
+        }
+    }
+
+</div>
+
+@Scripts.Render("~/bundles/SiteScripts")
+<script>
+    $(document).ready(function () {
+        var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
+        $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+
+        var selectedProvinces = '@Model.objReportFilters.SelectedProvinceIds';
+        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+
+        var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'", "")';
+        $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+    });
+</script>

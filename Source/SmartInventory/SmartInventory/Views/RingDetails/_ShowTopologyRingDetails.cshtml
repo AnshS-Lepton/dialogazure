@@ -6,7 +6,7 @@
 
 <!DOCTYPE html>
 
-@if (Model.objRingDetails != null && Model.objRingDetails.SearchbyRingTypes.Any() == true)
+@if (Model.objRingDetails != null && Model.objRingDetails.SearchbyRingTypes != null && Model.objRingDetails.SearchbyRingTypes.Any())
 {
     var ringIdsCsv = string.Join(",", Model.objRingDetails.SearchbyRingTypes);
     <script type="text/javascript">
@@ -26,137 +26,137 @@
 else
 {
     <script type="text/javascript">
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        
-        $('.chosen-select').chosen({ width: '100%' });
-        $('th a, tfoot a').on("click", function () {
-            // onGridHeaderClick('tblFiberLinkGrid');
-            $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
-            return false;
+
+            $('.chosen-select').chosen({ width: '100%' });
+            $('th a, tfoot a').on("click", function () {
+                // onGridHeaderClick('tblFiberLinkGrid');
+                $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
+                return false;
+            });
+
+
         });
-
-
-    });
-    this.clearUserTempOverlay = function (lyrObj) {
-        debugger;
-        if (lyrObj) {
-            for (var i = 0; i < lyrObj.length; i++)
-                lyrObj[i].setMap(null);
-        }
-        lyrObj = [];
-    }
-    this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, network_id, is_virtual_port_allowed) {
-        var gmarkernew = new google.maps.Marker({
-            position: mrkrLatlng,
-            icon: imageUrl,
-            draggable: false,
-            id: system_id,
-            eType: en_type,
-            portNo: port_no,
-            networkId: network_id,
-            isVirtualPortAllowed: is_virtual_port_allowed
-        });
-
-        return gmarkernew;
-    }
-    this.ShowEntityOnMap = function (ringId) {
-        //if ($(event).hasClass("glyphicon-eye-open")) {
-        var app = this;
-        var gMapObj = {};
-        this.ParentModel = 'PARENT';
-        this.isSwapped = false;
-        this.mainJSPlumb = null;
-        this.gMapObj = {};
-        var bounds = new google.maps.LatLngBounds();
-        ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
-            if (resp.status = 'OK') {
-
-
-                if (resp.lstSitedetails != null || resp.lstSitedetails != undefined) {
-
-                    $(popup.DE.MinimizeModel).trigger("click");
-                    app.clearUserTempOverlay(gMapObj.TraceRoute);
-                    gMapObj.TraceRoute = [];
-                    app.gMapObj.pointMarkers = [];
-                    var bounds = new google.maps.LatLngBounds();
-                    var highlightLineList = [];
-                    var oms = new OverlappingMarkerSpiderfier(si.map, {
-                        markersWontMove: true,
-                        markersWontHide: true,
-                        keepSpiderfied: true,
-                        circleFootSeparation: 35, // radius of circle
-                        nearbyDistance: 30, // distance in which it include the markers in spiderfier..
-                        circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
-                        legWeight: 2.4
-                    });
-                    var objInfoWindow = new google.maps.InfoWindow();
-                    var infowindow = new google.maps.InfoWindow({
-                        content: contentString
-                    });
-
-                    debugger;
-                    for (var i = 0; i < resp.lstSitedetails.length; i++) {
-
-                        var en_type = 'POD';
-                        var system_id = resp.lstSitedetails[i].system_id;
-                        // var port_no = resp.lstSitedetails[i].connected_port_no;
-                        var network_id = resp.lstSitedetails[i].network_id;
-                        var is_virtual_port_allowed = false;
-                        var geometry = getLatLongArr(resp.lstSitedetails[i].geom);
-
-                        var ptObj = null;
-                        //if (resp.lstSitedetails[i].system_id != null && resp.lstSitedetails[i].system_id != '') {
-                        //    ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.lstSitedetails[i].connected_entity_category + '_' + en_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
-                        //}
-                        //else {
-                        ptObj = si.createMarkerForPathFinder(geometry[0], 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
-                        //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
-
-                        //}
-                        // add info window
-                        var contentString = '<div id="content">' +
-                            '<input type="button" id="export" enType="' + en_type + '" systemId="' + system_id + '"  value="export"/>' +
-                            '</div>';
-                        google.maps.event.addListener(ptObj, 'click', (function (ptObj, i) {
-                            //if (ptObj.portNo != null) {
-                            //    var PortNo = ptObj.portNo > 0 ? ptObj.portNo.toString() + " OUT" : ptObj.portNo.toString().replace('-', '') + " IN";
-                            //}
-                            return function () {
-
-                                var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
-                                //if (!ptObj.isVirtualPortAllowed) {
-                                //    content += '<p><span  class="Info-content">Port No :</span> ' + PortNo + '</p>';
-                                //}
-                                objInfoWindow.setContent(content);
-                                objInfoWindow.open(si.map, ptObj);
-                            }
-                        })(ptObj, i));
-
-                        ptObj.setMap(si.map);
-                        gMapObj.TraceRoute.push(ptObj);
-                        app.gMapObj.pointMarkers.push(ptObj);
-                        oms.addMarker(ptObj);
-
-                    }
-
-                    debugger;
-                }
+        this.clearUserTempOverlay = function (lyrObj) {
+            debugger;
+            if (lyrObj) {
+                for (var i = 0; i < lyrObj.length; i++)
+                    lyrObj[i].setMap(null);
             }
-        }, true, true);
-    }
+            lyrObj = [];
+        }
+        this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, network_id, is_virtual_port_allowed) {
+            var gmarkernew = new google.maps.Marker({
+                position: mrkrLatlng,
+                icon: imageUrl,
+                draggable: false,
+                id: system_id,
+                eType: en_type,
+                portNo: port_no,
+                networkId: network_id,
+                isVirtualPortAllowed: is_virtual_port_allowed
+            });
+
+            return gmarkernew;
+        }
+        this.ShowEntityOnMap = function (ringId) {
+            //if ($(event).hasClass("glyphicon-eye-open")) {
+            var app = this;
+            var gMapObj = {};
+            this.ParentModel = 'PARENT';
+            this.isSwapped = false;
+            this.mainJSPlumb = null;
+            this.gMapObj = {};
+            var bounds = new google.maps.LatLngBounds();
+            ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
+                if (resp.status = 'OK') {
+
+
+                    if (resp.lstSitedetails != null || resp.lstSitedetails != undefined) {
+
+                        $(popup.DE.MinimizeModel).trigger("click");
+                        app.clearUserTempOverlay(gMapObj.TraceRoute);
+                        gMapObj.TraceRoute = [];
+                        app.gMapObj.pointMarkers = [];
+                        var bounds = new google.maps.LatLngBounds();
+                        var highlightLineList = [];
+                        var oms = new OverlappingMarkerSpiderfier(si.map, {
+                            markersWontMove: true,
+                            markersWontHide: true,
+                            keepSpiderfied: true,
+                            circleFootSeparation: 35, // radius of circle
+                            nearbyDistance: 30, // distance in which it include the markers in spiderfier..
+                            circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
+                            legWeight: 2.4
+                        });
+                        var objInfoWindow = new google.maps.InfoWindow();
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                        });
+
+                        debugger;
+                        for (var i = 0; i < resp.lstSitedetails.length; i++) {
+
+                            var en_type = 'POD';
+                            var system_id = resp.lstSitedetails[i].system_id;
+                            // var port_no = resp.lstSitedetails[i].connected_port_no;
+                            var network_id = resp.lstSitedetails[i].network_id;
+                            var is_virtual_port_allowed = false;
+                            var geometry = getLatLongArr(resp.lstSitedetails[i].geom);
+
+                            var ptObj = null;
+                            //if (resp.lstSitedetails[i].system_id != null && resp.lstSitedetails[i].system_id != '') {
+                            //    ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.lstSitedetails[i].connected_entity_category + '_' + en_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                            //}
+                            //else {
+                            ptObj = si.createMarkerForPathFinder(geometry[0], 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
+                            //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+
+                            //}
+                            // add info window
+                            var contentString = '<div id="content">' +
+                                '<input type="button" id="export" enType="' + en_type + '" systemId="' + system_id + '"  value="export"/>' +
+                                '</div>';
+                            google.maps.event.addListener(ptObj, 'click', (function (ptObj, i) {
+                                //if (ptObj.portNo != null) {
+                                //    var PortNo = ptObj.portNo > 0 ? ptObj.portNo.toString() + " OUT" : ptObj.portNo.toString().replace('-', '') + " IN";
+                                //}
+                                return function () {
+
+                                    var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
+                                    //if (!ptObj.isVirtualPortAllowed) {
+                                    //    content += '<p><span  class="Info-content">Port No :</span> ' + PortNo + '</p>';
+                                    //}
+                                    objInfoWindow.setContent(content);
+                                    objInfoWindow.open(si.map, ptObj);
+                                }
+                            })(ptObj, i));
+                            debugger;
+                            ptObj.setMap(si.map);
+                            gMapObj.TraceRoute.push(ptObj);
+                            si.gMapObj.pointMarkers.push(ptObj);
+                            oms.addMarker(ptObj);
+
+                        }
+
+                        debugger;
+                    }
+                }
+            }, true, true);
+        }
 
 
 
 
-    this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
-        debugger;
-        var ringId = ringId.toString();
-        ajaxReq('main/Encrypt', { systemId: ringId + '/' + ring_code }, false, function (resp) {
+        this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
+            debugger;
+            var ringId = ringId.toString();
+            ajaxReq('main/Encrypt', { systemId: ringId + '/' + ring_code }, false, function (resp) {
 
-            window.open(appRoot + 'RingDetails/GetSchematicView?key=' + resp + '&ring_id=' + ringId + '&ring_code=' + ring_code, '_blank');
-        }, false, false);
-    }
+                window.open(appRoot + 'RingDetails/GetSchematicView?key=' + resp + '&ring_id=' + ringId + '&ring_code=' + ring_code, '_blank');
+            }, false, false);
+        }
     </script>
 
 
@@ -282,6 +282,7 @@ else
 
                     <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
                     <button id="btnExportLinks" class="btn btn-success ml-auto">Export</button>
+                    @*<input type="button" id="btnExportLinks" class="btn btn-success ml-auto" value="Export" />*@
                     <input type="submit" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
 
                 </div>
@@ -353,7 +354,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
 <script>
 
     $("#btnRingReset").on("click", function () {
-        document.getElementById("ddllstRingName").selectedIndex = 0;
+        $("#ddllstRingName")[0].selectedIndex = -1; // removes all selections
         $("#ddllstRingName").trigger("chosen:updated");
         document.getElementById("ddllstSegmentName").selectedIndex = 0;
         $("#ddllstSegmentName").trigger("chosen:updated");
@@ -362,6 +363,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
     });
 
     $("#btnExportLinks").on("click", function () {
+
         window.location = appRoot + 'RingDetails/ExportRingDetails';
     });
     function validateSearch(event) {

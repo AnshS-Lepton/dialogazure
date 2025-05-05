@@ -60,6 +60,7 @@
             }
             $(app.DE.ModalBody).html("");
             $(app.DE.ModalDialog).attr("style", "");
+            app.clearMapobj();
         });
 
         $(app.DE.MinimizeModel).on('click', function () {
@@ -178,7 +179,8 @@
         //{ isp.bindCableRightPop(); }
         /*if (si != null) { si.ClearAdvanceFilter(); }*/
     }
-    this.resetToolBar = function () { if ($('#dvROWReport').hasClass('activeToolBar')) { $('#dvROWReport').trigger("click"); $('#reportToolBar div,#reportToolBar div a').removeClass('activeToolBar'); } }
+    this.resetToolBar = function () { 
+        if ($('#dvROWReport').hasClass('activeToolBar')) { $('#dvROWReport').trigger("click"); $('#reportToolBar div,#reportToolBar div a').removeClass('activeToolBar'); } }
     //this.hideButtonsWhenLayerDisabled = function () {
     //    var editEnabled = $("#LayerEditPermission").val();
     //    var buttonList = " .floorRowDelete,.shaftRowDelete,.floorRowAdd,.shaftRowAdd,.icon-close,.referenceRowAdd,#dvAddMaintenanceCharge1";
@@ -304,5 +306,17 @@
                 objModalDialog.addClass(className);
             }
         }
+    }
+    this.clearMapobj = function () {
+        if (splicing) {
+            $.each(splicing.gMapObj.pointMarkers, function (indx, itm) {
+                itm.setMap(null);
+            })
+        }  
+        if (si.gMapObj) {
+            $.each(si.gMapObj.TraceRoute, function (indx, itm) {
+                itm.setMap(null);
+            })
+        }  
     }
 }

@@ -167,11 +167,11 @@ namespace DataAccess.Admin
 
         }
 
-        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id,int distance, int user_id)
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id,int segment_id,int distance, int user_id)
         {
             try
             {
-                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id = ring_id, p_distance= distance, p_user_id =user_id }, false);
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites_test", new { p_system_id = system_id, p_ring_id = ring_id, p_segment_id = segment_id, p_distance = distance, p_user_id =user_id }, false);
 
             }
             catch { throw; }
@@ -974,7 +974,7 @@ namespace DataAccess.Admin
             objPOD.ring_site_id = objPODMaster.ring_site_id;
             objPOD.ring_site_seq = objPODMaster.ring_site_seq;
             objPOD.site_id = objPODMaster.site_id;
-            objPOD.site_name = objPODMaster.site_name;
+            //objPOD.site_name = objPODMaster.site_name;
             objPOD.agg_01 = objPODMaster.agg_01; 
             objPOD.agg_02 = objPODMaster.agg_02; 
             objPOD.ring_a_site_id = objPODMaster.ring_a_site_id;
