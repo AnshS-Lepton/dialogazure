@@ -970,6 +970,15 @@
                                 </li>
 
                             }
+                            @if (Model.lstUserModule.Contains("TPCS"))
+                            {
+                                <li>
+                                    <a href="#" class="iconBaricomoon" onclick="si.ViewSegment('','POD')" title="Segment Details">
+                                        <span class="icon-export_report"></span>
+                                    </a>
+                                </li>
+
+                            }
                             @if (Model.lstUserModule.Contains("TPLP"))
                             {
                                 <li>

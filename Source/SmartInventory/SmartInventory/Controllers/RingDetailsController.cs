@@ -59,7 +59,8 @@ namespace SmartInventory.Controllers
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
+                    if(objRingFilter.objRingDetails.SearchbyRingTypes != null)
+                        ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else {
                     region_id = objRingFilter.objRingDetails.region_name;
@@ -160,11 +161,12 @@ namespace SmartInventory.Controllers
             //objRingFilter.objGridAttributes.orderBy = "";
             if (objRingFilter.objRingDetails != null)
             {
-                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName) || objRingFilter.objRingDetails.SearchbyRingType != null || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName))
+                if (!string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbyRegionName) || objRingFilter.objRingDetails.SearchbyRingTypes != null || !string.IsNullOrEmpty(objRingFilter.objRingDetails.SearchbySegmentName))
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingType);
+                    if(objRingFilter.objRingDetails.SearchbyRingTypes != null)
+                    ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else
                 {
@@ -187,6 +189,7 @@ namespace SmartInventory.Controllers
             dtReport.Columns.Remove("SEARCHBYREGIONNAME");
             dtReport.Columns.Remove("SEARCHBYSEGMENTNAME");
             dtReport.Columns.Remove("SEARCHBYRINGTYPE");
+            dtReport.Columns.Remove("SEARCHBYRINGTYPES");
             //dtReport.Columns.Remove("SEARCHBYRINGTYPE");
             dtReport.Columns["SEGMENT_CODE"].SetOrdinal(0);
             dtReport.Columns["RING_CODE"].SetOrdinal(1);

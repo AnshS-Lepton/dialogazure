@@ -35,6 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
@@ -13593,11 +13594,11 @@ namespace SmartInventory.Controllers
             return Json(TopologySegment, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Gettopologygetsites(int systemId, int ringId, int distance)
+        public JsonResult Gettopologygetsites(int systemId, int ringId, int distance,int segment_id)
         {
             distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
-            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, segment_id, distance, Convert.ToInt32(Session["user_id"])).ToList();
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
         }
 
@@ -13780,7 +13781,7 @@ namespace SmartInventory.Controllers
             var result = siteList.Select(s => new {
                 label = s.site_id.ToString(),  // Displayed in dropdown
                 value = s.site_id.ToString(),  // Stored in textbox
-                siteName = s.site_name,        // Site name
+                siteName = s.site_name +" ("+ s.network_id+" )",        // Site name
                 systemId = s.system_id         // Include system_id in response
             }).ToList();
 
@@ -13912,6 +13913,110 @@ namespace SmartInventory.Controllers
             }
 
             return PartialView("_AddSegment", pODMaster);
+        }
+        #endregion
+
+        #region Segment details
+
+        public ActionResult ShowSegmentReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
+        {
+            try
+            {
+                objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+                objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+                objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+                objExportEntitiesReport.objReportFilters.pageSize = 10;
+                objExportEntitiesReport.objReportFilters.currentPage = page == 0 ? 1 : page;
+                objExportEntitiesReport.objReportFilters.sort = sort;
+                objExportEntitiesReport.objReportFilters.sortdir = sortdir;
+                objExportEntitiesReport.objReportFilters.userId = Convert.ToInt32(Session["user_id"]);
+                if (!string.IsNullOrEmpty(objExportEntitiesReport.objReportFilters.layerName))
+                {
+                    List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSegmentReportData(objExportEntitiesReport.objReportFilters);
+                    string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO", "BARCODE" };
+                    foreach (Dictionary<string, string> dic in lstExportEntitiesDetail)
+                    {
+                        var obj = (IDictionary<string, object>)new ExpandoObject();
+
+                        foreach (var col in dic)
+                        {
+                            obj.Add(col.Key, col.Value);
+                        }
+                        objExportEntitiesReport.lstReportData.Add(obj);
+                    }
+
+                    objExportEntitiesReport.lstReportData = BLConvertMLanguage.MultilingualConvert(objExportEntitiesReport.lstReportData, arrIgnoreColumns);
+                    objExportEntitiesReport.objReportFilters.totalRecord = lstExportEntitiesDetail.Count > 0 ? Convert.ToInt32(lstExportEntitiesDetail[0].FirstOrDefault().Value) : 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("ShowSegmentReport()", "Report", ex);
+                throw ex;
+            }
+            Session["ExportSegmentReportFilter"] = objExportEntitiesReport.objReportFilters;
+            return PartialView("_ViewSegment", objExportEntitiesReport);
+        }
+
+        public void DownloadSegmentReport(string fileType, string reportType)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(fileType))
+                {
+                    if (reportType.ToUpper() == "ALL" && fileType.ToUpper() == "EXCEL")
+                    {
+                        DownloadSegmentReportIntoExcel(reportType);
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSegmentReport()", "Report", ex);
+            }
+        }
+        public void DownloadSegmentReportIntoExcel(string reportType)
+        {
+            try
+            {
+                if (Session["ExportSegmentReportFilter"] != null)
+                {
+                    try
+                    {
+                        ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportSegmentReportFilter"];
+                        objReportFilter.currentPage = 0;
+                       
+                        List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSegmentReportData(objReportFilter);
+                        lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
+                        DataTable dtReport = new DataTable();
+                        dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);
+                        dtReport.TableName = "Segment";
+                        if (dtReport != null && dtReport.Rows.Count > 0)
+                        {
+                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                            if (dtReport.Columns.Contains("system_id")) { dtReport.Columns.Remove("system_id"); }
+                        }
+
+                        if (dtReport.Rows.Count > 0)
+                        {
+                            ExportData(dtReport, "SEGMENT_Report_" + MiscHelper.getTimeStamp());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogHelper.WriteErrorLog("DownloadSegmentReportIntoExcel()", "Report", ex);
+                        throw ex;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSegmentReportIntoExcel()", "Report", ex);
+                throw ex;
+            }
         }
         #endregion
 

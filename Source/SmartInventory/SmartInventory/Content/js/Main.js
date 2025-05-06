@@ -10404,15 +10404,15 @@ var Main = function () {
     }
     this.showRingDetailsOnMap = function (ringId) {
       
-        var gMapObj = {};
-        this.gMapObj = {};
+        
+        app.gMapObj = {};
         ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
                
                 if (resp.lstcableinfo != null && resp.lstcableinfo != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
-                    splicing.clearUserTempOverlay(gMapObj.TraceRoute);
-                    gMapObj.TraceRoute = [];
+                    splicing.clearUserTempOverlay(app.gMapObj.TraceRoute);
+                    app.gMapObj.TraceRoute = [];
                     splicing.gMapObj.pointMarkers = [];
                     var bounds = new google.maps.LatLngBounds();
                     var highlightLineList = [];
@@ -10489,7 +10489,7 @@ var Main = function () {
                                 //});
 
                                 lineObj.setMap(si.map);
-                                gMapObj.TraceRoute.push(lineObj);
+                                app.gMapObj.TraceRoute.push(lineObj);
                             }
                         }
 
@@ -10530,8 +10530,9 @@ var Main = function () {
                                 }
                             })(ptObj, i));
 
+                            debugger;
                             ptObj.setMap(si.map);
-                            gMapObj.TraceRoute.push(ptObj);
+                            app.gMapObj.TraceRoute.push(ptObj);
                             splicing.gMapObj.pointMarkers.push(ptObj);
                             oms.addMarker(ptObj);
 
@@ -22160,6 +22161,18 @@ var Main = function () {
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType
         }, titleText, 'modal-xl');
+    }
+    this.ViewSegment = function (_systemId, _entityType) {
+
+        var formURL = "Report/ShowSegmentReport";
+        var titleText = "Segment Details";
+        popup.LoadModalDialog('PARENT', formURL, {
+            systemId: _systemId, eType: _entityType
+        }, titleText, 'modal-xl');
+    }
+    this.ExportSegmentReport= function (_fileType, _reportType) {
+
+        window.location = appRoot + 'Report/DownloadSegmentReport?fileType=' + _fileType + '&reportType=' + _reportType;
     }
     this.ViewLossDetail = function () {
         var value = $('#ddl_waveLength').val();
