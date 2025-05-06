@@ -943,9 +943,8 @@ ALTER FUNCTION public.fn_topology_get_cableroute(integer, integer, integer)
 
 -------------------------------------------------------------------- Get site details in modification----------------------------------------------
 
--- FUNCTION: public.fn_topology_get_sites_test(integer, integer, integer, integer)
 
--- DROP FUNCTION IF EXISTS public.fn_topology_get_sites_test(integer, integer, integer, integer);
+ DROP FUNCTION IF EXISTS public.fn_topology_get_site(integer, integer, integer, integer);
 
 CREATE OR REPLACE FUNCTION public.fn_topology_get_sites(
 	p_site_id integer,
@@ -1126,7 +1125,7 @@ Raise info 'Temp table row ->%',(select count(1) from temp_site_geom);
 END;
 $BODY$;
 
-ALTER FUNCTION public.fn_topology_get_sites_test(integer, integer, integer, integer)
+ALTER FUNCTION public.fn_topology_get_sites(integer, integer, integer, integer)
     OWNER TO postgres;
 
 
@@ -1136,7 +1135,7 @@ ALTER FUNCTION public.fn_topology_get_sites_test(integer, integer, integer, inte
 
 -- DROP FUNCTION IF EXISTS public.fn_topology_sites_dissociation(integer, integer, integer, integer, integer);
 
-CREATE OR REPLACE FUNCTION public.fn_topology_sites_dissociation_test(
+CREATE OR REPLACE FUNCTION public.fn_topology_sites_dissociation(
 	p_base_site_id integer,
 	p_site_id integer,
 	p_ring_id integer,
@@ -1178,7 +1177,7 @@ end if;
 END;
 $BODY$;
 
-ALTER FUNCTION public.fn_topology_sites_dissociation_test(integer, integer, integer, integer, integer)
+ALTER FUNCTION public.fn_topology_sites_dissociation(integer, integer, integer, integer, integer)
     OWNER TO postgres;
 
 --------------------------------------Modification in functions----------------------------------------
