@@ -171,7 +171,7 @@ namespace DataAccess.Admin
         {
             try
             {
-                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites_test", new { p_system_id = system_id, p_ring_id = ring_id, p_segment_id = segment_id, p_distance = distance, p_user_id =user_id }, false);
+                return repo.ExecuteProcedure<TopologyGetSites>("fn_topology_get_sites", new { p_system_id = system_id, p_ring_id = ring_id, p_segment_id = segment_id, p_distance = distance, p_user_id =user_id }, false);
 
             }
             catch { throw; }
