@@ -810,7 +810,9 @@
 
             SetThroughConnValue();
             var connection = app.getConnectionsData(params.sourceId, params.targetId, true);
-
+            if (connection.is_through_connection === undefined || connection.is_through_connection === null) {
+                connection.is_through_connection = 'false';
+            }
             var connectorEtype = $(app.DE.ConnectingEntity + ' :selected').attr('data-entity-type');
             if (connection.is_through_connection.toLowerCase() == 'true' && connection.source_port_no != connection.destination_port_no) {
                 alert("Through connection can be performed with same tube/core number only!");
@@ -820,15 +822,11 @@
                 //Connection can not be created between two port for same
                 alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_029 + '  <b>' + $('#' + params.sourceId).attr('data-entity-type') + '</b>.');
                 return false;
-            } else if ($('#' + params.sourceId).attr('data-entity-type') == $('#' + params.targetId).attr('data-entity-type') && parseInt($('#' + params.sourceId).attr('data-system-id')) == parseInt($('#' + params.targetId).attr('data-system-id')) && $('#' + params.sourceId).attr('data-entity-type').toLowerCase() != 'cable') {
-                //Connection can not be created between two port for same
-                alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_029 + '  <b>' + $('#' + params.sourceId).attr('data-entity-type') + '</b>.');
-                return false;
             }
             else if ($('#' + params.sourceId).attr('data-entity-type') == $('#' + params.targetId).attr('data-entity-type')
                 && parseInt($('#' + params.sourceId).attr('data-system-id')) != parseInt($('#' + params.targetId).attr('data-system-id'))
                 && ((parseInt($('#' + params.sourceId).attr('data-port-no')) > 0 && parseInt($('#' + params.targetId).attr('data-port-no')) > 0) || (parseInt($('#' + params.sourceId).attr('data-port-no')) < 0 && parseInt($('#' + params.targetId).attr('data-port-no')) < 0))
-                && $('#' + params.sourceId).attr('data-entity-type').toLowerCase() != 'cable') {
+                && $('#' + params.sourceId).attr('data-entity-type').toLowerCase() != 'cable' && $('#' + params.sourceId).attr('data-entity-type').toLowerCase() != 'fms') {
                 //Connection can not be created between two output/input for different
                 alert(MultilingualKey.SI_OSP_GBL_JQ_GBL_030 + '  <b>' + $('#' + params.sourceId).attr('data-entity-type') + '</b>.');
                 return false;
@@ -2212,18 +2210,25 @@
 
 
     this.showFiberLinkOnMap = function (_linkSystemID) {
-        
+      
+        if (si.previousInfoWindow && si.previousInfoWindow.length > 0) {
+            si.previousInfoWindow.forEach(function (infoWindowss) {
+                infoWindowss.close();
+            });
+            // Clear the array to make sure no info windows are left open
+            si.previousInfoWindow = [];
+        }
 
         ajaxReq('FiberLink/showFiberLinkOnMap', { linkSystemID: _linkSystemID }, true, function (resp) {
             if (resp.status = 'OK') {
+                var highlightLineList = [];
 
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
                     app.clearUserTempOverlay(gMapObj.TraceRoute);
                     gMapObj.TraceRoute = [];
                     app.gMapObj.pointMarkers = [];
-                    var bounds = new google.maps.LatLngBounds();
-                    var highlightLineList = [];
+                    var bounds = new google.maps.LatLngBounds();                    
                     var oms = new OverlappingMarkerSpiderfier(si.map, {
                         markersWontMove: true,
                         markersWontHide: true,

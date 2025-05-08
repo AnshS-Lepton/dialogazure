@@ -35,6 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
@@ -13562,47 +13563,65 @@ namespace SmartInventory.Controllers
             // Return as JSON
             return Json(segmentDropdownData, JsonRequestBehavior.AllowGet);
         }
-        //public JsonResult GetSegmentsCode()
-        //{
-        //    // Fetch segments based on regionId
-        //    var segmentcode = new BLProject().GetSegmentCode();
-        //    return Json(segmentcode, JsonRequestBehavior.AllowGet);
-        //}
+        public JsonResult GetSegmentsDetails(int regionId)
+        {
+           // Fetch segments based on regionId
+            var segmentcode = new BLProject().GetSegmentCode();
+            return Json(segmentcode, JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult GetSegmentsCode()
         {
             PageMessage objMsg = new PageMessage();
-            PODMaster pODMaster = new PODMaster();
+            TopologySegment TopologySegment = new TopologySegment();
+
+
             try
             {
-            // Fetch segments based on regionId
+
+                //pODMaster.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+
                 var segmentcode = new BLProject().GetSegmentCode();
-              //  pODMaster.segment = segmentcode;
+                TopologySegment = segmentcode;
                 
-                if (segmentcode == null)
-                {
-
-                    pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
-                    pODMaster.objPM.message = "Failed to fetch segment code.";
-
-                }
 
             }
             catch
             {
-                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
-                pODMaster.objPM.message = "Failed to fetch segment code.";
+               
             }
 
-            return PartialView("_AddSegment", pODMaster);
+            return Json(TopologySegment, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Gettopologygetsites(int systemId, int ringId, int distance)
+        public JsonResult Gettopologygetsites(int systemId, int ringId, int distance,int segment_id)
         {
             distance = distance * 1000;// Converting killometer into meter
             PODMaster pODMaster = new PODMaster();
-            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, distance, Convert.ToInt32(Session["user_id"])).ToList();
+            pODMaster.lsttopologygetsites = new BLProject().Bindtopologygetsites(systemId, ringId, segment_id, distance, Convert.ToInt32(Session["user_id"])).ToList();
             return Json(pODMaster, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult getExistingSegmentDetails(int regionId, int agg1_site_id, int agg2_site_id,string route)
+        {
+
+            segmentMaster segmentMaster = new segmentMaster();
+
+
+           var Segmentdata = new BLProject().getExistingSegmentDetails( regionId, agg1_site_id, agg2_site_id, route, Convert.ToInt32(Session["user_id"]));
+            if (Segmentdata.Count > 0)
+            {
+                segmentMaster.id = Segmentdata.FirstOrDefault().id;
+                segmentMaster.sequence = Segmentdata.FirstOrDefault().sequence;
+                segmentMaster.region_name = Segmentdata.FirstOrDefault().region_name;
+                segmentMaster.segment_code = Segmentdata.FirstOrDefault().segment_code;
+                segmentMaster.route_name = Segmentdata.FirstOrDefault().route_name;
+                segmentMaster.description = Segmentdata.FirstOrDefault().description;
+            }
+
+
+            return Json(segmentMaster, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult getSegmentDetailsRoutewise(int systemId)
@@ -13733,7 +13752,7 @@ namespace SmartInventory.Controllers
         public JsonResult GetSegmentdata(string agg1_site_id, string agg2_site_id)
         {
             TopologySegment topologySegment = new TopologySegment();
-            topologySegment.agg1_site_id = agg1_site_id;
+            topologySegment.agg1_site_id =  agg1_site_id;
             topologySegment.agg2_site_id = agg2_site_id;
 
             var siteList = new BLProject().GetSegment(topologySegment);
@@ -13746,7 +13765,7 @@ namespace SmartInventory.Controllers
             return Json(siteList, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetCableNetworldata(string agg1_site_id, string agg2_site_id)
+        public JsonResult getCableRouteDetails(string regionId, string agg1_site_id, string agg2_site_id)
         {
             TopologySegment topologySegment = new TopologySegment();
             topologySegment.agg1_site_id = agg1_site_id;
@@ -13762,7 +13781,7 @@ namespace SmartInventory.Controllers
             var result = siteList.Select(s => new {
                 label = s.site_id.ToString(),  // Displayed in dropdown
                 value = s.site_id.ToString(),  // Stored in textbox
-                siteName = s.site_name,        // Site name
+                siteName = s.site_name +" ("+ s.network_id+" )",        // Site name
                 systemId = s.system_id         // Include system_id in response
             }).ToList();
 
@@ -13842,20 +13861,27 @@ namespace SmartInventory.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveSegment(string segmentcode,int region_code, string agg1_site_id, string agg2_site_id, string description,int Agg1SystemId,int Agg2SystemId,int segment_id)
+        public JsonResult SaveSegment(string segmentcode,int region_code, string description,int Agg1SystemId,int Agg2SystemId, int route_id, int SegmentId=0, int SequenceId = 0)
         {
             try
             {
                 TopologySegment topologySegment = new TopologySegment();
+                topologySegment.id = SegmentId;
+                topologySegment.sequence = SequenceId;
                 topologySegment.segment_code = segmentcode;
                 topologySegment.region_id = region_code;
-                topologySegment.agg1_site_id = agg1_site_id;
-                topologySegment.agg2_site_id = agg2_site_id;
+                topologySegment.agg1_site_id = Agg1SystemId.ToString();
+                topologySegment.agg2_site_id = Agg2SystemId.ToString();
                 topologySegment.description = description;
-                var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"])).ToList();
-                new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"]), segment_id);
-                // Save to database
+                topologySegment.route_id = route_id;
+
+
+                // var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"])).ToList();
+
+                // Save to segment database
                 topologySegment = new BLProject().SaveSegment(topologySegment);
+                // Save to segment database
+                new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"]), topologySegment.id, route_id);
 
                 return Json(new { success = true, message = "Segment saved successfully!" });
             }
@@ -13866,7 +13892,134 @@ namespace SmartInventory.Controllers
         }
 
         #endregion
-       
+
+        #region Create segment
+        public ActionResult CreateSegment()
+        {
+            PageMessage objMsg = new PageMessage();
+            PODMaster pODMaster = new PODMaster();
+
+
+            try
+            {
+
+                pODMaster.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
+
+            }
+            catch
+            {
+                pODMaster.objPM.status = ResponseStatus.ERROR.ToString();
+                pODMaster.objPM.message = "Failed to fetch segment code.";
+            }
+
+            return PartialView("_AddSegment", pODMaster);
+        }
+        #endregion
+
+        #region Segment details
+
+        public ActionResult ShowSegmentReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
+        {
+            try
+            {
+                objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+                objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+                objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+                objExportEntitiesReport.objReportFilters.pageSize = 10;
+                objExportEntitiesReport.objReportFilters.currentPage = page == 0 ? 1 : page;
+                objExportEntitiesReport.objReportFilters.sort = sort;
+                objExportEntitiesReport.objReportFilters.sortdir = sortdir;
+                objExportEntitiesReport.objReportFilters.userId = Convert.ToInt32(Session["user_id"]);
+                if (!string.IsNullOrEmpty(objExportEntitiesReport.objReportFilters.layerName))
+                {
+                    List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSegmentReportData(objExportEntitiesReport.objReportFilters);
+                    string[] arrIgnoreColumns = { "TOTALRECORDS", "S_NO", "BARCODE" };
+                    foreach (Dictionary<string, string> dic in lstExportEntitiesDetail)
+                    {
+                        var obj = (IDictionary<string, object>)new ExpandoObject();
+
+                        foreach (var col in dic)
+                        {
+                            obj.Add(col.Key, col.Value);
+                        }
+                        objExportEntitiesReport.lstReportData.Add(obj);
+                    }
+
+                    objExportEntitiesReport.lstReportData = BLConvertMLanguage.MultilingualConvert(objExportEntitiesReport.lstReportData, arrIgnoreColumns);
+                    objExportEntitiesReport.objReportFilters.totalRecord = lstExportEntitiesDetail.Count > 0 ? Convert.ToInt32(lstExportEntitiesDetail[0].FirstOrDefault().Value) : 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("ShowSegmentReport()", "Report", ex);
+                throw ex;
+            }
+            Session["ExportSegmentReportFilter"] = objExportEntitiesReport.objReportFilters;
+            return PartialView("_ViewSegment", objExportEntitiesReport);
+        }
+
+        public void DownloadSegmentReport(string fileType, string reportType)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(fileType))
+                {
+                    if (reportType.ToUpper() == "ALL" && fileType.ToUpper() == "EXCEL")
+                    {
+                        DownloadSegmentReportIntoExcel(reportType);
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSegmentReport()", "Report", ex);
+            }
+        }
+        public void DownloadSegmentReportIntoExcel(string reportType)
+        {
+            try
+            {
+                if (Session["ExportSegmentReportFilter"] != null)
+                {
+                    try
+                    {
+                        ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportSegmentReportFilter"];
+                        objReportFilter.currentPage = 0;
+                       
+                        List<Dictionary<string, string>> lstExportEntitiesDetail = new BLSite().GetSegmentReportData(objReportFilter);
+                        lstExportEntitiesDetail = BLConvertMLanguage.ExportMultilingualConvert(lstExportEntitiesDetail);
+                        DataTable dtReport = new DataTable();
+                        dtReport = MiscHelper.GetDataTableFromDictionaries(lstExportEntitiesDetail);
+                        dtReport.TableName = "Segment";
+                        if (dtReport != null && dtReport.Rows.Count > 0)
+                        {
+                            if (dtReport.Columns.Contains("S_NO")) { dtReport.Columns.Remove("S_NO"); }
+                            if (dtReport.Columns.Contains("totalrecords")) { dtReport.Columns.Remove("totalrecords"); }
+                            if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
+                            if (dtReport.Columns.Contains("system_id")) { dtReport.Columns.Remove("system_id"); }
+                        }
+
+                        if (dtReport.Rows.Count > 0)
+                        {
+                            ExportData(dtReport, "SEGMENT_Report_" + MiscHelper.getTimeStamp());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogHelper.WriteErrorLog("DownloadSegmentReportIntoExcel()", "Report", ex);
+                        throw ex;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("DownloadSegmentReportIntoExcel()", "Report", ex);
+                throw ex;
+            }
+        }
+        #endregion
+
         public ActionResult SiteBomBoqSummary(ViewItemVendorCost objViewItemVendorCost, int page = 0, string sort = "", string sortdir = "", string refrenceData = "", string searchBy = "", string searchText="")
         {
 

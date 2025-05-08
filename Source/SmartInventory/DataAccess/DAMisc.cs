@@ -982,7 +982,8 @@ namespace DataAccess
                         p_entity_type = objBulkDelete.entity_select,
                         P_entity_sub_type = objBulkDelete.entity_sub_type,
                         p_system_id = objBulkDelete.system_id,
-                        p_root_id = objBulkDelete.rootid
+                        p_root_id = objBulkDelete.rootid,
+                        p_selectedUsers = objBulkDelete.selectedUsers
                     }).ToList();
 
             }

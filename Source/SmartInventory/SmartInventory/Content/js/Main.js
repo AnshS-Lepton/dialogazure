@@ -447,6 +447,7 @@ var Main = function () {
     this.provinceListData = [];
     this.IsZoomInTriggered = false;
     this.provinceDeltaFetchTime = new Map();
+    this.previousInfoWindow = []; 
     this.ShowHideVectorLayerByZoomSetting = function () {
         let _Zoom = app.map.getZoom();
         const _OldlayerChekedState = app.layerChekedState;// new Map([...app.layerChekedState]);
@@ -10403,15 +10404,15 @@ var Main = function () {
     }
     this.showRingDetailsOnMap = function (ringId) {
       
-        var gMapObj = {};
-        this.gMapObj = {};
+        
+        app.gMapObj = {};
         ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
                
                 if (resp.lstcableinfo != null && resp.lstcableinfo != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
-                    splicing.clearUserTempOverlay(gMapObj.TraceRoute);
-                    gMapObj.TraceRoute = [];
+                    splicing.clearUserTempOverlay(app.gMapObj.TraceRoute);
+                    app.gMapObj.TraceRoute = [];
                     splicing.gMapObj.pointMarkers = [];
                     var bounds = new google.maps.LatLngBounds();
                     var highlightLineList = [];
@@ -10488,7 +10489,7 @@ var Main = function () {
                                 //});
 
                                 lineObj.setMap(si.map);
-                                gMapObj.TraceRoute.push(lineObj);
+                                app.gMapObj.TraceRoute.push(lineObj);
                             }
                         }
 
@@ -10529,8 +10530,9 @@ var Main = function () {
                                 }
                             })(ptObj, i));
 
+                            debugger;
                             ptObj.setMap(si.map);
-                            gMapObj.TraceRoute.push(ptObj);
+                            app.gMapObj.TraceRoute.push(ptObj);
                             splicing.gMapObj.pointMarkers.push(ptObj);
                             oms.addMarker(ptObj);
 
@@ -10546,7 +10548,19 @@ var Main = function () {
             }
         }, true, true);
     }
-
+    this.ShowEntityOnMapbyRoute = function (route_id, gType) {
+        ajaxReq('main/getGeometryDetailbyRoute', { route_id: route_id, geomType: gType }, false, function (resp) {
+            ;
+            if (resp.status = 'OK') {
+                //;
+                if (resp.result != null && resp.result != undefined) {
+                    app.HighlightEntityOnMap(gType, resp.result);
+                    //app.printPolygonEntityArea(resp.result);
+                    app.fitElementOnMap(resp.result)
+                }
+            }
+        }, true, false);
+    }
     this.ShowEntityOnMapbyGeom = function (audit_id, gType) {
         ajaxReq('main/getGeometryDetailbygeom', { audit_id: audit_id, geomType: gType }, false, function (resp) {
             ;
@@ -10901,10 +10915,9 @@ var Main = function () {
 
         // Calculate the accurate midpoint of the polyline
         var midLatLng = getMidpoint(_path);
-
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
-        var infoWindow = new google.maps.InfoWindow({
+         infoWindow = new google.maps.InfoWindow({
             content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
                    Core: ${core_number}
                </div>`,
@@ -10913,7 +10926,7 @@ var Main = function () {
 
         // Open the tooltip immediately so it stays fixed
         infoWindow.open(si.map);
-
+        app.previousInfoWindow.push(infoWindow);
         ShowLineLength(_path);
         return tmpLine;
     };
@@ -12748,7 +12761,7 @@ var Main = function () {
         }
     }
     this.GetNearByEntitiesByLatLong = function (latLng, objId) {
-
+      
 
         app.collapseRemove();
         var _zoom = app.map.getZoom();
@@ -12780,7 +12793,7 @@ var Main = function () {
                         }
                         else {
                             $('#searchNBEntities').css('top', (app.currentMousePos.y));
-                        }
+                        }                     
                         $('#searchNBEntities').show();
                     }
                 },
@@ -17394,7 +17407,7 @@ var Main = function () {
         $('#searchNBEntities').hide();
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
-
+      
         si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
@@ -17403,9 +17416,11 @@ var Main = function () {
         $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
+           // $(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
+           // $(popup.DE.MinimizeModel).trigger("click");
         }
     }
     this.addTerminationPoint = function (_data) {
@@ -18845,6 +18860,7 @@ var Main = function () {
         popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
+        let selectedUsers = $("#ddlUsers").val().join(',');
         var rootid = $("#ddl_RootId").val();
         var _data = {
             geom: $('#objFilterAttributes_geom').val(),
@@ -18855,6 +18871,7 @@ var Main = function () {
             entity_sub_type: _entitySubtype,
             system_id: parseInt(system_id),
             rootid: rootid,
+            selectedUsers: selectedUsers
         };
         ////;
         //var confirmAlertMsg = '<b>In the selected region, All the '+_entitytype+' Entities will be deleted permanently</b>,<br> Do you Want to Continue?</br>';
@@ -18914,11 +18931,16 @@ var Main = function () {
                 }
                 else {
                     // $('#closeModalPopup').trigger("click");
+                    if (resp.message === "No Entites Found!"){
+                        alert(resp.message);
+                        app.loadLayerOnEntity();
+                    }
+                    else{
                     alert(resp.message);
                     app.loadLayerOnEntity();
                     window.location = appRoot + 'Main/DownloadBulkDeleteProcessLogs?';
+                     }
                 }
-
 
             }, true, true);
         });
@@ -22134,11 +22156,23 @@ var Main = function () {
     }
     this.createSegment = function (_systemId, _entityType) {
 
-        var formURL = "Report/GetSegmentsCode";
+        var formURL = "Report/CreateSegment";
         var titleText = " Create Segment";
         popup.LoadModalDialog('PARENT', formURL, {
             systemId: _systemId, eType: _entityType
         }, titleText, 'modal-xl');
+    }
+    this.ViewSegment = function (_systemId, _entityType) {
+
+        var formURL = "Report/ShowSegmentReport";
+        var titleText = "Segment Details";
+        popup.LoadModalDialog('PARENT', formURL, {
+            systemId: _systemId, eType: _entityType
+        }, titleText, 'modal-xl');
+    }
+    this.ExportSegmentReport= function (_fileType, _reportType) {
+
+        window.location = appRoot + 'Report/DownloadSegmentReport?fileType=' + _fileType + '&reportType=' + _reportType;
     }
     this.ViewLossDetail = function () {
         var value = $('#ddl_waveLength').val();

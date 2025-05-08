@@ -848,3 +848,6 @@
 .icon-topology:before {
     content: "\e9cb";
 }
+.icon-createSegment:before {
+    content: "\e9cc";
+}

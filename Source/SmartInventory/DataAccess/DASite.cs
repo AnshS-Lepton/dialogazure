@@ -194,5 +194,29 @@ namespace DataAccess
             }
             catch (Exception ex) { throw ex; }
         }
+
+        public List<Dictionary<string, string>> GetSegmentReportData(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_segment_report_data",
+                    new
+                    {
+                       
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_pageno = objReportFilter.currentPage,
+                        p_pagerecord = objReportFilter.pageSize,
+                        p_sortcolname = objReportFilter.sort,
+                        p_sorttype = objReportFilter.sortdir,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
     }
 }

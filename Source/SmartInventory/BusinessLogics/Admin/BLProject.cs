@@ -118,10 +118,10 @@ namespace BusinessLogics.Admin
             return new DAProject().BindPurpose(network_stage, ddlworkorder_id);
 
         }
-        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id, int distance, int user_id)
+        public List<TopologyGetSites> Bindtopologygetsites(int system_id, int ring_id,int segment_id, int distance, int user_id)
         {
 
-            return new DAProject().Bindtopologygetsites( system_id, ring_id, distance, user_id);
+            return new DAProject().Bindtopologygetsites( system_id, ring_id, segment_id, distance, user_id);
 
         }
 
@@ -159,10 +159,10 @@ namespace BusinessLogics.Admin
             return new DAProjectCode().IsCodeExistsForProjSpeci(network_stage, type, code);
         }
 
-        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id)
+        public void Savetopsegmentcablemapping(int Agg1SystemId, int Agg2SystemId, int userId,int segment_id, int route_id)
         {
 
-            new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id);
+            new DAProjectCode().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, userId, segment_id, route_id);
         }
         public void Savetopsegmentringcablemapping(int Agg1SystemId, int Agg2SystemId, int userId, int ringId, int segmentId,string top_type,int system_id)
         {
@@ -242,7 +242,7 @@ namespace BusinessLogics.Admin
         {
             return new DASegment().GetSegment(objTopologyPlan);
         }
-        public List<CableDetails> GetCableRoute(TopologySegment objTopologyPlan, int user_id)
+        public List<routeDetails> GetCableRoute(TopologySegment objTopologyPlan, int user_id)
         {
             return new DASegment().GetCableRoute(objTopologyPlan, user_id);
         }
@@ -281,6 +281,10 @@ namespace BusinessLogics.Admin
         public List<SiteMaster> getSiteDetails(int systemId, int user_id)
         {
             return new DAPodMaster().getSiteDetails(systemId, user_id);
+        }
+        public List<segmentMaster> getExistingSegmentDetails(int regionId, int agg1_site_id, int agg2_site_id,string route, int user_id)
+        {
+            return new DAPodMaster().getExistingSegmentDetails(regionId, agg1_site_id, agg2_site_id, route, user_id);
         }
     }
 }

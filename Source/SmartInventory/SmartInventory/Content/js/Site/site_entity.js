@@ -195,4 +195,43 @@ $(document).ready(function () {
             return true;
         }
     });
+
+
+    $('#tblSegmentReport thead tr th a').each(function () {
+        var html = $(this).html(); $(this).parent().attr('data-column-name', html);
+    })
+    $('#tblSegmentReport tbody tr td').each(function () {
+        var html = $(this).html(); $(this).attr('data-value', html);
+    })
+    $('#tblSegmentReport tbody tr').each(function (index, value) {
+        var replacetdIndex = 1;
+        var firsttdHtml = $('#tblSegmentReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html();
+        $('#tblSegmentReport  tbody tr:eq(' + index + ') td:eq(' + replacetdIndex + ')').html('<div class="Created"></div>' + '<div style="width:150px;">' + firsttdHtml + '</div>')
+        $('#tblSegmentReport thead tr th:eq(0)').html('' + MultilingualKey.SI_OSP_GBL_GBL_GBL_059 + '');
+        var systemId = $('#tblSegmentReport  tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
+        
+        var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle rowSegemetShowOnMap" title= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+        rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
+       /* rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowDeleteSegmentt" title= "' + 'Delete Segment' + '"><span class="cptr icon-Delete ml-05"></span></a>';*/
+
+        $('#tblSegmentReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+    });
+
+    $('.rowDeleteSegmentt').on("click", function () {
+        var systemId = $(this).attr('data-value');
+        si.SiteReport.SiteTopology(null, systemId, null, this);
+
+    });
+    $('.rowSegemetShowOnMap').on("click", function () {
+
+        var systemId = $(this).attr('data-value');
+        si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+    addDefaultSortingIcons('tblSegmentReport');
+
+    $("#btnSegmentReportIntoExcel").on("click", function () {
+        si.ExportSegmentReport('Excel', 'All');
+        $('.FlowDiv').slideUp();
+    });
+
 });

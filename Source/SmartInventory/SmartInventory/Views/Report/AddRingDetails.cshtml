@@ -73,9 +73,10 @@
      $('#closeChildPopup').trigger("click");
      debugger;
      var nbrOfsites = $("#ddlnofsites").val();
-
+    
      if (nbrOfsites === "") {
-         alert("Please select no of sites !");
+         /*alert("Please select no of sites !");*/
+         nbrOfsites = 20; // Default value
      }
 
      var ringcap = $("#ddlringcapacity").val();
