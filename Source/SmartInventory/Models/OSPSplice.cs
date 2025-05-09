@@ -935,7 +935,13 @@ namespace Models
         public string status { get; set; }
         public bool isGridCalling { get; set; }
     }
-    
+
+    public class FiberStatusUpdate
+    {
+        public int CableId { get; set; }
+        public int FiberNumber { get; set; }
+        public string FiberStatus { get; set; }
+    }
     public class connectionInfoCable
     {
         public List<CablerouteInfo> lstConnectionInfo { get; set; }
