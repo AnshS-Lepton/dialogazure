@@ -3816,10 +3816,46 @@ namespace SmartInventoryServices.Controllers
 			return response;
 		}
 
-		#endregion
+        [HttpPost]
+        public ApiResponse<string> GetUpdateFiberStatus(ReqInput data)
+        {
+            var response = new ApiResponse<string>();
+          
 
-		#region SaveLMCInfo
-		public ApiResponse<CableMaster> SaveLMCInfo(LMCCableInfo objLMCInfo)
+            try
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                var fiberUpdateRequest = ReqHelper.GetRequestData<FiberStatusUpdate>(data);
+                
+                new BLCable().GetUpdateFiberStatus(
+                    fiberUpdateRequest.CableId,
+                    fiberUpdateRequest.FiberNumber,
+                    fiberUpdateRequest.FiberStatus
+                );
+
+                response.results = "Fiber Status Updated successfully!";
+                response.status = StatusCodes.OK.ToString();
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.WriteDebugLog("GetUpdateFiberStatus API Error: " + ex.StackTrace);
+                logHelper.ApiLogWriter("GetUpdateFiberStatus()", "Cable Controller", "", ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error while processing request.";
+            }
+
+            return response;
+        }
+
+
+
+        #endregion
+
+
+
+        #region SaveLMCInfo
+        public ApiResponse<CableMaster> SaveLMCInfo(LMCCableInfo objLMCInfo)
 		{
 			var response = new ApiResponse<CableMaster>();
 			ModelState.Clear();
