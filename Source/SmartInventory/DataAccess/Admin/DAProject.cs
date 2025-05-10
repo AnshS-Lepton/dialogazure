@@ -796,6 +796,20 @@ namespace DataAccess.Admin
             return repo.GetAll(m =>  m.agg1_site_id.ToUpper() == topologySegment.agg1_site_id.ToString().ToUpper() && m.agg2_site_id.ToUpper() == topologySegment.agg2_site_id.ToString().ToUpper()).ToList();
 
         }
+
+        public vmRingConnectedElementDetails getRouteConnectedElementDetail(int route_id, int user_id)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<vmRingConnectedElementDetails>("fn_get_route_connectedelement_details", new
+                {
+                    p_route_id = route_id,
+                    p_user_id = user_id
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public List<routeDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
         {
             if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))

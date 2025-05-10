@@ -225,7 +225,7 @@ $(document).ready(function () {
     $('.rowSegemetShowOnMap').on("click", function () {
 
         var systemId = $(this).attr('data-value');
-        si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
+        si.showRouteDetailsOnMap(systemId);
     });
     addDefaultSortingIcons('tblSegmentReport');
 

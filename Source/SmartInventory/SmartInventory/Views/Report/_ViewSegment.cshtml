@@ -122,7 +122,7 @@ new SelectListItem { Text = "Created On", Value = "created_on"},
             {
                 <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-default ml-10" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
             }
-            <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
+            <input type="button" id="btnSegmentExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
         </div>
 
         if (Model.lstReportData.Count > 0)
@@ -149,7 +149,7 @@ new SelectListItem { Text = "Created On", Value = "created_on"},
         else
         {
             <div id="divNoRecordFound" class="nr-found filtersBg">
-                <span>@Resources.Resources.SI_OSP_GBL_NET_RPT_355</span>
+                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
             </div>
         }
     }
@@ -158,14 +158,66 @@ new SelectListItem { Text = "Created On", Value = "created_on"},
 
 @Scripts.Render("~/bundles/SiteScripts")
 <script>
-    $(document).ready(function () {
-        var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
-        $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
+   
+    $("#btnShowSegmentReportData").on("click", function () {
 
-        var selectedProvinces = '@Model.objReportFilters.SelectedProvinceIds';
-        $("#ddlProvinces").val(selectedProvinces.split(',')).trigger("chosen:updated");
+        var DurationBasedColumns = $("#ddlLayerDurationBasedColumns option:selected").val().trim();
+        var customedate = $("#customedate option:selected").val().trim();
+        if (DurationBasedColumns == "0") {
 
-        var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'", "")';
-        $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+            return false;
+        }
+
+        debugger;
+        if (customedate == "0") {
+
+            alert("Please select an option for Duration!");
+            return false;
+        }
+
+
+        if ($("#txtDateFrom").val() == "" && customedate != "9") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+            return false;
+        }
+
+        else if ($("#txtDateTo").val() == "" && customedate != "9") {
+            alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+            return false;
+        }
+
+        //else if ( $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+        //    var startDate = new Date($('#txtDateFrom').val());
+        //    var endDate = new Date($('#txtDateTo').val());
+        //    var configuredDay = 365;
+        //    return si.GetDaysDifference(startDate, endDate, configuredDay);
+        //}
+        else {
+            return true;
+        }
     });
+
+    $('#btnSegmentExportClear').on("click", function () {
+        ResetSegmentReportFilter();
+    });
+
+     function ResetSegmentReportFilter() {
+        $('#ddlLayers').val(0).trigger("chosen:updated");
+        $('#SelectedNetworkStatus').val(0).trigger("chosen:updated");
+        $('#ddlRegions').val(0).trigger("chosen:updated");
+        $('#ddlProvinces').val(0).trigger("chosen:updated");
+        $('#customedate').val(0).trigger("chosen:updated");
+        $('#txtSearchText').val('');
+        $('#txtDateFrom').val('');
+        $('#txtDateTo').val('');
+
+        $('#hidden_searchby_column').val('');
+        $('#ddlLayerColumns option:eq(0)').prop('selected', true).trigger("chosen:updated");
+        $('#ddlLayerDurationBasedColumns option:eq(0)').prop('selected', true).trigger("chosen:updated");
+        if (!$('#objReportFilters_geomType').val()) { $('.div_totalRecord span').html('0'); $('#dvViewROWExportData').html('<div style="text-align: center; margin-top: 10px; padding: 30px; font-size: 15px;"><span>Use the above filers to export report!</span></div>'); }
+        $('#btnExport').attr('disabled', 'disabled');
+        $('.FlowDiv').slideUp();
+        $('#divNoRecordFound').html('<span>' + MultilingualKey.SI_OSP_GBL_GBL_RPT_001 + '</span>');//Use the above filers to export ROW report!
+    }
 </script>

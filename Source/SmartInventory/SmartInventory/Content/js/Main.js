@@ -10548,6 +10548,152 @@ var Main = function () {
             }
         }, true, true);
     }
+    this.showRouteDetailsOnMap = function (routeid) {
+
+
+        app.gMapObj = {};
+        ajaxReq('Report/getRouteConnectedElementDetail', { routeid: routeid }, true, function (resp) {
+            if (resp.status = 'OK') {
+
+                if (resp.lstcableinfo != null && resp.lstcableinfo != undefined) {
+                    $(popup.DE.MinimizeModel).trigger("click");
+                    splicing.clearUserTempOverlay(app.gMapObj.TraceRoute);
+                    app.gMapObj.TraceRoute = [];
+                    splicing.gMapObj.pointMarkers = [];
+                    var bounds = new google.maps.LatLngBounds();
+                    var highlightLineList = [];
+                    var oms = new OverlappingMarkerSpiderfier(si.map, {
+                        markersWontMove: true,
+                        markersWontHide: true,
+                        keepSpiderfied: true,
+                        circleFootSeparation: 35, // radius of circle 
+                        nearbyDistance: 30, // distance in which it include the markers in spiderfier..
+                        circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
+                        legWeight: 2.4
+                    });
+                    //var objInfoWindow = new google.maps.InfoWindow();
+                    //var infowindow = new google.maps.InfoWindow({
+                    //    content: contentString
+                    //});
+                    if (resp.lstcableinfo != null || resp.lstcableinfo != undefined) {
+                        var cableNetworkFiberMap = {};
+                        for (var i = 0; i < resp.lstcableinfo.length; i++) {
+
+                            if (resp.lstcableinfo[i].cable_geom != null) {
+                                var geometry = getLatLongArr(resp.lstcableinfo[i].cable_geom);
+                                for (var z = 0; z < geometry.length; z++) {
+                                    bounds.extend(geometry[z]);
+                                }
+                                /*  var lineObj = si.createLineWithCore(geometry, resp.lstcableinfo[i].core_number);*/
+                                var lineObj = si.createLine(geometry);
+                                lineObj.strokeColor = 'blue';
+                                var _lineIcon = [{
+                                    icon: {
+                                        path: 'M -.5,-.5 .5,-.5, .5,.5 -.5,.5',
+                                        fillOpacity: 1
+                                    },
+                                    repeat: '6px'
+                                }];
+
+                                lineObj.strokeOpacity = 0;
+                                lineObj.strokeWeight = 4;
+                                lineObj.set('icons', _lineIcon);
+                                highlightLineList.push(lineObj);
+
+                                var contentString = '<div id="content">' +
+                                    '<input type="button" id="export" enType="' + 'Cable' + '" systemId="' + resp.lstcableinfo[i].cable_system_id + '"  value="export"/>' +
+                                    '</div>';
+
+                                google.maps.event.addListener(lineObj, 'click', (function (lineObj, i) {
+
+                                    var _cableNetworkId = resp.lstcableinfo[i].cable_network_id;
+                                    var _cableFiberNumber = resp.lstcableinfo[i].fiber_number;
+
+                                    // Add the fiber number to the corresponding cable network ID in the map
+                                    if (!cableNetworkFiberMap[_cableNetworkId]) {
+                                        cableNetworkFiberMap[_cableNetworkId] = [];
+                                    }
+                                    cableNetworkFiberMap[_cableNetworkId].push(_cableFiberNumber);
+
+                                    return function () {
+
+                                        var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
+                                        content += '<p><span  class="Info-content">Core / Port No :</span> ' + cableNetworkFiberMap[_cableNetworkId].join(', ') + '</p>';
+                                        //   objInfoWindow.setContent(content);
+                                        // objInfoWindow.open(si.map, lineObj);
+                                    }
+                                })(lineObj, i));
+
+                                //si.map.data.addListener("mouseover", event => {
+                                //    // 
+                                //    app._focusMe('Line', event.feature.getGeometry().i, 'Cable', null);
+                                //});
+
+                                //si.map.data.addListener("mouseout", event => {
+                                //    si.RemoveOldInfoWindow();
+                                //    si.removeInfoHoverItem();
+                                //});
+
+                                lineObj.setMap(si.map);
+                                app.gMapObj.TraceRoute.push(lineObj);
+                            }
+                        }
+
+                    }
+                    debugger;
+                    if (resp.lstconnectedelements != null || resp.lstconnectedelements != undefined) {
+                        debugger;
+                        for (var i = 0; i < resp.lstconnectedelements.length; i++) {
+
+                            var en_type = resp.lstconnectedelements[i].connected_entity_type;
+                            var system_id = resp.lstconnectedelements[i].connected_system_id;
+
+                            var network_id = resp.lstconnectedelements[i].connected_network_id;
+
+                            var geometry = getLatLongArr(resp.lstconnectedelements[i].connected_entity_geom);
+
+                            var ptObj = null;
+                            if (resp.lstconnectedelements[i].is_agg_site != null && resp.lstconnectedelements[i].is_agg_site == true) {
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/small/' + resp.lstconnectedelements[i].connected_entity_type.toUpperCase() + 'ag.png', system_id, en_type, 0, network_id, true);
+                            }
+                            else {
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/small/' + (resp.lstconnectedelements[i].is_virtual ? 'v_' : '') + resp.lstconnectedelements[i].connected_entity_type + '.png', system_id, en_type, 0, network_id, true);
+                            }
+                            // add info window
+                            var contentString = '<div id="content">' +
+                                '<input type="button" id="export" enType="' + en_type + '" systemId="' + system_id + '"  value="export"/>' +
+                                '</div>';
+                            google.maps.event.addListener(ptObj, 'click', (function (ptObj, i) {
+                                if (ptObj.portNo != null) {
+                                    var PortNo = ptObj.portNo > 0 ? ptObj.portNo.toString() + " OUT" : ptObj.portNo.toString().replace('-', '') + " IN";
+                                }
+                                return function () {
+
+                                    var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
+
+                                    objInfoWindow.setContent(content);
+                                    objInfoWindow.open(si.map, ptObj);
+                                }
+                            })(ptObj, i));
+
+                            debugger;
+                            ptObj.setMap(si.map);
+                            app.gMapObj.TraceRoute.push(ptObj);
+                            splicing.gMapObj.pointMarkers.push(ptObj);
+                            oms.addMarker(ptObj);
+
+                        }
+                    }
+                    // for highlight the  Path..
+                    $.each(highlightLineList, function (index, item) {
+                        setTimeout(function () { animateLine(item, 0) }, 20);
+                    });
+
+                    si.map.fitBounds(bounds);
+                }
+            }
+        }, true, true);
+    }
     this.ShowEntityOnMapbyRoute = function (route_id, gType) {
         ajaxReq('main/getGeometryDetailbyRoute', { route_id: route_id, geomType: gType }, false, function (resp) {
             ;
