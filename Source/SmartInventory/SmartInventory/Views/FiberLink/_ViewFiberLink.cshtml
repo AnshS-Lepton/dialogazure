@@ -160,7 +160,7 @@
                             @Html.DropDownListFor(x => x.SearchbyText, new SelectList(Model.lstSearchByColumns.Select(x => new { value = x.column_name, text = x.display_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlSearchBy", @onchange = "fiberLink.enableSearchtext();", @style = "width:300px" })
                         </div>
                         <div class="d-flex">
-                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "30", @class = "form-control input-mr search--padding", @style = "", @readonly = true })
+                            @Html.TextBoxFor(m => m.Searchtext, new { @id = "txtSearchTxt", @maxlength = "30", @class = "form-control input-mr search--padding", @style = "width: 250px; height: 26px;", @readonly = true })
                             <i class="glyphicon glyphicon-search"></i>
                         </div>
                         <button type="submit" class="btn btn-success ml-auto" id="btnLinkData"> @Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
@@ -242,7 +242,9 @@
             // modal.classList.add('resizable');
             const resizableDiv = $(modal);//modal;//$('#ModalPopUp');
             const minWidth = 370.976;
-            const minHeight = 210.976;
+            const minHeight = 510.976;
+            const maxWidth = 1150;    // <-- Set your maximum width here
+            const maxHeight = 650;
 
             const corner = $('<div>').css({
                 width: '10px',
@@ -270,8 +272,11 @@
                     let newWidth = initialWidth + widthDiff;
                     let newHeight = initialHeight + heightDiff;
 
-                    resizableDiv.width(Math.max(minWidth, newWidth));
-                    resizableDiv.height(Math.max(minHeight, newHeight));
+                    newWidth = Math.min(Math.max(minWidth, newWidth), maxWidth);
+                    newHeight = Math.min(Math.max(minHeight, newHeight), maxHeight);
+                    resizableDiv.width(newWidth);
+                    resizableDiv.height(newHeight);
+
                     $('#dvfiberlinkGrid').height(newHeight - 210);
                 });
 
