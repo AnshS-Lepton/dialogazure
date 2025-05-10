@@ -242,6 +242,10 @@ namespace BusinessLogics.Admin
         {
             return new DASegment().GetSegment(objTopologyPlan);
         }
+        public vmRingConnectedElementDetails getRouteConnectedElementDetail(int route_id, int user_id)
+        {
+            return new DASegment().getRouteConnectedElementDetail(route_id, user_id);
+        }
         public List<routeDetails> GetCableRoute(TopologySegment objTopologyPlan, int user_id)
         {
             return new DASegment().GetCableRoute(objTopologyPlan, user_id);

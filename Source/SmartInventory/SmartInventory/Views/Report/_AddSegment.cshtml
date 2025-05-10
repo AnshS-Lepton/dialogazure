@@ -321,7 +321,8 @@ source: function (request, response) {
 
         var systemId = $("#ddlroute option:selected").val();
 
-        si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
+       /* si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");*/
+        si.showRouteDetailsOnMap(systemId);
     });
 
     $('#ddlregionid').change(function () {
