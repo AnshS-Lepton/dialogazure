@@ -435,11 +435,11 @@
                     ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
 
-                    
+
                     RingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
 
-                    
+
                     RingASite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingASite").prop("disabled", false).trigger("chosen:updated");
 
@@ -456,7 +456,7 @@
                 {
                    // $("#txtagg2").val("");
                     $("#txtagg2").css("display", "block").prop("disabled", false);
-                    
+
                     RingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
                     //  $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
@@ -599,7 +599,7 @@
                 }
                 var ringtype = $("#ddlringtype").val();
                 if (ringtype == "") {
-                    alert("Please select ring type!");
+                    alert("Please select @Resources.Resources.SI_OSP_GBL_NET_RPT_465 !");
                     return;
                 }
 
@@ -621,7 +621,7 @@
 
 
 
-              
+
             //  Validate all fields
             var SiteId = $('#txtSiteId').val();
             var SiteName = $("#txtSiteName").val();
@@ -727,8 +727,8 @@
                 alert("Please select Topology type !");
                 return;
             }
-           
-            
+
+
 
             var ddlnofsites = $("#ddlnofsites").val();
             if (ddlnofsites === "") {
@@ -744,7 +744,7 @@
             var ringTypeDropdown = $('#ddlringtype');
             var ringtype = $("#ddlringtype").val();
             if (!ringtype) {
-                alert("Please select a Ring.");
+                alert("Please select @Resources.Resources.SI_OSP_GBL_NET_RPT_465 !");
                 return;
             }
             // var segmentName = $("#txtSegmentName").val();
@@ -1035,11 +1035,20 @@
             success: function (data) {
             var ringTypeDropdown = $('#ddlringtype');
             ringTypeDropdown.empty(); // Clear previous options
-            ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+                ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+
                 debugger;
-            // Append new options
+                // Append new options
+                const match = item.ring_info.match(/\((\d+)\)/);
+                const Count = match ? parseInt(match[1], 0) : null;
                 $.each(data, function (index, item) {
-                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+
+                    if (Count != 0 && topologyType == "Linear")
+                        ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                     if (topologyType != "Linear")
+                        ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                   
+                       
             });
 
             // Update Chosen.js Dropdown (if used)
@@ -1238,10 +1247,12 @@
                  debugger;
                  const match = item.ring_info.match(/\((\d+)\)/);
                  const data = match ? parseInt(match[1], 0) : null;
-                 if (data != 0 && topologyType !="Ring")
+                 if (data != 0 && topologyType =="Linear")
                      ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
-                 else
+                 else if (topologyType != "Linear")
                      ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                 
+                    
              });
 
              debugger;
@@ -1257,7 +1268,7 @@
      });
  } else {
      // Clear the ring type dropdown if no segment is selected
-     $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+     $('#ddlringtype').empty().append('<option value="">--Select Ring--</option>');
  }
     };
         function updateGrid() {
@@ -1289,7 +1300,7 @@
                 debugger;
                 if (parts.length > 1) {
 
-                    let siteName = parts[0] + parts[1].replace(")", ""); // Remove ")"; // "siteN-2"
+                    let siteName = parts[0] +" ("+ parts[1]; // Remove ")"; // "siteN-2"
                     let extractedValue = parts[2].replace(")", ""); // Remove ")"
                     let RingName = "";
                     if (parts.length == 4) {
@@ -1341,7 +1352,7 @@
             }
         }
 
-   
+
     function getSiteListItemRingwise(isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
 
         var ddltopologytype = $("#ddltopologytype").val();
@@ -1376,10 +1387,11 @@
     var $dropdownA = $("#ddlRingASite");
             var $dropdownB = $("#ddlRingBSite");
             var $ddlOtherRingSite = $("#ddlOtherRingSite");
-           
+
 
         function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh = true) {
 
+            debugger;
             if (isfresh) {
                 $dropdown.find("option").each(function () {
                     var ringId = $(this).attr("data-ringid");
@@ -1480,7 +1492,7 @@
         }
 
         debugger;
-   
+
     //--- Start Case Third ---
         if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh))
         {
@@ -1686,7 +1698,7 @@
                      selectByText("ddltopologytype", response.topology_type);
                      $("#ddltopologytype").trigger("chosen:updated");
 
-                     if (response.topology_type == "Linear") { $("#ddlRingBSite").prop("disabled", true); }
+                     if (response.topology_type != "Ring") { $("#ddlRingBSite").prop("disabled", true); $("#btncreateringdiv").css("display", "none"); }
                      else { $("#ddlRingBSite").prop("disabled", false); }
 
                      selectByText("ddlringcapacity", response.ring_capacity);

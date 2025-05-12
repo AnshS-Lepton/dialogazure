@@ -53,7 +53,7 @@ namespace SmartInventoryServices.Controllers
 
 		[HttpPost]
 		public dynamic EntityOperations(ReqInput data)
-		{
+		 {
 			var response = new ApiResponse<dynamic>();
 			HeaderAttributes headerAttribute = ReqHelper.getHeaderValue(Request.Headers.ToList());
 			dynamic objIn = ReqHelper.GetRequestData<dynamic>(data);
