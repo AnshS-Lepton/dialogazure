@@ -64,11 +64,11 @@ namespace SmartInventory.Controllers
 
             var lstColumnMapping = new BLFiberLinkColumns().getFiberLinkColumns();
             // Define allowed column names using an array
-            string[] searchColumns = { "network_id", "link_id" };
-            objFiberLinkFilter.lstSearchByColumns = lstColumnMapping
-                .Where(a => a != null && searchColumns.Contains(a.column_name))
-                .ToList();
-            //objFiberLinkFilter.lstSearchByColumns = lstColumnMapping;
+           // string[] searchColumns = { "network_id", "link_id" };
+           // objFiberLinkFilter.lstSearchByColumns = lstColumnMapping
+              //  .Where(a => a != null && searchColumns.Contains(a.column_name))
+                //.ToList();
+            objFiberLinkFilter.lstSearchByColumns = lstColumnMapping;
             objFiberLinkFilter.objFiberLink.lstFiberLinkColumnsMapping = lstColumnMapping.Select(x => x.column_name).ToList();
 
             objFiberLinkFilter.totalRecord = lstFiberLinkDetails.Count > 0 ? Convert.ToInt32(lstFiberLinkDetails[0].FirstOrDefault().Value) : 0;
