@@ -30,14 +30,31 @@ else
 
 
             $('.chosen-select').chosen({ width: '100%' });
-            $('th a, tfoot a').on("click", function () {
-                // onGridHeaderClick('tblFiberLinkGrid');
+            //$('th a, tfoot a').on("click", function () {
+            //    // onGridHeaderClick('tblFiberLinkGrid');
+            //    $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
+            //    return false;
+            //});
+
+            $('th a, tfoot a').on("click", function (e) {
+
+                debugger;
+                var lstRingName = $("#ddllstRingName").val();
+                if (lstRingName != "") {
+                    return false;
+                }
+
+                // Proceed with setting form action and submitting
                 $('#frmViewRingDetails').attr('action', $(this).attr('href')).submit();
                 return false;
             });
 
 
+
         });
+        
+
+       
         this.clearUserTempOverlay = function (lyrObj) {
             debugger;
             if (lyrObj) {
@@ -161,6 +178,8 @@ else
 
 
 }
+
+
 
 
 <style>
@@ -353,6 +372,26 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
 </div>
 <script>
 
+    
+    function isDivEnabledByClass(className) {
+        const divs = document.getElementsByClassName(className);
+        for (let div of divs) {
+            const style = window.getComputedStyle(div);
+            const isVisible = div.offsetParent !== null;
+            const isInteractive = style.pointerEvents !== "none" &&
+                style.display !== "none" &&
+                style.visibility !== "hidden";
+            const isNotCustomDisabled = !div.hasAttribute("disabled") &&
+                !div.classList.contains("disabled");
+
+            if (isVisible && isInteractive && isNotCustomDisabled) {
+                return true; // at least one enabled div found
+            }
+        }
+        return false; // no enabled divs
+    }
+
+    
     $("#btnRingReset").on("click", function () {
         $("#ddllstRingName")[0].selectedIndex = -1; // removes all selections
         $("#ddllstRingName").trigger("chosen:updated");
@@ -360,9 +399,17 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
         $("#ddllstSegmentName").trigger("chosen:updated");
         document.getElementById("ddllstRegionName").selectedIndex = 0;
         $("#ddllstRegionName").trigger("chosen:updated");
+        $('#btnExport').attr('disabled', 'disabled');
     });
 
     $("#btnExportLinks").on("click", function () {
+        const enabled = isDivEnabledByClass("div_totalRecord");
+        debugger;
+        if (!enabled) {
+            $('#btnExport').attr('disabled', 'disabled');
+            return false;
+        }
+        console.log("div_totalRecord is enabled:", enabled);
 
         window.location = appRoot + 'RingDetails/ExportRingDetails';
     });
@@ -373,7 +420,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
         var segName = $("#ddllstSegmentName").val()?.trim();
         var regName = $("#ddllstRegionName").val()?.trim();
 
-        if (!ringCode && !segName && !regName) {
+        if (!ringCodes && !segName && !regName) {
             alert("Please select at least one valid search criteria.");
             event.preventDefault(); // Prevents submission
             event.returnValue = false; // Ensures older browser compatibility

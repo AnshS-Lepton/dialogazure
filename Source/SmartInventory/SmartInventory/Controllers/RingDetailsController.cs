@@ -179,7 +179,10 @@ namespace SmartInventory.Controllers
             }
 
             var ringdetails =new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
-            DataTable dtReport = new DataTable();
+            if (ringdetails == null || ringdetails.Count == 0)
+            { return; }  
+        
+        DataTable dtReport = new DataTable();
             dtReport = MiscHelper.ListToDataTable<RingDetails>(ringdetails);
             dtReport.Columns.Remove("NETWORK_ID");
             dtReport.Columns.Remove("POD_NAME");

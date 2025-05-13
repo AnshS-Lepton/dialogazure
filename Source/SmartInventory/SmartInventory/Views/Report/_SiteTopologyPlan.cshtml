@@ -92,7 +92,7 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_357 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, onkeyup = "toggleMapLink()" })
 
                                 <div class="pose-plus">
                                     <a href="javascript:void(0);"
@@ -419,6 +419,13 @@
                 var selectedValue = $(this).val(); // Get selected value
                 var ddlRingASite = $("#ddlRingASite").val();
                 var ddlRingBSite = $("#ddlRingBSite").val();
+                var ringTypeDropdown = $('#ddlringtype');
+                var RingASite = $('#ddlRingASite');
+                var RingBSite = $('#ddlRingBSite');
+                ringTypeDropdown.empty(); // Clear existing options
+                ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+                ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
+
                 if (selectedValue == "Ring") {
                     var ddlnofsites = $('#ddlnofsites');
                     ddlnofsites.prop('selectedIndex', 0).trigger("chosen:updated");
@@ -428,11 +435,11 @@
                     ddlringcapacity.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlringcapacity").prop("disabled", false).trigger("chosen:updated");
 
-                    var RingBSite = $('#ddlRingBSite');
+
                     RingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingBSite").prop("disabled", false).trigger("chosen:updated");
 
-                    var RingASite = $('#ddlRingASite');
+
                     RingASite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingASite").prop("disabled", false).trigger("chosen:updated");
 
@@ -449,6 +456,8 @@
                 {
                    // $("#txtagg2").val("");
                     $("#txtagg2").css("display", "block").prop("disabled", false);
+
+                    RingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
                     $("#ddlRingBSite").prop("disabled", true).trigger("chosen:updated");
                     //  $("#ddlsegment").prop("disabled", true).trigger("chosen:updated");
                     var ddlnofsites = $('#ddlnofsites');
@@ -483,6 +492,7 @@
                     $("#btncreateringdiv").css("display", "none");
 
                 }
+
             });
 
 
@@ -565,6 +575,33 @@
                 var ddlRingASite = $("#ddlRingASite").val();
                 var ddlRingBSite = $("#ddlRingBSite").val();
                 var ddltopologytype = $("#ddltopologytype").val();
+                var PlanSiteId = $("#txtSiteId").val();
+                if (PlanSiteId === "") {
+                    alert("Please enter Site ID!");
+                    return;
+                }
+                var TOPOTYPE = $("#ddltopologytype").val();
+                if (TOPOTYPE == "") {
+                    alert("Please select topology type!");
+                    return;
+                }
+
+                var nofsites = $("#ddlnofsites").val();
+                if (nofsites == "") {
+                    alert("Please select max. sites per Ring !");
+                    return;
+                }
+
+                var ringcap = $("#ddlringcapacity").val();
+                if (ringcap == "") {
+                    alert("Please select ring capacity!");
+                    return;
+                }
+                var ringtype = $("#ddlringtype").val();
+                if (ringtype == "") {
+                    alert("Please select @Resources.Resources.SI_OSP_GBL_NET_RPT_465 !");
+                    return;
+                }
 
                 if (ddltopologytype == "Ring") {
                     if ((ddlRingASite == "" && ddlRingASite == "") || ddlRingASite == "" || ddlRingBSite == "" ) {
@@ -584,17 +621,6 @@
 
 
 
-                var TOPOTYPE = $("#ddltopologytype").val();
-                if (TOPOTYPE == "") {
-                    alert("Please select topology type!");
-                    return;
-                }
-
-                var ringcap = $("#ddlringcapacity").val();
-                if (ringcap == "") {
-                    alert("Please select ring capacity!");
-                    return;
-                }
 
             //  Validate all fields
             var SiteId = $('#txtSiteId').val();
@@ -667,6 +693,7 @@
 
             event.preventDefault(); // Prevent form submission (if inside a form)
             event.stopPropagation();
+            var PlanSiteId = $("#txtSiteId").val();
             var agg1SiteId = $("#txtagg1").val();
             var agg2SiteId = $("#txtagg2").val();
             var regionId = $("#ddlRegion").val();
@@ -692,18 +719,34 @@
             var ddlRingBSite = $('#ddlRingBSite');
             ddlRingBSite.prop('selectedIndex', 0).trigger("chosen:updated");
 
-           
+            if (PlanSiteId === "") {
+                alert("Please enter Site ID!");
+                return;
+            }
             if (topologyType === "") {
                 alert("Please select Topology type !");
                 return;
             }
 
+
+
             var ddlnofsites = $("#ddlnofsites").val();
-            if (ddlnofsites === "" && topologyType == "Ring") {
+            if (ddlnofsites === "") {
                 alert("Please select no of sites !");
                 return;
             }
 
+            var ringcapacity = $("#ddlringcapacity").val();
+            if (!ringcapacity) {
+                alert("Please select Ring Capacity.");
+                return;
+            }
+            var ringTypeDropdown = $('#ddlringtype');
+            var ringtype = $("#ddlringtype").val();
+            if (!ringtype) {
+                alert("Please select @Resources.Resources.SI_OSP_GBL_NET_RPT_465 !");
+                return;
+            }
             // var segmentName = $("#txtSegmentName").val();
             if (topologyType == "Ring") {
                 if (agg1SiteId === "" || agg2SiteId === "") {
@@ -712,10 +755,12 @@
                 }
             }
             else if (topologyType == "Linear") {
+
+
                     if (agg1SiteId === "") {
                         alert("Aggregate Site 1 is required.");
                         return;
-                    }
+                }
                 }
             $("#dvProgress").show();
             $('#dvProgress').css('display', 'block');
@@ -990,11 +1035,20 @@
             success: function (data) {
             var ringTypeDropdown = $('#ddlringtype');
             ringTypeDropdown.empty(); // Clear previous options
-            ringTypeDropdown.append('<option value="">--Select Ring--</option>');
+                ringTypeDropdown.append('<option value="">--Select Ring--</option>');
 
-            // Append new options
-            $.each(data, function (index, item) {
-                ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                debugger;
+                // Append new options
+                const match = item.ring_info.match(/\((\d+)\)/);
+                const Count = match ? parseInt(match[1], 0) : null;
+                $.each(data, function (index, item) {
+
+                    if (Count != 0 && topologyType == "Linear")
+                        ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                     if (topologyType != "Linear")
+                        ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                   
+                       
             });
 
             // Update Chosen.js Dropdown (if used)
@@ -1157,15 +1211,6 @@
  var agg1 = $("#txtagg1").val();
  var agg2 = $("#txtagg2").val();
 
- //if (agg1 === "") {
- //    alert("Please select Aggregate Site 1!");
- //    return false;
- //}
- //if (agg2 === "") {
- //    alert("Please select Aggregate Site 2!");
- //    return false;
- //}
-
  var segmentId = $('#ddlsegment').val(); // Get the selected SegmentId
  var ringcap = $("#ddlringcapacity").val();
  var topologyType = $("#ddltopologytype").val();
@@ -1192,12 +1237,22 @@
          data: { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap },
          success: function (data) {
              var ringTypeDropdown = $('#ddlringtype');
+
+             debugger;
              ringTypeDropdown.empty(); // Clear existing options
              ringTypeDropdown.append('<option value="">--Select Ring--</option>');
 
              // Append new options from response
              $.each(data, function (index, item) {
-                 ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                 debugger;
+                 const match = item.ring_info.match(/\((\d+)\)/);
+                 const data = match ? parseInt(match[1], 0) : null;
+                 if (data != 0 && topologyType =="Linear")
+                     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                 else if (topologyType != "Linear")
+                     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
+                 
+                    
              });
 
              debugger;
@@ -1213,7 +1268,7 @@
      });
  } else {
      // Clear the ring type dropdown if no segment is selected
-     $('#ddlringtype').empty().append('<option value="">--Select Ring Type--</option>');
+     $('#ddlringtype').empty().append('<option value="">--Select Ring--</option>');
  }
     };
         function updateGrid() {
@@ -1245,7 +1300,7 @@
                 debugger;
                 if (parts.length > 1) {
 
-                    let siteName = parts[0] + parts[1].replace(")", ""); // Remove ")"; // "siteN-2"
+                    let siteName = parts[0] +" ("+ parts[1]; // Remove ")"; // "siteN-2"
                     let extractedValue = parts[2].replace(")", ""); // Remove ")"
                     let RingName = "";
                     if (parts.length == 4) {
@@ -1297,9 +1352,15 @@
             }
         }
 
-   
+
     function getSiteListItemRingwise(isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
-        if (ring_a_site_id != null)
+
+        var ddltopologytype = $("#ddltopologytype").val();
+        if (ddltopologytype == "Linear" && ring_a_site_id != null) {
+            ring_a_site_id = isfresh;
+            isfresh = false;
+           }
+       else if (ring_a_site_id != null)
         {
             ring_b_site_id = ring_a_site_id;
             ring_a_site_id = isfresh;
@@ -1326,10 +1387,11 @@
     var $dropdownA = $("#ddlRingASite");
             var $dropdownB = $("#ddlRingBSite");
             var $ddlOtherRingSite = $("#ddlOtherRingSite");
-            var ddltopologytype = $("#ddltopologytype").val();
+
 
         function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh = true) {
 
+            debugger;
             if (isfresh) {
                 $dropdown.find("option").each(function () {
                     var ringId = $(this).attr("data-ringid");
@@ -1430,7 +1492,7 @@
         }
 
         debugger;
-   
+
     //--- Start Case Third ---
         if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh))
         {
@@ -1571,11 +1633,14 @@
                 $(".BsiterowShowOnMap").hide();  // Hide if nothing is selected
             }
 
-
-            if ($("#hdnSystemId").val()) {
+            var SiteId = $("#txtSiteId").val();
+            var hdnSystemId = $("#hdnSystemId").val();
+            if ($("#hdnSystemId").val() !== "0" && SiteId.length >3) {
+                debugger;
                 $(".SiteShowOnMap").show();  // Show if selected
             } else {
                 $(".SiteShowOnMap").hide();  // Hide if nothing is selected
+                $("#hdnSystemId").val("0");
             }
         }
 
@@ -1633,7 +1698,7 @@
                      selectByText("ddltopologytype", response.topology_type);
                      $("#ddltopologytype").trigger("chosen:updated");
 
-                     if (response.topology_type == "Linear") { $("#ddlRingBSite").prop("disabled", true); }
+                     if (response.topology_type != "Ring") { $("#ddlRingBSite").prop("disabled", true); $("#btncreateringdiv").css("display", "none"); }
                      else { $("#ddlRingBSite").prop("disabled", false); }
 
                      selectByText("ddlringcapacity", response.ring_capacity);
@@ -1665,7 +1730,7 @@
 
                          selectByText("ddlringtype", response.ring);
                          $("#ddlringtype").trigger("chosen:updated");
-
+                         debugger;
                          if (response.ring_a_site_id > 0) {
                              selectByValue("ddlRingASite", response.ring_a_site_id.toString());
                          }

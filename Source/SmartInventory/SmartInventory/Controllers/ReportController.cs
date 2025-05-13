@@ -13765,6 +13765,15 @@ namespace SmartInventory.Controllers
             return Json(siteList, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public ActionResult getRouteConnectedElementDetail(int routeid)
+        {
+            JsonResponse<vmRingConnectedElementDetails> objResp = new JsonResponse<vmRingConnectedElementDetails>();
+
+            objResp.result = new BLProject().getRouteConnectedElementDetail(routeid, Convert.ToInt32(Session["user_id"]));
+
+            return Json(objResp.result, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult getCableRouteDetails(string regionId, string agg1_site_id, string agg2_site_id)
         {
             TopologySegment topologySegment = new TopologySegment();

@@ -851,3 +851,6 @@
 .icon-createSegment:before {
     content: "\e9cc";
 }
+.icon-reportSegmant:before {
+    content: "\e9cd";
+}
