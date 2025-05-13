@@ -13126,7 +13126,7 @@ namespace SmartInventory.Controllers
                     try
                     {
                         ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
-                        objReportFilter.currentPage = 0;
+                        objReportFilter.currentPage =0;
                         //Filter the Layer Detail
                         var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objReportFilter.layerName.ToUpper()).FirstOrDefault();
 
