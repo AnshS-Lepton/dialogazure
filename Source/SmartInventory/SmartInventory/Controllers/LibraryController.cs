@@ -13501,13 +13501,11 @@ namespace SmartInventory.Controllers
             return PartialView("_UpdateProjectDetails", projectList);
         }
         [HttpPost]
-        public JsonResult UpdateProject(int Id,string siteId, string siteName, string projectCategory, string  cablePlanCores, string comment,string siteowner,int maximumcost,string address,string scmcarea)
+        public JsonResult UpdateSiteProject(siteprojectdetails siteprojectdetails)
         {
             try
             {
-                // Save the data (e.g., update database)
-                // Example: projectService.Update(...)
-                var test = new BLProject().UpdateProjectDetails(Id,siteId, siteName, projectCategory, cablePlanCores, comment, siteowner, maximumcost, address, scmcarea);
+                var siteproject = new BLProject().UpdateSiteProject(siteprojectdetails);
                 return Json(new { success = true });
             }
             catch (Exception ex)

@@ -2342,8 +2342,6 @@ namespace SmartInventoryServices.Controllers
 				fillRegionProvAbbr(objPOD);
 			}
 			objPOD.lstUserModule = new BLLayer().GetUserModuleAbbrList(user_id, UserType.Web.ToString());
-            objPOD.Projectdetails.lstProjectdetails = new BLProject().GetProjectDetails(objPOD.site_id); // Replace with your actual data access
-			objPOD.Projectdetails.system_id = objPOD.system_id;
             return objPOD;
 		}
 

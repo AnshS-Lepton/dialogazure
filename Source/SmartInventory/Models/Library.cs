@@ -285,27 +285,8 @@ namespace Models
         int totalRecord { get; set; }
         int currentPage { get; set; }
     }
-    public interface Isiteprojectdetails
-    {
-        //string project_id { get; set; }
-        string site_id { get; set; }
-        string site_name { get; set; }
-        //string site_owner { get; set; }
-        int? maximum_cost { get; set; } // change to decimal? if you ensure it's numeric
-        //string location_address { get; set; }
-        //string ds_cmc_area { get; set; }
-        //string coordinates_latitude { get; set; }
-        //string coordinates_longitude { get; set; }
-        string project_category { get; set; }
-        int? priority { get; set; }
-        string cable_plan_cores { get; set; }
-        //string fiber_link_type_link_id_prefix { get; set; }
-        string comment { get; set; }
-
-
-
-    }
-    public class PODMaster : PODTemplateMaster, IProjectSpecification, IOwnershipInfo, IAcquireFrom, IReference, IGeographicDetails, IAdditionalFields, ICustomCoordinate, ISite, Isiteprojectdetails
+   
+    public class PODMaster : PODTemplateMaster, IProjectSpecification, IOwnershipInfo, IAcquireFrom, IReference, IGeographicDetails, IAdditionalFields, ICustomCoordinate, ISite
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -574,39 +555,11 @@ namespace Models
         public bool is_agg_site { get; set; }
         [NotMapped]
         public int sequence { get; set; }
-        //[NotMapped]
-        //public string SiteId { get; set; }
-        //[NotMapped]
-        //public string SiteName { get; set; }
-        //[NotMapped]
-        //public decimal? MaximumCost { get; set; }
-        //[NotMapped]
-        //public string ProjectCategory { get; set; }
-        //[NotMapped]
-        //public string Priority { get; set; }
-        //[NotMapped]
-        //public string CablePlanCores { get; set; }
-        //[NotMapped]
-        //public string FiberLinkTypeLinkIdPrefix { get; set; }
-        //[NotMapped]
-        //public string Comment { get; set; }
-        //[NotMapped]
-        //public decimal? PlanCost { get; set; }
-        //[NotMapped]
-        //public decimal? FiberDistance { get; set; }
-        //[NotMapped]
-        //public string FiberLinkType { get; set; }
-        //[NotMapped]
-        //public string FiberLinkCode { get; set; }
-        //[NotMapped]
-        //public int uploaded_by { get; set; }
+       
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_linkid_prefix { get; set; }
         public bool is_site_imported { get; set; }
-        [NotMapped]
-        //public List<siteprojectdetails> lstProjectdetails { get; set; }
-        public ProjectDetailsGridViewModel Projectdetails;
-        /// Site Details Properties end
+        
         public PODMaster()
         {
 
@@ -635,7 +588,6 @@ namespace Models
             lstTopologySegmentMaster = new List<TopologySegmentMaster>();
             lstTopologyRingMaster = new List<TopologyRingMaster>();
             lsttopologygetsites = new List<TopologyGetSites>();
-            Projectdetails=new ProjectDetailsGridViewModel();
         }
 
 
@@ -5803,8 +5755,7 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        [NotMapped]
-        public int system_id { get; set; }
+        
         public string project_id { get; set; }
         public string site_id { get; set; }
         public string site_name { get; set; }
@@ -5831,14 +5782,6 @@ namespace Models
 
     }
 
-    public class ProjectDetailsGridViewModel: IProjectDetailsGridViewModel
-    {
-        public List<siteprojectdetails> lstProjectdetails { get; set; }
-        public int system_id { get; set; }
-        public int pageSize { get; set; }
-        public int totalRecord { get; set; }
-        public int currentPage { get; set; }
-    }
 }
 
 

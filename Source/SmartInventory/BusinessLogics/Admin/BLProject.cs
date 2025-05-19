@@ -294,9 +294,9 @@ namespace BusinessLogics.Admin
         {
             return new DASiteDetails().UpdateSiteDetails(PODMaster);
         }
-        public List<siteprojectdetails> SaveProjectDetails(List<PODMaster> PODMaster,int userId)
+        public List<siteprojectdetails> SaveSiteProjectDetails(List<PODMaster> PODMaster,int userId)
         {
-            return new DAProjectDetails().SaveProjectDetails(PODMaster, userId);
+            return new DAProjectDetails().SaveSiteProjectDetails(PODMaster, userId);
         }
         public List<siteprojectdetails> GetProjectDetails(string site_id)
         {
@@ -314,9 +314,9 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().GetProjectDetailsById(id);
         }
-        public siteprojectdetails UpdateProjectDetails(int Id, string siteId, string siteName, string projectCategory, string cablePlanCores, string comment, string siteowner, int maximumcost, string address, string scmcarea)
+        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
         {
-            return new DAProjectDetails().UpdateProjectDetails(Id, siteId, siteName, projectCategory, cablePlanCores, comment, siteowner,  maximumcost,  address,  scmcarea);
+            return new DAProjectDetails().UpdateSiteProject(siteprojectdetails);
         }
         public DbMessage DeleteProjectById(int ticket_id, int userId)
         {

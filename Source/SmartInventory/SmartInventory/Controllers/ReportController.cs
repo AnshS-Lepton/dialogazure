@@ -14460,10 +14460,7 @@ namespace SmartInventory.Controllers
 
            
            var site=  new BLProject().updateSiteDetails(siteList);
-            new BLProject().SaveProjectDetails(siteList, userId);
-
-            // Here you could call a database function to insert/update records
-
+            new BLProject().SaveSiteProjectDetails(siteList, userId);
             return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
         }
 

@@ -1,6 +1,7 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
+using Models.API;
 using Models.WFM;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI;
+using Utility;
 using static Mono.Security.X509.X520;
 
 namespace DataAccess.Admin
@@ -1064,22 +1066,24 @@ namespace DataAccess.Admin
     public class DAProjectDetails : Repository<siteprojectdetails>
     {
         //PROJECTDetails
-        public List<siteprojectdetails> SaveProjectDetails(List<PODMaster> pODMasterList,int userId)
+        public List<siteprojectdetails> SaveSiteProjectDetails(List<PODMaster> pODMasterList, int userId)
         {
             List<siteprojectdetails> savedRecords = new List<siteprojectdetails>();
-            foreach (var pod in pODMasterList)
+
+            try
             {
-                
+                foreach (var pod in pODMasterList)
+                {
                     // Insert new record
                     var newRecord = new siteprojectdetails
                     {
-                        project_id = GetNextProjectId(), 
+                        project_id = GetNextProjectId(),
                         site_id = pod.site_id,
                         site_name = pod.site_name,
                         //site_owner = pod.site_owner,
                         maximum_cost = pod.maximum_cost,
                         //location_address = pod.location_address,
-                       // ds_cmc_area = pod.ds_cmc_area,
+                        //ds_cmc_area = pod.ds_cmc_area,
                         //coordinates_latitude = pod.coordinates_latitude,
                         //coordinates_longitude = pod.coordinates_longitude,
                         project_category = pod.project_category,
@@ -1087,18 +1091,24 @@ namespace DataAccess.Admin
                         cable_plan_cores = pod.cable_plan_cores,
                         fiber_link_type_link_id_prefix = pod.fiber_link_type_linkid_prefix,
                         comment = pod.comment,
-                        created_by= userId,
+                        created_by = userId,
                         created_on = pod.created_on != default(DateTime) ? pod.created_on : DateTime.Now
-
                     };
 
                     repo.Insert(newRecord);
                     savedRecords.Add(newRecord);
-                
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveSiteProjectDetails()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
             }
 
             return savedRecords;
         }
+
         private string GetNextProjectId()
         {
             var lastProject = repo.GetAll()
@@ -1140,35 +1150,49 @@ namespace DataAccess.Admin
             var sitenameList = repo.GetAll().Where(x => x.id == id).FirstOrDefault();
             return sitenameList;
         }
-        public siteprojectdetails UpdateProjectDetails(int id, string siteId, string siteName, string projectCategory, string cablePlanCores, string comment, string siteowner, int maximumcost, string address, string scmcarea)
+        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
         {
-            // Check if the record exists
-            var existingRecord = repo.GetAll().Where(x => x.id == id).FirstOrDefault();
-
-            if (existingRecord != null)
+            try
             {
-                // Update fields
-                existingRecord.site_name = siteName;
-                existingRecord.project_category = projectCategory;
-                existingRecord.cable_plan_cores = cablePlanCores;
-                existingRecord.comment = comment;
-                existingRecord.site_owner = siteowner;
-                existingRecord.maximum_cost = maximumcost;
-                existingRecord.location_address = address;
-                existingRecord.ds_cmc_area = scmcarea;
+                // Check if the record exists
+                var existingRecord = repo.GetAll().FirstOrDefault(x => x.id == siteprojectdetails.id);
 
-                repo.Update(existingRecord); // Make sure your repo handles updating
+                if (existingRecord != null)
+                {
+                    // Update fields
+                    existingRecord.site_name = siteprojectdetails.site_name;
+                    existingRecord.project_category = siteprojectdetails.project_category;
+                    existingRecord.cable_plan_cores = siteprojectdetails.cable_plan_cores;
+                    existingRecord.comment = siteprojectdetails.comment;
+                    existingRecord.site_owner = siteprojectdetails.site_owner;
+                    existingRecord.maximum_cost = siteprojectdetails.maximum_cost;
+                    existingRecord.location_address = siteprojectdetails.location_address;
+                    existingRecord.ds_cmc_area = siteprojectdetails.ds_cmc_area;
+
+                    repo.Update(existingRecord); // Ensure this commits changes properly
+                }
+
+                return existingRecord;
             }
-
-            return existingRecord;
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateSiteProject()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
+            }
         }
+
         public DbMessage DeleteProjectById(int id, int userId)
         {
             try
             {
                 return repo.ExecuteProcedure<DbMessage>("delete_site_project_detail", new { p_id = id, p_userId = userId }).FirstOrDefault();
             }
-            catch { throw; }
+            catch(Exception ex) {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("DeleteProjectById()", "Library Controller", ex.Message.ToString(), ex);
+                throw;  
+            }
 
         }
 

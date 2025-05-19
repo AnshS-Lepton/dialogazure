@@ -46,10 +46,6 @@
 {
     { Html.RenderPartial("~/Views/Library/_AdditionalFields.cshtml", (IAdditionalFields)Model); }
 }
-@*@helper ProjectDetails()
-{
-    @Html.Partial("~/Views/Library/_ProjectDetails.cshtml", (IProjectDetailsGridViewModel)Model.Projectdetails)
-}*@
 @helper SiteDetails()
 {
     { Html.RenderPartial("~/Views/Library/_SiteDtls.cshtml", (ISite)Model); }

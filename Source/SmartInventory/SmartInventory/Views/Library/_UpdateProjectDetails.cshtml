@@ -81,7 +81,6 @@
         var projectcategory = $("#txtprojectcategory").val();
         var cableplancores = $("#txtcableplancores").val();
         var comment = $("#txtcomment").val();
-
         var siteowner = $("#txtsiteowner").val();
         var maximumcost = $("#txtmaximumcost").val();
         var address = $("#txtlocationaddress").val();
@@ -89,19 +88,19 @@
 
 
     $.ajax({
-        url: '@Url.Action("UpdateProject", "Library")',
+        url: '@Url.Action("UpdateSiteProject", "Library")',
         type: 'POST',
         data: {
             Id: id,
-            siteId: siteid,
-            siteName: sitename,
-            projectCategory: projectcategory,
-            cablePlanCores: cableplancores,
+            site_id: siteid,
+            site_name: sitename,
+            project_category: projectcategory,
+            cable_plan_cores: cableplancores,
             comment: comment,
-            siteowner: siteowner,
-            maximumcost: maximumcost,
-            address: address,
-            scmcarea: scmcarea
+            site_owner: siteowner,
+            maximum_cost: maximumcost,
+            location_address: address,
+            ds_cmc_area: scmcarea
         },
         success: function (response) {
             debugger;
