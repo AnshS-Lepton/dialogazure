@@ -1031,36 +1031,46 @@ namespace DataAccess.Admin
         {
             List<PODMaster> updatedRecords = new List<PODMaster>();
 
-            foreach (var pod in pODMasterList)
+            try
             {
-                // Fetch existing record by SiteId
-                var existingRecord = repo.GetAll(x => x.site_id == pod.site_id).FirstOrDefault();
-
-                if (existingRecord != null)
+                foreach (var pod in pODMasterList)
                 {
-                    // Update fields
-                    existingRecord.site_name = pod.site_name;
-                    existingRecord.maximum_cost = pod.maximum_cost;
-                    existingRecord.project_category = pod.project_category;
-                    existingRecord.priority = pod.priority;
-                    existingRecord.cable_plan_cores  = pod.cable_plan_cores ;
-                    existingRecord.fiber_link_type_linkid_prefix = pod.fiber_link_type_linkid_prefix;
-                    existingRecord.comment = pod.comment;
-                    existingRecord.plan_cost = pod.plan_cost;
-                    existingRecord.fiber_distance = pod.fiber_distance;
-                    existingRecord.fiber_link_type = pod.fiber_link_type;
-                    existingRecord.fiber_link_code = pod.fiber_link_code;
-                    existingRecord.is_site_imported =true;
+                    // Fetch existing record by SiteId
+                    var existingRecord = repo.GetAll(x => x.site_id == pod.site_id).FirstOrDefault();
 
-                    // Update in DB
-                    repo.Update(existingRecord);
+                    if (existingRecord != null)
+                    {
+                        // Update fields
+                        existingRecord.site_name = pod.site_name;
+                        existingRecord.maximum_cost = pod.maximum_cost;
+                        existingRecord.project_category = pod.project_category;
+                        existingRecord.priority = pod.priority;
+                        existingRecord.cable_plan_cores = pod.cable_plan_cores;
+                        existingRecord.fiber_link_type_linkid_prefix = pod.fiber_link_type_linkid_prefix;
+                        existingRecord.comment = pod.comment;
+                        existingRecord.plan_cost = pod.plan_cost;
+                        existingRecord.fiber_distance = pod.fiber_distance;
+                        existingRecord.fiber_link_type = pod.fiber_link_type;
+                        existingRecord.fiber_link_code = pod.fiber_link_code;
+                        existingRecord.is_site_imported = true;
 
-                    updatedRecords.Add(existingRecord);
+                        // Update in DB
+                        repo.Update(existingRecord);
+
+                        updatedRecords.Add(pod);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateSiteDetails()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
             }
 
             return updatedRecords;
         }
+
 
     }
     public class DAProjectDetails : Repository<siteprojectdetails>
