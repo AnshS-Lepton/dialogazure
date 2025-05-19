@@ -1,0 +1,128 @@
+﻿@model Models.siteprojectdetails
+<input type="hidden" id="txtid" value="@Model.id" />
+
+<div class="space-pad">
+    <form id="segmentForm">
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">SiteId<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsiteid", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text",Readonly=true, @maxlength = 100 })
+
+                @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
+            </div>
+            <label class="control-label col-sm-2" for="txtSearchtext">SiteName<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.site_name, new { @id = "txtsitename", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", Readonly = true, @maxlength = 100 })
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Project Category<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.project_category, new { @id = "txtprojectcategory", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+            <label class="control-label col-sm-2" for="txtSearchtext">Cable Plan Cores<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.cable_plan_cores, new { @id = "txtcableplancores", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Comment<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.comment, new { @id = "txtcomment", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+            <label class="control-label col-sm-2" for="searchby">Site Owner<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.site_owner, new { @id = "txtsiteowner", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Maximum Cost<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.maximum_cost, new { @id = "txtmaximumcost", @title = "Search text", @tabindex = "4", @onkeypress = "return allowNumberwithOneDot(event,'txtmaximumcost');", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+            <label class="control-label col-sm-2" for="searchby">Address<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.location_address, new { @id = "txtlocationaddress", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Ds CMC Area<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.ds_cmc_area, new { @id = "txtdscmcarea", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
+
+            </div>
+        </div>
+    </form>
+</div>
+<div class="ModalFooter d-flex --gap05">
+    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnringCancel">
+        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+</div>
+
+<script>
+    $("#btnringCancel").click(function (event) {
+        event.preventDefault(); // Prevent form submission (if inside a form)
+        event.stopPropagation();
+        $("#closeChildPopup").trigger("click");
+    });
+  $("#btnSave").click(function () {
+    debugger;
+      var id = $("#txtid").val();
+
+        var siteid = $("#txtsiteid").val();
+        var sitename = $("#txtsitename").val();
+        var projectcategory = $("#txtprojectcategory").val();
+        var cableplancores = $("#txtcableplancores").val();
+        var comment = $("#txtcomment").val();
+
+        var siteowner = $("#txtsiteowner").val();
+        var maximumcost = $("#txtmaximumcost").val();
+        var address = $("#txtlocationaddress").val();
+        var scmcarea = $("#txtdscmcarea").val();
+
+
+    $.ajax({
+        url: '@Url.Action("UpdateProject", "Library")',
+        type: 'POST',
+        data: {
+            Id: id,
+            siteId: siteid,
+            siteName: sitename,
+            projectCategory: projectcategory,
+            cablePlanCores: cableplancores,
+            comment: comment,
+            siteowner: siteowner,
+            maximumcost: maximumcost,
+            address: address,
+            scmcarea: scmcarea
+        },
+        success: function (response) {
+            debugger;
+            if (response.success) {
+                alert("Project updated successfully!");
+                $('#myModal').modal('hide'); // close modal using jQuery
+                $("#closeChildPopup").trigger("click");
+                ajaxReq('Library/GetSiteProjectDetail', {
+                    site_id: siteid
+                }, true, function (resp) {
+                    $("#PRojectAssoctn").html(resp);
+                    $("#PRojectAssoctn").css('background-image', 'none');
+                }, false, false);
+            } else {
+                alert(response.message || "Failed to update.");
+            }
+        },
+        error: function () {
+            alert("An error occurred while saving the project.");
+        }
+    });
+});
+    
+</script>

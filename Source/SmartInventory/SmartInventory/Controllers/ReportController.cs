@@ -22,6 +22,7 @@ using SmartInventory.Helper;
 using SmartInventory.Settings;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Dynamic;
@@ -14390,6 +14391,98 @@ namespace SmartInventory.Controllers
             }
             return workbook;
 
+        }
+        [HttpPost]
+        public ActionResult UploadSiteFiles(HttpPostedFileBase files1)
+        {
+            DataTable dtExcelData = new DataTable();
+            var fileName = string.Empty;
+            var filepath = string.Empty;
+            var dataFileName = string.Empty;
+            int userId = Convert.ToInt32(Session["user_id"]);
+            HttpFileCollectionBase files = Request.Files;
+            DataTable dataTable = new DataTable();
+            var timeStamp = DateTimeHelper.Now.ToString("yyyyMMddHHmmssfff");
+            if (files.Count > 1)
+            {
+               
+                for (int i = 0; i < files.Count; i++)
+                {
+                    HttpPostedFileBase file = files[i];
+                    fileName = Request.Files[i].FileName;
+                    fileName = string.Concat(Path.GetFileNameWithoutExtension(fileName), timeStamp, Path.GetExtension(fileName));
+                    filepath = Path.Combine(Server.MapPath("~\\Content\\UploadedFiles\\Buildings\\"), fileName);
+                    file.SaveAs(filepath);
+                }
+            }
+            else
+            {
+                HttpPostedFileBase file = files[0];
+                fileName = AppendTimeStamp(Request.Files[0].FileName);
+                filepath = Path.Combine(Server.MapPath("~\\Content\\UploadedFiles\\Site\\"), fileName);
+                file.SaveAs(filepath);
+                if (Path.GetExtension(fileName).ToUpper() == ".XLS" || Path.GetExtension(fileName).ToUpper() == ".XLSX")
+                {
+                    dataTable = NPOIExcelHelper.ExcelToTable(filepath, "");
+
+                }
+                // Remove blank rows...
+                if (dataTable != null && dataTable.Rows.Count > 0)
+                {
+                    dtExcelData = dataTable.Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is DBNull || string.IsNullOrWhiteSpace(field as string))).CopyToDataTable();
+                }
+            }
+            // Optionally log the values
+            List<PODMaster> lstSiteImportModel = new List<PODMaster>();
+            var now = DateTime.Now; // Set once to keep consistent timestamp for all records
+
+            var siteList = dtExcelData.AsEnumerable().Select(row => new PODMaster
+            {
+                site_id = row["Site ID"]?.ToString()?.Trim(),
+                site_name = row["Site Name"]?.ToString()?.Trim(),
+
+                maximum_cost = int.TryParse(row["Maximum Cost"]?.ToString(), out var maxCost) ? maxCost : (int?)null,
+                project_category = row["Project Category"]?.ToString()?.Trim(),
+                priority = int.TryParse(row["Priority"]?.ToString(), out var Priority) ? maxCost : (int?)null,
+
+
+                cable_plan_cores = row["Cable Plan(Cores)"]?.ToString()?.Trim(),
+                fiber_link_type_linkid_prefix = row["Fiber Link Type(Link ID Prefix)"]?.ToString()?.Trim(),
+                comment = row["Comment"]?.ToString()?.Trim(),
+
+                plan_cost = int.TryParse(row["Plan Cost"]?.ToString(), out var planCost) ? planCost : (int?)null,
+                fiber_distance = int.TryParse(row["Fiber Distance"]?.ToString(), out var fiberDist) ? fiberDist : (int?)null,
+
+                fiber_link_type = row["Fiber Link Type"]?.ToString()?.Trim(),
+                fiber_link_code = row["Fiber Link Code"]?.ToString()?.Trim(),
+                created_on = now
+            }).ToList();
+
+           
+           var site=  new BLProject().updateSiteDetails(siteList);
+            new BLProject().SaveProjectDetails(siteList, userId);
+
+            // Here you could call a database function to insert/update records
+
+            return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
+        }
+
+        public string AppendTimeStamp(string fileName)
+        {
+            return string.Concat(
+            Path.GetFileNameWithoutExtension(fileName),
+            DateTimeHelper.Now.ToString("yyyyMMddHHmmssfff"),
+            Path.GetExtension(fileName)
+            );
+
+        }
+        public FileResult DownloadTemplate()
+        {
+            string filePath = Server.MapPath("~\\Content\\Templates\\Site\\ImportSite.xlsx");
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            string fileName = "ImportSite.xlsx";
+
+            return File(filePath, contentType, fileName);
         }
     }
 }

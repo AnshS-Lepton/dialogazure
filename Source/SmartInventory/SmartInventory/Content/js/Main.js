@@ -22183,6 +22183,7 @@ var Main = function () {
     //##POP Association
     this.GetPODAssociationDetail = function (_geom, _system_id, _entity_type, _primary_pod_system_id, _secondary_pod_system_id) {
         //;
+        debugger;
         ajaxReq('Library/GetPODAssociationDetail', {
             geom: _geom, associated_system_id: _system_id, associated_entity_Type: _entity_type, primary_pod_system_id: _primary_pod_system_id, secondary_pod_system_id: _secondary_pod_system_id
         }, true, function (resp) {
@@ -22190,7 +22191,17 @@ var Main = function () {
             $("#PODAssoctn").css('background-image', 'none');
         }, false, false);
     }
-
+    //##GetSiteProjectDetail
+    this.GetSiteProjectDetail = function (_site_id) {
+        //;
+        debugger;
+        ajaxReq('Library/GetSiteProjectDetail', {
+            site_id: _site_id
+        }, true, function (resp) {
+            $("#PRojectAssoctn").html(resp);
+            $("#PRojectAssoctn").css('background-image', 'none');           
+        }, false, false);
+    }
 
     // ## AT Acceptance
     this.GetATAcceptance = function (_entityId, _entityType, editPermission) {

@@ -131,6 +131,10 @@ namespace DataAccess
                     objPOD.link_id = objPODMaster.link_id;
                     objPOD.alias_name = objPODMaster.alias_name;
                     objPOD.bh_status = objPODMaster.bh_status;
+
+                    objPOD.project_category = objPODMaster.project_category;
+                    objPOD.cable_plan_cores = objPODMaster.cable_plan_cores;
+                    objPOD.comment = objPODMaster.comment;
                     //site 
                     var result = repo.Update(objPOD);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.POD.ToString(), result.province_id, 1);

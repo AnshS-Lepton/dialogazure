@@ -24,6 +24,25 @@
     .icon-kmldownload {
         font-size: 20px;
     }
+
+    .FlowDivs {
+        right: 82px;
+        width: 240px;
+        height: auto;
+        background-color: #fcfcfc;
+        position: absolute;
+        text-align: left;
+        display: none;
+        top: 50px;
+        box-shadow: 0 10px 20px 0 rgb(82 63 105 / 20%);
+        border: 1px solid #e5e5e5;
+        padding:8px;
+    }
+    .downloadUploadBox{
+        display:flex;
+        gap:10px;
+        flex-direction:column;
+    }
 </style>
 
 <div class="libDetail">
@@ -128,18 +147,53 @@
                     @Resources.Resources.GBL_GBL_GBL_GBL_GBL_010
                     <i class="fa fa-chevron-down" aria-hidden="true"></i>
                 </button>
+                <button type="button" class="exp--btn ml-10" id="btnExports">
+                    Site Import
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
                 <div class="FlowDiv">
                     <div class="arrow-up"></div>
                     <span class="excel"><a id="btnExportReportIntoExcel" href="#"><i class="fa fa-file-excel-o mr-05" aria-hidden="true"></i> @Resources.Resources.SI_OSP_GBL_NET_GBL_006</a> </span>
                     <span class="excel"><a id="btnExportReportIntoKML" href="#"><i class="fa icon-kmldownload mr-05" aria-hidden="true"></i>@Resources.Resources.SI_GBL_GBL_GBL_GBL_115</a> </span>
+                    @*<span class="excel">
+                            <label for="updExcel" style="cursor: pointer;">
+                                <i class="fa fa-upload mr-05" aria-hidden="true"></i>Site Import
+                            </label>
+                            <input type="file" id="updExcel" accept=".xls,.xlsx" style="display: block;">
+                            <button id="uploadExcelFile" type="button" class="btn btn-primary ml-2">
+                                <i aria-hidden="true"></i> Upload
+                            </button>
+                        </span>*@
+
+
+                </div>
+                <div class="FlowDivs">
+                    <div class="downloadUploadBox">
+                            <input type="file" id="updExcel" accept=".xls,.xlsx">
+                        <div class="d-flex --gap05">
+                            <button id="uploadExcelFile" type="button" class="btn btn-default">
+                                Upload
+                            </button>
+                            <button id="downloadTemplate" type="button" class="btn btn-primary">
+                                Download
+                            </button>
+                        </div>
+                    </div>
                 </div>
             }
             else
             {
                 <input type="button" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010" class="btn btn-default ml-10" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+                <input type="button" value="Site Import" class="btn btn-default ml-10" @string.Format((grid.TotalRowCount == 0) ? "disabled" : "") />
+
             }
             <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
+
+
         </div>
+
+
+
 
         if (Model.lstReportData.Count > 0)
         {
@@ -175,6 +229,8 @@
 @Scripts.Render("~/bundles/SiteScripts")
 <script>
     $(document).ready(function () {
+
+       
         var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
         $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
 
@@ -183,5 +239,51 @@
 
         var selectedNetworkStatuses = '@Model.objReportFilters.SelectedNetworkStatues.Replace("'", "")';
         $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
+
+        document.getElementById("uploadExcelFile").addEventListener("click", function () {
+            debugger;
+            const fileInput = document.getElementById("updExcel");
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Use your reusable AJAX file upload function
+            ajaxReqforFileUpload('Report/UploadSiteFiles', formData, true, function (result) {
+                if (result.success) {
+                    alert(result.message);
+                    $("#updExcel").val("");
+                } else {
+                    alert("Import failed: " + (result.message || "Unknown error"));
+                }
+            });
+        });
+
+        // Example reusable function (ensure this exists globally in your project)
+        function ajaxReqforFileUpload(url, data, isAsync, callback) {
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                contentType: false,
+                processData: false,
+                async: isAsync,
+                success: function (res) {
+                    if (callback) callback(res);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Upload error:", error);
+                    if (callback) callback({ success: false, message: "Server error occurred." });
+                }
+            });
+        }
+
+        $("#downloadTemplate").on("click", function () {
+            window.location.href = '/Report/DownloadTemplate';
+        });
     });
 </script>

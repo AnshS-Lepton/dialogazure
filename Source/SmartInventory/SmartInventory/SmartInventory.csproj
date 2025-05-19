@@ -2455,6 +2455,8 @@
     <Content Include="Views\SpxI49Ftz\Index.cshtml" />
     <Content Include="Views\Report\_AddSegment.cshtml" />
     <Content Include="Views\Report\_ViewSegment.cshtml" />
+    <Content Include="Views\Library\_UpdateProjectDetails.cshtml" />
+    <Content Include="Views\Library\PODProject.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
