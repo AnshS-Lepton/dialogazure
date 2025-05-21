@@ -2704,11 +2704,13 @@ namespace SmartInventory.Controllers
             ////}
             //BindPODDropDown(objPODMaster);
             //return PartialView("_AddPOD", objPODMaster);
+            
             PODMaster obj = new PODMaster();
             obj.networkIdType = networkIdType;
             obj.system_id = systemId;
             obj.geom = geom;
             obj.user_id = Convert.ToInt32(Session["user_id"]);
+            
             string url = "api/Library/EntityOperations";
             var response = WebAPIRequest.PostIntegrationAPIRequest<PODMaster>(url, obj, EntityType.POD.ToString(), EntityAction.Get.ToString());
             return PartialView("_AddPOD", response.results);
@@ -11784,8 +11786,19 @@ namespace SmartInventory.Controllers
         //cabinet shazia 
         public PartialViewResult GetPODAssociationDetail(PODAssociation obj)
         {
+
             obj.lstPODAssociation = new BLPOD().GetPODAssociationDetail(obj.geom, obj.associated_system_id, obj.associated_entity_Type);
             return PartialView("POD_Association", obj);
+
+        }
+        //siteid
+        public PartialViewResult GetSiteProjectDetail(SiteProjectDetails obj)
+        {
+            SiteProjectDetails pRojectAssociation = new SiteProjectDetails();
+            pRojectAssociation.lstSiteProjectDetails = new BLProject().GetProjectByDetails(obj.site_id); // Replace with your actual data access
+
+            //obj.lstPODAssociation = new BLPOD().GetPODAssociationDetail(obj.geom, obj.associated_system_id, obj.associated_entity_Type);
+            return PartialView("PODProject", pRojectAssociation);
 
         }
         //Vaultt shazia 
@@ -13458,6 +13471,65 @@ namespace SmartInventory.Controllers
             objResp  = new BLCable().GetRemoveRingAssociation(ringId, userId, cableId);
             return Json(new { message = objResp.message, status = objResp.status }, JsonRequestBehavior.AllowGet);
         }
+        
+        //public PartialViewResult ShowProjectDetails(int page = 0)
+        //{
+        //   var  projectList = new BLProject().GetProjectDetails(); // Replace with your actual data access
+        //    int totalRecords = projectList.Count;
 
+        //    var model = new ProjectDetailsGridViewModel
+        //    {
+        //        lstProjectdetails = projectList.Skip(page * 10).Take(10).ToList(),
+        //        totalRecord = totalRecords,
+        //        pageSize = 10,
+        //        currentPage = page + 1
+        //    };
+
+        //    return PartialView("_ProjectDetails", model);
+        //}
+
+        //public PartialViewResult EditProject(int siteId)
+        //{
+        //    ProjectDetailsGridViewModel siteprojectdetails = new ProjectDetailsGridViewModel();
+        //    siteprojectdetails.lstProjectdetails= new BLProject().GetProjectDetailsById(siteId);
+        //    return PartialView("_UpdateProjectDetails", siteprojectdetails);
+        //}
+        public PartialViewResult EditProject(int siteId)
+        {
+            var projectList = new BLProject().GetProjectDetailsById(siteId);
+            
+            return PartialView("_UpdateProjectDetails", projectList);
+        }
+        [HttpPost]
+        public JsonResult UpdateSiteProject(siteprojectdetails siteprojectdetails)
+        {
+            try
+            {
+                var siteproject = new BLProject().UpdateSiteProject(siteprojectdetails);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        public JsonResult DeleteProject(int id)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+
+
+            var result = new BLProject().DeleteProjectById(id, Convert.ToInt32(Session["user_id"]));
+            if (result.status)
+            {
+                objResp.status = ResponseStatus.OK.ToString();
+                objResp.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);
+            }
+            else
+            {
+                objResp.status = ResponseStatus.FAILED.ToString();
+                objResp.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
     }
 }

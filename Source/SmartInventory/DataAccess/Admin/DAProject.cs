@@ -1,6 +1,8 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
+using Models.API;
+using Models.WFM;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI;
+using Utility;
 using static Mono.Security.X509.X520;
 
 namespace DataAccess.Admin
@@ -1021,5 +1024,187 @@ namespace DataAccess.Admin
 
             return resultItem;
         }
+    }
+    public class DASiteDetails : Repository<PODMaster>
+    {
+        public List<PODMaster> UpdateSiteDetails(List<PODMaster> pODMasterList)
+        {
+            List<PODMaster> updatedRecords = new List<PODMaster>();
+
+            try
+            {
+                foreach (var pod in pODMasterList)
+                {
+                    // Fetch existing record by SiteId
+                    var existingRecord = repo.GetAll(x => x.site_id == pod.site_id).FirstOrDefault();
+
+                    if (existingRecord != null)
+                    {
+                        // Update fields
+                        existingRecord.site_name = pod.site_name;
+                        existingRecord.maximum_cost = pod.maximum_cost;
+                        existingRecord.project_category = pod.project_category;
+                        existingRecord.priority = pod.priority;
+                        existingRecord.cable_plan_cores = pod.cable_plan_cores;
+                        existingRecord.fiber_link_type_linkid_prefix = pod.fiber_link_type_linkid_prefix;
+                        existingRecord.comment = pod.comment;
+                        existingRecord.plan_cost = pod.plan_cost;
+                        existingRecord.fiber_distance = pod.fiber_distance;
+                        existingRecord.fiber_link_type = pod.fiber_link_type;
+                        existingRecord.fiber_link_code = pod.fiber_link_code;
+                        existingRecord.is_site_imported = true;
+
+                        // Update in DB
+                        repo.Update(existingRecord);
+
+                        updatedRecords.Add(pod);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateSiteDetails()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
+            }
+
+            return updatedRecords;
+        }
+
+
+    }
+    public class DAProjectDetails : Repository<siteprojectdetails>
+    {
+        //PROJECTDetails
+        public List<siteprojectdetails> SaveSiteProjectDetails(List<PODMaster> pODMasterList, int userId)
+        {
+            List<siteprojectdetails> savedRecords = new List<siteprojectdetails>();
+
+            try
+            {
+                foreach (var pod in pODMasterList)
+                {
+                    // Insert new record
+                    var newRecord = new siteprojectdetails
+                    {
+                        project_id = GetNextProjectId(),
+                        site_id = pod.site_id,
+                        site_name = pod.site_name,
+                        //site_owner = pod.site_owner,
+                        maximum_cost = pod.maximum_cost,
+                        //location_address = pod.location_address,
+                        //ds_cmc_area = pod.ds_cmc_area,
+                        //coordinates_latitude = pod.coordinates_latitude,
+                        //coordinates_longitude = pod.coordinates_longitude,
+                        project_category = pod.project_category,
+                        priority = pod.priority,
+                        cable_plan_cores = pod.cable_plan_cores,
+                        fiber_link_type_link_id_prefix = pod.fiber_link_type_linkid_prefix,
+                        comment = pod.comment,
+                        created_by = userId,
+                        created_on = pod.created_on != default(DateTime) ? pod.created_on : DateTime.Now
+                    };
+
+                    repo.Insert(newRecord);
+                    savedRecords.Add(newRecord);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("SaveSiteProjectDetails()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
+            }
+
+            return savedRecords;
+        }
+
+        private string GetNextProjectId()
+        {
+            var lastProject = repo.GetAll()
+                                  .OrderByDescending(x => x.id) // Assuming id is sequential
+                                  .FirstOrDefault();
+
+            if (lastProject != null && !string.IsNullOrEmpty(lastProject.project_id) && lastProject.project_id.StartsWith("PRJ"))
+            {
+                var numberPart = lastProject.project_id.Substring(3);
+                if (int.TryParse(numberPart, out int lastNumber))
+                {
+                    return "PRJ" + (lastNumber + 1).ToString("D5"); // e.g., PRJ00001
+                }
+            }
+
+            return "PRJ00001"; // First project if none exists
+        }
+        public List<siteprojectdetails> GetProjectDetails(string site_id)
+        {
+            var sitname = repo.GetAll().Where(x => x.site_id == site_id).ToList();
+            return sitname;
+        }
+        public List<siteprojectdetails> GetProjectDetails()
+        {
+            var sitname = repo.GetAll().ToList();
+            return sitname;
+        }
+
+        public List<PROJECTDetails> GetProjectByDetails(string site_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<PROJECTDetails>("get_site_project_details", new { p_site_id = site_id }, true);
+            }
+            catch { throw; }
+        }
+        public siteprojectdetails GetProjectDetailsById(int id)
+        {
+            var sitenameList = repo.GetAll().Where(x => x.id == id).FirstOrDefault();
+            return sitenameList;
+        }
+        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
+        {
+            try
+            {
+                // Check if the record exists
+                var existingRecord = repo.GetAll().FirstOrDefault(x => x.id == siteprojectdetails.id);
+
+                if (existingRecord != null)
+                {
+                    // Update fields
+                    existingRecord.site_name = siteprojectdetails.site_name;
+                    existingRecord.project_category = siteprojectdetails.project_category;
+                    existingRecord.cable_plan_cores = siteprojectdetails.cable_plan_cores;
+                    existingRecord.comment = siteprojectdetails.comment;
+                    existingRecord.site_owner = siteprojectdetails.site_owner;
+                    existingRecord.maximum_cost = siteprojectdetails.maximum_cost;
+                    existingRecord.location_address = siteprojectdetails.location_address;
+                    existingRecord.ds_cmc_area = siteprojectdetails.ds_cmc_area;
+
+                    repo.Update(existingRecord); // Ensure this commits changes properly
+                }
+
+                return existingRecord;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateSiteProject()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
+            }
+        }
+
+        public DbMessage DeleteProjectById(int id, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("delete_site_project_detail", new { p_id = id, p_userId = userId }).FirstOrDefault();
+            }
+            catch(Exception ex) {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("DeleteProjectById()", "Library Controller", ex.Message.ToString(), ex);
+                throw;  
+            }
+
+        }
+
     }
 }

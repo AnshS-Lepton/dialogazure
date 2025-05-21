@@ -89,6 +89,10 @@ $('#btnExport').on('click', function () {
     $('.FlowDiv').slideToggle();
 
 });
+$('#btnExports').on('click', function () {
+    $('.FlowDivs').slideToggle();
+
+});
 
 $(document).ready(function () {
     $('#hdnLayerName').val('POD');

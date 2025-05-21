@@ -290,5 +290,37 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getExistingSegmentDetails(regionId, agg1_site_id, agg2_site_id, route, user_id);
         }
+        public List<PODMaster> updateSiteDetails(List<PODMaster> PODMaster)
+        {
+            return new DASiteDetails().UpdateSiteDetails(PODMaster);
+        }
+        public List<siteprojectdetails> SaveSiteProjectDetails(List<PODMaster> PODMaster,int userId)
+        {
+            return new DAProjectDetails().SaveSiteProjectDetails(PODMaster, userId);
+        }
+        public List<siteprojectdetails> GetProjectDetails(string site_id)
+        {
+            return new DAProjectDetails().GetProjectDetails(site_id);
+        }
+        public List<PROJECTDetails> GetProjectByDetails(string site_id)
+        {
+            return new DAProjectDetails().GetProjectByDetails(site_id);
+        }
+        public List<siteprojectdetails> GetProjectDetails()
+        {
+            return new DAProjectDetails().GetProjectDetails();
+        }
+        public siteprojectdetails GetProjectDetailsById(int id)
+        {
+            return new DAProjectDetails().GetProjectDetailsById(id);
+        }
+        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
+        {
+            return new DAProjectDetails().UpdateSiteProject(siteprojectdetails);
+        }
+        public DbMessage DeleteProjectById(int ticket_id, int userId)
+        {
+            return new DAProjectDetails().DeleteProjectById(ticket_id, userId);
+        }
     }
 }

@@ -30258,6 +30258,12 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_GBL_GBL_GBL_GBL_437", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
-
-        }        
+        public static string SI_OSP_GBL_NET_FRM_767
+        {
+            get
+            {
+                return resourceProvider.GetResource("SI_OSP_GBL_NET_FRM_767", CultureInfo.CurrentUICulture.Name) as string;
+            }
+        }
+    }        
 }
