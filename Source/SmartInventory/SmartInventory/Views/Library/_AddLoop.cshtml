@@ -216,6 +216,10 @@
             alert(MultilingualKey.SI_OSP_GBL_NET_FRM_462);
             return false;
         }
+        else if ($('#txt_loop_length').val() < 0) {
+            alert("Loop length cannot be negative or empty!");
+            return false;
+        }
         else if (parseFloat($('#txt_loop_length').val()) > parseFloat($('#txtAvailbleCalLngth').val())) {
             alert(MultilingualKey.SI_OSP_GBL_NET_FRM_463);
             return false;
