@@ -1,0 +1,48 @@
+﻿@model List<Models.NetworkPlanning>
+@using Utility
+
+
+@foreach (var item in Model)
+{
+    <div class="srch" id="dv_kml_@item.planid">
+        <div class="fontIDExtnlData">
+            <div class="plan--name">
+                <div class="plan--name_box">
+                    <i class="icon-cricle plan_name-circle" id="HighlightCircle_@item.planid"></i>
+                </div>
+                <div class="plan--name_content">
+                    <span class="plan_name-text" id=@item.plan_name>@item.plan_name</span>
+                    <span class="fontIDExtnlData importantcolor">@MiscHelper.FormatDateTime(item.created_on.ToString())</span>
+                </div>
+            </div>
+
+            <div class="ml-auto pose-relate d-flex">
+                <i class="glyphicon glyphicon-eye-open mr-05" id="dvHighlight_@item.planid" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_112" onclick="networkdata.ShowBackbonePlanEntityOnMap('@item.planid')"></i>
+                <i class="glyphicon glyphicon-option-horizontal clsexrnlpopup" id="ExternalPopup"></i>
+                <div class="drop_window">
+                    <ul>
+                        <li onclick="networkdata.deleteBackbonePlan('@item.planid')">@Resources.Resources.SI_GBL_GBL_GBL_GBL_002</li>
+                        <li onclick="networkdata.downloadBackboneBomReport('@item.planid')">@Resources.Resources.SI_ISP_GBL_GBL_GBL_038</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $(document).off("click", ".clsexrnlpopup").on('click', '.clsexrnlpopup', function () {
+            var sibling = $(this).next('.drop_window');
+
+            $(".drop_window").each(function () {
+                var answer = $(this);
+                if (!answer.is(sibling)) {
+                    $(this).hide(300);
+                }
+            });
+            $(this).siblings('.drop_window').slideToggle();
+        });
+    });
+</script>
+

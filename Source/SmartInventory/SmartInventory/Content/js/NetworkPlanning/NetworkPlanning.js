@@ -99,7 +99,7 @@ var NetworkPlanning = function () {
     }
 
     this.ResetPlanForm = function () {
-         
+
         app.temp_gemo = '';
         $('#geometry').val('');
         $('#lengthAutoPlaningDiv').empty()
@@ -191,7 +191,6 @@ var NetworkPlanning = function () {
 
     this.ViewAutoPlanningData = function () {
 
-
         if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
             si.autoplanid = 0;
             app.autoplanningplanid = 0;
@@ -202,6 +201,22 @@ var NetworkPlanning = function () {
             $("#planInfo").html(resp);
             // $("#planInfo").css('padding-left', '11px');
            //$("#planInfo").css('padding-top', '10px');
+            $("#planInfo").css('background-image', 'none');
+        }, false, false);
+    }
+
+    this.ViewBackbonePlanningData = function () {
+
+        if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
+            si.autoplanid = 0;
+            app.autoplanningplanid = 0;
+            si.LoadLayersOnMap();
+        }
+        $("#planInfo").html("");
+        ajaxReq('Plan/GetBackbonePlanData', {}, true, function (resp) {
+            $("#planInfo").html(resp);
+            // $("#planInfo").css('padding-left', '11px');
+            //$("#planInfo").css('padding-top', '10px');
             $("#planInfo").css('background-image', 'none');
         }, false, false);
     }
@@ -317,6 +332,14 @@ var NetworkPlanning = function () {
         }
     }
 
+
+    this.PlanningBufferPoint = function () {
+        debugger;
+        var buffer = parseFloat($('#buffer').val());
+        var request = app.lastRequest;
+
+    }
+
     this.RestInputPicker = function () {
         if ($('#demo').hasClass("inputpicker-original")) {
             $('#demo').inputpicker('destroy');
@@ -332,7 +355,7 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-        
+
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
@@ -391,6 +414,65 @@ var NetworkPlanning = function () {
             app.autoPlanningShowNetworkLayer(resp);
         }, false, true, false);
     }
+
+    this.createBackbonePlanNetwork = function () {
+        debugger;
+        if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
+
+            for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
+                for (var k = 0; k < app.selectedPlanningPath.legs[j].steps.length; k++) {
+                    console.log(app.selectedPlanningPath.legs[j].steps[k].start_location.lng() + " " +
+                        app.selectedPlanningPath.legs[j].steps[k].start_location.lat());
+                    var manhole_geom = app.selectedPlanningPath.legs[j].steps[k].start_location.lng() + " " +
+                        app.selectedPlanningPath.legs[j].steps[k].start_location.lat();
+
+                    ajaxReq('Library/SaveManhole', {
+                        geom: manhole_geom, networkIdType: 'A', isDirectSave: true
+                    }, true, function (response) {
+                        console.log(response + "1");
+                    });
+                    if (k == app.selectedPlanningPath.legs[j].steps.length - 1) {
+                        var manhole_geom2 = app.selectedPlanningPath.legs[j].steps[k].end_location.lng() + " " +
+                            app.selectedPlanningPath.legs[j].steps[k].end_location.lat();
+                        ajaxReq('Library/SaveManhole', {
+                            geom: manhole_geom2, networkIdType: 'A', isDirectSave: true
+                        }, true, function (response) {
+                            console.log(response + "2");
+                        });
+                    }
+                }
+            }
+        }
+        else {
+            for (let i = 0; i < app.selectedPlanningPath.length; i++) {
+                for (let j = 0; j < app.selectedPlanningPath[i].legs.length; j++) {
+                    for (var k = 0; k < app.selectedPlanningPath[i].legs[j].steps.length; k++) {
+                        console.log(app.selectedPlanningPath[i].legs[j].steps[k].start_location.lng() + " " +
+                            app.selectedPlanningPath[i].legs[j].steps[k].start_location.lat());
+                        var manhole_geom = app.selectedPlanningPath[i].legs[j].steps[k].start_location.lng() + " " +
+                            app.selectedPlanningPath[i].legs[j].steps[k].start_location.lat();
+                        ajaxReq('Library/SaveManhole', {
+                            geom: manhole_geom, networkIdType: 'A', isDirectSave: true
+                        }, true, function (response) {
+                            console.log(response + "1");
+                        }); if (k == app.selectedPlanningPath[i].legs[j].steps.length - 1) {
+                            var manhole_geom2 = app.selectedPlanningPath[i].legs[j].steps[k].end_location.lng() + " " +
+                                app.selectedPlanningPath[i].legs[j].steps[k].end_location.lat();
+                            ajaxReq('Library/SaveManhole', {
+                                geom: manhole_geom2, networkIdType: 'A', isDirectSave: true
+                            }, true, function (response) {
+                                console.log(response + "2");
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        ajaxReq('Plan/SaveBackboneProcess', $('form').serialize(), true, function (resp) {
+            app.autoPlanningShowNetworkLayer(resp);
+        }, false, true, false);
+    }
   
     this.geomToForm = function () {
         if ($('#ddledit_path').val() == "manually") {
@@ -425,6 +507,7 @@ var NetworkPlanning = function () {
     }
 
     this.autoPlanningShowNetworkLayer = function (resp) {
+        debugger;
         if (resp.objPM.status == "True") {
             alert(resp.objPM.message);
             app.autoplanningPlanId = resp.planid;
@@ -475,6 +558,57 @@ var NetworkPlanning = function () {
         $('.pull-right').find('.activemarker').removeClass('activemarker')
         $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
         ajaxReq('Plan/GetNetworkForMap', { plan_id: planId }, true, function (resp) {
+            if (resp.status.toLowerCase() == "ok") {
+                $('#dvHighlight' + '_' + planId).addClass('activemarker');
+                app.autoplanid = planId;
+                si.autoplanid = planId;
+                si.resetTreeLayer();
+                //si.map.setZoom(18);
+                var startlatlong = resp.result.start_point.split(',');
+                //  si.map.setCenter(new google.maps.LatLng(startlatlong[0], startlatlong[1]));
+                $(si.DE.chkShowLabelOnMap).prop("checked", resp.result.has_label);
+
+                var workSpaceLyrs = resp.result.layer_id.split(",");
+
+                if (workSpaceLyrs.length > 0) {
+                    for (var i = 0; i < workSpaceLyrs.length; i++) {
+                        $('#chk_nLyr_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
+                        $('#chk_netP_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
+                        $('#chk_netA_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
+                        $('#chk_netD_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
+                    }
+                }
+
+                var networkRegion = resp.result.region_ids.split(",");
+
+                if (networkRegion.length > 0) {
+                    for (var i = 0; i < networkRegion.length; i++) {
+
+                        $('#chk_rLyr_' + networkRegion[i]).not(":disabled").prop('checked', true);
+
+                    }
+                }
+
+                var networkProvinces = resp.result.province_ids.split(",");
+
+                if (networkProvinces.length > 0) {
+                    for (var i = 0; i < networkProvinces.length; i++) {
+                        $('#chk_pLyr_' + networkProvinces[i]).not(":disabled").prop('checked', true);
+                    }
+                }
+
+                app.fitElementOnMap(resp.result.start_point, resp.result.end_point);
+                si.map.setZoom(si.map.getZoom() - 1);
+                si.LoadLayersOnMap();
+
+            }
+        }, true, true);
+    }
+
+    this.ShowBackbonePlanEntityOnMap = function (planId) {
+        $('.pull-right').find('.activemarker').removeClass('activemarker')
+        $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
+        ajaxReq('Plan/GetBackboneForMap', { plan_id: planId }, true, function (resp) {
             if (resp.status.toLowerCase() == "ok") {
                 $('#dvHighlight' + '_' + planId).addClass('activemarker');
                 app.autoplanid = planId;
@@ -591,6 +725,23 @@ var NetworkPlanning = function () {
             }, false, true, false);
         });
     }
+    this.deleteBackbonePlan = function (planId) {
+        showConfirm(MultilingualKey.SI_OSP_GBL_GBL_FRM_157, function () {
+            ajaxReq('plan/DeleteBackbonePlanByPlanId', { plan_id: planId }, true, function (resp) {
+                if (resp.msg.toLowerCase() == "ok") {
+                    alert(resp.strReturn);
+                    $("#dv_kml_" + planId).remove();
+                    //app.hideAllNetworkFile();
+                    //app.RemoveOldFeature();
+                    $('.lyrRefresh').trigger("click");
+
+                }
+                else {
+                    alert(resp.strReturn);
+                }
+            }, false, true, false);
+        });
+    }
 
     this.createAutoMarker = function (mrkrLatlng, imageUrl, label, draggable = true) {
 
@@ -608,6 +759,10 @@ var NetworkPlanning = function () {
 
     this.downloadBomReport = function (planId) {
         window.location = appRoot + 'Report/ExportPlanBOMBOQReport?plan_id=' + planId;
+    }
+
+    this.downloadBackboneBomReport = function (planId) {
+        window.location = appRoot + 'Report/ExportBackbonePlanBOMBOQReport?plan_id=' + planId;
     }
 
     this.loopUpdate = function () {
@@ -655,7 +810,7 @@ var NetworkPlanning = function () {
     }
 
     this.NetworkPlanning = function (ismappicker, destination_point) {
-
+        debugger;
         var cableType = $('#cable_type').val();
         if (cableType == '') {
             alert('Please Select Cable Type');
@@ -847,6 +1002,7 @@ var NetworkPlanning = function () {
     //}
 
     this.createCableBetweenMakers = function () {
+        debugger;
         app.AllPlanningPaths = [];
         app.AllDistances = [];
         app.minDistance = 0;
@@ -870,15 +1026,18 @@ var NetworkPlanning = function () {
                 provideRouteAlternatives: true
             };
 
+            app.lastRequest = request;
+
             request.destination = app.endLatLng;
             app.CheckCableCreated();
             var network_Type = $('#ddledit_path').val();
 
             directionsService.route(request, function (response, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
-                     
                     app.AllPathResponses.push(response);
+                    
                     var Paths = response.routes;
+                    console.log(Paths);
                     for (let i = 0; i < Paths.length; i++) {
                         let totalDist = 0;
 
@@ -909,6 +1068,7 @@ var NetworkPlanning = function () {
 
 
                     }
+                    console.log("path1" + app.AllPlanningPaths);
 
 
                     // if (network_Type != "manually") {
@@ -924,7 +1084,7 @@ var NetworkPlanning = function () {
                     directionsDisplay.setMap(null);
                 }
             });
-
+    
             var Reverserequest = {
                 origin: app.endLatLng,
                 travelMode: google.maps.DirectionsTravelMode.DRIVING,
@@ -968,7 +1128,7 @@ var NetworkPlanning = function () {
                                 app.BindPlanningPaths(app.AllPlanningPaths, false);
                             }
                             //app.BindPlanningPaths(app.AllPlanningPaths, false);
-
+                            console.log("path2" + app.AllPlanningPaths);
                             //}
 
                         }
@@ -1239,7 +1399,7 @@ var NetworkPlanning = function () {
 
 
     this.createAutoPlanLine = function (_path, LineEdiTable, Is_DashedLine = false, strokeWdth) {
-
+        debugger;
         strokeWdth = (strokeWdth == undefined || strokeWdth == null || strokeWdth == '' || strokeWdth == 0) ? 2 : strokeWdth * 10;
         var tmpLine;
         if (Is_DashedLine == false) {
@@ -1373,6 +1533,7 @@ var NetworkPlanning = function () {
 
 
     this.planningmode = function (val) {
+        debugger;
         app.ResetPlanForm();
         app.plan_mode = val;
         $('.mainPart').show();
@@ -1382,6 +1543,11 @@ var NetworkPlanning = function () {
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", true);
             $("#endpointmap").addClass("disable-click");
+            $("#site").hide();
+            $("#buffer").hide();
+            $("#is_create_trench").show();
+            $("#is_create_duct").show();
+            $("#trenchduct").show();
         }
         else if (app.plan_mode == 'manual_planning') {
             $('.Manual').show();
@@ -1389,6 +1555,11 @@ var NetworkPlanning = function () {
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", false);
             $("#endpointmap").removeClass("disable-click");
+            $("#site").show();
+            $("#buffer").show();
+            $("#is_create_trench").hide();
+            $("#is_create_duct").hide();
+            $("#trenchduct").hide();
         }
         else {
             $('.mainPart').hide();
@@ -1717,6 +1888,7 @@ var NetworkPlanning = function () {
     }
 
     this.networkPlanningmode = function () {
+        debugger;
         //removeOldMarkers();
         // removeOldMarkersWithRemoveActive();
         if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }

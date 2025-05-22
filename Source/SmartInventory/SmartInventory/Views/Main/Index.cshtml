@@ -233,6 +233,17 @@
         </div>
         <div class="iconBar myMenu">
             <ul class="dropDownMenu">
+                @if (Model.lstUserModule.Contains("BBPL"))
+                {
+
+                    <li>
+                        <a href="#" class="iconBaricomoon Plantool" id="Backboneplan" onclick="si.ViewBackboneplan()" title="BackBone Planning">
+                            <span class="icon-Navigator"></span>
+                        </a>
+                    </li>
+                    <li class="techSep"></li>
+                }
+
                 @if (Model.lstUserModule.Contains("BMQ-FUD"))
                 {
 
@@ -883,6 +894,7 @@
                 }
 
 
+
                 @if (Model.lstUserModule.Contains("BPTL"))
                 {
 
@@ -1004,14 +1016,14 @@
                 }
 
                 @*@if (Model.lstUserModule.Contains("RNG"))
-                {
-                    <li>
-                        <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
-                            <span class="icon-topology"></span>
-                        </a>
-                    </li>
-                    <li class="techSep"></li>
-                }*@
+        {
+            <li>
+                <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
+                    <span class="icon-topology"></span>
+                </a>
+            </li>
+            <li class="techSep"></li>
+        }*@
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {

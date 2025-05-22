@@ -20503,6 +20503,47 @@ var Main = function () {
         });
     }
 
+    this.ViewBackboneplan = function () {
+        debugger;
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        app.addRemoveActiveClass($('.Plantool'));
+        $("#dvExternalData").hide();
+        $("#divPlanTool").hide();
+        if ($("#dvAutoPlanData").css('display') == 'none') {
+            if (typeof networkdata != "undefined") {
+                networkdata.hideAllNetworkFile();
+            }
+            $("#dvAutoPlanData").html('');
+            $("#dvAutoPlanData").addClass('networkPlanDataLoader');
+        }
+        $("#dvAutoPlanData").slideToggle('slow', function () {
+            if ($("#dvAutoPlanData").css('display') != 'none') {
+                app.ActiveNetworkPlanning = true;
+                ajaxReq('Plan/ShowBackbonePlanTool', {}, true, function (resp) {
+                    $("#dvAutoPlanData").html(resp);
+                    $("#dvAutoPlanData").removeClass('networkPlanDataLoader');
+                    $("#closeNetworkPlanningData").show();
+                    $("#openNetworkPlanningData").hide();
+                }, false, false);
+            }
+            else {
+                if (networkdata.autoplanningplanid > 0 || app.autoplanid > 0) {
+                    app.autoplanid = 0;
+                    networkdata.autoplanningplanid = 0;
+                    app.LoadLayersOnMap();
+                }
+                if (typeof networkdata !== 'undefined' && networkdata != null) {
+                    networkdata.hideAllNetworkFile();
+                    $("#openNetworkPlanningData").hide();
+                }
+
+            }
+        });
+    }
+
+
+
 
 
     this.showBulkPlanTool = function () {

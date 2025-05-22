@@ -2426,6 +2426,27 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<NetworkPlanning> GetBackbonePlanDetails(NetworkPlanningDataFilter objExtnlDtaFilter, int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_list", new
+                {
+                    p_user_id = user_id,
+                    p_searchby = objExtnlDtaFilter.searchBy,
+                    p_searchtext = objExtnlDtaFilter.searchText,
+                    p_pageno = objExtnlDtaFilter.currentPage,
+                    p_pagerecord = objExtnlDtaFilter.pageSize,
+                    p_sortcolname = objExtnlDtaFilter.orderBy,
+                    p_sorttype = objExtnlDtaFilter.sort,
+                    p_totalrecords = objExtnlDtaFilter.totalRecord
+                }, true);
+                return res;
+            }
+            catch { throw; }
+        }
+
+
         public string GetPlanElement(int plan_id)
         {
             try
@@ -2503,11 +2524,37 @@ namespace DataAccess
             }
         }
 
+        public List<DbMessageForPlan> savePoint2PointBackbone(NetworkPlanning objPlan)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_start_point_buffer = objPlan.start_point_buffer, p_start_point_entity_id = objPlan.start_point_entity, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<DbMessageForPlan> DeletePlanByPlanId(int plan_id, int user_id)
         {
             try
             {
                 var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_network_planning_delete_by_plan_id", new { p_plan_id = plan_id, p_user_id = user_id });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public List<DbMessageForPlan> DeleteBackbonePlanByPlanId(int plan_id, int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_planning_delete_by_plan_id", new { p_plan_id = plan_id, p_user_id = user_id });
                 return res;
             }
             catch (Exception ex)
@@ -2655,12 +2702,40 @@ namespace DataAccess
             catch { throw; }
         }
 
+
+        public NetworkPlanning GetBackbonePlanningById(int planId)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_network", new
+                {
+                    p_plan_id = planId
+                }, true).FirstOrDefault();
+                return res;
+            }
+            catch { throw; }
+        }
+
         public NetworkPlanning GetNetworkForMap(int planId)
         {
 
             try
             {
                 var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_network_planning_network", new
+                {
+                    p_plan_id = planId
+                }, true).FirstOrDefault();
+                return res;
+            }
+            catch { throw; }
+        }
+
+        public NetworkPlanning GetBackboneForMap(int planId)
+        {
+
+            try
+            {
+                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_network", new
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();

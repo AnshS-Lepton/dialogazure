@@ -1116,10 +1116,19 @@ namespace BusinessLogics
             return new DANetworkPlanning().GetNetworkPlanningById(planId);
         }
 
+        public NetworkPlanning GetBackbonePlanningById(int planId)
+        {
+            return new DANetworkPlanning().GetBackbonePlanningById(planId);
+        }
 
         public NetworkPlanning GetNetworkForMap(int planId)
         {
             return new DANetworkPlanning().GetNetworkForMap(planId);
+        }
+
+        public NetworkPlanning GetBackboneForMap(int planId)
+        {
+            return new DANetworkPlanning().GetBackboneForMap(planId);
         }
 
         public List<NetworkPlanning> GetTempNetworkForMap(int planId)
@@ -1140,6 +1149,11 @@ namespace BusinessLogics
         public List<NetworkPlanning> GetPlanDetails(NetworkPlanningDataFilter objExtnlDtaFilter, int user_id)
         {
             return new DAPlan().GetPlanDetails(objExtnlDtaFilter, user_id);
+        }
+
+        public List<NetworkPlanning> GetBackbonePlanDetails(NetworkPlanningDataFilter objExtnlDtaFilter, int user_id)
+        {
+            return new DAPlan().GetBackbonePlanDetails(objExtnlDtaFilter, user_id);
         }
         public List<DbMessage> processPlan(int building_id, int manhole_id, string geom, int user_id)
         {
@@ -1163,11 +1177,22 @@ namespace BusinessLogics
             return new DAPlan().savePoint2Point(objPlan);
         }
 
+        public List<DbMessageForPlan> savePoint2PointBackbone(NetworkPlanning objPlan)
+        {
+            return new DAPlan().savePoint2PointBackbone(objPlan);
+        }
+
         public List<DbMessageForPlan> DeletePlanByPlanId(int plan_id, int user_id)
         {
             return new DAPlan().DeletePlanByPlanId(plan_id, user_id);
         }
 
+        public List<DbMessageForPlan> DeleteBackbonePlanByPlanId(int plan_id, int user_id)
+        {
+            return new DAPlan().DeleteBackbonePlanByPlanId(plan_id, user_id);
+        }
+
+        
 
         public List<PlanBom> GetTempCableLengthGemo(NetworkPlanning model, int user_id)
         {

@@ -1,0 +1,40 @@
+﻿@model Models.ModelNetworkPlanningDetails
+
+
+<!DOCTYPE html>
+<div class="sideAutoDatabar" id="divNetworkPlanningData">
+    @using (Ajax.BeginForm("GetBackbonePlanData", "Plan",
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "planInfo", LoadingElementId = "dvexternalDataLoader" },
+           new { id = "frmGetPlanData", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.HiddenFor(m => m.objPlanDataFilter.currentPage, new { id = "hdnCurrentPage" })
+        @Html.HiddenFor(m => m.objPlanDataFilter.sort, new { id = "hdnSortType" })
+        @Html.HiddenFor(m => m.objPlanDataFilter.orderBy, new { id = "hdnSortDir" })
+
+        <div class="prowindowNetworkData">
+            <div class="d-flex space-pad">
+                @Html.TextBoxFor(m => m.objPlanDataFilter.searchText, new { @id = "txtBbSearchTextExtnlData", @placeholder = Resources.Resources.SP_OSP_GBL_GBL_GBL_001, @class = "input-sm form-control", @maxlength = "50" })
+
+                <button type="submit" class="btn btn-success ml-10">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
+            </div>
+
+            <div id="divExtnlDataloader">
+                <div id="rowdata" class="NetworkDatabodytype">
+                    @if (Model.lstPlanDetails.Count > 0)
+                    {
+                        Html.RenderPartial("_BackbonePlanDataList", Model.lstPlanDetails);
+                    }
+                    else
+                    {
+                        <div class="nr-found">
+                            <span>@Resources.Resources.SF_GBL_GBL_NET_FRM_037</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+

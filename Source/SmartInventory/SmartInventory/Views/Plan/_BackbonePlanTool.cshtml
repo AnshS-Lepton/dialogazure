@@ -1,0 +1,300 @@
+﻿@model Models.NetworkPlanning
+@Scripts.Render("~/bundles/NetworkPlanning/Scripts")
+@Styles.Render("~/bundles/NetworkPlanning/css")
+
+<span class="glyphicon glyphicon-menu-right sidectrlright" id="closeNetworkPlanningData"></span>
+
+<!DOCTYPE html>
+
+<div class="sidenetworkDatabar" id="divNetworkPlanningData">
+    <header>
+        <h3>BACKBONE PLANNING</h3>
+        <h5> @Resources.Resources.SI_GBL_GBL_GBL_FRM_044</h5>
+        <span id="closePlanTool" class="kmlClose">×</span>
+    </header>
+    <div class="libTabs">
+        <div class="scrollmenu">
+            <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+            <div class="scrollerhide overflow-hidden">
+                <ul class="nav nav-tabs tabs-left" id="ulCableTabs">
+                    <li class="active"><a href="#GISInfo" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_285 </a></li>
+                    <li><a href="#planInfo" onclick="networkdata.ViewBackbonePlanningData()" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_498</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="GISInfo">
+                @using (Ajax.BeginForm("GetTempLine", "Plan", new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    LoadingElementId = "dvProgress",
+                    OnSuccess = "networkdata.GetTemNetwork(data)"
+                },
+new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete = "off" }))
+                {
+                    @Html.HiddenFor(m => m.geometry)
+                    @Html.HiddenFor(m => m.is_bomboq_reqested)
+                    @Html.HiddenFor(m => m.end_point_entity)
+                    @Html.HiddenFor(m => m.temp_plan_id)
+                    @Html.HiddenFor(m => m.is_loop_update)
+                    @Html.HiddenFor(m => m.MinAutoPlanEndPointBuffer)
+                    @Html.HiddenFor(m => m.MaxAutoPlanEndPointBuffer)
+
+                    <div class="prowindowNetworkData">
+                        <div class="createPlan">
+                            <div class="form-group">
+                                <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_001<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-7">
+                                    @Html.TextBoxFor(m => m.plan_name, new { @class = "form-control", @maxlength = 100 })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_286<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-7">
+                                    @Html.DropDownListFor(m => m.planning_mode, new List<SelectListItem>
+                             {
+                                new SelectListItem{ Text="Select", Value = "0"},
+                                new SelectListItem{ Text="Auto", Value = "auto"},
+                                new SelectListItem{ Text="Manual", Value = "manual_planning"  }
+                             }, new { @id = "ddlplanning_mode", @title = "Planning Mode", @class = "form-control", @Style = "padding: 0px;", @onchange = "networkdata.planningmode(this.value)" })
+                                </div>
+                            </div>
+
+                            <div class="mainPart" style="display:none">
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_021<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.DropDownListFor(m => m.cable_type, new SelectList(Model.listcableType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text")
+                       , "--Select--", new { @class = "chosen-select form-control", @onchange = "networkdata.autoPlanningCableType()" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.start_point, new { @class = "form-control", @onblur = "return networkdata.networkPlanningManualmode('start',true);", Value = "", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30 })
+                                        <i id="startpointmap" onclick="return networkdata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_NET_FRM_499 :</label>
+                                    <div class="col-md-7">
+                                        @Html.DropDownListFor(m => m.edit_path, new List<SelectListItem>
+                                        {
+                                           new SelectListItem{ Text="With Google", Value = "google"},
+                                           new SelectListItem{ Text="Manually", Value = "manually"  }
+                                        }, new
+                                        {
+                                         @id = "ddledit_path",
+                                         @title = "End point Type",
+                                         @class = "chosen-select form-control",
+                                         @onchange = "networkdata.onChangeEditPath(this.value)"
+                                        })
+                                    </div>
+                                </div>
+
+                                <div class="form-group auto">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_GBL_GBL_NET_FRM_131 <i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.DropDownListFor(m => m.end_point_type, new SelectList(Model.lstLayers.Select(x => new { Value = x.layer_name, Text = x.layer_title }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", @id = "ddlend_point_type", @onchange = "networkdata.autoPlanningEndPoint()" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group auto">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_FRM_154:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.end_point_buffer, new { @class = "form-control", @onfocusout = "networkdata.autoPlanningEndPoint()", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
+                                        @Html.ValidationMessageFor(model => model.end_point_buffer, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group auto" style="margin-left:20px">
+                                    <div class="col-md-12">
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group auto">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_FRM_155 :</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" id="demo" value="--Select--" onkeydown="return false">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_073<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.end_point, new { @class = "form-control", @onblur = "return networkdata.networkPlanningManualmode('end',true)", Value = "", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30 })
+                                        <i id="endpointmap" onclick="return networkdata.NetworkPlanning(true, 'end');" class="icon-Find_Direction" title="Click on map to choose end point"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="buffer">
+                                    <label class="control-label col-md-5">Buffer:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.buffer, new { @class = "form-control", @onfocusout = "networkdata.PlanningBufferPoint()", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
+                                        @Html.ValidationMessageFor(model => model.buffer, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group " id="site">
+                                    <label class="control-label col-md-5">Nearest sites :</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" value="--Select--" onkeydown="return false">
+                                    </div>
+                                </div>
+
+
+                                <div id="trenchduct" style="display:none;">
+                                    <div class="form-group mb-15">
+                                        <div class="col-md-5">
+                                        </div>
+                                        <div class="col-md-7 d-flex white-space">
+                                            <div class="d-flex align-itm mr-01">
+                                                @Html.CheckBoxFor(m => m.is_create_trench, new { @class = "cheight" })
+                                                <label class="control-label">Create Trench</label>
+                                            </div>
+                                            <div class="d-flex align-itm white-space">
+                                                @Html.CheckBoxFor(m => m.is_create_duct, new { @class = "cheight" })
+                                                <label class="control-label">Create Duct</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
+                                        @Resources.Resources.SI_OSP_GBL_GBL_FRM_156                                                                        <i class="clsMandatory">*</i>:
+                                    </label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.pole_manhole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_287:<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.cable_length, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+
+                                    </div>
+                                </div>
+
+                                @* <div class="form-group">
+            <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_160:</label>
+            <div class="col-md-7">
+                <div class="splicing--Box-check">
+                    @Html.RadioButtonFor(m => m.is_offset_required, true, new { @id = "is_offset_requiredYes", @onclick = "networkdata.CheckOffSetRequired();" })
+                    <label for="is_offset_requiredYes">Yes</label>
+
+                    @Html.RadioButtonFor(m => m.is_offset_required, false, new { @id = "is_offset_requiredNo", @onclick = "networkdata.CheckOffSetRequired();" })
+                    <label for="is_offset_requiredNo">No</label>
+                </div>
+
+            </div>
+        </div>
+        <div id="optionDiv" style="display:none">
+            <div class="form-group">
+                <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_159:</label>
+                <div class="col-md-7">
+                    <div class="splicing--Box-check">
+                        @Html.RadioButtonFor(m => m.offset_position, false, new { @id = "is_offset_requiredLeft", @onclick = "networkdata.createOffsetCable()" })
+                        <label for="is_offset_requiredLeft">Left</label>
+
+                        @Html.RadioButtonFor(m => m.offset_position, true, new { @id = "is_offset_requiredRight", @onclick = "networkdata.createOffsetCable()" })
+                        <label for="is_offset_requiredRight">Right</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_204 :</label>
+                <div class="col-md-7">
+                    @Html.TextBoxFor(x => x.offset_value, new { @class = "form-control", Value = "", onblur = "networkdata.createOffsetCable();", @onkeydown = "return ValidateNumberDecimal(this,event,3,2);" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_161:</label>
+            <div class="col-md-7">
+                <div class="splicing--Box-check">
+                    @Html.RadioButtonFor(m => m.is_loop_required, true, new { @id = "is_loop_requiredYes", @onclick = "networkdata.CheckLoopRequired(this);" })
+                    <label for="is_loop_requiredYes">Yes</label>
+
+                    @Html.RadioButtonFor(m => m.is_loop_required, false, new { @id = "is_loop_requiredNo", @onclick = "networkdata.CheckLoopRequired(this);" })
+                    <label for="is_loop_requiredNo">No</label>
+                </div>
+            </div>
+        </div>
+        <div id="DvloopLength" class="form-group input-Bton" style="display:none">
+            <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_162:</label>
+            <div class="col-md-7">
+                @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return networkdata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+            </div>
+        </div>
+        <div class="form-group" id="suggestBox" style="display:none;">
+            <label class="control-label col-md-5 w-space">Suggested Routes:</label>
+            <div class="col-md-7">
+                <div class="splicing--Box-check routeBox">
+                </div>
+            </div>
+
+        </div>*@
+                                <div class="form-group">
+                                    <label class="control-label col-md-12" id="lengthAutoPlaningDiv"></label>
+                                </div>
+                                <button type="button" class="btn btn-default" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                                <input type="submit" class="btn btn-success" id="btnBomCable" onclick="return networkdata.loopValidation()" value="BOM/BOQ" />
+                                <input type="button" class="btn btn-success" onclick="networkdata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
+                                       value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
+                                <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="networkdata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
+
+                            </div>
+
+                            <div id="BomDetails"></div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+            <div class="tab-pane" id="planInfo"></div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    var networkdata = new NetworkPlanning();
+
+    var inputs = [];
+    var defaultBufer = '@Model.end_point_buffer';
+    $(document).ready(function () {
+        $('#suggestBox').hide();
+        networkdata.initApp();
+
+        callFormValidator("frmNetworkPlanning");
+        $('.chosen-select').chosen({ width: '100%' });
+        $('form').on('keyup change paste', 'input, select, checkbox', function () {
+            if ($('#BomDetails').html() != "")
+            {
+                $("#BomDetails").html("");
+                $("#btnProcessPlan").attr("disabled", true);
+                $("#ManageLoop").attr("disabled", true);
+                networkdata.CheckLoopRequired();
+            }
+        });
+    });
+    $('#btnReset').on("click", function () {
+        $('#ddlplanning_mode').val(0).trigger("chosen:updated");
+        $('#plan_name').val('');
+        networkdata.ResetPlanForm();
+    });
+
+
+
+
+</script>
+
+

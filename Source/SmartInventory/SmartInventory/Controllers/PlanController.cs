@@ -59,6 +59,23 @@ namespace SmartInventory.Controllers
             planobj.MaxAutoOffsetValue = ApplicationSettings.MaxAutoOffsetValue;
             return PartialView("_PlanTool", planobj);
         }
+
+        public ActionResult ShowBackbonePlanTool()
+        {
+            NetworkPlanning planobj = new NetworkPlanning();
+            List<DisplayPlan> t = new List<DisplayPlan>();
+            BindCableTypeDropDown(planobj);
+            var userdetails = (User)Session["userDetail"];
+            planobj.lstLayers = new BLLayer().GetLayerDetailsForAutoPlanning();
+
+            //planobj.end_point_buffer = Convert.ToDouble(new BLGlobalSetting().GetGlobalSettings().Where(x => x.key.ToUpper() == "AutoPlanEndBufferPoint".ToUpper()).FirstOrDefault().value);
+            planobj.end_point_buffer = ApplicationSettings.DefaultAutoPlanEndPointBuffer;
+            planobj.MinAutoPlanEndPointBuffer = ApplicationSettings.MinAutoPlanEndPointBuffer;
+            planobj.MaxAutoPlanEndPointBuffer = ApplicationSettings.MaxAutoPlanEndPointBuffer;
+            planobj.MaxAutoOffsetValue = ApplicationSettings.MaxAutoOffsetValue;
+            return PartialView("_BackbonePlanTool", planobj);
+        }
+
         public ActionResult ShowBulkPlanTool()
         {
             return PartialView("_BulkAutoPlan");
@@ -207,12 +224,52 @@ namespace SmartInventory.Controllers
             return Json(objPlan, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult SaveBackboneProcess(NetworkPlanning objPlan)
+        {
+
+            if (ModelState.IsValid)
+            {
+                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                if (user_id != 0)
+                {
+                    if (objPlan.is_loop_required == true && objPlan.is_loop_update == false)
+                    {
+                        new BLtemp_auto_network_plan().UpdateLoopLengthByPlanId(objPlan.temp_plan_id, objPlan.loop_length);
+                    }
+                    objPlan.created_by = user_id;
+                    //objPlan = new BLPlan().SaveNetworkPlanning(objPlan);
+
+                    var objResp = new BLPlan().savePoint2PointBackbone(objPlan);
+                    objPlan.objPM.message = objResp[0].message;
+                    objPlan.objPM.status = objResp[0].status.ToString();
+                    objPlan.planid = objResp[0].plan_id;
+                }
+            }
+            BindCableTypeDropDown(objPlan);
+            return Json(objPlan, JsonRequestBehavior.AllowGet);
+        }
+
         //DeletePlanByPlanId
 
         public ActionResult DeletePlanByPlanId(int plan_id)
         {
             int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
             var objResp = new BLPlan().DeletePlanByPlanId(plan_id, user_id);
+            objResp[0].message = BLConvertMLanguage.MultilingualMessageConvert(objResp[0].message);
+            if (objResp[0].status)
+            {
+                return Json(new { strReturn = objResp[0].message, msg = "OK" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { strReturn = objResp[0].message, msg = "false" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult DeleteBackbonePlanByPlanId(int plan_id)
+        {
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            var objResp = new BLPlan().DeleteBackbonePlanByPlanId(plan_id, user_id);
             objResp[0].message = BLConvertMLanguage.MultilingualMessageConvert(objResp[0].message);
             if (objResp[0].status)
             {
@@ -257,6 +314,8 @@ namespace SmartInventory.Controllers
             }
             //return Json(new { Data = data, JsonRequestBehavior.AllowGet });
         }
+
+
         public JsonResult GetPlanElementPath(int plan_id)
         {
             string objresp = string.Empty;
@@ -288,6 +347,30 @@ namespace SmartInventory.Controllers
             return PartialView("_ViewPlanData", objfiledetail);
         }
 
+        public PartialViewResult GetBackbonePlanData(ModelNetworkPlanningDetails objfiledetail)
+        {
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            objfiledetail.objPlanDataFilter.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            objfiledetail.objPlanDataFilter.currentPage = 1;
+            objfiledetail.objPlanDataFilter.sort = "";
+            objfiledetail.objPlanDataFilter.orderBy = "";
+            var fileList = new BLPlan().GetBackbonePlanDetails(objfiledetail.objPlanDataFilter, user_id);
+            //objfiledetail.objPlanDataFilter.totalRecord = fileList.Count > 0 ? fileList[0].totalRecords : 0;
+            string Filename = string.Empty;
+            foreach (var item in fileList)
+            {
+                Filename = item.plan_name;
+                //item.login_user = objUser.user_id;
+                //item.filepath = filepath + item.type.ToUpper();
+                //item.created_by_text = objUser.user_name;
+                item.created_on = MiscHelper.FormatDateTime(item.created_on.ToString());
+                //item.file_size = BytesToString(Convert.ToInt32(item.file_size));
+            }
+            objfiledetail.lstPlanDetails = fileList;
+            //List <NetworkPlanning> planList= new BLPlan().GetNetworkPlanning(user_id);
+            return PartialView("_BackboneViewPlanData", objfiledetail);
+        }
+
         public PartialViewResult GetLoopManage(int tempPlanid, double looplength, bool is_loop_updated)
         {
             List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid);
@@ -306,6 +389,23 @@ namespace SmartInventory.Controllers
             objfiledetails.objPlanDataFilter = objFilter;
             objfiledetails.objPlanDataFilter.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
             var fileList = new BLPlan().GetPlanDetails(objfiledetails.objPlanDataFilter, user_id);
+            foreach (var item in fileList)
+            {
+                item.created_by = user_id;
+                // item.created_by_text = objUser.user_name;
+                item.created_on = MiscHelper.FormatDateTime(item.created_on.ToString());
+            }
+            objfiledetails.lstPlanDetails = fileList;
+            return PartialView("_PlanDataList", objfiledetails.lstPlanDetails);
+        }
+
+        public PartialViewResult GetBackboneFilterPlanFile(NetworkPlanningDataFilter objFilter)
+        {
+            ModelNetworkPlanningDetails objfiledetails = new ModelNetworkPlanningDetails();
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            objfiledetails.objPlanDataFilter = objFilter;
+            objfiledetails.objPlanDataFilter.pageSize = ApplicationSettings.ViewAdminDashboardGridPageSize;
+            var fileList = new BLPlan().GetBackbonePlanDetails(objfiledetails.objPlanDataFilter, user_id);
             foreach (var item in fileList)
             {
                 item.created_by = user_id;
@@ -341,7 +441,31 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-
+        public JsonResult GetBackbonePlanDetails(int plan_id)
+        {
+            JsonResponse<NetworkPlanning> objResp = new JsonResponse<NetworkPlanning>();
+            try
+            {
+                var usrDetail = (User)Session["userDetail"];
+                if (usrDetail != null)
+                {
+                    var usrId = usrDetail.user_id;
+                    objResp.result = new BLPlan().GetBackbonePlanningById(plan_id);
+                    objResp.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_145;
+                }
+            }
+            catch (Exception ex)
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_146;
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
 
         public JsonResult GetNetworkForMap(int plan_id)
         {
@@ -369,6 +493,31 @@ namespace SmartInventory.Controllers
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetBackboneForMap(int plan_id)
+        {
+            JsonResponse<NetworkPlanning> objResp = new JsonResponse<NetworkPlanning>();
+            try
+            {
+                var usrDetail = (User)Session["userDetail"];
+                if (usrDetail != null)
+                {
+                    var usrId = usrDetail.user_id;
+                    objResp.result = new BLPlan().GetBackboneForMap(plan_id);
+                    objResp.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_145;
+                }
+            }
+            catch (Exception ex)
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_146;
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult SaveLoop(List<temp_auto_network_plan> model)
         {
