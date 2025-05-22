@@ -11,11 +11,15 @@ $(document).ready(function () {
 
     $('#chkCommonPath').on('click', function (event) {
         if ($(this).is(':checked')) {
-            $('#chkFiberLinks').prop('checked', false);
+            //$('#chkFiberLinks').prop('checked', false);
             $('#divLinkIdsSearchResult').show();
             $('#divLinksSearchResult').hide();
             $('#btnShowOnMapFiberLinks').hide();
             $('#btnShowOnMapLinkIds').show();
+            $('#chkCommonPath').prop('disabled', true);
+            if ($('#chkFiberLinks').is(':checked')) {
+                $('#chkFiberLinks').prop('checked', false).prop('disabled', false);
+            }
         }
         else {
             $('#divLinkIdsSearchResult').hide();
@@ -23,11 +27,15 @@ $(document).ready(function () {
     });
     $('#chkFiberLinks').on('click', function (event) {
         if ($(this).is(':checked')) {
-            $('#chkCommonPath').prop('checked', false);
+           // $('#chkCommonPath').prop('checked', false);
             $('#divLinkIdsSearchResult').hide();
             $('#divLinksSearchResult').show();    //this div is for FiberLinks details
             $('#btnShowOnMapFiberLinks').show();
             $('#btnShowOnMapLinkIds').hide();
+            $('#chkFiberLinks').prop('disabled', true);
+            if ($('#chkCommonPath').is(':checked')) {
+                $('#chkCommonPath').prop('checked', false).prop('disabled', false);
+            }
         } else {
             $('#divLinksSearchResult').hide();
         }
@@ -98,90 +106,104 @@ function SearchLinkIds(event) {
         return false;
     }
     if (linkIds != '') {
-        ajaxReq('CommonPathFinder/validateLinkIds', { linkIds: linkIds }, false, function (resp) {
-            if (JSON.parse(resp.data[0]).invalidlinkids != null) {
-                invalid_link_ids = JSON.parse(resp.data[0]).invalidlinkids
-                alert("Invalid LinkIds :" + invalid_link_ids);
-                $('#tblbodyLinks').empty();
-                $('#tblbodyFiberLinks').empty();
-                return false;
-            }
+    ajaxReq('CommonPathFinder/validateLinkIds', { linkIds: linkIds }, false, function (resp) {
+        if (JSON.parse(resp.data[0]).invalidlinkids != null) {
+            let invalid_link_ids = JSON.parse(resp.data[0]).invalidlinkids;
+            alert("Invalid LinkIds :" + invalid_link_ids);
+            $('#tblbodyLinks').empty();
+            $('#tblbodyFiberLinks').empty();
+            return false;
+        }
             else {
-                ajaxReq('CommonPathFinder/GetCableListByLinkIds', { linkIds: linkIds }, false, function (resp) {
+        ajaxReq('CommonPathFinder/GetCableListByLinkIds', { linkIds: linkIds }, false, function (resp) {
                     if (resp.status == "OK") {
-                        let tblbody = $('#tblbodyLinks');
-                        let tblbodyfiber = $('#tblbodyFiberLinks');
-                        tblbody.empty();
-                        tblbodyfiber.empty();
-                        let linkdata = JSON.parse(resp.data).features;
+                let tblbody = $('#tblbodyLinks');
+                let tblbodyfiber = $('#tblbodyFiberLinks');
+                tblbody.empty();
+                tblbodyfiber.empty();
+                let linkdata = JSON.parse(resp.data).features;
                         // Parse the JSON response
-                        let parsedResponse = JSON.parse(resp.fiberData);
+                let parsedResponse = JSON.parse(resp.fiberData);
 
                         // Access the FiberLinkDetails array
-                        let fiberLinkData = JSON.parse(parsedResponse.result).FiberLinkDetails;
-     
+                let fiberLinkData = JSON.parse(parsedResponse.result).FiberLinkDetails;
+
                         //let maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count));
-                        let maxLinkCount = 0;
+                let maxLinkCount = 0;
                         if (linkdata != null) { maxLinkCount = Math.max(...linkdata.map(item => item.properties.link_count)); }
-                        
+
                         var strGeom = '';
-                        if (linkdata != null) {
-                            linkdata.forEach(function (value, index) {
-                                var isChecked = (value.properties.link_count == maxLinkCount) ? "checked" : "";
-                                var bodyRow = $(`<tr>`);
-                                bodyRow.append($(`<td>`).html(`<input ${isChecked} type="checkbox" class="chklink" geom='${value.geometry.coordinates.map(a => a.join(" ")).join(",")}' />`));
-                                bodyRow.append($(`<td>`).text(value.properties.cable_name));
-                                bodyRow.append($(`<td>`).text(value.properties.network_id));
-                                bodyRow.append($(`<td>`).text(value.properties.a_location));
-                                bodyRow.append($(`<td>`).text(value.properties.b_location));
-                                bodyRow.append($(`<td>`).text(value.properties.link_count));
+                if (linkdata != null) {
+                    linkdata.forEach(function (value) {
+                        let isChecked = (value.properties.link_count === maxLinkCount) ? "checked" : "";
+                        let bodyRow = $(`<tr>`);
+                        bodyRow.append($(`<td>`).html(`<input ${isChecked} type="checkbox" class="chklink" geom='${value.geometry.coordinates.map(a => a.join(" ")).join(",")}' />`));
+                        bodyRow.append($(`<td>`).text(value.properties.cable_name));
+                        bodyRow.append($(`<td>`).text(value.properties.network_id));
+                        bodyRow.append($(`<td>`).text(value.properties.a_location));
+                        bodyRow.append($(`<td>`).text(value.properties.b_location));
+                        bodyRow.append($(`<td>`).text(value.properties.link_count));
 
                                 // strGeom = strGeom == '' ? linkdata[index].geometry.coordinates.map(a => a.join(" ")).join(",") : strGeom + ',' + linkdata[index].geometry.coordinates.map(a => a.join(" ")).join(",")
-                                tblbody.append(bodyRow);
-                            });
-                        }
-                        if (fiberLinkData != null) {
-                            fiberLinkData.forEach(function (value, index) {
-                                var bodyRow = $(`<tr>`);
-                                bodyRow.append($(`<td>`).html(`<input type="checkbox" class="chkFiberlink" geom='${value.geometry}' colorcode='${value.properties.ColorCode}' />`).css('background-color', value.properties.ColorCode));  
-                                bodyRow.append($(`<td>`).text(value.properties.network_id));
-                                bodyRow.append($(`<td>`).text(value.properties.link_id));
-                                bodyRow.append($(`<td>`).text(value.properties.link_name));
-                                bodyRow.append($(`<td>`).text(value.properties.fiber_link_status));
-                                bodyRow.append($(`<td>`).text(value.properties.link_type));
+                        tblbody.append(bodyRow);
+                    });
 
-                                tblbodyfiber.append(bodyRow);
-                            });
-                        }
+                    // ✅ Auto-check #chkSelectAll if all .chklink are checked
+                    let totalChkLinks = $('.chklink').length;
+                    let checkedChkLinks = $('.chklink:checked').length;
+                    $('#chkSelectAll').prop('checked', totalChkLinks > 0 && totalChkLinks === checkedChkLinks);
+                }
+                if (fiberLinkData != null) {
+                    fiberLinkData.forEach(function (value) {
+                        let bodyRow = $(`<tr>`);
+                        bodyRow.append($(`<td>`).html(`<input type="checkbox" class="chkFiberlink" geom='${value.geometry}' colorcode='${value.properties.ColorCode}' />`).css('background-color', value.properties.ColorCode));
+                        bodyRow.append($(`<td>`).text(value.properties.network_id));
+                        bodyRow.append($(`<td>`).text(value.properties.link_id));
+                        bodyRow.append($(`<td>`).text(value.properties.link_name));
+                        bodyRow.append($(`<td>`).text(value.properties.fiber_link_status));
+                        bodyRow.append($(`<td>`).text(value.properties.link_type));
+
+                        tblbodyfiber.append(bodyRow);
+                    });
+
+                    // ✅ Auto-check #chkFiberSelectAll if all .chkFiberlink are checked
+                    let totalChkFiber = $('.chkFiberlink').length;
+                    let checkedChkFiber = $('.chkFiberlink:checked').length;
+                    $('#chkFiberSelectAll').prop('checked', totalChkFiber > 0 && totalChkFiber === checkedChkFiber);
+                }
                         // Add event delegation for dynamic elements
-                        $(document).on('change', '.chklink', function () {
-                            linkChange(this, tblbody);
-                        });
-                        $(document).on('change', '.chkFiberlink', function () {
-                            linkChange(this, tblbodyfiber);
-                        });
-                        $('#chkCommonPath').prop('checked', true);
-                        $('#chkFiberLinks').prop('checked', false);
-                        $('#divLinkIdsSearchResult').show();
-                        $('#divLinksSearchResult').hide();
-                        $('#btnShowOnMapLinkIds').show();
-                        $('#divChkSearchResult').show();
-                        //linkShowOnMapDefault(linkdata[0].geometry.coordinates.map(a => a.join(" ")).join(","));
-                        linkShowOnMap();
+                $(document).on('change', '.chklink', function () {
+                    linkChange(this, tblbody);
+                });
+                $(document).on('change', '.chkFiberlink', function () {
+                    linkChange(this, tblbodyfiber);
+                });
+                $('#chkCommonPath').prop('checked', true);
+                if ($('#chkCommonPath').is(':checked')){
+                    $('#chkCommonPath').prop('checked', true).prop('disabled', true);
 
-                        const dargetedDiv = document.querySelector('.modal-content');
-                        dargetedDiv.classList.remove('resizable');
+                }
+                $('#chkFiberLinks').prop('checked', false);
+                $('#divLinkIdsSearchResult').show();
+                $('#divLinksSearchResult').hide();
+                $('#btnShowOnMapLinkIds').show();
+                $('#divChkSearchResult').show();
+                        //linkShowOnMapDefault(linkdata[0].geometry.coordinates.map(a => a.join(" ")).join(","));
+                linkShowOnMap();
+
+                const dargetedDiv = document.querySelector('.modal-content');
+                dargetedDiv.classList.remove('resizable');
                         //dargetedDiv.classList.add('minimize');
 
                         // linkShowOnMapDefault(strGeom);
                     }
                     else {
-                        alert(resp.error_message);
-                    }
-                });
+                alert(resp.error_message);
             }
         });
-    }
+            }
+    });
+}
 }
 function linkShowOnMapDefault(geom) {
     clearLinksfromMap();

@@ -313,10 +313,10 @@
                 itm.setMap(null);
             })
         }  
-        if (si.gMapObj) {
+        if (si && si.gMapObj && si.gMapObj.TraceRoute) {
             $.each(si.gMapObj.TraceRoute, function (indx, itm) {
                 itm.setMap(null);
-            })
+            });
         }  
     }
 }
