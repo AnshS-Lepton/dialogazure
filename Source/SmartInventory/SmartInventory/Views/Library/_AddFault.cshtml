@@ -182,7 +182,7 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtFaulttype">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4 ui-widget">
-                                @Html.TextBoxFor(m => m.fault_type, new { @class = "form-control", @id = "txtFaultType", @maxlength = "50", @onkeyup = "si.GetAutoFaultType();" })
+                                @Html.TextBoxFor(m => m.fault_type, new { @class = "form-control", @id = "txtFaultType", @maxlength = "50", @onkeyup = "si.GetAutoFaultType(); validateOnlyLetters(this);", @pattern = "^[a-zA-Z]*$", })
 
                             </div>
 
@@ -296,7 +296,7 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtFaulttype">@Resources.Resources.SI_OSP_GBL_NET_FRM_383<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.objFaultStatusHistory.updated_by, new { @class = "form-control", @id = "txtUpdatedBy", @maxlength = "50", @readonly = true })
+                                @Html.TextBoxFor(m => m.objFaultStatusHistory.updated_by, new { @class = "form-control", @id = "txtUpdatedBy", @maxlength = "50", @readonly = true, @pattern = "^[a-zA-Z]*$", })
                             </div>
                             <label class="control-label col-sm-2" for="txtFaultEntity">@Resources.Resources.SI_OSP_GBL_NET_FRM_384<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
@@ -424,7 +424,11 @@
                 function removecss() {
                     $('#txtRCA').css('border-color', '');
 
-                }
+    }
+
+    function validateOnlyLetters(input) {
+        input.value = input.value.replace(/[^a-zA-Z ]/g, '');
+    }
 </script>
 <style>
        #PODAssoctn {
