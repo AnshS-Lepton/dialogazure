@@ -690,35 +690,34 @@ LAYER
 			END
 		END
 		#====================As-Built======================
-		CLASS 
-			NAME "Out_Of_Range"   
-			#TEXT "[count_ducts]"
-			EXPRESSION ('[network_status]'  eq 'A')	
-			STYLE
-				WIDTH 3
-				COLOR 114 26 26
-				LINECAP ROUND
-				#PATTERN 10 10 END
-			END		
-			LABEL
-			    OUTLINEWIDTH 5
-				OUTLINECOLOR 255 255 255
-				FONT arial
-				TYPE truetype
-				COLOR 0 0 0
-				SIZE 8
-				STYLE
-					GEOMTRANSFORM 'labelpoly'
-					COLOR 255 0 0  # background rect.
-				END				
-				OFFSET 0 0
-				ANTIALIAS TRUE
-				POSITION CC
-				ANGLE AUTO
-				FORCE FALSE
-				PARTIALS FALSE
-			END
+	CLASS 
+    NAME "Out_Of_Range"
+    EXPRESSION ('[network_status]' eq 'A')    
+    STYLE
+        WIDTH 3
+        COLOR 255 0 0  # red line color
+        LINECAP ROUND
+        #PATTERN 10 10 END
+    END        
+    LABEL
+        OUTLINEWIDTH 5
+        OUTLINECOLOR 255 255 255
+        FONT arial
+        TYPE truetype
+        COLOR 0 0 0  # black label text
+        SIZE 8
+        STYLE
+            GEOMTRANSFORM 'labelpoly'
+            COLOR 0 0 0  # background rectangle
+        END                
+        OFFSET 0 0
+        ANTIALIAS TRUE
+        POSITION CC
+        ANGLE AUTO
+        FORCE FALSE
+        PARTIALS FALSE
 		END
+	END
 		#====================Dormant======================
 		CLASS 
 			NAME "Out_Of_Range"   
@@ -1698,7 +1697,7 @@ LAYER
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D'AND '[is_agg_site]'  eq 'true')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
 				SYMBOL "icons/Dorment/Podag.png" 
 				SIZE 25
@@ -1708,9 +1707,9 @@ LAYER
 		END	
 CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D'AND '[is_agg_site]'  eq 'true')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'false')  			
 			STYLE
-				SYMBOL "icons/Dorment/Podag.png" 
+				SYMBOL "icons/Dorment/POD.png" 
 				SIZE 25
 				OFFSET 0 -5				
 			END
