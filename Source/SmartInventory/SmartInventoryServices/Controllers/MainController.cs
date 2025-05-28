@@ -406,6 +406,62 @@ namespace SmartInventoryServices.Controllers
 
             return response;
         }
+
+
+        [System.Web.Http.HttpPost]
+        public ApiResponse<List<EntityDetail>> GetNearByTopologyEntity(ReqInput data)
+        {
+            var response = new ApiResponse<List<EntityDetail>>();
+            try
+            {
+
+                TopologyNearByEntitiesIn objEntityTemplateIn = ReqHelper.GetRequestData<TopologyNearByEntitiesIn>(data);
+                if (objEntityTemplateIn.bufferInMtrs <= 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid buffer!";
+                    return response;
+                }
+                else if (objEntityTemplateIn.latitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid latitude!";
+                    return response;
+                }
+                else if (objEntityTemplateIn.longitude == 0)
+                {
+                    response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                    response.error_message = "Invalid longitude!";
+                    return response;
+                }
+
+            
+                //Models.User objUser = new BLUser().GetUserDetailByID(objEntityTemplateIn.user_id);
+                response.status = StatusCodes.OK.ToString();
+                response.results = new BLMisc().GetNearByTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.bufferInMtrs, objEntityTemplateIn.source_ref_id, objEntityTemplateIn.source_ref_type, objEntityTemplateIn.userId);
+                if(response.results.Count>0)
+                {
+                    List<bool> isVailidRouteEntity = new BLMisc().validateTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.geom,objEntityTemplateIn.userId);
+                    if (!isVailidRouteEntity[0])
+                    {
+                        response.status = StatusCodes.VALIDATION_FAILED.ToString();
+                        response.error_message = "Invalid entity choosen for selected route!";
+                        response.results = new List<EntityDetail>();
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("GetNearByTopologyEntity()", "Main Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing  Request.";
+            }
+
+            return response;
+        }
+
         [System.Web.Http.HttpPost]
         public ApiResponse<List<EntityDetailWithAttribute>> GetNearByEntitiesWithAttribute(ReqInput data)
         {

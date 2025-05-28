@@ -29,9 +29,16 @@
 
     .pose-plus {
         position: absolute;
-        right: 9px;
-        top: 1px;
+        right: 18px;
+        top: 3px;
         z-index: 9;
+    }
+    .pose-plus i{
+        font-size:1.6rem;
+        color:#000000;
+    }
+    .sitePlan_fieldset .form-control{
+        padding:2px 6px;
     }
 
     .txtdesc {
@@ -67,15 +74,15 @@
     {
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
-       
+
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
-       
+
 
         @Html.HiddenFor(m => m.agg1SystemId, new { id = "hdnAgg1SystemId" })
         @Html.HiddenFor(m => m.agg2SystemId, new { id = "hdnAgg2SystemId" })
 
-      
+
         @Html.HiddenFor(m => m.ring_a_site_distance, new { id = "hdnRingASiteDistance" })
         @Html.HiddenFor(m => m.ring_b_site_distance, new { id = "hdnRingBSiteDistance" })
         @*<input type="hidden" id="hdnRingBSiteId" name="hdnRingBSiteId" />*@
@@ -94,46 +101,56 @@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter text", @maxlength = 100 })
-                                <div class="pose-plus">
-                                    <a href="javascript:void(0);"
-                                       class="txtagg1ShowOnMap"
-                                       title="Show on Map">
-                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                                <div class="pose-plus map-con">
+                                    <a href="#" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                        <i class="cptr icon-map-view" id="sEntity" data-Entity="0" onclick="si.Site_info_tool(this)"></i>
                                     </a>
                                 </div>
+                                @*<div class="pose-plus">
+                                        <a href="javascript:void(0);"
+                                           class="txtagg1ShowOnMap"
+                                           title="Show on Map">
+                                            <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                        </a>
+                                    </div>*@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter text", @maxlength = 100 })
-                                <div class="pose-plus">
-                                    <a href="javascript:void(0);"
-                                       class="txtagg2ShowOnMap"
-                                       title="Show on Map">
-                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+
+                                <div class="pose-plus map-con">
+                                    <a href="#" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                        <i class="cptr icon-map-view" id="segEntity" data-Entity="1" onclick="si.Site_info_tool(this)"></i>
                                     </a>
                                 </div>
+
+                                @*<div class="pose-plus">
+                                        <a href="javascript:void(0);"
+                                           class="txtagg2ShowOnMap"
+                                           title="Show on Map">
+                                            <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                        </a>
+                                    </div>*@
                             </div>
                         </div>
                         <div class="form-group row" id="dvregionId" style="display: block;">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_463  <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select col-sm-12", id = "ddlregionid" })
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstTopologyRegionMaster.Select(x => new { Value = x.id, Text = x.region_name }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control", id = "ddlregionid" })
                                 @*<div class="pose-plus"><button class="btn btn-primary" id="btncreatelinkCPL" title="Create new"><i class="fa fa-plus"></i></button> </div>*@
 
                             </div>
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_464 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
+                                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsegcode", @title = "Enter segment code", @tabindex = "4", @class = "form-control", @placeholder = "Enter segment code", @maxlength = 100 })
 
                             </div>
-
                         </div>
                         <div class="form-group row">
-
                             <label class="control-label col-sm-2" for="searchby">Route <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlroute" })
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control", id = "ddlroute" })
                                 <div class="pose-plus">
                                     <a href="javascript:void(0);"
                                        class="routeShowOnMap"
@@ -144,15 +161,11 @@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                             <div class="col-sm-4">
-                                @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "col-sm-12", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
+                                @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "form-control", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
                             </div>
-
                         </div>
-
-                        
-                        
                     </fieldset>
-                  
+
                 </div>
             </div>
 
@@ -176,9 +189,14 @@
     </div>
 </div>
 
-
+<script src="~/Content/js/Main.js"></script>
 
 <script>
+
+    function isValidFormat(input) {
+        const pattern = /^ACC\d{1,3}$/;
+        return pattern.test(input);
+    }
 
     $("#txtagg1").autocomplete({
         source: function (request, response) {
@@ -292,7 +310,7 @@ source: function (request, response) {
         }
 
         var cable_id = $("#ddlroute option:selected").val();
-      
+
         if (cable_id === "") {
             $(".routeShowOnMap").hide();  // Hide if nothing is selected
         }
@@ -363,7 +381,7 @@ source: function (request, response) {
         var routename = "";
         var description = "";
         var SelectedRoute = "";
-       
+
         $.ajax({
             url: '@Url.Action("getExistingSegmentDetails", "Report")', // Fetch Route details
             type: 'GET',
@@ -381,13 +399,16 @@ source: function (request, response) {
                 $("#hdnsegmentid").val(SegmentId);
                 $("#hdnSequenceId").val(sequence);
                 $("#dvProgress").hide();
-                if (routename == null) {
-                    getSegmentCode();
-                }
-                if (route == null) {
-                    bindSegmentRouteDetails(regionname, segmentcode, routename);
-                }
-               
+                //if (routename == null) {
+
+                //    getSegmentCode();
+                //}
+                //if (route == null) {
+                //    bindSegmentRouteDetails(regionname, segmentcode, routename);
+                //}
+                getSegmentCode();
+              //  bindSegmentRouteDetails(regionname, segmentcode, routename);
+
             },
             error: function () {
                 $("#dvProgress").hide();
@@ -397,7 +418,7 @@ source: function (request, response) {
     }
 
     function bindSegmentRouteDetails(regionname=null, segmentcode=null, routename=null) {
-        
+
        var regionId = $('#ddlregionid').val(); // Get the selected RegionId
         var agg1 = $("#hdnAgg1SystemId").val();
         var agg2 = $("#hdnAgg2SystemId").val();
@@ -431,10 +452,12 @@ if (agg2 === "") {
             });
             routeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
 
-            if (segmentcode == null) {
-                getSegmentCode();
-            }
-        
+            getSegmentCode();
+
+            //if (segmentcode == null) {
+            //    getSegmentCode();
+            //}
+
           /*Auto Select*/
             if (routename != null) {
                 selectByText("ddlroute", routename);
@@ -449,7 +472,7 @@ if (agg2 === "") {
                 regionid.trigger("chosen:updated"); // Ensure chosen dropdown updates
             }
             /*Auto Select*/
-            
+
         },
         error: function () {
             $("#dvProgress").hide();
@@ -457,7 +480,7 @@ if (agg2 === "") {
         }
     });
 
-        
+
     };
 
     function getSegmentCode() {
@@ -500,7 +523,7 @@ if (agg2 === "") {
    var Agg1SystemId = $("#hdnAgg1SystemId").val();
            var SequenceId = $("#hdnSequenceId").val();
            var SegmentId = $("#hdnsegmentid").val();
-           
+
            var Agg2SystemId = $("#hdnAgg2SystemId").val();
            var route_id = $("#ddlroute option:selected").val();
            if (Agg1SystemId === "" || Agg1SystemId === "0") {
@@ -513,6 +536,10 @@ if (agg2 === "") {
            }
            if (regionid === "") {
                alert("Please select a region!");
+               return false;
+           }
+           if (!isValidFormat(segmentcode)) {
+               alert("Please enter valid segment code !");
                return false;
            }
 
@@ -540,8 +567,9 @@ Agg2SystemId: Agg2SystemId,
     SegmentId: SegmentId,
     SequenceId: SequenceId
 },
-success: function (response) {
-    if (response) {
+    success: function (response) {
+        debugger;
+    if (response.success) {
         $("#dvProgress").hide();
         $('#dvProgress').css('display', 'none');
         alert("Segment saved successfully!");
@@ -564,11 +592,15 @@ success: function (response) {
         ddlroute.append('<option value="">--Select Route--</option>');
 
 } else {
-alert(response.Message);
+        alert(response.message);
+        $("#dvProgress").hide();
+        $('#dvProgress').css('display', 'none');
 }
 },
 error: function () {
-alert('An error occurred while saving the topology.');
+    alert('An error occurred while saving the topology.');
+    $("#dvProgress").hide();
+    $('#dvProgress').css('display', 'none');
 }
 });
            });
@@ -579,10 +611,6 @@ alert('An error occurred while saving the topology.');
 
     $('#ddlroute').change(function () {
         toggleMapLink();
-
-        var route = $("#ddlroute option:selected").text();
-        debugger;
-        getSegmentDetails(route);
     });
 
 </script>

@@ -1,5 +1,19 @@
 ﻿namespace Models
 {
+
+    public class TopologyNearByEntitiesIn
+    {
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public int bufferInMtrs { get; set; }
+        public string geom { get; set; }
+        public string entity_name { get; set; }
+        public int userId { get; set; }
+        public int ticket_id { get; set; }
+        public string source_ref_id { get; set; }
+        public string source_ref_type { get; set; }
+    }
+
     public class NearByEntitiesIn
     {
         public double latitude { get; set; }

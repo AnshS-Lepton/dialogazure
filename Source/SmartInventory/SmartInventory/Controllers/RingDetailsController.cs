@@ -40,6 +40,7 @@ namespace SmartInventory.Controllers
             string region_id = "";
             string segment_code = "";
             string ring_code = "";
+            string site_id = "";
             Session["RingFilter"] = null;
             objRingFilter.objGridAttributes.pageSize = 10;
             objRingFilter.objGridAttributes.currentPage = page == 0 ? 1 : page;
@@ -59,19 +60,21 @@ namespace SmartInventory.Controllers
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    if(objRingFilter.objRingDetails.SearchbyRingTypes != null)
+                    site_id = objRingFilter.objRingDetails.site_id;
+                    if (objRingFilter.objRingDetails.SearchbyRingTypes != null)
                         ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else {
                     region_id = objRingFilter.objRingDetails.region_name;
                     segment_code = objRingFilter.objRingDetails.segment_code;
+                    site_id = objRingFilter.objRingDetails.site_id;
                     ring_code = objRingFilter.objRingDetails.ring_capacity;
                 }
 
 
             }
             Session["RingFilter"] = objRingFilter;
-            var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
+            var ringdetails = new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code, site_id);
 
             objRingFilter.lstRingDetails = ringdetails;
            // objRingFilter.objRingDetails.SearchbyRingType = objRingFilter.objRingDetails.SearchbyRingTypes != null && objRingFilter.objRingDetails.SearchbyRingTypes.Count > 0 ? string.Join(",", objRingFilter.objRingDetails.SearchbyRingTypes.ToArray()) : "";
@@ -155,6 +158,7 @@ namespace SmartInventory.Controllers
             string region_id = "";
             string segment_code = "";
             string ring_code = "";
+            string site_id = "";
             objRingFilter.objGridAttributes.pageSize = 0;
             objRingFilter.objGridAttributes.currentPage = 0;
             //objRingFilter.objGridAttributes.sort = "";
@@ -165,20 +169,22 @@ namespace SmartInventory.Controllers
                 {
                     region_id = objRingFilter.objRingDetails.SearchbyRegionName;
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
-                    if(objRingFilter.objRingDetails.SearchbyRingTypes != null)
+                    site_id = objRingFilter.objRingDetails.site_id;
+                    if (objRingFilter.objRingDetails.SearchbyRingTypes != null)
                     ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else
                 {
                     region_id = objRingFilter.objRingDetails.region_name;
                     segment_code = objRingFilter.objRingDetails.segment_code;
+                    site_id = objRingFilter.objRingDetails.site_id;
                     ring_code = objRingFilter.objRingDetails.ring_capacity;
                 }
 
 
             }
 
-            var ringdetails =new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code);
+            var ringdetails =new BLRingDetails().getRingDetails(objRingFilter.objGridAttributes, region_id, segment_code, ring_code, site_id);
             if (ringdetails == null || ringdetails.Count == 0)
             { return; }  
         
