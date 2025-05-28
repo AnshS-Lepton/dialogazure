@@ -5484,5 +5484,36 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 return Json(new List<EntityDetail>(), JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        public JsonResult GetNearByTopologyEntityByLatLong(double latitude, double longitude, int bufferInMtrs)
+        {
+            try
+            {
+                TopologyNearByEntitiesIn nearByEntitiesIn = new TopologyNearByEntitiesIn();
+                var usrDetail = (User)Session["userDetail"];
+                nearByEntitiesIn.userId = usrDetail.user_id;
+                nearByEntitiesIn.source_ref_id = "";
+                nearByEntitiesIn.source_ref_type = "";
+                //nearByEntitiesIn.bufferInMtrs = ApplicationSettings.NEDefaultBuffer;
+                nearByEntitiesIn.bufferInMtrs = bufferInMtrs;
+                nearByEntitiesIn.latitude = latitude;
+                nearByEntitiesIn.longitude = longitude;
+                nearByEntitiesIn.geom = Session["routeGeom"].ToString();
+                string url = "api/Main/GetNearByTopologyEntity ";
+                var response = WebAPIRequest.PostIntegrationAPIRequest<List<EntityDetail>>(url, nearByEntitiesIn, "", "").results;
+                var filteredResults = response.Where(r => r.entity_type == EntityType.POD.ToString() || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
+
+              //  return Json(new { status = "OK", message = response, result = filteredResults }, JsonRequestBehavior.AllowGet);
+
+                return Json(filteredResults, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetNearByTopologyEntityByLatLong()", "Main", ex);
+                return Json(new List<EntityDetail>(), JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

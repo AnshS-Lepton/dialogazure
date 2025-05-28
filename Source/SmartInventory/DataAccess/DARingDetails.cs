@@ -15,7 +15,7 @@ namespace DataAccess
     public class DARingDetails:Repository<RingDetails>
     {
        
-        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes, string region_name, string segment_code, string ring_code)
+        public List<RingDetails> getRingDetails(CommonGridAttributes objGridAttributes, string region_name, string segment_code, string ring_code,string site_id)
         {
             try
             {
@@ -29,7 +29,8 @@ namespace DataAccess
                     P_SORTTYPE = objGridAttributes.orderBy,
                     p_ring_network_id = region_name,
                     p_segment_code = segment_code,
-                    p_ring_code = ring_code
+                    p_ring_code = ring_code,
+                    p_site_id= site_id
 
 
                 }, true); ;

@@ -84,7 +84,8 @@ namespace Models
         public int cable_system_id { get; set; }
         public string cable_network_id { get; set; }
         public string cable_type { get; set; }
-        
+        public double cable_length { get; set; }  
+
     }
     public class connectedelements
     {

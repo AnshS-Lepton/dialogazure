@@ -34,6 +34,16 @@
         z-index: 9;
     }
 
+    .choose-plus {
+        position: absolute;
+        right: 18px;
+        top: -2px;
+        z-index: 9;
+        font-size: 1.6rem;
+        color: #000000;
+    }
+       
+
     .txtdesc {
         width: 469px;
     }
@@ -94,18 +104,38 @@
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, onkeyup = "toggleMapLink()" })
 
-                                <div class="pose-plus">
-                                    <a href="javascript:void(0);"
-                                       class="SiteShowOnMap"
-                                       title="Show on Map">
-                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                <div class="choose-plus">
+                                    <a href="#" class="iconBaricomoon" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
+                                        <span class="cptr icon-map-view" id="sEntity" data-Entity="2" onclick="si.Site_info_tool(this)"></span>
                                     </a>
                                 </div>
+
+                                @*<div class="pose-plus">
+                    <a href="javascript:void(0);"
+                       class="SiteShowOnMap"
+                       title="Show on Map">
+                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                    </a>
+                </div>*@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_GBL_083 <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.TextBoxFor(m => m.site_name, new { @id = "txtSiteName", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100, @readonly = "readonly" })
                             </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" id="lblddlsegment" for="ddlsegment">@*@Resources.Resources.SI_OSP_GBL_NET_RPT_464*@ Segment/Region  <i class="clsMandatory">*</i>:</label>
+
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
+                            </div>
+
+                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (km)<i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 4 })
+                            </div>
+
                         </div>
 
                         <div class="form-group row">
@@ -142,19 +172,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" id="lblddlsegment" for="ddlsegment">@*@Resources.Resources.SI_OSP_GBL_NET_RPT_464*@ Segment/Region  <i class="clsMandatory">*</i>:</label>
 
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.segment_id, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select col-sm-12", id = "ddlsegment" })
-                            </div>
-
-                            <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_462 (km)<i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.max_distance_peer, new { @id = "txtmaxdistancepeer", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 4 })
-                            </div>
-
-                        </div>
 
 
 
@@ -397,7 +415,7 @@
                 $("#hdnSystemId").val(ui.item.systemId); // Set system_id in hidden field
                 toggleMapLink();
                 debugger;
-                getSegmentDetailsRoutewise(); // To bind segment details;
+                si.getSegmentDetailsRoutewise(); // To bind segment details;
 
                 var $dvsiteTable = $("#dvsiteTable");
                 var $table = $("#siteTable");
@@ -412,8 +430,6 @@
             return false;
             }
             });
-
-        getSegmentDetailsRoutewise(); // To bind segment details;
 
             $("#ddltopologytype").change(function () {
                 var selectedValue = $(this).val(); // Get selected value
@@ -498,7 +514,7 @@
 
         $('#ddlsegment').change(function () {
 
-            bindRingDetails();
+            si.bindRingDetails();
             var segment = $("#ddlsegment option:selected").text();
             debugger;
             var agg1 = $(this).find(":selected").data("agg1_site_id");
@@ -520,7 +536,7 @@
 
         $('#ddlringcapacity').change(function () {
 
-            bindRingDetails();
+            si.bindRingDetails();
             var segment = $("#ddlsegment option:selected").text();
             debugger;
             var agg1 = $("#ddlsegment option:selected").data("agg1_site_id");
@@ -540,16 +556,7 @@
 
         });
 
-        //$('#ddlsegment').change(function () {
-
-
-        //});
-
-    //$('#ddlregionid').change(function () {
-
-    //    bindRingDetails();
-    //});
-
+      
 
 
                 $('#ddlsegment').off("click").change(function () {
@@ -561,7 +568,7 @@
 
             $("#ddlringtype").on("change", function () {
 
-                getSiteListItemRingwise();
+                si.getSiteListItemRingwise();
 
             });
 
@@ -766,7 +773,7 @@
             $('#dvProgress').css('display', 'block');
 
             $("#dvProgress").show();
-            getAllSitelistItem();
+            si.getAllSitelistItem();
 
 
         });
@@ -1191,9 +1198,9 @@
     success: function (response) {
         alert("Removed successfully!");
         if (response?.lsttopologygetsites?.length > 0) {
-            populateDropdowns(response.lsttopologygetsites, true);
+            si.populateDropdowns(response.lsttopologygetsites, true);
         } else {
-            resetDropdowns();
+            si.resetDropdowns();
         }
     },
     error: function (xhr, status, error) {
@@ -1205,420 +1212,6 @@
 
         });
 
-    function bindRingDetails(ring = null) {
-        debugger;
-        var regionId = $('#ddlregionid').val(); // Get the selected RegionId
- var agg1 = $("#txtagg1").val();
- var agg2 = $("#txtagg2").val();
-
- var segmentId = $('#ddlsegment').val(); // Get the selected SegmentId
- var ringcap = $("#ddlringcapacity").val();
- var topologyType = $("#ddltopologytype").val();
- var nofsites = $("#ddlnofsites").val();
-
- if (ringcap === "") {
-     alert("Please select ring capacity!");
-     return false;
- }
- if (topologyType === "") {
-     alert("Please select topology type!");
-     return false;
- }
- if (nofsites === "") {
-     alert("Please select number of sites!");
-     return false;
- }
-
-        debugger;
- if (segmentId) {
-     $.ajax({
-         url: '@Url.Action("GetRingTypesByRegion", "Report")', // Fetch ring types
-         type: 'GET',
-         data: { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap },
-         success: function (data) {
-             var ringTypeDropdown = $('#ddlringtype');
-
-             debugger;
-             ringTypeDropdown.empty(); // Clear existing options
-             ringTypeDropdown.append('<option value="">--Select Ring--</option>');
-
-             // Append new options from response
-             $.each(data, function (index, item) {
-                 debugger;
-                 const match = item.ring_info.match(/\((\d+)\)/);
-                 const data = match ? parseInt(match[1], 0) : null;
-                 if (data != 0 && topologyType =="Linear")
-                     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
-                 else if (topologyType != "Linear")
-                     ringTypeDropdown.append('<option value="' + item.ring_id + '">' + item.ring_info + '</option>');
-                 
-                    
-             });
-
-             debugger;
-             if (ring !=null)
-             {
-                 selectByText("ddlringtype", ring);  }
-             // **Update Chosen Dropdown**
-             ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
-         },
-         error: function () {
-             alert("Error fetching ring types. Please try again.");
-         }
-     });
- } else {
-     // Clear the ring type dropdown if no segment is selected
-     $('#ddlringtype').empty().append('<option value="">--Select Ring--</option>');
- }
-    };
-        function updateGrid() {
-            var $dvsiteTable = $("#dvsiteTable");
-            var $table = $("#siteTable");
-            var $tbody = $table.find("tbody");
-
-            // Clear previous data
-            $tbody.empty();
-
-            // Get all options that are NOT hidden (Alternative way)
-            var visibleOptions = $("#ddlOtherRingSite option").filter(function () {
-                 return !$(this).prop("hidden");  // Use hidden property instead of :visible
-                //return !$(this).css("display") === "none";
-            });
-            ;
-            var v_length = visibleOptions.length;
-            // Get all visible options
-            visibleOptions.each(function () {
-                var fullText = $(this).text();
-                var ringId = $(this).data("ringid");
-                var is_agg_site = $(this).data("is_agg_site");
-                var siteid = $(this).data("siteid");
-
-                // Extract values
-                //let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
-
-                let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
-                debugger;
-                if (parts.length > 1) {
-
-                    let siteName = parts[0] +" ("+ parts[1]; // Remove ")"; // "siteN-2"
-                    let extractedValue = parts[2].replace(")", ""); // Remove ")"
-                    let RingName = "";
-                    if (parts.length == 4) {
-                        RingName = parts[2].replace(/\)\s*$/, ""); // Remove trailing ")"
-                        extractedValue = parts[3].replace(")", ""); // Remove ")"
-                      //  extractedValue = (extractedValue / 1000).toFixed(3); // Convert and format to 3 decimal places;
-                    }
-
-
-                    debugger;
-
-                    // Skip empty/default option
-                    if (ringId !== "" && ringId != 0 && is_agg_site == false) {
-                        var row = "<tr>" +
-                            "<td><button type='button' class='action-btn-success' data-id='" + ringId + "' data-siteid='" + siteid + "'>Remove</button></td>" +
-                            "<td>" + siteName + "</td>" +
-                            "<td>" + RingName + "</td>" +
-                            "<td>" + extractedValue + "</td>" +
-                            "</tr>";
-
-                        $tbody.append(row);
-                    }
-
-                    // Show or hide the table based on data availability
-                    if ($tbody.children().length > 0) {
-                        $dvsiteTable.show();
-                        $table.show(); // Show table if data exists
-                        $table.addClass("grid"); // Show table if data exists
-                    } else {
-                        $dvsiteTable.hide();
-                        $table.hide(); // Hide table if no data
-                    }
-                }
-
-
-
-
-            });
-
-            var childrenlength = $tbody.children().length;
-            // Show or hide the table based on data availability
-            if ($tbody.children().length > 0) {
-                $table.removeClass("hidden");
-                $dvsiteTable.removeClass("hidden");
-                $table.addClass("grid"); // Show table if data exists
-            } else {
-                $table.addClass("hidden");
-                $dvsiteTable.addClass("hidden");
-            }
-        }
-
-
-    function getSiteListItemRingwise(isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
-
-        var ddltopologytype = $("#ddltopologytype").val();
-        if (ddltopologytype == "Linear" && ring_a_site_id != null) {
-            ring_a_site_id = isfresh;
-            isfresh = false;
-           }
-       else if (ring_a_site_id != null)
-        {
-            ring_b_site_id = ring_a_site_id;
-            ring_a_site_id = isfresh;
-            isfresh = false;
-
-        }
-    var $dvsiteTable = $("#dvsiteTable");
-    var $table = $("#siteTable");
-    var $tbody = $table.find("tbody");
-
-    // Clear previous data
-            $tbody.empty();
-
-    $table.addClass("hidden");
-    $dvsiteTable.addClass("hidden");
-
-            var selectedRingId = $("#ddlringtype").val(); // Get selected value
-            var selectedRing = $("#ddlringtype option:selected").text(); // Get selected value
-            if (selectedRing !="--Select Ring--")
-            $("#lbdringsiteId").text(selectedRing).css("display", "none");
-        let visibleCount = 0;
-    var thirdCount = 0;
-
-    var $dropdownA = $("#ddlRingASite");
-            var $dropdownB = $("#ddlRingBSite");
-            var $ddlOtherRingSite = $("#ddlOtherRingSite");
-
-
-        function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh = true) {
-
-            debugger;
-            if (isfresh) {
-                $dropdown.find("option").each(function () {
-                    var ringId = $(this).attr("data-ringid");
-                    var is_agg_site = $(this).attr("data-is_agg_site");
-                    debugger;
-                    if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === undefined)) {
-                        $(this).show();
-                        if (hideOthers) visibleCount++;
-                    }
-                    else if (((ringId == "0") && is_agg_site === "true" && ddltopologytype != "Dual Home" || ringId === undefined)) {
-                        $(this).show();
-                        if (hideOthers) visibleCount++;
-                    }
-                    else if (ddltopologytype != "Dual Home" && (is_agg_site === "true" || ringId === condition|| ringId === undefined)) {
-                        $(this).show();
-                        if (hideOthers) visibleCount++;
-                    }
-
-                    else {
-                        $(this).hide();
-                    }
-                });
-            }
-            else {
-
-                const $options = $dropdown.find("option");
-                let allAreAggRing0 = false;
-                let hasMatchingNonAgg = false;
-                debugger;
-                // ---------------- CASE 1: Check if all items have ringId == "0" and are aggregate ----------------
-                $options.each(function () {
-                    const ringId = $(this).attr("data-ringid");
-                    const isAgg = $(this).attr("data-is_agg_site") === "true";
-                    if (ringId == "0" && isAgg == true) {
-                        allAreAggRing0 = true;
-                        return false; // break loop
-                    }
-                });
-                if (allAreAggRing0) {
-                    $options.each(function () {
-                        const isAgg = $(this).attr("data-is_agg_site") === "true";
-                        const ringId = $(this).attr("data-ringid");
-                        debugger;
-                        if (isAgg) {
-                            $(this).show();
-                        } else {
-                            $(this).hide();
-                        }
-                    });
-                    return false; // break loop
-                }
-
-                // ---------------- CASE 2: Show aggregates (ringId !== 0) and non-aggs with ringId == 0 or selectedRingId ----------------
-                $options.each(function () {
-                    const ringId = $(this).attr("data-ringid");
-                    const isAgg = $(this).attr("data-is_agg_site") === "true";
-                    debugger;
-                    const showThis =
-                        (isAgg && ringId !== "0") ||
-                        (!isAgg && (ringId === condition));
-
-                    if (showThis) {
-                        $(this).show();
-                        if (!isAgg) hasMatchingNonAgg = true;
-                    } else {
-                        $(this).hide();
-                    }
-                });
-
-                // ---------------- CASE 3: If no matching non-agg site, show only aggregates with ringId !== 0 ----------------
-                if (!hasMatchingNonAgg) {
-                    $options.each(function () {
-                        const ringId = $(this).attr("data-ringid");
-                        const isAgg = $(this).attr("data-is_agg_site") === "true";
-                        debugger;
-                        if (isAgg && ringId !== "0") {
-                            $(this).show();
-                            if (hideOthers) visibleCount++;
-                        } else {
-                            $(this).hide();
-                        }
-                    });
-                }
-
-
-            }
-
-        }
-
-    //--- Start Case First ---
-            if (!isfresh) {
-                filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
-            }
-            else {
-                filterDropdownOptions($dropdownA, selectedRingId, true, isfresh);
-                filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
-        }
-
-        debugger;
-
-    //--- Start Case Third ---
-        if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh))
-        {
-        $ddlOtherRingSite.find("option").each(function () {
-            var ringId = $(this).attr("data-ringid");
-            var is_agg_site = $(this).attr("data-is_agg_site");
-            debugger;
-            if (ringId !== selectedRingId && ringId !== "0" && ringId !== "" || ringId === undefined) {
-                $(this).show();
-                thirdCount++;
-            } else {
-                $(this).hide();
-            }
-        });
-
-    }
-        debugger;
-            if (thirdCount > 1 && selectedRingId !== null || isfresh) {
-
-        updateGrid();
-    }
-    //--- End Case Third ---
-
-
-
-        if (ring_a_site_id > 0) {
-            selectByValue("ddlRingASite", ring_a_site_id.toString());
-        }
-        if (ring_b_site_id > 0) {
-
-            selectByValue("ddlRingBSite", ring_b_site_id.toString());
-
-        }
-    // Refresh dropdowns
-    $dropdownA.trigger("chosen:updated");
-            $dropdownB.trigger("chosen:updated");
-            $ddlOtherRingSite.trigger("chosen:updated");
-}
-
-
-    function getAllSitelistItem(ring_a_site_id=null, ring_b_site_id=null) {
-
-    // Get selected values
-        var topologytype = $("#ddltopologytype").val();
-        var segmentid = $("#ddlsegment").val();
-            var maxdistancepeer = $("#txtmaxdistancepeer").val();
-    var ringid = $("#ddlringtype").val() || 0; // Fallback to 0 if null/undefined
-    var systemId = $("#hdnSystemId").val() || 0;
-
-            if (!systemId) {
-                alert("System ID is missing. Defaulting to 0.");
-            }
-
-     // AJAX Call
-     $.ajax({
-         url: '@Url.Action("Gettopologygetsites", "Report")',
-         type: "GET",
-         dataType: "json",
-         data: { systemId: systemId, ringId: ringid, distance: maxdistancepeer, segment_id: segmentid },
-         success: function (response) {
-             $("#dvProgress").hide();
-            if (response && response.lsttopologygetsites && response.lsttopologygetsites.length > 0) {
-                populateDropdowns(response.lsttopologygetsites, ring_a_site_id, ring_b_site_id);
-            } else {
-                resetDropdowns();
-            }
-          },
-         error: function (xhr, status, error) {
-             $("#dvProgress").hide();
-            console.error("Error fetching topology sites:", status, error);
-            alert("Error fetching topology sites. Please try again.");
-              }
-      });
-}
-
-            // Function to populate dropdowns
-    function populateDropdowns(sites, isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
-
-                var dropdownA = $("#ddlRingASite");
-            var dropdownB = $("#ddlRingBSite");
-            var dropdownOther = $("#ddlOtherRingSite");
-
-                // Clear existing options
-                dropdownA.empty();
-            dropdownB.empty();
-            dropdownOther.empty();
-
-                // Append default option
-                dropdownA.append('<option value="">--Select--</option>');
-                dropdownB.append('<option value="">--Select--</option>');
-                // Append new options
-                $.each(sites, function (index, item) {
-                    var optionHtml = '<option style="display:none;" value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"   data-siteid="' + item.siteid + '" data-is_agg_site="' + item.is_agg_site + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
-                    dropdownA.append(optionHtml);
-                    dropdownB.append(optionHtml);
-                    dropdownOther.append(optionHtml);
-                });
-
-        debugger;
-        getSiteListItemRingwise(isfresh, ring_a_site_id, ring_b_site_id);
-                // Refresh dropdowns
-                dropdownA.trigger("chosen:updated");
-            dropdownB.trigger("chosen:updated");
-            dropdownOther.trigger("chosen:updated");
-            }
-
-            // Function to reset dropdowns
-            function resetDropdowns() {
-                var dropdownA = $("#ddlRingASite");
-                var dropdownB = $("#ddlRingBSite");
-                var ddlOtherRingSite = $("#ddlOtherRingSite");
-
-                // Clear existing options
-                dropdownA.empty();
-                dropdownB.empty();
-                ddlOtherRingSite.empty();
-
-                // Append default option
-                dropdownA.append('<option value="">--Select--</option>');
-                dropdownB.append('<option value="">--Select--</option>');
-
-                // Refresh dropdowns
-                dropdownA.trigger("chosen:updated");
-                dropdownB.trigger("chosen:updated");
-                ddlOtherRingSite.trigger("chosen:updated");
-        }
 
         function toggleMapLink() {
             if ($("#ddlRingASite").val()) {
@@ -1643,154 +1236,6 @@
                 $("#hdnSystemId").val("0");
             }
         }
-
-
-                function getSegmentDetailsRoutewise() {
-
-                    debugger;
-    var systemId = $("#hdnSystemId").val() || 0;
-
-            if (!systemId) {
-                alert("System ID is missing. Defaulting to 0.");
-            }
-
-     // AJAX Call
-     $.ajax({
-         url: '@Url.Action("getSegmentDetailsRoutewise", "Report")',
-         type: "GET",
-         dataType: "json",
-         data: { systemId: systemId },
-         success: function (response) {
-             if (response && response.lstsegment && response.lstsegment.length > 0) {
-                 // Append new options
-                 debugger;
-                 var ddlsegment = $("#ddlsegment");
-
-                 // Clear existing options
-                 ddlsegment.empty();
-
-                 // Append default option
-               //  ddlsegment.append('<option value="">--Select--</option>');
-                 $.each(response.lstsegment, function (index, item) {
-                     var optionHtml = '<option value="' + item.id + '" data-region_id="' + item.region_id + '" data-agg1_site_id="' + item.agg1_site_id + '"  data-agg2_site_id="' + item.agg2_site_id + '">' + item.segment_code+'</option>';
-                     ddlsegment.append(optionHtml);
-                     if (index == 0) {
-
-                         var agg1 = item.agg1_site_id;
-                         var agg2 = item.agg2_site_id;
-                         if (agg1 == " ()")
-                             agg1 = "";
-                         if (agg2 == " ()")
-                             agg2 = "";
-
-                         $("#txtagg1").val(agg1);
-                         $("#txtagg2").val(agg2);
-                         document.getElementById("hdnAgg1SystemId").value = item.agg1_system_id;
-                         document.getElementById("hdnAgg2SystemId").value = item.agg2_system_id;
-                     }
-
-                 });
-                 // Refresh dropdowns
-                 ddlsegment.trigger("chosen:updated");
-                 if (response.ring != "" && response.ring != null) {
-                     selectByText("ddlsegment", response.segment);
-                     $("#ddlsegment").trigger("chosen:updated");
-                     selectByText("ddltopologytype", response.topology_type);
-                     $("#ddltopologytype").trigger("chosen:updated");
-
-                     if (response.topology_type != "Ring") { $("#ddlRingBSite").prop("disabled", true); $("#btncreateringdiv").css("display", "none"); }
-                     else { $("#ddlRingBSite").prop("disabled", false); }
-
-                     selectByText("ddlringcapacity", response.ring_capacity);
-                     $("#ddlringcapacity").trigger("chosen:updated");
-                     selectByText("ddlregionid", response.region_name);
-                     $("#ddlregionid").trigger("chosen:updated");
-
-                     var ringTypeDropdown = $('#ddlringtype');
-                     ringTypeDropdown.empty(); // Clear existing options
-
-                     //ringTypeDropdown.append('<option value="">--Select Ring--</option>');
-                     //// Append new options from response
-                     //ringTypeDropdown.append('<option value="' + response.ring_id + '">' + response.ring + '</option>');
-
-                     //selectByText("ddlringtype", response.ring);
-                     //$("#ddlringtype").trigger("chosen:updated");
-
-                     selectByText("ddlnofsites", response.no_of_sites.toString());
-                     $("#ddlnofsites").trigger("chosen:updated");
-
-                     $("#txtmaxdistancepeer").val(response.max_distance_peer);
-
-                     //$("#txtagg1").val(response.agg_01);
-                     //$("#agg_02").val(response.segment);
-                     bindRingDetails(response.ring);
-
-                     getAllSitelistItem(response.ring_a_site_id, response.ring_b_site_id);
-                     setTimeout(() => {
-
-                         selectByText("ddlringtype", response.ring);
-                         $("#ddlringtype").trigger("chosen:updated");
-                         debugger;
-                         if (response.ring_a_site_id > 0) {
-                             selectByValue("ddlRingASite", response.ring_a_site_id.toString());
-                         }
-                         if (response.ring_b_site_id > 0) {
-
-                             selectByValue("ddlRingBSite", response.ring_b_site_id.toString());
-
-                         }
-                         $("#ddlRingASite").trigger("chosen:updated");
-                         $("#ddlRingBSite").trigger("chosen:updated");
-                     }, 2000); // This takes 2 seconds
-
-
-
-
-                 }
-                 else {
-                     $("#btncreateringdiv").css("display", "block");
-
-                 }
-            } else {
-                 var ddlsegment = $("#ddlsegment");
-                 debugger;
-                 // Clear existing options
-                 ddlsegment.empty();
-
-                 // Append default option
-                 ddlsegment.append('<option value="">--Select--</option>');
-                 ddlsegment.trigger("chosen:updated");
-            }
-          },
-         error: function (xhr, status, error) {
-            console.error("Error fetching topology sites:", status, error);
-            alert("Error fetching topology sites. Please try again.");
-              }
-      });
-}
-
-    function selectByText(dropdownId, textToSelect) {
-        let dropdown = document.getElementById(dropdownId);
-        for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].text.toLowerCase().includes(textToSelect.toLowerCase())) {
-
-                dropdown.selectedIndex = i;
-                break;
-            }
-        }
-    }
-
-    function selectByValue(dropdownId, textToSelect) {
-        debugger;
-        let dropdown = document.getElementById(dropdownId);
-        for (let i = 0; i < dropdown.options.length; i++) {
-            if (dropdown.options[i].value === textToSelect) {
-                dropdown.selectedIndex = i;
-                break;
-            }
-        }
-    }
-
 
 </script>
 
