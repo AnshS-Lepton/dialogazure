@@ -5486,7 +5486,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
         }
 
         [HttpGet]
-        public JsonResult GetNearByTopologyEntityByLatLong(double latitude, double longitude, int bufferInMtrs)
+        public JsonResult GetNearByTopologyEntityByLatLong(double latitude, double longitude, int bufferInMtrs, string source_ref_type = "")
         {
             try
             {
@@ -5494,17 +5494,23 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 var usrDetail = (User)Session["userDetail"];
                 nearByEntitiesIn.userId = usrDetail.user_id;
                 nearByEntitiesIn.source_ref_id = "";
-                nearByEntitiesIn.source_ref_type = "";
+                if (string.IsNullOrEmpty(source_ref_type))
+                    nearByEntitiesIn.source_ref_type = "";
+                else
+                    nearByEntitiesIn.source_ref_type = source_ref_type;
+
                 //nearByEntitiesIn.bufferInMtrs = ApplicationSettings.NEDefaultBuffer;
                 nearByEntitiesIn.bufferInMtrs = bufferInMtrs;
                 nearByEntitiesIn.latitude = latitude;
                 nearByEntitiesIn.longitude = longitude;
-                nearByEntitiesIn.geom = Session["routeGeom"].ToString();
+                nearByEntitiesIn.geom = "";
+                if (Session["routeGeom"] != null)
+                    nearByEntitiesIn.geom = Session["routeGeom"].ToString();
                 string url = "api/Main/GetNearByTopologyEntity ";
                 var response = WebAPIRequest.PostIntegrationAPIRequest<List<EntityDetail>>(url, nearByEntitiesIn, "", "").results;
                 var filteredResults = response.Where(r => r.entity_type == EntityType.POD.ToString() || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
 
-              //  return Json(new { status = "OK", message = response, result = filteredResults }, JsonRequestBehavior.AllowGet);
+                //  return Json(new { status = "OK", message = response, result = filteredResults }, JsonRequestBehavior.AllowGet);
 
                 return Json(filteredResults, JsonRequestBehavior.AllowGet);
             }
