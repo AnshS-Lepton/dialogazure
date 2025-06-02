@@ -19,6 +19,11 @@
         line-height: 1.6;
         margin-bottom: 6px;
     }
+    .printChanges{
+        float:none !important;
+        width:24px !important;
+    }
+  
     /*.infoBack {
     float: right;
     background: url(/images/split_img.png) no-repeat -75px -171px;
@@ -193,7 +198,7 @@
                     }
                     else
                     {
-                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="entitydiv @(subItem.action_name)  @(subItem.is_template_filled ? "infoFilledTemplate" : "infoTemplate")@(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title)" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title" style="display:@(subItem.is_visible ? "block;" : "none;")">
+                        <div id="Entity@(subItem.action_name)" data-bufferEnabled="@subItem.is_buffer_needed" data-action="@(subItem.action_name)" class="entitydiv printChanges @(subItem.action_name)  @(subItem.is_template_filled ? "infoFilledTemplate" : "infoTemplate")@(subItem.is_enabled ? "" : "roledisabled") @(subItem.action_name.ToUpper() == "PENTROWREPORT" ? "icon-export_report_ROW" : "")" data-entity-title="@(subItem.action_title)" @(subItem.is_enabled ? "" : "onclick=disabledItem(event);") title="@subItem.action_title" style="display:@(subItem.is_visible ? "block;" : "none;")">
                         </div>
                     }
                 }
