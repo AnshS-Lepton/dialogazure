@@ -17660,6 +17660,28 @@ var Main = function () {
     }
 
     /*Topology Plan*/
+
+    this.Site_info_toolplan = function (obj) {
+
+        si.mapReport.clearSelection();
+        var infoId = $('#' + obj.id);
+        infoId.toggleClass('activeToolBar');
+
+        si.ClearMapAddressTool();
+        $('.infoSwitch').removeClass('activeToolBar');
+        si.map.setOptions({ draggableCursor: 'crosshair' });
+        //$(popup.DE.MinimizeModel).trigger("click");
+        google.maps.event.addListener(si.map, 'click', function (LatLong) {
+            debugger;
+            if (si.lineBufferObj != null) {
+                si.lineBufferObj.setMap(null);
+            }
+            si.clearInfoRelatedObjects();
+            si.GetNearByTopologyEntityByLatLong(LatLong.latLng, obj.id, 'Plan');
+        });
+        $(popup.DE.MinimizeModel).trigger("click");
+    }
+
     this.Site_info_tool = function (obj) {
 
         si.mapReport.clearSelection();
@@ -17681,7 +17703,7 @@ var Main = function () {
         $(popup.DE.MinimizeModel).trigger("click");
     }
 
-    this.GetNearByTopologyEntityByLatLong = function (latLng, objId) {
+    this.GetNearByTopologyEntityByLatLong = function (latLng, objId, req_type) {
 
         debugger;
         app.collapseRemove();
@@ -17694,7 +17716,8 @@ var Main = function () {
                 data: {
                     latitude: latLng.lat(),
                     longitude: latLng.lng(),
-                    bufferInMtrs: getMeterDistanceFromZoom(_zoom)
+                    bufferInMtrs: getMeterDistanceFromZoom(_zoom),
+                    source_ref_type: req_type
                 },
                 success: function (resp) {
                     // Log the response
@@ -17702,7 +17725,7 @@ var Main = function () {
                     var ulNE = $(app.DE.UlNearByEntities);
                     $('#searchNBEntities').hide();
                     ulNE.html('');
-debugger;
+                    debugger;
                     if (resp.length >= 1) {
                         document.getElementById("lblNearByEntities").textContent = "Nearby Site Details";
                         $.each(resp, function (indx, item) {
@@ -17731,6 +17754,7 @@ debugger;
             confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_069, parseInt($('#hdnInfoToolZoom').val()), _zoom)), func);
         }
     }
+
 
     this.bindNetworkIdToTopology = function (network_id, objId, system_id, display_name) {
   
@@ -17770,12 +17794,12 @@ debugger;
     }
 
     this.bindManualRoutes = function () {
-  
-       
+
+
         var agg1 = $("#hdnAgg1SystemId").val();
         var agg2 = $("#hdnAgg2SystemId").val();
 
-        if (agg1 != "" && agg2 !="") {
+        if (agg1 != "" && agg2 != "") {
 
             ajaxReq('Report/getManualRouteDetails', { agg1: agg1, agg2: agg2 }, true, function (data) {
 
@@ -17787,17 +17811,14 @@ debugger;
 
                 // Append new options from response
                 $.each(data.result, function (index, item) {
-                    
+
                     ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
-                    
+
                 });
 
                 debugger;
-                if (ring != null) {
-                    selectByText("ddlringtype", ring);
-                }
-                // **Update Chosen Dropdown**
-                ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
+
+                ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
             }, false, false);
 
 
@@ -17806,6 +17827,7 @@ debugger;
             $('#ddlringtype').empty().append('<option value="">--Select Ring--</option>');
         }
     };
+
     this.getSegmentDetailsRoutewise = function () {
 
         debugger;

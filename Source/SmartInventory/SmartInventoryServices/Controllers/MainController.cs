@@ -435,13 +435,13 @@ namespace SmartInventoryServices.Controllers
                     return response;
                 }
 
-            
+
                 //Models.User objUser = new BLUser().GetUserDetailByID(objEntityTemplateIn.user_id);
                 response.status = StatusCodes.OK.ToString();
                 response.results = new BLMisc().GetNearByTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.bufferInMtrs, objEntityTemplateIn.source_ref_id, objEntityTemplateIn.source_ref_type, objEntityTemplateIn.userId);
-                if(response.results.Count>0)
+                if (response.results.Count > 0 && objEntityTemplateIn.source_ref_type == "")
                 {
-                    List<bool> isVailidRouteEntity = new BLMisc().validateTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.geom,objEntityTemplateIn.userId);
+                    List<bool> isVailidRouteEntity = new BLMisc().validateTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.geom, objEntityTemplateIn.userId);
                     if (!isVailidRouteEntity[0])
                     {
                         response.status = StatusCodes.VALIDATION_FAILED.ToString();
@@ -449,7 +449,7 @@ namespace SmartInventoryServices.Controllers
                         response.results = new List<EntityDetail>();
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
