@@ -9915,7 +9915,7 @@ var Main = function () {
         ClearRuler();
     }
 
-    this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, port_no, network_id, is_virtual_port_allowed) {
+    this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name) {
         var gmarkernew = new google.maps.Marker({
             position: mrkrLatlng,
             icon: imageUrl,
@@ -9924,7 +9924,8 @@ var Main = function () {
             eType: en_type,
             portNo: port_no,
             networkId: network_id,
-            isVirtualPortAllowed: is_virtual_port_allowed
+            isVirtualPortAllowed: is_virtual_port_allowed,
+            network_name: network_name
         });
 
         return gmarkernew;
