@@ -315,9 +315,10 @@ namespace Models
         public bool is_virtual_port_allowed { get; set; }
         public string connected_entity_category { get; set; }
         public bool is_virtual { get; set; }
-        public string source_display_name { get; set; }
+        public string network_name { get; set; }
 
         
+
     }
 
 
