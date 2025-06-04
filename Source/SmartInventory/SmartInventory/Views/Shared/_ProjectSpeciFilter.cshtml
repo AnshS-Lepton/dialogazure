@@ -140,7 +140,7 @@
                             </div>
                         </div>
                     </fieldset>
-                    <fieldset class="the-fieldset">
+                    @*<fieldset class="the-fieldset">
                         <legend class="the-legend">Design Id Filter</legend>
                         <div class="form-group row">
                             <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">Design Id:</label>
@@ -148,8 +148,8 @@
                                 @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @id = "txtgisdesignid", @maxlength = "50" })
                             </div>
                         </div>
-                    </fieldset>
-                    <fieldset class="the-fieldset">
+                    </fieldset>*@
+                   @* <fieldset class="the-fieldset">
                         <legend class="the-legend">Route Filter</legend>
                         <div class="form-group row">
                             <label class="control-label col-md-2 col-sm-2" for="RdOwnershipType">Route Id:</label>
@@ -157,7 +157,7 @@
                                 @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
                             </div>
                         </div>
-                    </fieldset>
+                    </fieldset>*@
                     @if (lstLayers.Where(x => x.layerName.ToUpper() == "SECTOR").Count() > 0)
                     {
 
