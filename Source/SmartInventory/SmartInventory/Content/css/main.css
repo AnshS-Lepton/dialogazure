@@ -4323,28 +4323,27 @@ div.slider-nav span.left {
 
 .tool_bar .infoTemplate {
     width: 17px;
-    /* height: 100%; */
     float: left;
     height: 24px;
     position: relative;
     z-index: 1000;
-    /*margin-left: -5px;
-    margin-right: 4px;*/
     font-weight: bold;
     text-align: center;
     padding-top: 4px;
-    background: #e8e7e7;
-    /* color: white; */
+    /*background: #e8e7e7;
+    height: 100%; 
+    margin-left: -5px;
+    margin-right: 4px;
+     color: white; */
     border: 1px solid gray;
-    border-left-width: 0px;
     cursor: pointer;
-    margin: 0 6px 0px -7px;
+    margin: 0 6px 0px 0;
 }
 
-    .tool_bar .infoTemplate:hover {
+/*    .tool_bar .infoTemplate:hover {
         background: #31bd72;
         color: white;
-    }
+    }*/
 
 .tool_bar .infoFilledTemplate {
     width: 14px;

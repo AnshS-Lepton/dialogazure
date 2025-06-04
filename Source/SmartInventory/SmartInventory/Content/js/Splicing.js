@@ -2339,14 +2339,14 @@
                             var network_id = resp.result.lstConnectedElements[i].connected_network_id;
                             var is_virtual_port_allowed = resp.result.lstConnectedElements[i].is_virtual_port_allowed;
                             var geometry = getLatLongArr(resp.result.lstConnectedElements[i].connected_entity_geom);
-
+                            var network_name = resp.result.lstConnectedElements[i].network_name;
                             var ptObj = null;
                             debugger;
                             if (resp.result.lstConnectedElements[i].connected_entity_category != null && resp.result.lstConnectedElements[i].connected_entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result.lstConnectedElements[i].connected_entity_category + '_' + resp.result.lstConnectedElements[i].connected_entity_type.toUpperCase() + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result.lstConnectedElements[i].connected_entity_category + '_' + resp.result.lstConnectedElements[i].connected_entity_type.toUpperCase() + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name);
                             }
                             // add info window
                             var contentString = '<div id="content">' +
@@ -2359,7 +2359,7 @@
                                 return function () {
                                     debugger;
                                     if (ptObj.eType == "SpliceClosure") {
-                                        var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Name: </span>' + ptObj.networkId + '</p>';
+                                        var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Name: </span>' + ptObj.network_name + '</p>';
 
                                     } else {
                                         var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';

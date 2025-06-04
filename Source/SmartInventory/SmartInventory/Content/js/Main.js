@@ -9919,7 +9919,7 @@ var Main = function () {
         ClearRuler();
     }
 
-    this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, port_no, network_id, is_virtual_port_allowed) {
+    this.createMarkerForPathFinder = function (mrkrLatlng, imageUrl, system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name) {
         var gmarkernew = new google.maps.Marker({
             position: mrkrLatlng,
             icon: imageUrl,
@@ -9928,7 +9928,8 @@ var Main = function () {
             eType: en_type,
             portNo: port_no,
             networkId: network_id,
-            isVirtualPortAllowed: is_virtual_port_allowed
+            isVirtualPortAllowed: is_virtual_port_allowed,
+            network_name: network_name
         });
 
         return gmarkernew;
@@ -17664,6 +17665,28 @@ var Main = function () {
     }
 
     /*Topology Plan*/
+
+    this.Site_info_toolplan = function (obj) {
+
+        si.mapReport.clearSelection();
+        var infoId = $('#' + obj.id);
+        infoId.toggleClass('activeToolBar');
+
+        si.ClearMapAddressTool();
+        $('.infoSwitch').removeClass('activeToolBar');
+        si.map.setOptions({ draggableCursor: 'crosshair' });
+        //$(popup.DE.MinimizeModel).trigger("click");
+        google.maps.event.addListener(si.map, 'click', function (LatLong) {
+            debugger;
+            if (si.lineBufferObj != null) {
+                si.lineBufferObj.setMap(null);
+            }
+            si.clearInfoRelatedObjects();
+            si.GetNearByTopologyEntityByLatLong(LatLong.latLng, obj.id, 'Plan');
+        });
+        $(popup.DE.MinimizeModel).trigger("click");
+    }
+
     this.Site_info_tool = function (obj) {
 
         si.mapReport.clearSelection();
@@ -17684,7 +17707,7 @@ var Main = function () {
         $(popup.DE.MinimizeModel).trigger("click");
     }
 
-    this.GetNearByTopologyEntityByLatLong = function (latLng, objId) {
+    this.GetNearByTopologyEntityByLatLong = function (latLng, objId, req_type) {
 
         app.collapseRemove();
         var _zoom = app.map.getZoom();
@@ -17696,7 +17719,8 @@ var Main = function () {
                 data: {
                     latitude: latLng.lat(),
                     longitude: latLng.lng(),
-                    bufferInMtrs: getMeterDistanceFromZoom(_zoom)
+                    bufferInMtrs: getMeterDistanceFromZoom(_zoom),
+                    source_ref_type: req_type
                 },
                 success: function (resp) {
                     // Log the response
@@ -17733,6 +17757,7 @@ var Main = function () {
             confirm(getMultilingualStringValue($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_069, parseInt($('#hdnInfoToolZoom').val()), _zoom)), func);
         }
     }
+
 
     this.bindNetworkIdToTopology = function (network_id, objId, system_id, display_name) {
   
@@ -17859,7 +17884,7 @@ var Main = function () {
         var agg1 = $("#hdnAgg1SystemId").val();
         var agg2 = $("#hdnAgg2SystemId").val();
 
-        if (agg1 != "" && agg2 !="") {
+        if (agg1 != "" && agg2 != "") {
 
 
 
@@ -17873,9 +17898,9 @@ var Main = function () {
 
                 // Append new options from response
                 $.each(data.result, function (index, item) {
-                    
+
                     ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
-                    
+
                 });
 
                
@@ -17890,6 +17915,7 @@ var Main = function () {
         }
 
     };
+
     this.getSegmentDetailsRoutewise = function () {
 
         
