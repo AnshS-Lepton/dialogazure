@@ -439,16 +439,7 @@ namespace SmartInventoryServices.Controllers
                 //Models.User objUser = new BLUser().GetUserDetailByID(objEntityTemplateIn.user_id);
                 response.status = StatusCodes.OK.ToString();
                 response.results = new BLMisc().GetNearByTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.bufferInMtrs, objEntityTemplateIn.source_ref_id, objEntityTemplateIn.source_ref_type, objEntityTemplateIn.userId);
-                if(response.results.Count>0)
-                {
-                    List<bool> isVailidRouteEntity = new BLMisc().validateTopologyEntity(objEntityTemplateIn.latitude, objEntityTemplateIn.longitude, objEntityTemplateIn.geom,objEntityTemplateIn.userId);
-                    if (!isVailidRouteEntity[0])
-                    {
-                        response.status = StatusCodes.VALIDATION_FAILED.ToString();
-                        response.error_message = "Invalid entity choosen for selected route!";
-                        response.results = new List<EntityDetail>();
-                    }
-                }
+                
                 
             }
             catch (Exception ex)

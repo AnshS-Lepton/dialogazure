@@ -135,10 +135,14 @@
         });
     }
     function entityShowOnMap(gType, audit_id) {
-         
+
+        if (si.gMapObj) {
+            $.each(si.gMapObj.TraceRoute, function (indx, itm) {
+                itm.setMap(null);
+            })
+        } 
         si.ShowEntityOnMapbyGeom(audit_id, gType);
-        $('#ModalPopUp .minmizeModel>i').trigger("click");
-        $('#ModalPopUp .minmizeModel>i').trigger("click");
-        $('#ModalPopUp .minmizeModel>i').trigger("click");
+        $(popup.DE.MinimizeModel).trigger("click");
+        
     }
 </script>

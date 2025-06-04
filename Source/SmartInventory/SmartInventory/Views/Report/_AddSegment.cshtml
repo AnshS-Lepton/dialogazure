@@ -148,7 +148,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-sm-2" for="searchby">Route <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="searchby">Suggested Route <i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-4">
                                 @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control", id = "ddlroute" })
                                 <div class="pose-plus">
@@ -162,6 +162,19 @@
                             <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                             <div class="col-sm-4">
                                 @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "form-control", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
+                            </div>
+
+                            <label class="control-label col-sm-2" for="txtSearchtext">Manual Route :</label>
+                            <a href="javascript:void(0);" class="fa fa-pencil action_icon fa-fw m-r-xs fa-lg" title="Create Route" id="btnmanualroute"></a>
+                            <div class="col-sm-4">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control", id = "ddlmanualroute" })
+                                <div class="pose-plus">
+                                    <a href="javascript:void(0);"
+                                       id="manualRouteShowOnMap"
+                                       title="Show on Map">
+                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -291,12 +304,19 @@ source: function (request, response) {
             ddlroute.empty(); // Clear existing options
             ddlroute.append('<option value="">--Select Route--</option>');
         }
+        var route_id = $("#ddlmanualroute option:selected").val();
+        if (route_id == undefined) {
+            var ddlmanualroute = $('#ddlmanualroute');
+            ddlmanualroute.empty(); // Clear existing options
+            ddlmanualroute.append('<option value="">--Select Route--</option>');
+        }
         toggleMapLink();
 
 
     });
 
     function toggleMapLink() {
+        debugger;
         if ($("#txtagg1").val()) {
             $(".txtagg1ShowOnMap").show();  // Show if selected
         } else {
@@ -317,6 +337,16 @@ source: function (request, response) {
         else {
             $(".routeShowOnMap").show();  // Show if selected
         }
+
+        debugger;
+        var route_id = $("#ddlmanualroute option:selected").val();
+
+        if (route_id === "") {
+            $("#manualRouteShowOnMap").hide();  // Hide if nothing is selected
+        }
+        else {
+            $("#manualRouteShowOnMap").show();  // Show if selected
+        }
     }
 
     // Show On Map
@@ -335,11 +365,26 @@ source: function (request, response) {
         si.ShowEntityOnMap(systemId, 'POD', 'Point'); $(popup.DE.MinimizeModel).trigger("click");
     });
 
+    // Show On Map
+    $('#btnmanualroute').on("click", function () {
+
+        debugger;
+        si.createsegmentroute();
+        $(popup.DE.MinimizeModel).trigger("click");
+    });
+
     $('.routeShowOnMap').on("click", function () {
 
         var systemId = $("#ddlroute option:selected").val();
 
        /* si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");*/
+        si.showRouteDetailsOnMap(systemId);
+    });
+    $('#manualRouteShowOnMap').on("click", function () {
+
+        var systemId = $("#ddlmanualroute option:selected").val();
+
+        /* si.ShowEntityOnMapbyRoute(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");*/
         si.showRouteDetailsOnMap(systemId);
     });
 
@@ -406,7 +451,7 @@ source: function (request, response) {
                 //if (route == null) {
                 //    bindSegmentRouteDetails(regionname, segmentcode, routename);
                 //}
-                getSegmentCode();
+                si.getSegmentCode();
               //  bindSegmentRouteDetails(regionname, segmentcode, routename);
 
             },
@@ -417,101 +462,9 @@ source: function (request, response) {
         });
     }
 
-    function bindSegmentRouteDetails(regionname=null, segmentcode=null, routename=null) {
+   
 
-       var regionId = $('#ddlregionid').val(); // Get the selected RegionId
-        var agg1 = $("#hdnAgg1SystemId").val();
-        var agg2 = $("#hdnAgg2SystemId").val();
-
-if (agg1 === "") {
-    alert("Please select Aggregate Site 1!");
-    return false;
-}
-if (agg2 === "") {
-    alert("Please select Aggregate Site 2!");
-    return false;
-}
-
-        $("#dvProgress").show();
-        $('#dvProgress').css('display', 'block');
-
-    $.ajax({
-        url: '@Url.Action("getCableRouteDetails", "Report")', // Fetch Route details
-        type: 'GET',
-        data: { regionId: regionId, agg1_site_id: agg1, agg2_site_id: agg2 },
-        success: function (data) {
-            $("#dvProgress").hide();
-            debugger;
-            var routeDropdown = $('#ddlroute');
-            routeDropdown.empty(); // Clear existing options
-            routeDropdown.append('<option value="">--Select Route--</option>');
-
-            // Append new options from response
-            $.each(data, function (index, item) {
-                routeDropdown.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
-            });
-            routeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
-
-            getSegmentCode();
-
-            //if (segmentcode == null) {
-            //    getSegmentCode();
-            //}
-
-          /*Auto Select*/
-            if (routename != null) {
-                selectByText("ddlroute", routename);
-                // **Update Chosen Dropdown**
-                routeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
-            }
-
-            if (regionname != null) {
-                var regionid = $('#ddlregionid');
-                selectByText("ddlregionid", routename);
-                // **Update Chosen Dropdown**
-                regionid.trigger("chosen:updated"); // Ensure chosen dropdown updates
-            }
-            /*Auto Select*/
-
-        },
-        error: function () {
-            $("#dvProgress").hide();
-            alert("Error fetching ring types. Please try again.");
-        }
-    });
-
-
-    };
-
-    function getSegmentCode() {
-
-        $("#dvProgress").show();
-        $('#dvProgress').css('display', 'block');
-          $.ajax({
-  url: '@Url.Action("GetSegmentsCode", "Report")',
-  type: "GET",
-  dataType: "json",
-  data: {  },
-
-  success: function (response) {
-  if (response && response.segment_code) {
-  $("#txtsegcode").val(response.segment_code);
-  if (response.sequence) {  // Assuming "sequence_id" is the key in the response
-      $("#hdnSequenceId").val(response.sequence);
-      $("#dvProgress").hide();
-    //  $("#segmentModal").modal("show");
-  }
-  } else {
-      $("#dvProgress").hide();
-  alert("Failed to fetch segment code.");
-  }
-  },
-              error: function () {
-                  $("#dvProgress").hide();
-  alert("An error occurred while fetching segment code.");
-  }
-  });
-    };
+   
 
        $("#btnSaveSegment").click(function () {
 
@@ -525,7 +478,8 @@ if (agg2 === "") {
            var SegmentId = $("#hdnsegmentid").val();
 
            var Agg2SystemId = $("#hdnAgg2SystemId").val();
-           var route_id = $("#ddlroute option:selected").val();
+
+           var route_id = $("#ddlmanualroute option:selected").val();
            if (Agg1SystemId === "" || Agg1SystemId === "0") {
                alert("Please select Aggregate Site 1!");
                return false;
@@ -543,6 +497,10 @@ if (agg2 === "") {
                return false;
            }
 
+          
+    if (route_id === "") {
+        route_id = $("#ddlroute option:selected").val();
+    }
            if (route_id === "") {
                alert("Please select a route!");
                return false;
@@ -610,6 +568,9 @@ error: function () {
        });
 
     $('#ddlroute').change(function () {
+        toggleMapLink();
+    });
+    $('#ddlmanualroute').change(function () {
         toggleMapLink();
     });
 

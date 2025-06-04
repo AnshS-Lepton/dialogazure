@@ -3627,7 +3627,7 @@ CLASS
         WIDTH 3
         COLOR 255 0 0  # red line color
         LINECAP ROUND
-        #PATTERN 10 10 END
+        PATTERN 10 5 1 5 END
     END
     LABEL
         OUTLINEWIDTH 5

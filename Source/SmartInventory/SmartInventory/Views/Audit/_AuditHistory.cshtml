@@ -15,14 +15,14 @@
 <!DOCTYPE html>
 <div class="tab-content" id="dvModalBody">
     <ul class="nav nav-tabs TicketManager">
+            <li class="@(Model.lstUserModule.Contains("ENT-HS-AC")?"active":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_186 @(Model.lstUserModule.Contains("ENT-HS-AC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)">
+                <a data-toggle="tab" aria-expanded="true" href="@(Model.lstUserModule.Contains("ENT-HS-AC")?"#AuditHistory":"")"  onclick="@(Model.lstUserModule.Contains("ENT-HS-AC")?"getAuditHistory()":"")">@Resources.Resources.SI_OSP_GBL_GBL_FRM_186</a>
+            </li>
 
 
-            <li class="@(Model.lstUserModule.Contains("ENT-HS-AC")?"active":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_186 @(Model.lstUserModule.Contains("ENT-HS-AC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"><a data-toggle="tab" href="@(Model.lstUserModule.Contains("ENT-HS-AC")?"#AuditHistory":"")" class="active show" onclick="@(Model.lstUserModule.Contains("ENT-HS-AC")?"getAuditHistory()":"")">@Resources.Resources.SI_OSP_GBL_GBL_FRM_186</a></li>
-
-
-            <li class="@(Model.lstUserModule.Contains("ENT-HS-LC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_293 @(Model.lstUserModule.Contains("ENT-HS-LC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" id="liAddFiberLink"><a data-toggle="tab" href="@(Model.lstUserModule.Contains("ENT-HS-LC")?"#":"")" onclick="@(Model.lstUserModule.Contains("ENT-HS-LC")?"GetGeometryHistory()":"")">@Resources.Resources.SI_OSP_GBL_GBL_GBL_293</a></li>
-
-        
+            <li class="@(Model.lstUserModule.Contains("ENT-HS-LC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_293 @(Model.lstUserModule.Contains("ENT-HS-LC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" id="liAddFiberLink">
+                <a data-toggle="tab"  href="@(Model.lstUserModule.Contains("ENT-HS-LC")?"#AuditHistory":"")" onclick="@(Model.lstUserModule.Contains("ENT-HS-LC")?"GetGeometryHistory()":"")">@Resources.Resources.SI_OSP_GBL_GBL_GBL_293</a>
+            </li>
 
     </ul>
 

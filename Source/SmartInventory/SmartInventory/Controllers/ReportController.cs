@@ -13787,10 +13787,10 @@ namespace SmartInventory.Controllers
         }
 
         #region Manual Route 
-        public JsonResult getManualRouteDetails( int agg1, int agg2 )
+        public JsonResult getManualRouteDetails( string geom, int agg1, int agg2 )
         {
 
-            string geom = Session["routeGeom"].ToString();
+          // string geom = Session["routeGeom"].ToString();
             var routeList = new BLProject().GetSelectedRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
 
             return Json(new { status = "OK", message = "Route attached successfully!", result= routeList });

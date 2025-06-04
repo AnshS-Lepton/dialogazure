@@ -5499,7 +5499,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 nearByEntitiesIn.bufferInMtrs = bufferInMtrs;
                 nearByEntitiesIn.latitude = latitude;
                 nearByEntitiesIn.longitude = longitude;
-                nearByEntitiesIn.geom = Session["routeGeom"].ToString();
+                //nearByEntitiesIn.geom = Session["routeGeom"].ToString();
                 string url = "api/Main/GetNearByTopologyEntity ";
                 var response = WebAPIRequest.PostIntegrationAPIRequest<List<EntityDetail>>(url, nearByEntitiesIn, "", "").results;
                 var filteredResults = response.Where(r => r.entity_type == EntityType.POD.ToString() || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
