@@ -697,7 +697,7 @@ LAYER
         WIDTH 3
         COLOR 255 0 0  # red line color
         LINECAP ROUND
-        #PATTERN 10 10 END
+         PATTERN 10 5 1 5 END
     END        
     LABEL
         OUTLINEWIDTH 5
@@ -3552,7 +3552,7 @@ CLASS
 			NAME 'HANDHOLE'
             EXPRESSION (('[network_status]'  eq 'A') && ('[is_virtual]'  = 'true'))  			
 			STYLE
-				SYMBOL "icons/AsBuild/v_manhole.png" 
+				SYMBOL "icons/AsBuild/v_handhole.png" 
 				SIZE 20			
 			END
             			
@@ -3561,7 +3561,7 @@ CLASS
 			NAME 'HANDHOLE'
             EXPRESSION (('[network_status]'  eq 'D') && ('[is_virtual]'  = 'true')) 		
 			STYLE
-				SYMBOL "icons/Dorment/v_manhole.png" 
+				SYMBOL "icons/Dorment/v_handhole.png" 
 				SIZE 30
 				OFFSET 0 -5				
 			END
@@ -3571,7 +3571,7 @@ CLASS
 			NAME 'HANDHOLE'
              EXPRESSION (('[network_status]'  eq 'P') && ('[is_virtual]'  = 'true'))  			
 			STYLE
-				SYMBOL "icons/Planned/v_manhole.png" 
+				SYMBOL "icons/Planned/v_handhole.png" 
 				SIZE 30
 				OFFSET 0 -5				
 			END

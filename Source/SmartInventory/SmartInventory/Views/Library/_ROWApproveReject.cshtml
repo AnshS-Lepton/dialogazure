@@ -85,7 +85,7 @@
             <label class="control-label col-sm-2">@Html.Raw(Resources.Resources.SI_OSP_ROW_NET_FRM_073)<i class="clsMandatory">*</i>:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.accessChargeStartDate, new { @class = "form-control clsReadOnly", id = "txtAccessChargeDate", @readonly = true })
-                <img id="imgAccessChargeDate" class="assign-calen" src="/Content/images/calendar.png" style="display: @(Model.system_id>0?"none":"block");">
+                <img id="imgAccessChargeDate" class="assign-calen" src="@Url.Content("~/Content/images/calendar.png")" style="display: @(Model.system_id>0?"none":"block");">
             </div>
         </div>
         <div class="form-group">
