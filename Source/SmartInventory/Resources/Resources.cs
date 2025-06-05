@@ -30272,6 +30272,20 @@ namespace Resources {
                    return resourceProvider.GetResource("SI_OSP_GBL_GBL_GBL_326", CultureInfo.CurrentUICulture.Name) as string;
                }
             }
+            
+        /// <summary>Validate Route</summary>
+        public static string SI_GBL_GBL_NET_FRM_443 {
+               get {
+                   return resourceProvider.GetResource("SI_GBL_GBL_NET_FRM_443", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
+            
+        /// <summary>Delete Route</summary>
+        public static string SI_GBL_GBL_NET_FRM_444 {
+               get {
+                   return resourceProvider.GetResource("SI_GBL_GBL_NET_FRM_444", CultureInfo.CurrentUICulture.Name) as string;
+               }
+            }
 
         }        
 }
