@@ -18619,7 +18619,7 @@ var Main = function () {
                                     app.clearDraggableLibrary();
                         si.bindManualRoutes(centerLineGeom);
                         $(popup.DE.MaximizeModel).trigger("click");
-                        popup.MaximizeModel();
+                       
                       
                     });
 
