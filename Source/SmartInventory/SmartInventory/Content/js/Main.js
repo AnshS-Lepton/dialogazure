@@ -9294,6 +9294,7 @@ var Main = function () {
 
     this.clearDraggableLibrary = function () { //remove draggable library element
         //;
+        debugger;
         LandBase.clearTempNewEntity();
         app.clearTempNewEntity();
         app.ClearMapAddressTool();
@@ -17688,7 +17689,7 @@ var Main = function () {
     }
 
     this.Site_info_tool = function (obj) {
-
+        debugger;
         si.mapReport.clearSelection();
         var infoId = $('#' + obj.id);
         infoId.toggleClass('activeToolBar');
@@ -17776,7 +17777,7 @@ var Main = function () {
             }
             $('#hdnAgg1SystemId').val(system_id);
             
-            si.bindSegmentRouteDetails();
+           // si.bindSegmentRouteDetails();
         }
         else if (flag == 1) {
             $('#txtagg2').val(network_id);
@@ -17787,7 +17788,7 @@ var Main = function () {
             }
             $('#hdnAgg2SystemId').val(system_id);
             
-            si.bindSegmentRouteDetails();
+            //si.bindSegmentRouteDetails();
             // $(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 2) {
@@ -17890,22 +17891,28 @@ var Main = function () {
 
             ajaxReq('Report/getManualRouteDetails', { geom: _geom, agg1: agg1, agg2: agg2 }, true, function (data) {
 
-                var ddlroute = $('#ddlmanualroute');
-
-                
-                ddlroute.empty(); // Clear existing options
-                ddlroute.append('<option value="">--Select Route--</option>');
-
-                // Append new options from response
-                $.each(data.result, function (index, item) {
-
-                    ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
-
-                });
-
                
-                // **Update Chosen Dropdown**
-                ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
+                debugger;
+                if (data.status =="VALIDATION_FAILED")
+                    alert(data.message);
+                if (data.status == "OK")
+                    {
+                        var ddlroute = $('#ddlmanualroute');
+                        ddlroute.empty(); // Clear existing options
+                        ddlroute.append('<option value="">--Select Route--</option>');
+
+                        // Append new options from response
+                        $.each(data.result, function (index, item) {
+
+                            ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
+
+                        });
+
+
+                        // **Update Chosen Dropdown**
+                        ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
+                    }
+               
             }, false, false);
 
 
@@ -18574,7 +18581,7 @@ var Main = function () {
     }
     this.setRouteToolEvents = function (libItem) {
 
-        debugger;
+       
         var centerLineGeom = '';
         var bufferWidth = 0;
         var geomType = app.EntityAttributeDetails["geomType"];
@@ -18602,16 +18609,17 @@ var Main = function () {
         ajaxReq('Main/ValidateEntityGeom', { geomType: geomType, enType: eType, txtGeom: txtGeom, isTemplate: isTemplate }, true,
             function (resp) {
                 if (resp.status == "OK") {
-
-                    app.showLibraryTools();
-                    $('#LibraryTools a:nth-child(2)').off('click');
-                    $('#LibraryTools a:nth-child(2)').on('click', function () {
-    
-                                    app.closeLibTools();
+                    debugger;
+                    app.showTopologyLibraryTools();
+                    $('#topologyLibraryTools a:nth-child(2)').off('click');
+                    $('#topologyLibraryTools a:nth-child(2)').on('click', function () {
+                        debugger;
+                        app.closeTopologyLibTools();
                                   //  app.loadLayerOnEntity();
                                     app.clearDraggableLibrary();
                         si.bindManualRoutes(centerLineGeom);
-
+                        $(popup.DE.MaximizeModel).trigger("click");
+                       
                       
                     });
 
@@ -18622,6 +18630,31 @@ var Main = function () {
                 }
             }, true, true);
     }
+
+    this.showTopologyLibraryTools = function () {
+        
+        $('#topologygreyDiv').show();
+        var marlft = $(window).width() - (132 + ($('#map_canvas').width() / 2));
+        var marBot = $(window).height() - 83 - $('#map_canvas').height() + ($('#map_canvas').height() / 2) - 14;
+        $('#topologyLibraryTools').css("left", marlft);
+        $('#topologyLibraryTools').show();
+        $('#topologyLibraryTools').stop(true).animate({ 'margin-bottom': marBot, 'opacity': '1' }, { queue: false, duration: 300 });
+    }
+
+    this.closeTopologyLibTools = function () {
+
+        debugger;
+        $('#topologyLibraryTools').stop(true).animate({ 'margin-bottom': -30, 'opacity': '0' }, { queue: false, duration: 300, complete: function () { $(this).hide() } });
+        $('#topologyLibraryTools a:first-child').hide();
+        $('#topologygreyDiv').hide();
+        if ($('#hdntopologyGeomType').val() == 'Polygon') {
+            google.maps.event.addListener(app.map, 'click', function (evt) {
+                app.drawPolygonEntity(evt.latLng, '');
+            });
+        }
+
+    }
+
     /*Topology Plan*/
 
     this.GetONTPortInfo = function (system_id, model_id) {

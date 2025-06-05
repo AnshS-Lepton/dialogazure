@@ -250,6 +250,11 @@ namespace BusinessLogics.Admin
         {
             return new DASegment().GetCableRoute(objTopologyPlan, user_id);
         }
+
+        public List<bool> getValidRoute(string geom, int agg1, int agg2, int user_id)
+        {
+            return new DASegment().getValidRoute(geom, agg1, agg2, user_id);
+        }
         public List<routeDetails> GetSelectedRoute(string geom, int agg1, int agg2, int user_id)
         {
             return new DASegment().GetSelectedRoute(geom, agg1, agg2, user_id);

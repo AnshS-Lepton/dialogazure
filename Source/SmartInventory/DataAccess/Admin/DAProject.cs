@@ -833,6 +833,19 @@ namespace DataAccess.Admin
             return sites;
 
         }
+
+        public List<bool> getValidRoute(string geom, int agg1, int agg2, int user_id)
+        {
+            return repo.ExecuteProcedure<bool>("fn_getvalidateToplogyroute", new
+            {
+                
+                p_agg1 = agg1,
+                p_agg2 = agg2,
+                p_geom = geom,
+                p_user_id = user_id
+            });
+
+        }
         public List<routeDetails> GetSelectedRoute(string geom,int agg1,int agg2, int user_id)
         {
             

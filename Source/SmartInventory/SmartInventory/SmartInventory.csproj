@@ -1639,6 +1639,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
     <Content Include="MigrationScripts\04-06-2025.sql" />
     <Content Include="MigrationScripts\23-05-2025.sql" />
     <Content Include="MigrationScripts\12-05-2025_SIT_29.sql" />
@@ -2461,6 +2462,7 @@
     <Content Include="Views\Report\_ViewSegment.cshtml" />
     <Content Include="Views\Library\_UpdateProjectDetails.cshtml" />
     <Content Include="Views\Library\PODProject.cshtml" />
+    <Content Include="Views\Shared\_TopologyAction.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

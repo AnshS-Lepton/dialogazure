@@ -33,12 +33,14 @@
         top: 3px;
         z-index: 9;
     }
-    .pose-plus i{
-        font-size:1.6rem;
-        color:#000000;
-    }
-    .sitePlan_fieldset .form-control{
-        padding:2px 6px;
+
+        .pose-plus i {
+            font-size: 1.6rem;
+            color: #000000;
+        }
+
+    .sitePlan_fieldset .form-control {
+        padding: 2px 6px;
     }
 
     .txtdesc {
@@ -56,6 +58,18 @@
 
     .disabledChosenBox {
         cursor: not-allowed;
+    }
+
+    .formContrl-Icon {
+        border-radius: 4px 0 0 4px !important;
+    }
+
+    .map-con {
+        border: 1px solid #CCCCCC;
+        border-left: none;
+        border-radius: 0 4px 4px 0 !important;
+        padding: 0.5rem;
+        background: #eeeeee
     }
 </style>
 
@@ -100,12 +114,11 @@
                         <legend>Create Segment</legend>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_RPT_459 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
-                                <div class="pose-plus map-con">
-                                    <a href="#" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                                        <i class="cptr icon-map-view" id="sEntity" data-Entity="0" onclick="si.Site_info_tool(this)"></i>
-                                    </a>
+                            <div class="col-sm-4 d-flex">
+                                @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control formContrl-Icon", @placeholder = "Enter text", @maxlength = 100 })
+                                <div class="map-con">
+                                    <i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="sEntity" data-Entity="0" onclick="si.Site_info_tool(this)"></i>
+
                                 </div>
                                 @*<div class="pose-plus">
                                         <a href="javascript:void(0);"
@@ -116,13 +129,11 @@
                                     </div>*@
                             </div>
                             <label class="control-label col-sm-2" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_RPT_460 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+                            <div class="col-sm-4 d-flex">
+                                @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control formContrl-Icon", @placeholder = "Enter text", @maxlength = 100 })
 
-                                <div class="pose-plus map-con">
-                                    <a href="#" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001">
-                                        <i class="cptr icon-map-view" id="segEntity" data-Entity="1" onclick="si.Site_info_tool(this)"></i>
-                                    </a>
+                                <div class="map-con">
+                                    <i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="segEntity" data-Entity="1" onclick="si.Site_info_tool(this)"></i>
                                 </div>
 
                                 @*<div class="pose-plus">
@@ -148,34 +159,34 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="control-label col-sm-2" for="searchby">Suggested Route <i class="clsMandatory">*</i>:</label>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control", id = "ddlroute" })
-                                <div class="pose-plus">
-                                    <a href="javascript:void(0);"
-                                       class="routeShowOnMap"
-                                       title="Show on Map">
-                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
-                                    </a>
+                            <label class="control-label col-sm-2" for="searchby" style="display:none;">Suggested Route <i class="clsMandatory">*</i>:</label>
+                            <div class="col-sm-4 d-flex" style="display:none;">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control formContrl-Icon", id = "ddlroute" })
+                                <div class="map-con">
+                                    <i title="Show on Map" class="fa fa-globe action_icon cptr"></i>
                                 </div>
                             </div>
+
+                            <label class="control-label col-sm-2" for="txtSearchtext">Route :</label>
+
+                            <div class="col-sm-4 d-flex">
+                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control formContrl-Icon", id = "ddlmanualroute" })
+                                <div class="map-con d-flex --gap10">
+                                    <i id="manualRouteShowOnMap" title="Show on Map">
+                                        <i class="fa fa-globe action_icon cptr"></i>
+                                    </i>
+                                    <i class="fa fa-pencil cptr" title="Create Route" id="btnmanualroute"></i>
+                                </div>
+
+
+                            </div>
+
                             <label class="control-label col-sm-2" for="txtSearchtext">Description :</label>
                             <div class="col-sm-4">
                                 @Html.TextAreaFor(m => m.Seg_desc, new { @id = "txtdesc", @title = "Enter Description", @tabindex = "4", @class = "form-control", @placeholder = "Enter Description", @maxlength = 500, @rows = 2, @cols = 50, @style = "resize: none;" })
                             </div>
 
-                            <label class="control-label col-sm-2" for="txtSearchtext">Manual Route :</label>
-                            <a href="javascript:void(0);" class="fa fa-pencil action_icon fa-fw m-r-xs fa-lg" title="Create Route" id="btnmanualroute"></a>
-                            <div class="col-sm-4">
-                                @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control", id = "ddlmanualroute" })
-                                <div class="pose-plus">
-                                    <a href="javascript:void(0);"
-                                       id="manualRouteShowOnMap"
-                                       title="Show on Map">
-                                        <i class="fa fa-globe action_icon fa-fw m-r-xs fa-lg"></i>
-                                    </a>
-                                </div>
-                            </div>
+
                         </div>
                     </fieldset>
 
@@ -207,7 +218,7 @@
 <script>
 
     function isValidFormat(input) {
-        const pattern = /^ACC\d{1,3}$/;
+        const pattern = /^[A-Z]{3}\d{2}$/;
         return pattern.test(input);
     }
 
@@ -462,9 +473,9 @@ source: function (request, response) {
         });
     }
 
-   
 
-   
+
+
 
        $("#btnSaveSegment").click(function () {
 
@@ -497,7 +508,7 @@ source: function (request, response) {
                return false;
            }
 
-          
+
     if (route_id === "") {
         route_id = $("#ddlroute option:selected").val();
     }
