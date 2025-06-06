@@ -604,58 +604,7 @@ var NetworkPlanning = function () {
             }
         }, true, true);
     }
-
-    this.ShowBackbonePlanEntityOnMap = function (planId) {
-        $('.pull-right').find('.activemarker').removeClass('activemarker')
-        $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
-        ajaxReq('Plan/GetBackboneForMap', { plan_id: planId }, true, function (resp) {
-            if (resp.status.toLowerCase() == "ok") {
-                $('#dvHighlight' + '_' + planId).addClass('activemarker');
-                app.autoplanid = planId;
-                si.autoplanid = planId;
-                si.resetTreeLayer();
-                //si.map.setZoom(18);
-                var startlatlong = resp.result.start_point.split(',');
-                //  si.map.setCenter(new google.maps.LatLng(startlatlong[0], startlatlong[1]));
-                $(si.DE.chkShowLabelOnMap).prop("checked", resp.result.has_label);
-
-                var workSpaceLyrs = resp.result.layer_id.split(",");
-
-                if (workSpaceLyrs.length > 0) {
-                    for (var i = 0; i < workSpaceLyrs.length; i++) {
-                        $('#chk_nLyr_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
-                        $('#chk_netP_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
-                        $('#chk_netA_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
-                        $('#chk_netD_' + workSpaceLyrs[i]).not(":disabled").prop('checked', true);
-                    }
-                }
-
-                var networkRegion = resp.result.region_ids.split(",");
-
-                if (networkRegion.length > 0) {
-                    for (var i = 0; i < networkRegion.length; i++) {
-
-                        $('#chk_rLyr_' + networkRegion[i]).not(":disabled").prop('checked', true);
-
-                    }
-                }
-
-                var networkProvinces = resp.result.province_ids.split(",");
-
-                if (networkProvinces.length > 0) {
-                    for (var i = 0; i < networkProvinces.length; i++) {
-                        $('#chk_pLyr_' + networkProvinces[i]).not(":disabled").prop('checked', true);
-                    }
-                }
-
-                app.fitElementOnMap(resp.result.start_point, resp.result.end_point);
-                si.map.setZoom(si.map.getZoom() - 1);
-                si.LoadLayersOnMap();
-
-            }
-        }, true, true);
-    }
-
+    
     this.ShowTempPlanEntityOnMap = function (planId) {
 
         const flightPlanCoordinates = [];
@@ -725,24 +674,7 @@ var NetworkPlanning = function () {
             }, false, true, false);
         });
     }
-    this.deleteBackbonePlan = function (planId) {
-        showConfirm(MultilingualKey.SI_OSP_GBL_GBL_FRM_157, function () {
-            ajaxReq('plan/DeleteBackbonePlanByPlanId', { plan_id: planId }, true, function (resp) {
-                if (resp.msg.toLowerCase() == "ok") {
-                    alert(resp.strReturn);
-                    $("#dv_kml_" + planId).remove();
-                    //app.hideAllNetworkFile();
-                    //app.RemoveOldFeature();
-                    $('.lyrRefresh').trigger("click");
-
-                }
-                else {
-                    alert(resp.strReturn);
-                }
-            }, false, true, false);
-        });
-    }
-
+   
     this.createAutoMarker = function (mrkrLatlng, imageUrl, label, draggable = true) {
 
         var gmarkernew = new google.maps.Marker({
@@ -759,10 +691,6 @@ var NetworkPlanning = function () {
 
     this.downloadBomReport = function (planId) {
         window.location = appRoot + 'Report/ExportPlanBOMBOQReport?plan_id=' + planId;
-    }
-
-    this.downloadBackboneBomReport = function (planId) {
-        window.location = appRoot + 'Report/ExportBackbonePlanBOMBOQReport?plan_id=' + planId;
     }
 
     this.loopUpdate = function () {

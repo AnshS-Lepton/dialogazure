@@ -10,7 +10,7 @@
             @foreach (var projspeci in Model.lstBindProjectCode)
             {
                 var selected = projspeci.system_id == Model.project_id ? "selected" : "";
-                <option value="@projspeci.system_id" data-projectname="@projspeci.project_name" @selected>@projspeci.project_code (@projspeci.project_name)</option>
+                <option value="@projspeci.system_id" data-projectname="@projspeci.project_name" @selected>@projspeci.project_code</option>
             }
         </select>
     </div>

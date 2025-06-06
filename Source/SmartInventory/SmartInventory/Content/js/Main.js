@@ -9382,13 +9382,13 @@ var Main = function () {
         app.layerManager = [];
 
         // Clear previously drawn polylines from the map
-        if (backboneself.polylines && backboneself.polylines.length > 0) {
-            backboneself.polylines.forEach(line => {
+        if (app.backboneself && app.backboneself.polylines.length > 0) {
+            app.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
                 }
             });
-            backboneself.polylines = [];
+            app.backboneself.polylines = [];
         }
         //load covid-19 layer..  
         if ($("#chk_covid_lyr").is(':checked')) {

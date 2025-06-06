@@ -139,13 +139,13 @@ var BackbonePlanning = function () {
         $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
         $('#siteDropdownToggle').val('--Select Site--');
         // Clear previously drawn polylines from the map
-        if (backboneself.polylines && backboneself.polylines.length > 0) {
-            backboneself.polylines.forEach(line => {
+        if (si.backboneself.polylines && si.backboneself.polylines.length > 0) {
+            si.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
                 }
             });
-            backboneself.polylines = [];
+            si.backboneself.polylines = [];
         }
     }
 
@@ -296,13 +296,13 @@ var BackbonePlanning = function () {
         ajaxReq('BackBonePlan/SaveBackboneProcess', $('form').serialize(), true, function (resp) {
             app.autoPlanningShowNetworkLayer(resp);
 
-            if (backboneself.polylines && backboneself.polylines.length > 0) {
-                backboneself.polylines.forEach(line => {
+            if (si.backboneself && si.backboneself.polylines.length > 0) {
+                si.backboneself.polylines.forEach(line => {
                     if (line && line.setMap) {
                         line.setMap(null);
                     }
                 });
-                backboneself.polylines = [];
+                si.backboneself.polylines = [];
             }
 
         }, false, true, false);
@@ -1286,20 +1286,20 @@ var BackbonePlanning = function () {
 
     this.drawGeoJsonLinesOnMap = function (planId) {
         debugger;
-        backboneself = this;
+        si.backboneself = this;
         si.gMapObj.infoEntity = null;
         si.gMapObj.libPath = null;
         si.point2pointgeom = [];
         if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
         if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
         // Clear previously drawn polylines from the map
-        if (backboneself.polylines && backboneself.polylines.length > 0) {
-            backboneself.polylines.forEach(line => {
+        if (si.backboneself.polylines && si.backboneself.polylines.length > 0) {
+            si.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
                 }
             });
-            backboneself.polylines = [];
+            si.backboneself.polylines = [];
         }
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
@@ -1311,11 +1311,11 @@ var BackbonePlanning = function () {
                 if (geo.type === 'LineString') {
                     debugger;
                     const path = geo.coordinates.map(coord => new google.maps.LatLng(coord[1], coord[0]));
-                    si.backbonePolyline = backboneself.createAutoPlanLine(path, true, false , 3);
+                    si.backbonePolyline = si.backboneself.createAutoPlanLine(path, true, false , 3);
                     si.backbonePolyline.setMap(si.map);
 
-                    backboneself.polylines = backboneself.polylines || [];
-                    backboneself.polylines.push(si.backbonePolyline);
+                    si.backboneself.polylines = si.backboneself.polylines || [];
+                    si.backboneself.polylines.push(si.backbonePolyline);
                 }
             });
         }, false, true, false);

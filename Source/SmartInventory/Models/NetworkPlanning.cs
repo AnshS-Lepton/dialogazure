@@ -31,12 +31,6 @@ namespace Models
         [Required]
         public string start_point { get; set; }
 
-        [NotMapped]
-        public double? start_point_buffer { get; set; }
-
-        [NotMapped]
-        public int? start_point_entity { get; set; }
-
         [Required]
         public string end_point { get; set; }
         [Required]
@@ -92,8 +86,7 @@ namespace Models
         public double MaxAutoOffsetValue { get; set; }
         [NotMapped]
         public bool is_bomboq_reqested { get; set; }
-        [NotMapped]
-        public double buffer { get; set; }
+    
 
         public NetworkPlanning()
         {
