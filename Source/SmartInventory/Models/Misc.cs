@@ -3138,5 +3138,22 @@ namespace Models
 	    }
     }
 
+    public class NearestSiteDetails
+    {
+        public int id { get; set; }
+        public double? fiber_ug_distance_to_network { get; set; }
+        public double? fiber_oh_distance_to_network { get; set; }
+        public double? total_fiber_distance { get; set; }
+        public double? fiber_distance_to_nearest_site { get; set; }
+        public string nearest_site { get; set; }
+        public string sp_geometry { get; set; }
+        public string network_id { get; set; }
+        public int system_id { get; set; }
+        public string site_geometry { get; set; }
+        public double distance { get; set; }
+        public double google_site_distance { get; set; }
+        public string line_geometry { get; set; }
+
+    }
 }
 

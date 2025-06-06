@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTSIntegrationDialog", "DTS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailogExportReport", "DailogExportReport\DailogExportReport.csproj", "{A0283B0C-607D-4A6F-BF3E-32A0DF5F8A11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteExport", "SiteExport\SiteExport.csproj", "{C63F7AC8-6AC5-435B-9F1A-183391051BDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -244,6 +246,14 @@ Global
 		{A0283B0C-607D-4A6F-BF3E-32A0DF5F8A11}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A0283B0C-607D-4A6F-BF3E-32A0DF5F8A11}.Release|x86.ActiveCfg = Release|Any CPU
 		{A0283B0C-607D-4A6F-BF3E-32A0DF5F8A11}.Release|x86.Build.0 = Release|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Debug|x86.Build.0 = Debug|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Release|x86.ActiveCfg = Release|Any CPU
+		{C63F7AC8-6AC5-435B-9F1A-183391051BDB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
