@@ -59,6 +59,7 @@ namespace SmartInventory.Controllers
             planobj.MaxAutoOffsetValue = ApplicationSettings.MaxAutoOffsetValue;
             return PartialView("_PlanTool", planobj);
         }
+
         public ActionResult ShowBulkPlanTool()
         {
             return PartialView("_BulkAutoPlan");
@@ -206,7 +207,7 @@ namespace SmartInventory.Controllers
             BindCableTypeDropDown(objPlan);
             return Json(objPlan, JsonRequestBehavior.AllowGet);
         }
-
+       
         //DeletePlanByPlanId
 
         public ActionResult DeletePlanByPlanId(int plan_id)
@@ -222,7 +223,7 @@ namespace SmartInventory.Controllers
             {
                 return Json(new { strReturn = objResp[0].message, msg = "false" }, JsonRequestBehavior.AllowGet);
             }
-        }
+        }       
 
         //public JsonResult GetEndPointEntity(double lat, double lng, string entity_type, double buffer)
         //{
@@ -257,6 +258,8 @@ namespace SmartInventory.Controllers
             }
             //return Json(new { Data = data, JsonRequestBehavior.AllowGet });
         }
+
+
         public JsonResult GetPlanElementPath(int plan_id)
         {
             string objresp = string.Empty;
@@ -287,7 +290,7 @@ namespace SmartInventory.Controllers
             //List <NetworkPlanning> planList= new BLPlan().GetNetworkPlanning(user_id);
             return PartialView("_ViewPlanData", objfiledetail);
         }
-
+       
         public PartialViewResult GetLoopManage(int tempPlanid, double looplength, bool is_loop_updated)
         {
             List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid);
@@ -314,7 +317,7 @@ namespace SmartInventory.Controllers
             }
             objfiledetails.lstPlanDetails = fileList;
             return PartialView("_PlanDataList", objfiledetails.lstPlanDetails);
-        }
+        }       
 
         public JsonResult GetPlanDetails(int plan_id)
         {
@@ -341,8 +344,7 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-
-
+        
         public JsonResult GetNetworkForMap(int plan_id)
         {
             JsonResponse<NetworkPlanning> objResp = new JsonResponse<NetworkPlanning>();
@@ -368,7 +370,6 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-
 
         public ActionResult SaveLoop(List<temp_auto_network_plan> model)
         {
@@ -432,13 +433,6 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult GetNetworkPlanningLineLength(string geom)
-        {
-            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
-            objResp.result = new BLPlan().GetLineLength(geom);
-            objResp.status = ResponseStatus.OK.ToString();
-            return Json(objResp, JsonRequestBehavior.AllowGet);
-        }
-
+      
     }
 }

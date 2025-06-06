@@ -30,6 +30,7 @@ namespace Models
 
         [Required]
         public string start_point { get; set; }
+
         [Required]
         public string end_point { get; set; }
         [Required]
@@ -85,6 +86,8 @@ namespace Models
         public double MaxAutoOffsetValue { get; set; }
         [NotMapped]
         public bool is_bomboq_reqested { get; set; }
+    
+
         public NetworkPlanning()
         {
             objPM = new PageMessage();

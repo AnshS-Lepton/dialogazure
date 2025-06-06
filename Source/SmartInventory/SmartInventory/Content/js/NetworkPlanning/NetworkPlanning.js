@@ -99,7 +99,7 @@ var NetworkPlanning = function () {
     }
 
     this.ResetPlanForm = function () {
-         
+
         app.temp_gemo = '';
         $('#geometry').val('');
         $('#lengthAutoPlaningDiv').empty()
@@ -191,7 +191,6 @@ var NetworkPlanning = function () {
 
     this.ViewAutoPlanningData = function () {
 
-
         if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
             si.autoplanid = 0;
             app.autoplanningplanid = 0;
@@ -205,6 +204,7 @@ var NetworkPlanning = function () {
             $("#planInfo").css('background-image', 'none');
         }, false, false);
     }
+
 
     this.CheckLoopLenght = function (event) {
 
@@ -332,7 +332,7 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-        
+
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
@@ -391,6 +391,7 @@ var NetworkPlanning = function () {
             app.autoPlanningShowNetworkLayer(resp);
         }, false, true, false);
     }
+
   
     this.geomToForm = function () {
         if ($('#ddledit_path').val() == "manually") {
@@ -521,7 +522,7 @@ var NetworkPlanning = function () {
             }
         }, true, true);
     }
-
+    
     this.ShowTempPlanEntityOnMap = function (planId) {
 
         const flightPlanCoordinates = [];
@@ -591,7 +592,7 @@ var NetworkPlanning = function () {
             }, false, true, false);
         });
     }
-
+   
     this.createAutoMarker = function (mrkrLatlng, imageUrl, label, draggable = true) {
 
         var gmarkernew = new google.maps.Marker({
@@ -847,6 +848,7 @@ var NetworkPlanning = function () {
     //}
 
     this.createCableBetweenMakers = function () {
+
         app.AllPlanningPaths = [];
         app.AllDistances = [];
         app.minDistance = 0;
@@ -870,15 +872,18 @@ var NetworkPlanning = function () {
                 provideRouteAlternatives: true
             };
 
+            app.lastRequest = request;
+
             request.destination = app.endLatLng;
             app.CheckCableCreated();
             var network_Type = $('#ddledit_path').val();
 
             directionsService.route(request, function (response, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
-                     
                     app.AllPathResponses.push(response);
+                    
                     var Paths = response.routes;
+
                     for (let i = 0; i < Paths.length; i++) {
                         let totalDist = 0;
 
@@ -909,7 +914,7 @@ var NetworkPlanning = function () {
 
 
                     }
-
+         
 
                     // if (network_Type != "manually") {
                     // directionsDisplay.setOptions({ suppressMarkers: true });
@@ -924,7 +929,7 @@ var NetworkPlanning = function () {
                     directionsDisplay.setMap(null);
                 }
             });
-
+    
             var Reverserequest = {
                 origin: app.endLatLng,
                 travelMode: google.maps.DirectionsTravelMode.DRIVING,
@@ -968,7 +973,7 @@ var NetworkPlanning = function () {
                                 app.BindPlanningPaths(app.AllPlanningPaths, false);
                             }
                             //app.BindPlanningPaths(app.AllPlanningPaths, false);
-
+   
                             //}
 
                         }
@@ -1373,6 +1378,7 @@ var NetworkPlanning = function () {
 
 
     this.planningmode = function (val) {
+
         app.ResetPlanForm();
         app.plan_mode = val;
         $('.mainPart').show();
@@ -1381,14 +1387,14 @@ var NetworkPlanning = function () {
             $('.Manual').hide();
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", true);
-            $("#endpointmap").addClass("disable-click");
+            $("#endpointmap").addClass("disable-click");          
         }
         else if (app.plan_mode == 'manual_planning') {
             $('.Manual').show();
             $('.auto').hide();
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", false);
-            $("#endpointmap").removeClass("disable-click");
+            $("#endpointmap").removeClass("disable-click");            
         }
         else {
             $('.mainPart').hide();

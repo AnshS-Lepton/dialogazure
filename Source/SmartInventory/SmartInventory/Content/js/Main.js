@@ -296,6 +296,8 @@ var Main = function () {
     this.fSource_ref_type = '';
     this.fIs_new_entity = false;
     this.fStatus = '';
+    this.backbonePolyline = {};
+    this.backboneself = undefined; 
     this.LayerLoadingStatusMap = new Map();
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
@@ -7085,6 +7087,7 @@ var Main = function () {
         var isLibSwitch = $(obj).attr("id") == 'divLibSwitch';
         var isMainToolvar = $(obj).hasClass("maintoolbar");
         var isPlanTool = $(obj).attr("id") == 'Plantool';
+        var isBackBonePlanTool = $(obj).attr("id") == 'Backboneplan';
         var isExternalDataView = $(obj).hasClass('externalDataView');
         var isSearchEntity = $(obj).attr("id") == 'dvSrch';
         $('#divLibSwitch').toggleClass('activeToolBar');
@@ -7145,6 +7148,28 @@ var Main = function () {
                 si.PointentityOBJ[k].setMap(null);
             }
             app.PointentityOBJ = [];
+        }
+        if (!isBackBonePlanTool) {
+
+            $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
+            $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
+
+            if (si.autoplanid > 0) {
+                if ($('#openNetworkPlanningData:visible').length == 0 && $('#openBackBonePlanningData:visible').length == 0) {
+                    si.autoplanid = 0;
+                    si.LoadLayersOnMap();
+                }
+            }
+
+            if (si.startMarker)
+                si.startMarker.setMap(null);
+            if (si.endMarker)
+                si.endMarker.setMap(null);
+            if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }
+            if (si.gMapObj.entitySrchObj)
+                si.gMapObj.entitySrchObj.setMap(null);
+            directionsDisplay.setMap(null);
+
         }
     }
 
@@ -9356,7 +9381,15 @@ var Main = function () {
         //blank layer object..
         app.layerManager = [];
 
-
+        // Clear previously drawn polylines from the map
+        if (app.backboneself && app.backboneself.polylines.length > 0) {
+            app.backboneself.polylines.forEach(line => {
+                if (line && line.setMap) {
+                    line.setMap(null);
+                }
+            });
+            app.backboneself.polylines = [];
+        }
         //load covid-19 layer..  
         if ($("#chk_covid_lyr").is(':checked')) {
             var layerParam = { Name: "Covid", DisplayName: "Covid-19", Filters: null, MapFilePath: "D:/CovidMapFiles/Covid.map" };
@@ -21494,6 +21527,9 @@ var Main = function () {
         app.addRemoveActiveClass($('.Plantool'));
         $("#dvExternalData").hide();
         $("#divPlanTool").hide();
+        if ($("#dvAutoBackBonePlanData").is(":visible")) {
+            $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
+        } 
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();
@@ -21525,6 +21561,46 @@ var Main = function () {
             }
         });
     }
+
+    this.ViewBackboneplan = function () {
+        debugger;
+        $(app.DE.InfoDiv).hide();
+        $(app.DE.SplicingDiv).hide();
+        app.addRemoveActiveClass($('.Backboneplan'));
+        $("#dvExternalData").hide();
+        $("#divBackBonePlanTool").hide();
+        if ($("#dvAutoPlanData").is(":visible")) {
+            $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
+        } 
+        if ($("#dvAutoBackBonePlanData").css('display') == 'none') {
+            if (typeof backbonedata != "undefined") {
+                backbonedata.hideAllNetworkFile();
+            }
+            $("#dvAutoBackBonePlanData").html('');
+            $("#dvAutoBackBonePlanData").addClass('networkPlanDataLoader');
+        }
+        $("#dvAutoBackBonePlanData").slideToggle('slow', function () {
+            if ($("#dvAutoBackBonePlanData").css('display') != 'none') {
+                app.ActiveNetworkPlanning = true;
+                ajaxReq('BackBonePlan/ShowBackbonePlanTool', {}, true, function (resp) {
+                    $("#dvAutoBackBonePlanData").html(resp);
+                    $("#dvAutoBackBonePlanData").removeClass('networkPlanDataLoader');
+                    $("#closeBackBonePlanningData").show();
+                    $("#openNetworkPlanningData").hide();
+                }, false, false);
+            }
+            else {
+               
+                if (typeof backbonedata !== 'undefined' && backbonedata != null) {
+                    backbonedata.hideAllNetworkFile();
+                    $("#openNetworkPlanningData").hide();
+                }
+
+            }
+        });
+    }
+
+
 
 
 

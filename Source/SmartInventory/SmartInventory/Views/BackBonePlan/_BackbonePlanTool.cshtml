@@ -1,0 +1,205 @@
+﻿@model Models.BackBonePlanning
+@Scripts.Render("~/bundles/BackBonePlanning/Scripts")
+@Styles.Render("~/bundles/BackBonePlanning/css")
+
+<span class="glyphicon glyphicon-menu-right sidectrlright" id="closeBackBonePlanningData"></span>
+
+<!DOCTYPE html>
+
+<div class="sidenetworkDatabar" id="divBackBonePlanningData">
+    <header>
+        <h3>BACKBONE PLANNING</h3>
+        <h5> @Resources.Resources.SI_GBL_GBL_GBL_FRM_044</h5>
+        <span id="closeBackBonePlanTool" class="kmlClose">×</span>
+    </header>
+    <div class="libTabs">
+        <div class="scrollmenu">
+            <div><span class="spanSide go-left" id="spnRightMenu" style="display:none;"><i class="fa fa-angle-left" aria-hidden="true"></i></span></div>
+            <div class="scrollerhide overflow-hidden">
+                <ul class="nav nav-tabs tabs-left" id="ulBackBoneTabs">
+                    <li class="active"><a href="#CreatePlan" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_285 </a></li>
+                    <li><a href="#planHistotry" onclick="backbonedata.ViewBackbonePlanningData()" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_498</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="libTabContent">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="CreatePlan">
+                @using (Ajax.BeginForm("GetBackbonePlanningEntityList", "BackBonePlan", new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    LoadingElementId = "dvProgress",
+                    OnSuccess = "backbonedata.planBomAndBOQ(data)"
+                },
+new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete = "off" }))
+                {
+                    @Html.HiddenFor(m => m.geometry)
+                    @Html.HiddenFor(m => m.is_bomboq_reqested)
+                    @Html.HiddenFor(m => m.plan_id)
+                    @Html.HiddenFor(m => m.is_loop_update)
+                    @Html.HiddenFor(m => m.selectedSites)
+                    @Html.HiddenFor(m => m.startpoint_network_id)
+                    @Html.HiddenFor(m => m.endpoint_network_id)
+                  
+                    <div class="prowindowNetworkData">
+                        <div class="createPlan">
+                            <div class="form-group">
+                                <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_001<i class="clsMandatory">*</i>:</label>
+                                <div class="col-md-7">
+                                    @Html.TextBoxFor(m => m.plan_name, new { @class = "form-control", @maxlength = 100 })
+                                </div>
+                            </div>
+
+                            <div class="mainPart">
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.start_point, new { @class = "form-control", @onblur = "return backbonedata.NetworkPlanning('start',true);", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30, @readonly = "readonly" })
+                                        <i id="startpointmap" onclick="return backbonedata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction"></i>
+                                        <i id="startPointErrorMsg" style="color: red; font-size: 10px;"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_073<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.end_point, new { @class = "form-control", @onblur = "return backbonedata.NetworkPlanning('end',true)", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30, @readonly = "readonly" })
+                                        <i id="endpointmap" onclick="return backbonedata.NetworkPlanning(true, 'end');" class="icon-Find_Direction" title="Click on map to choose end point"></i>
+                                        <i id="endPointErrorMsg" style="color: red; font-size: 10px;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="buffer">
+                                    <label class="control-label col-md-5">Buffer(meter)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.buffer, new { @id = "planbuffer", Value = "", @onblur = "return backbonedata.PlanningBufferPoint();", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">Backbone Fiber <i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.DropDownListFor(m => m.backbone_fiber, new SelectList(Model.lstBackboneFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "backboneFiberDropdown" })
+
+                                    </div>
+                                </div>
+                                <div class="form-group" id="siteLst">
+                                    <label class="control-label col-md-5">Nearest sites :</label>
+                                    <div class="col-md-7" style="position: relative;">
+                                        <input type="text" id="siteDropdownToggle" readonly placeholder="--Select Site--" class="form-control" />
+                                        <div id="siteDropdownPanel" style="display:none; position:absolute; z-index:1000; background:#fff; border:1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto;">
+                                            <table id="nearestSitesTable" class="table table-bordered" style="margin:0;">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="selectAll"></th>
+                                                        <th>Network ID</th>
+                                                        <th>Name</th>
+                                                        <th>Network Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">Sprout Fiber <i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.DropDownListFor(m => m.sprout_fiber, new SelectList(Model.lstSproutFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "sproutFiberDropdown" })
+                                    </div>
+                                </div>
+
+                                <div id="trenchduct" style="display:none;">
+                                    <div class="form-group mb-15">
+                                        <div class="col-md-5">
+                                        </div>
+                                        <div class="col-md-7 d-flex white-space">
+                                            <div class="d-flex align-itm mr-01">
+                                                @Html.CheckBoxFor(m => m.is_create_trench, new { @class = "cheight" })
+                                                <label class="control-label">Create Trench</label>
+                                            </div>
+                                            <div class="d-flex align-itm white-space">
+                                                @Html.CheckBoxFor(m => m.is_create_duct, new { @class = "cheight" })
+                                                <label class="control-label">Create Duct</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
+                                        Manhole @Resources.Resources.SI_OSP_GBL_GBL_FRM_156   <i class="clsMandatory">*</i>:
+                                    </label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.manhole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
+                                        Pole @Resources.Resources.SI_OSP_GBL_GBL_FRM_156 <i class="clsMandatory">*</i>:
+                                    </label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.pole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">Threshold <i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.threshold, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-12" id="lengthAutoPlaningDiv"></label>
+                                </div>
+                                <button type="button" class="btn btn-default" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                                <button type="submit" class="btn btn-default" id="btnApply">Apply</button>
+                                <input type="button" class="btn btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
+                                       value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
+                                <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
+
+                            </div>
+
+                            <div id="BomBoqDetails"></div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+            <div class="tab-pane" id="planHistotry"></div>
+            @*<div id="selectedSites" style="display:none"></div>
+            <div id="startPointNetworkId" style="display:none"></div>
+            <div id="endPointNetworkId" style="display:none"></div>*@
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    var backbonedata = new BackbonePlanning();
+    var inputs = [];
+    $(document).ready(function () {
+        $('#suggestBox').hide();
+        backbonedata.initApp();
+
+        callFormValidator("frmBackbonePlanning");
+        $('.chosen-select').chosen({ width: '100%' });
+        $('form').on('keyup change paste', 'input, select, checkbox', function () {
+            if ($('#BomBoqDetails').html() != "")
+            {
+                $("#BomBoqDetails").html("");
+                $("#btnProcessPlan").attr("disabled", true);             
+            }
+        });
+    });
+    $('#btnReset').on("click", function () {
+        $('#plan_name').val('');
+        backbonedata.ResetPlanForm();
+    });
+
+</script>
+
+

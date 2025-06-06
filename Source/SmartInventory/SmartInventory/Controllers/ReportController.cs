@@ -12025,6 +12025,30 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+        public void ExportBackbonePlanBOMBOQReport(int plan_id)
+        {
+
+            if (plan_id > 0)
+            {
+                string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
+                string fileName = plan_name + "_BackBone_Planing_BomBOQ_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                List<BackBonePlanBom> lstBomReport = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+
+                DataTable dtReport = MiscHelper.ListToDataTable<BackBonePlanBom>(lstBomReport);
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }
+                    if (dtReport.Columns.Contains("length_qty")) { dtReport.Columns["length_qty"].ColumnName = "Length/Qty"; }
+                    if (dtReport.Columns.Contains("cost_per_unit")) { dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per " + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+                }
+                if (dtReport.Rows.Count > 0)
+                {
+                    ExportData(dtReport, fileName);
+                }
+            }
+        }
         #endregion
 
 

@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using BusinessLogics.DaFiFeasibilityAPI;
+using DataAccess;
 using DataAccess.Admin;
 using DataAccess.ISP;
 using Models;
@@ -12,6 +13,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Models.GoogleMapAPI;
+using static Models.RouteAssetDeatils;
 //using static Models.GoogleMapAPI;
 
 namespace BusinessLogics
@@ -1012,7 +1015,7 @@ namespace BusinessLogics
         public List<DropDownMaster> GetToplogyDropDownList(string ddType)
         {
             return objDAMisc.GetToplogyDropDownList(ddType);
-        }
+        } 
     }
 
     //public class BLUserModule
@@ -1127,10 +1130,19 @@ namespace BusinessLogics
             return new DANetworkPlanning().GetNetworkPlanningById(planId);
         }
 
+        public BackBonePlanning GetBackbonePlanningById(int planId)
+        {
+            return new DANetworkPlanning().GetBackbonePlanningById(planId);
+        }
 
         public NetworkPlanning GetNetworkForMap(int planId)
         {
             return new DANetworkPlanning().GetNetworkForMap(planId);
+        }
+
+        public BackBonePlanning GetBackboneForMap(int planId)
+        {
+            return new DANetworkPlanning().GetBackboneForMap(planId);
         }
 
         public List<NetworkPlanning> GetTempNetworkForMap(int planId)
@@ -1151,6 +1163,11 @@ namespace BusinessLogics
         public List<NetworkPlanning> GetPlanDetails(NetworkPlanningDataFilter objExtnlDtaFilter, int user_id)
         {
             return new DAPlan().GetPlanDetails(objExtnlDtaFilter, user_id);
+        }
+
+        public List<BackBonePlanning> GetBackbonePlanHistoryDetails(BackBonePlanningDataFilter objExtnlDtaFilter, int user_id)
+        {
+            return new DAPlan().GetBackbonePlanHistoryDetails(objExtnlDtaFilter, user_id);
         }
         public List<DbMessage> processPlan(int building_id, int manhole_id, string geom, int user_id)
         {
@@ -1174,10 +1191,21 @@ namespace BusinessLogics
             return new DAPlan().savePoint2Point(objPlan);
         }
 
+        public List<DbMessageForBackbonePlan> saveBackbonePlanning(BackBonePlanning objPlan)
+        {
+            return new DAPlan().saveBackbonePlanning(objPlan);
+        }
+
         public List<DbMessageForPlan> DeletePlanByPlanId(int plan_id, int user_id)
         {
             return new DAPlan().DeletePlanByPlanId(plan_id, user_id);
         }
+
+        public List<DbMessageForPlan> DeleteBackbonePlanByPlanId(int plan_id, int user_id)
+        {
+            return new DAPlan().DeleteBackbonePlanByPlanId(plan_id, user_id);
+        }
+
 
 
         public List<PlanBom> GetTempCableLengthGemo(NetworkPlanning model, int user_id)
@@ -1202,6 +1230,35 @@ namespace BusinessLogics
         public double GetLineLength(string geom)
         {
             return new DAPlan().GetLineLength(geom);
+        }
+        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer)
+        {
+            return new DAPlan().GetNearestSiteList(geom, buffer);
+        }
+        public List<BackBoneSproutFiberDetails> GetBackbonePlanningList(BackBonePlanning plan, int userId)
+        {
+            return new DAPlan().GetBackbonePlanningList(plan, userId);
+        }
+        public void updateSiteLineGeometry(string lineGeom, int systemId,double cableLength,double? threshold,int planId)
+        {
+             new DAPlan().updateSiteLineGeometry(lineGeom, systemId, cableLength, threshold, planId);
+        }
+        public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int systemId)
+        {
+             return new DAPlan().BackBonePlanBom(model, systemId);
+        }
+        public List<BackBonePlanBom> GetBackBonePlanBomByPlanId(int plan_id, int user_id)
+        {
+            return new DAPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+        }
+
+        public List<SiteBufferGeometryRaw> BackBonePlanDraftLineGeometry(int planId, int systemId)
+        {
+             return new DAPlan().BackBonePlanDraftLineGeometry(planId, systemId);
+        } 
+        public List<DropDownMaster> GetBackboneFiberTypeDropDownList()
+        {
+             return new DAPlan().GetBackboneFiberTypeDropDownList();
         }
     }
     public class BLSiteCircle

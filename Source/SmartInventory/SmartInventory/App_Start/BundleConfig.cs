@@ -297,6 +297,19 @@ namespace SmartInventory
                         "~/Content/js/CommonPathFinder/common_path_finder.js"
                         ));
             #endregion
+            #region BackbonePlan
+
+            bundles.Add(new ScriptBundle("~/bundles/BackBonePlanning/Scripts").Include(
+             "~/Content/js/BackBonePlanning/BackBonePlanning.js",
+             "~/Content/js/inputpicker/jquery.inputpicker1.js",
+              "~/Content/js/NetworkPlanning/distanceWidget.js"
+           ));
+
+            bundles.Add(new StyleBundle("~/bundles/BackBonePlanning/css").Include(
+                "~/Content/css/BackBonePlanning/backbonePlanning.css",
+                "~/Content/css/inputpicker/jquery.inputpicker1.css"
+          ));
+            #endregion
             BundleTable.EnableOptimizations = true;
         }
     }

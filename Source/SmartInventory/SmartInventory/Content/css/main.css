@@ -6216,6 +6216,14 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
     padding: 10px 10px;
     right: 5px;
 }
+#openBackBonePlanningData, #openExternalData {
+    margin-top: 83px;
+    background-image: var(--header-gradient);
+    color: #fff;
+    display: none;
+    padding: 10px 10px;
+    right: 5px;
+}
 
 #floating-panel-right {
     position: absolute;
