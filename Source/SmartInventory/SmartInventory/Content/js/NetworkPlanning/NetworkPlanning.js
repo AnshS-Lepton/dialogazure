@@ -205,21 +205,6 @@ var NetworkPlanning = function () {
         }, false, false);
     }
 
-    this.ViewBackbonePlanningData = function () {
-
-        if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
-            si.autoplanid = 0;
-            app.autoplanningplanid = 0;
-            si.LoadLayersOnMap();
-        }
-        $("#planInfo").html("");
-        ajaxReq('Plan/GetBackbonePlanData', {}, true, function (resp) {
-            $("#planInfo").html(resp);
-            // $("#planInfo").css('padding-left', '11px');
-            //$("#planInfo").css('padding-top', '10px');
-            $("#planInfo").css('background-image', 'none');
-        }, false, false);
-    }
 
     this.CheckLoopLenght = function (event) {
 
@@ -332,14 +317,6 @@ var NetworkPlanning = function () {
         }
     }
 
-
-    this.PlanningBufferPoint = function () {
-        debugger;
-        var buffer = parseFloat($('#buffer').val());
-        var request = app.lastRequest;
-
-    }
-
     this.RestInputPicker = function () {
         if ($('#demo').hasClass("inputpicker-original")) {
             $('#demo').inputpicker('destroy');
@@ -415,64 +392,6 @@ var NetworkPlanning = function () {
         }, false, true, false);
     }
 
-    this.createBackbonePlanNetwork = function () {
-        debugger;
-        if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
-
-            for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
-                for (var k = 0; k < app.selectedPlanningPath.legs[j].steps.length; k++) {
-                    console.log(app.selectedPlanningPath.legs[j].steps[k].start_location.lng() + " " +
-                        app.selectedPlanningPath.legs[j].steps[k].start_location.lat());
-                    var manhole_geom = app.selectedPlanningPath.legs[j].steps[k].start_location.lng() + " " +
-                        app.selectedPlanningPath.legs[j].steps[k].start_location.lat();
-
-                    ajaxReq('Library/SaveManhole', {
-                        geom: manhole_geom, networkIdType: 'A', isDirectSave: true
-                    }, true, function (response) {
-                        console.log(response + "1");
-                    });
-                    if (k == app.selectedPlanningPath.legs[j].steps.length - 1) {
-                        var manhole_geom2 = app.selectedPlanningPath.legs[j].steps[k].end_location.lng() + " " +
-                            app.selectedPlanningPath.legs[j].steps[k].end_location.lat();
-                        ajaxReq('Library/SaveManhole', {
-                            geom: manhole_geom2, networkIdType: 'A', isDirectSave: true
-                        }, true, function (response) {
-                            console.log(response + "2");
-                        });
-                    }
-                }
-            }
-        }
-        else {
-            for (let i = 0; i < app.selectedPlanningPath.length; i++) {
-                for (let j = 0; j < app.selectedPlanningPath[i].legs.length; j++) {
-                    for (var k = 0; k < app.selectedPlanningPath[i].legs[j].steps.length; k++) {
-                        console.log(app.selectedPlanningPath[i].legs[j].steps[k].start_location.lng() + " " +
-                            app.selectedPlanningPath[i].legs[j].steps[k].start_location.lat());
-                        var manhole_geom = app.selectedPlanningPath[i].legs[j].steps[k].start_location.lng() + " " +
-                            app.selectedPlanningPath[i].legs[j].steps[k].start_location.lat();
-                        ajaxReq('Library/SaveManhole', {
-                            geom: manhole_geom, networkIdType: 'A', isDirectSave: true
-                        }, true, function (response) {
-                            console.log(response + "1");
-                        }); if (k == app.selectedPlanningPath[i].legs[j].steps.length - 1) {
-                            var manhole_geom2 = app.selectedPlanningPath[i].legs[j].steps[k].end_location.lng() + " " +
-                                app.selectedPlanningPath[i].legs[j].steps[k].end_location.lat();
-                            ajaxReq('Library/SaveManhole', {
-                                geom: manhole_geom2, networkIdType: 'A', isDirectSave: true
-                            }, true, function (response) {
-                                console.log(response + "2");
-                            });
-                        }
-                    }
-                }
-            }
-        }
-
-        ajaxReq('Plan/SaveBackboneProcess', $('form').serialize(), true, function (resp) {
-            app.autoPlanningShowNetworkLayer(resp);
-        }, false, true, false);
-    }
   
     this.geomToForm = function () {
         if ($('#ddledit_path').val() == "manually") {
@@ -507,7 +426,6 @@ var NetworkPlanning = function () {
     }
 
     this.autoPlanningShowNetworkLayer = function (resp) {
-        debugger;
         if (resp.objPM.status == "True") {
             alert(resp.objPM.message);
             app.autoplanningPlanId = resp.planid;
@@ -738,7 +656,7 @@ var NetworkPlanning = function () {
     }
 
     this.NetworkPlanning = function (ismappicker, destination_point) {
-        debugger;
+
         var cableType = $('#cable_type').val();
         if (cableType == '') {
             alert('Please Select Cable Type');
@@ -930,7 +848,7 @@ var NetworkPlanning = function () {
     //}
 
     this.createCableBetweenMakers = function () {
-        debugger;
+
         app.AllPlanningPaths = [];
         app.AllDistances = [];
         app.minDistance = 0;
@@ -965,7 +883,7 @@ var NetworkPlanning = function () {
                     app.AllPathResponses.push(response);
                     
                     var Paths = response.routes;
-                    console.log(Paths);
+
                     for (let i = 0; i < Paths.length; i++) {
                         let totalDist = 0;
 
@@ -996,8 +914,7 @@ var NetworkPlanning = function () {
 
 
                     }
-                    console.log("path1" + app.AllPlanningPaths);
-
+         
 
                     // if (network_Type != "manually") {
                     // directionsDisplay.setOptions({ suppressMarkers: true });
@@ -1056,7 +973,7 @@ var NetworkPlanning = function () {
                                 app.BindPlanningPaths(app.AllPlanningPaths, false);
                             }
                             //app.BindPlanningPaths(app.AllPlanningPaths, false);
-                            console.log("path2" + app.AllPlanningPaths);
+   
                             //}
 
                         }
@@ -1327,7 +1244,7 @@ var NetworkPlanning = function () {
 
 
     this.createAutoPlanLine = function (_path, LineEdiTable, Is_DashedLine = false, strokeWdth) {
-        debugger;
+
         strokeWdth = (strokeWdth == undefined || strokeWdth == null || strokeWdth == '' || strokeWdth == 0) ? 2 : strokeWdth * 10;
         var tmpLine;
         if (Is_DashedLine == false) {
@@ -1461,7 +1378,7 @@ var NetworkPlanning = function () {
 
 
     this.planningmode = function (val) {
-        debugger;
+
         app.ResetPlanForm();
         app.plan_mode = val;
         $('.mainPart').show();
@@ -1470,24 +1387,14 @@ var NetworkPlanning = function () {
             $('.Manual').hide();
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", true);
-            $("#endpointmap").addClass("disable-click");
-            $("#site").hide();
-            $("#buffer").hide();
-            $("#is_create_trench").show();
-            $("#is_create_duct").show();
-            $("#trenchduct").show();
+            $("#endpointmap").addClass("disable-click");          
         }
         else if (app.plan_mode == 'manual_planning') {
             $('.Manual').show();
             $('.auto').hide();
             $('#offsetvalue').show();
             $("#end_point").attr("readonly", false);
-            $("#endpointmap").removeClass("disable-click");
-            $("#site").show();
-            $("#buffer").show();
-            $("#is_create_trench").hide();
-            $("#is_create_duct").hide();
-            $("#trenchduct").hide();
+            $("#endpointmap").removeClass("disable-click");            
         }
         else {
             $('.mainPart').hide();
@@ -1816,7 +1723,6 @@ var NetworkPlanning = function () {
     }
 
     this.networkPlanningmode = function () {
-        debugger;
         //removeOldMarkers();
         // removeOldMarkersWithRemoveActive();
         if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }
