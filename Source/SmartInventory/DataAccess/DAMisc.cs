@@ -44,7 +44,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-       
+
 
         public List<DropDownMaster> GetAssociationDropDownList(string enType, string ddType = "")
         {
@@ -171,7 +171,10 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new { lat = latitude, lng = longitude,
+                return repo.ExecuteProcedure<EntityDetail>("fn_getnearbyentities", new
+                {
+                    lat = latitude,
+                    lng = longitude,
                     mtrBuffer = bufferInMtr,
                     p_user_id = user_id,
                     p_source_ref_id = source_ref_id,
@@ -225,7 +228,7 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<EntityDetailWithAttribute>("fn_api_getnearbyentitywithatributes", new { p_lat = latitude, p_lng = longitude, mtrBuffer = bufferInMtr, p_ticket_id= ticket_id });
+                return repo.ExecuteProcedure<EntityDetailWithAttribute>("fn_api_getnearbyentitywithatributes", new { p_lat = latitude, p_lng = longitude, mtrBuffer = bufferInMtr, p_ticket_id = ticket_id });
             }
             catch { throw; }
         }
@@ -387,17 +390,17 @@ namespace DataAccess
             catch { throw; }
         }
 
-		public DbMessage UpdatePowerMeterReading(int? system_id, string entity_type, double? power_meter_reading, bool is_manual_meter_reading)
-		{
-			try
-			{
-				return repo.ExecuteProcedure<DbMessage>("fn_update_splitter_power_meter_reading", new { p_systemid = system_id, p_entitytype = entity_type, p_powermeterreading = power_meter_reading, p_ismanualmeterreading = is_manual_meter_reading }).FirstOrDefault();
-			}
-			catch { throw; }
-		}
+        public DbMessage UpdatePowerMeterReading(int? system_id, string entity_type, double? power_meter_reading, bool is_manual_meter_reading)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_update_splitter_power_meter_reading", new { p_systemid = system_id, p_entitytype = entity_type, p_powermeterreading = power_meter_reading, p_ismanualmeterreading = is_manual_meter_reading }).FirstOrDefault();
+            }
+            catch { throw; }
+        }
 
 
-		public List<StaticPageMasterInfo> getStaticPageDetails(string name)
+        public List<StaticPageMasterInfo> getStaticPageDetails(string name)
         {
             try
             {
@@ -455,21 +458,21 @@ namespace DataAccess
             catch { throw; }
 
         }
-		public T GetNetworkTicketIdByEntityId<T>(int systemid, EntityType eType) where T : new()
-		{
-			try
-			{
-				var lstItems = new T();
-				if (systemid > 0)
-				{
-					lstItems = repo.ExecuteProcedure<T>("fn_get_networkTicketid_by_entityid", new { p_systemid = systemid, p_entity_name = eType.ToString() }, true).FirstOrDefault();
-				}
-				return lstItems;
-			}
-			catch { throw; }
-		}
+        public T GetNetworkTicketIdByEntityId<T>(int systemid, EntityType eType) where T : new()
+        {
+            try
+            {
+                var lstItems = new T();
+                if (systemid > 0)
+                {
+                    lstItems = repo.ExecuteProcedure<T>("fn_get_networkTicketid_by_entityid", new { p_systemid = systemid, p_entity_name = eType.ToString() }, true).FirstOrDefault();
+                }
+                return lstItems;
+            }
+            catch { throw; }
+        }
 
-		public T GetEntityDetailById<T>(int systemid, EntityType eType, int userId) where T : new()
+        public T GetEntityDetailById<T>(int systemid, EntityType eType, int userId) where T : new()
         {
             try
             {
@@ -843,7 +846,7 @@ namespace DataAccess
                     p_selectiontype = objfilter.selection_type,
                     p_radius = objfilter.buff_Radius,
                     p_network_status = objfilter.dd_networkStatus,
-                    project_id = objfilter.lstBindProjectCode ==null?0:Convert.ToInt32(objfilter.lstBindProjectCode),//372  
+                    project_id = objfilter.lstBindProjectCode == null ? 0 : Convert.ToInt32(objfilter.lstBindProjectCode),//372  
                     p_parentusers = objfilter.SelectedParentUsers,
                     p_userids = objfilter.SelectedUserIds == "" ? objfilter.userid.ToString() : objfilter.SelectedUserIds,
                     p_roleid = objfilter.roleid
@@ -1101,7 +1104,7 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<LineEntityInfo>("fn_get_associate_entity_test", new {  p_parent_geom = pParentGeom }, true).ToList();
+                return repo.ExecuteProcedure<LineEntityInfo>("fn_get_associate_entity_test", new { p_parent_geom = pParentGeom }, true).ToList();
             }
             catch { throw; }
         }
@@ -1125,7 +1128,7 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId , p_manhole_count = pManholeCount }, true).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_save_Entity_Assocition", new { p_line_associate_info = objLineEnAssocite, p_parent_system_id = pSystemId, p_parent_entity_type = pEntityType, p_user_id = userId, p_manhole_count = pManholeCount }, true).FirstOrDefault();
             }
             catch { throw; }
         }
@@ -1221,11 +1224,11 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public bool BulkAssociationRequestLog(int systemId) 
+        public bool BulkAssociationRequestLog(int systemId)
         {
             try
             {
-                var value = repo.ExecuteProcedure<bool>("fn_bulk_assocation_request_logs", new { p_system_id = systemId}).FirstOrDefault();
+                var value = repo.ExecuteProcedure<bool>("fn_bulk_assocation_request_logs", new { p_system_id = systemId }).FirstOrDefault();
                 return value;
             }
             catch { throw; }
@@ -1794,7 +1797,7 @@ namespace DataAccess
             try
             {
 
-                return repo.ExecuteProcedure<DbMessage>("fn_geojson_update_entity_attribute", new { p_system_id = system_id, p_entity_type = entityType, p_province_id = province_id, p_action_id = action_id, is_location_edit =false }, false).FirstOrDefault();
+                return repo.ExecuteProcedure<DbMessage>("fn_geojson_update_entity_attribute", new { p_system_id = system_id, p_entity_type = entityType, p_province_id = province_id, p_action_id = action_id, is_location_edit = false }, false).FirstOrDefault();
             }
             catch { throw; }
         }
@@ -1818,7 +1821,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public PageMessage GetValidatePointGeometry(int systemId, string entityType, string latitude, string longitude,int? region_id,int? province_id)
+        public PageMessage GetValidatePointGeometry(int systemId, string entityType, string latitude, string longitude, int? region_id, int? province_id)
         {
             PageMessage response;
             try
@@ -1838,7 +1841,6 @@ namespace DataAccess
             catch { throw; }
         }
     }
-
     public class DAMisce : Repository<EmailSettingsModel>
     {
         public EmailSettingsModel getEmailSettings()
@@ -2426,11 +2428,11 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public List<NetworkPlanning> GetBackbonePlanDetails(NetworkPlanningDataFilter objExtnlDtaFilter, int user_id)
+        public List<BackBonePlanning> GetBackbonePlanHistoryDetails(BackBonePlanningDataFilter objExtnlDtaFilter, int user_id)
         {
             try
             {
-                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_list", new
+                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_backbone_get_plan_list", new
                 {
                     p_user_id = user_id,
                     p_searchby = objExtnlDtaFilter.searchBy,
@@ -2498,6 +2500,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<BackBonePlanBom> GetBackBonePlanBomByPlanId(int plan_id, int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<BackBonePlanBom>("fn_backbone_get_plan_bom", new { p_plan_id = plan_id, p_user_id = user_id }, true);
+                return res;
+            }
+            catch { throw; }
+        }
         public List<PlanBom> PlanBom(NetworkPlanning model, int user_id)
         {
             try
@@ -2523,12 +2534,23 @@ namespace DataAccess
                 throw ex;
             }
         }
-
-        public List<DbMessageForPlan> savePoint2PointBackbone(NetworkPlanning objPlan)
+        public List<DbMessageForBackbonePlan> saveBackbonePlanning(BackBonePlanning objPlan)
         {
             try
             {
-                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_start_point_buffer = objPlan.start_point_buffer, p_start_point_entity_id = objPlan.start_point_entity, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length });
+                var res = repo.ExecuteProcedure<DbMessageForBackbonePlan>("fn_backbone_save_plan", new { 
+                    is_create_trench = objPlan.is_create_trench,
+                    is_create_duct = objPlan.is_create_duct, 
+                    p_line_geom = objPlan.geometry, 
+                    p_cable_length = objPlan.cable_length, 
+                    p_user_id = objPlan.created_by, 
+                    p_plan_name = objPlan.plan_name, 
+                    p_startpoint = objPlan.start_point,    
+                    p_endpoint = objPlan.end_point, 
+                    plan_id = objPlan.plan_id,
+                    startpoint_networkid = objPlan.startpoint_network_id,
+                    endpoint_network_id = objPlan.endpoint_network_id
+                });
                 return res;
             }
             catch (Exception ex)
@@ -2554,7 +2576,7 @@ namespace DataAccess
         {
             try
             {
-                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_planning_delete_by_plan_id", new { p_plan_id = plan_id, p_user_id = user_id });
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_delete_plan", new { p_plan_id = plan_id, p_user_id = user_id });
                 return res;
             }
             catch (Exception ex)
@@ -2599,8 +2621,112 @@ namespace DataAccess
             }
             catch { throw; }
         }
-    }
+        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer)
+        {
+            try
+            {
+                var jsonResult = repo.ExecuteProcedure<string>("fn_backbone_get_nearest_sites", new { line_geom = geom, buffer = buffer }, false).FirstOrDefault();
+                if (jsonResult != null)
+                {
+                    return JsonConvert.DeserializeObject<BackBoneSitePlanDetails>(jsonResult);
+                }
+                return null;
+            }
+            catch { throw; }
+        }
+        public List<BackBoneSproutFiberDetails> GetBackbonePlanningList(BackBonePlanning plan, int userId)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<BackBoneSproutFiberDetails>("fn_backbone_draft_network",
+                    new
+                    {
+                        is_create_trench = plan.is_create_trench,
+                        is_create_duct = plan.is_create_duct,
+                        p_line_geom = plan.geometry,
+                        p_user_id = userId,
+                        p_plan_name = plan.plan_name,
+                        p_startpoint = plan.start_point,
+                        p_endpoint = plan.end_point,
+                        p_sprout_fiber_type = plan.sprout_fiber,
+                        p_backbone_fiber_type = plan.backbone_fiber,
+                        p_nearest_sites = plan.selectedSites,
+                        p_pole_span = Convert.ToDouble(plan.pole_distance),
+                        p_manhole_span = Convert.ToDouble(plan.manhole_distance),
+                        v_buffer = plan.buffer,
+                        START_SITE_NETWORK_ID = plan.startpoint_network_id,
+                        END_SITE_NETWORK_ID = plan.endpoint_network_id,
+                        p_threshold = plan.threshold
+                    }, true).ToList();
+                return res;
+            }
+            catch { throw; }
+        }
 
+        public void updateSiteLineGeometry(string lineGeom, int systemId, double cableLength,double? threshold,int planId )
+        {
+            try
+            {
+                repo.ExecuteProcedure<string>("fn_backbone_update_sprout_network",
+                    new { p_lineGeom = lineGeom ,p_systemId = systemId, p_cableLength = cableLength}, true);                
+            }
+            catch { throw; }
+        }
+
+        public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int userId)
+        {
+            try
+            {
+                var result = repo.ExecuteProcedure<BackBoneBOMOBOQResponse>("fn_backbone_get_plan_bom",
+                    new { p_plan_id = model.plan_id,
+                        p_user_id= userId, 
+                        p_backbone_fiber_type= model.backbone_fiber,
+                        p_sprout_fibertype = model.sprout_fiber,
+                        p_backbone_line_geom = model.geometry
+                    }, true).ToList();
+                if(result == null || result.Count == 0)
+                {
+                    return null;
+                }
+                return result;
+            }
+            catch { throw; }
+        }
+        public List<SiteBufferGeometryRaw> BackBonePlanDraftLineGeometry(int planId, int userId)
+        {
+            try
+            {
+                var rawList = repo.ExecuteProcedure<SiteBufferGeometryRaw>(
+                    "fn_backbone_get_draft_line_geometry", 
+                    new
+                    {                        
+                        p_plan_id = planId,
+                        p_user_id = userId
+                    }                    
+                ).ToList();
+
+                if (rawList == null || !rawList.Any())
+                    return null;
+
+                return rawList;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DropDownMaster> GetBackboneFiberTypeDropDownList()
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DropDownMaster>("fn_backbone_get_fibertype_dropdownlist", new {
+                },true);
+            }
+            catch { throw; }
+        }
+
+    }
     public class DAtemp_auto_network_plan : Repository<temp_auto_network_plan>
     {
         public double GetTotalLoopLength(int plan_id)
@@ -2611,7 +2737,6 @@ namespace DataAccess
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -2703,11 +2828,11 @@ namespace DataAccess
         }
 
 
-        public NetworkPlanning GetBackbonePlanningById(int planId)
+        public BackBonePlanning GetBackbonePlanningById(int planId)
         {
             try
             {
-                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_network", new
+                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_backbone_get_plan_network", new
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();
@@ -2730,12 +2855,12 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public NetworkPlanning GetBackboneForMap(int planId)
+        public BackBonePlanning GetBackboneForMap(int planId)
         {
 
             try
             {
-                var res = repo.ExecuteProcedure<NetworkPlanning>("fn_get_backbone_planning_network", new
+                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_get_backbone_planning_network", new
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();
@@ -4055,7 +4180,7 @@ namespace DataAccess
                 return repo.GetAll().ToList();
                 //var lst = repo.ExecuteProcedure<TicketTypeMaster>("fn_get_ticket_type", new
                 //{
-                  
+
                 //}, true);
                 //return lst;
             }
@@ -4621,8 +4746,8 @@ namespace DataAccess
                 return repo.ExecuteProcedure<DbMessage>("fn_save_workarea_marking", new
                 {
                     p_marking_type = obj.marking_type,
-                    p_marking_id= obj.marking_id,
-                    p_lstmarkings= _lstMarkings,
+                    p_marking_id = obj.marking_id,
+                    p_lstmarkings = _lstMarkings,
                     p_workspace_id = obj.workspace_id,
                     p_geom = obj.geom,
                     p_zoom = obj.zoom,
@@ -4637,7 +4762,7 @@ namespace DataAccess
             {
                 return repo.Get(u => u.marking_id == marking_id);
             }
-            catch (Exception ex) {throw ex;}
+            catch (Exception ex) { throw ex; }
         }
         public List<WorkAreaMarking> GetWorkareaByWorkspaceId(int workspace_id)
         {
@@ -4671,8 +4796,6 @@ namespace DataAccess
         }
 
     }
-
-   
 
 }
 

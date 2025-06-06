@@ -237,7 +237,7 @@
                 {
 
                     <li>
-                        <a href="#" class="iconBaricomoon Plantool" id="Backboneplan" onclick="si.ViewBackboneplan()" title="BackBone Planning">
+                        <a href="#" class="iconBaricomoon BackBonePlan" id="Backboneplan" onclick="si.ViewBackboneplan()" title="BackBone Planning">
                             <span class="icon-Navigator"></span>
                         </a>
                     </li>
@@ -255,7 +255,7 @@
                     <li class="techSep"></li>
                 }
                 @*@if (Model.lstUserModule.Contains("CPL"))
-        {*@
+                    {*@
                 <li>
                     <a href="#" class="iconBaricomoon maintoolbar" id="dvCorePlanLogic" onclick="si.corePlanLogic('corePlanLogic', this)" title="Core Planner">
                         <span class="icon-patchpanel"></span>
@@ -339,15 +339,15 @@
                     int count = 0;
 
                     @*
-                        <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
-                <span class="icon-plus-Icon"></span>
-            </div>*@
+                                    <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
+                            <span class="icon-plus-Icon"></span>
+                        </div>*@
                     <li>
                         <a href="#" class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_165">
                             <span class="icon-miscellaneousTools"></span>
                         </a>
                         @*@if (Model.lstUserModule.Contains("MSC_Tools"))
-                {*@
+                            {*@
                         @if (Model.lstUserModule.Contains("MRG-CABLE") == true || Model.lstUserModule.Contains("MAP-LAYOUT") == true || Model.lstUserModule.Contains("EAD") == true)
                         {
                             count++;
@@ -529,16 +529,16 @@
 
 
                                 @*
+                                                <li>
+                                        <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
+                                            <span class="icon-Navigator"></span>
+                                        </a>
+                                    </li>
                                     <li>
-                            <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
-                                <span class="icon-Navigator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
-                                <span class="icon-draw_survey_area"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
+                                            <span class="icon-draw_survey_area"></span>
+                                        </a>
+                                    </li>*@
                                 @if (Model.lstUserModule.Contains("WFM-AJO") || Model.lstUserModule.Contains("WFM-TTAJO"))
                                 {
                                     <li class="techSep"></li>
@@ -719,25 +719,25 @@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     @*<li>
-                <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
-                    <span class="fa fa-clock-o"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>*@
+                            <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
+                                <span class="fa fa-clock-o"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>*@
 
                     @*<li id="liUserTimeSheet">
-                <a id="lnkUserTimeSheet" title="Roster Management"
-                   data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
-                <i class="fa fa-clock-o" aria-hidden="true"></i></a>
-            </li>*@
+                            <a id="lnkUserTimeSheet" title="Roster Management"
+                               data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i></a>
+                        </li>*@
 
 
                     <!--<li>
-        <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
+                    <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
                     @*<span class="fa fa-clock-o"></span>*@
                     <!--</a>
-        </li>
-        <li class="techSep"></li>-->
+                    </li>
+                    <li class="techSep"></li>-->
 
 
 
@@ -925,15 +925,15 @@
 
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
-        {
+                    {
 
-            <li>
-                <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
-                    <span class="icon-Shift"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
+                        <li>
+                            <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
+                                <span class="icon-Shift"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>
+                    }*@
 
                 @if (Model.lstUserModule.Contains("TKM") && ApplicationSettings.isTicketManagerEnabled)
                 {
@@ -1016,14 +1016,14 @@
                 }
 
                 @*@if (Model.lstUserModule.Contains("RNG"))
-        {
-            <li>
-                <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
-                    <span class="icon-topology"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
+                    {
+                        <li>
+                            <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
+                                <span class="icon-topology"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>
+                    }*@
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
@@ -1123,15 +1123,15 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>*@
                                 <li class="techSep"></li>
                                 @if (Model.lstUserModule.Contains("BMQ-POLY"))
                                 {
@@ -1520,10 +1520,10 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>*@
 
                                 @if (Model.lstUserModule.Contains("EXRPT-RECT"))
                                 {
@@ -1726,12 +1726,12 @@
                 }
 
                 @*<li>
-            <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
-                <span class="icon-search"></span>
-            </a>
+                        <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
+                            <span class="icon-search"></span>
+                        </a>
 
 
-        </li>*@
+                    </li>*@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     <li id="liViewNotification">
@@ -1785,9 +1785,13 @@
     </div>
     <span class="glyphicon glyphicon-menu-left sidectrlright" id="openExternalData"></span>
     <span class="glyphicon glyphicon-menu-left sidectrlright" id="openNetworkPlanningData"></span>
+    <span class="glyphicon glyphicon-menu-left sidectrlright" id="openBackBonePlanningData"></span>
+
     <div id="dvExternalData" class="KmlDiv">
     </div>
     <div id="dvAutoPlanData" class="KmlDiv">
+    </div>
+    <div id="dvAutoBackBonePlanData" class="KmlDiv">
     </div>
     @if (Model.lstUserModule.Contains("UNT"))
     {
@@ -2001,42 +2005,42 @@
                                             {
                                                 id++;
 
-                                <li class="nestedTW-ml" data-mapabbr="@objLayer.mapAbbr">
-                                    <img src="Content/css/images/t.gif" alt="">
+                                                <li class="nestedTW-ml" data-mapabbr="@objLayer.mapAbbr">
+                                                    <img src="Content/css/images/t.gif" alt="">
 
-                                    @{var whiteSpaceRemove = objcableLayer.dropdown_value.Replace(" ", "");
-                                        var ids = whiteSpaceRemove + objLayer.layerId;}
+                                                    @{var whiteSpaceRemove = objcableLayer.dropdown_value.Replace(" ", "");
+                                                        var ids = whiteSpaceRemove + objLayer.layerId;}
 
-                                    <input id="chk_nLyr_@ids" data-layerid="@objLayer.layerId"
-                                           data-cable-parent-group="@ids" subchild-layerid="@objLayer.layerId" data-mapabbr="@objLayer.mapAbbr"
-                                           class="mainLyr checkbox-custom-SubChild SubChild treeview" type="checkbox"
-                                           data-SubChild-layerid="@ids" data-SubChild-layergroup="chkid_@id" data-layergroup="chkid_@Chkid"
-                                           data-layername="@objcableLayer.dropdown_value" style="width: 0px;"
-                                           name="chkcategory-@objLayer.layerTitle" />
-                                    <b>
-                                    <label for="chk_nLyr_@ids" class="checkbox-custom-label">
+                                                    <input id="chk_nLyr_@ids" data-layerid="@objLayer.layerId"
+                                                           data-cable-parent-group="@ids" subchild-layerid="@objLayer.layerId" data-mapabbr="@objLayer.mapAbbr"
+                                                           class="mainLyr checkbox-custom-SubChild SubChild treeview" type="checkbox"
+                                                           data-SubChild-layerid="@ids" data-SubChild-layergroup="chkid_@id" data-layergroup="chkid_@Chkid"
+                                                           data-layername="@objcableLayer.dropdown_value" style="width: 0px;"
+                                                           name="chkcategory-@objLayer.layerTitle" />
+                                                    <b>
+                                                        <label for="chk_nLyr_@ids" class="checkbox-custom-label">
                                         <span>@objcableLayer.dropdown_value</span></label></b>&nbsp;
 
-                                    <span class="floatVisibility">
+                                                    <span class="floatVisibility">
 
-                                        <input id="chkSubChild_netP_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-P checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid"
-                                               name="chkcategory-@objLayer.layerTitle" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                        <b><label for="chkSubChild_netP_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
+                                                        <input id="chkSubChild_netP_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-P checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid"
+                                                               name="chkcategory-@objLayer.layerTitle" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                        <b><label for="chkSubChild_netP_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
 
-                                        <input id="chkSubChild_netA_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-A checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="A" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                        <b><label for="chkSubChild_netA_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
-                                        @if (ApplicationSettings.IsDormantEnabled)
-                                        {
-                                            <input id="chkSubChild_netD_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-D checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="D" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                            <b><label for="chkSubChild_netD_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
-                                        }
-                                        <input id="chkSubChild_netL_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-L checkbox-custom2 SubChild2" data-SubChild-mapabbr="@objLayer.mapAbbr" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="L" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired">
-                                        <b><label for="chkSubChild_netL_@ids" class="checkbox-custom2-label SubChild2-label"></label></b>
-                                        <span class="zoomLevelCount">@objLayer.minZoomLevel</span>
-                                    </span>
+                                                        <input id="chkSubChild_netA_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-A checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="A" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                        <b><label for="chkSubChild_netA_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
+                                                        @if (ApplicationSettings.IsDormantEnabled)
+                                                        {
+                                                            <input id="chkSubChild_netD_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-D checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="D" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                            <b><label for="chkSubChild_netD_@ids" class="checkbox-custom2-label SubChild2-label @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
+                                                        }
+                                                        <input id="chkSubChild_netL_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-L checkbox-custom2 SubChild2" data-SubChild-mapabbr="@objLayer.mapAbbr" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="L" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-SubChild-ntp="@objLayer.isNetworkTypeRequired">
+                                                        <b><label for="chkSubChild_netL_@ids" class="checkbox-custom2-label SubChild2-label"></label></b>
+                                                        <span class="zoomLevelCount">@objLayer.minZoomLevel</span>
+                                                    </span>
 
-                                    <span class="z_frm" id="MinMaxZoom" style="display:none;" data-min-zoom="@objLayer.minZoomLevel" data-max-zoom="@objLayer.maxZoomLevel">Z:(@objLayer.minZoomLevel-@objLayer.maxZoomLevel)</span>
-                                </li>
+                                                    <span class="z_frm" id="MinMaxZoom" style="display:none;" data-min-zoom="@objLayer.minZoomLevel" data-max-zoom="@objLayer.maxZoomLevel">Z:(@objLayer.minZoomLevel-@objLayer.maxZoomLevel)</span>
+                                                </li>
 
                                             }
                                         }

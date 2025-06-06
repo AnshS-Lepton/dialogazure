@@ -23,7 +23,7 @@
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
     <Use64BitIISExpress>
-    </Use64BitIISExpress>
+	</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -461,6 +461,7 @@
     <Content Include="bin\zxing.dll" />
     <Content Include="Content\css\animate.css" />
     <Content Include="Content\css\animate.min.css" />
+    <Content Include="Content\css\BackBonePlanning\backbonePlanning.css" />
     <Content Include="Content\css\bread_crumb.css" />
     <Content Include="Content\css\chart.css" />
     <Content Include="Content\css\chartist.min.css" />
@@ -1587,6 +1588,7 @@
     <Content Include="Content\images\UnlinkAll.svg" />
     <Content Include="Content\images\warinng.png" />
     <Content Include="Content\images\warning.svg" />
+    <Content Include="Content\js\BackBonePlanning\BackBonePlanning.js" />
     <Content Include="Content\js\chartist-bar-labels.js" />
     <Content Include="Content\js\chartist-plugin-legend.js" />
     <Content Include="Content\js\CommonPathFinder\common_path_finder.js" />
@@ -2457,9 +2459,10 @@
     <Content Include="Views\SpxI49Ftz\Index.cshtml" />
     <Content Include="Views\Report\_AddSegment.cshtml" />
     <Content Include="Views\Report\_ViewSegment.cshtml" />
-    <Content Include="Views\Plan\_BackbonePlanTool.cshtml" />
-    <Content Include="Views\Plan\_BackbonePlanDataList.cshtml" />
-    <Content Include="Views\Plan\_BackboneViewPlanData.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackbonePlanTool.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackbonePlanDataList.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackboneViewPlanData.cshtml" />
+    <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2504,6 +2507,7 @@
     <Compile Include="Areas\Admin\Controllers\WFMController.cs" />
     <Compile Include="Areas\Admin\Models\WorkSpaceViewModel.cs" />
     <Compile Include="Controllers\AuditController.cs" />
+    <Compile Include="Controllers\BackBonePlanController.cs" />
     <Compile Include="Controllers\BOMBOQController.cs" />
     <Compile Include="Controllers\CommonPathFinderController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />

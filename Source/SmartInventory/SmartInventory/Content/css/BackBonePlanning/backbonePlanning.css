@@ -1,0 +1,420 @@
+﻿
+
+#inputpicker-wrapped-list table tr td:last-child {
+    display: none;
+}
+
+#inputpicker-wrapped-list table tr th:last-child {
+    display: none;
+}
+
+.activemarker {
+    color: orange;
+}
+
+.disable-click {
+    pointer-events: none;
+}
+
+.read--only {
+    cursor: not-allowed;
+}
+
+.pop {
+    min-width: 200px;
+    display: none;
+    position: absolute; /*
+    height: 100px;*/
+    padding: 10px;
+    background: var(--white-color);
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+}
+
+.sidenetworkDatabar {
+    height: calc(100vh - 112px);
+    width: 352px;
+}
+
+    .sidenetworkDatabar header {
+        padding: 15px;
+        color: #333;
+        position: relative;
+        background-image: var(--header-gradient);
+        position: relative;
+        color: var(--white-color);
+        border-bottom: 1px solid var(--right-box-bb);
+    }
+
+        .sidenetworkDatabar header h3 {
+            font-size: 15px;
+        }
+
+        .sidenetworkDatabar header h3, .sidenetworkDatabar header h5 {
+            letter-spacing: 0.5px;
+        }
+
+        .sidenetworkDatabar header h5 {
+            font-size: 12px;
+            color: var(--white-color);
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+
+        .sidenetworkDatabar header i {
+            font-size: 18px;
+            font-style: normal;
+            cursor: pointer;
+        }
+
+.inputpicker-arrow b {
+    right: 9px !important;
+    margin-top: 0px !important;
+    left: unset !important;
+}
+
+
+
+/*.prowindowNetworkData {
+        border-top: 1px solid #ccc;
+    }*/
+
+
+
+.fontIDExtnlData {
+    position: relative;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.sidenetworkDatabar .importantcolor {
+    color: #adadad;
+    font-weight: 600 !important;
+    font-size: 10px;
+}
+
+
+.prowindowNetworkData input {
+    height: 28px;
+}
+
+
+.prowindowNetworkData .glyphicon-option-horizontal {
+    background-color: #e0e0e0;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.fontIDExtnlData a {
+    color: #0C0;
+}
+
+
+.dropwindowExtnlData {
+    display: none;
+    width: 130px;
+    position: absolute;
+    height: auto;
+    background-color: #fff;
+    box-shadow: 0px 2px 5px #ccc;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    right: 8px;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 13px;
+    color: #666;
+    z-index: 99;
+}
+
+.dropD-top {
+    top: 100%;
+}
+
+.dropD-right {
+    right: 42px !important;
+}
+
+
+.checkbox, .radio {
+    margin-top: 5px !important;
+    margin-bottom: 7px !important;
+}
+
+hr {
+    margin: 3px 0px !important;
+}
+
+.pull-right .glyphicon {
+    margin: 0px 3px;
+    /*background-color: #e0e0e0;*/
+    /*color: #a9a9a9;*/
+}
+
+    .pull-right .glyphicon:hover {
+        margin: 0px 3px;
+        color: #509af8;
+    }
+
+.activeBlue {
+    color: #509af8;
+}
+
+
+.glyphicon-record {
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.prowindowExtnlData {
+    padding: 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+
+.ExternalData_Loader {
+    position: absolute;
+    width: 100%;
+    display: none;
+    height: 100%;
+    opacity: 0.4;
+    background: rgba(0,0,0,0.2) url(../../../Content/images/loading_new.gif) no-repeat center center !important;
+    left: 0;
+    top: 0
+}
+
+.exterpos {
+    overflow-x: hidden !important;
+}
+
+.Uploadfile {
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.drop_window {
+    display: none;
+    width: 120px;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0px 4px 9px #cccccc94;
+    border-radius: 3px;
+    border: 1px solid #e3e3e3;
+    right: 0;
+    cursor: pointer;
+    z-index: 9;
+    top: 19px;
+}
+
+    .drop_window ul {
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+    }
+
+        .drop_window ul li {
+            padding: 6px 8px;
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+            .drop_window ul li:hover {
+                background-color: #e2f5eb;
+            }
+
+.prowindowNetworkData .form-group {
+    display: flex;
+}
+
+.col-md-7 {
+    padding: 0px 5px;
+    width: 58.33333333%;
+}
+
+.col-md-5 {
+    padding: 0px 5px;
+    line-height: 2.2;
+}
+
+
+.icon-Find_Direction {
+    position: absolute;
+    right: 13px;
+    top: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999999;
+}
+
+#planHistotry {
+    background-image: url('../../Content/images/loading_new.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.NetworkDatabodytype {
+    height: calc(100vh - 275px);
+    overflow: auto;
+    padding: 0 12px 15px 15px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+.ExterDatabody {
+    height: calc(100vh - 257px);
+    overflow: auto;
+    padding: 15px 12px 15px;
+    scrollbar-color: #c9d0d8 #efefef;
+    scrollbar-width: thin;
+}
+
+/* New css start here*/
+
+.cheight {
+    height: auto !important;
+    margin-right: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+.align-itm {
+    align-items: center;
+}
+
+.mb-15 {
+    margin-bottom: 1.5rem;
+}
+
+.mr-15 {
+    margin-right: 1.5rem;
+}
+
+.w-space {
+    white-space: nowrap;
+}
+
+
+.col-md-7 label:not(:last-child) {
+    margin-right: 2rem;
+}
+
+.net--planning {
+    margin: 0;
+}
+
+
+    .net--planning [type="radio"]:checked,
+    .net--planning [type="radio"]:not(:checked) {
+        position: absolute;
+        left: -9999px;
+    }
+
+        .net--planning [type="radio"]:checked + label,
+        .net--planning [type="radio"]:not(:checked) + label {
+            position: relative;
+            padding-left: 28px;
+            cursor: pointer;
+            line-height: 20px;
+            display: inline-block;
+            color: #666;
+        }
+
+            .net--planning [type="radio"]:checked + label:before,
+            .net--planning [type="radio"]:not(:checked) + label:before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 20px;
+                height: 20px;
+                border: 1px solid #ddd;
+                border-radius: 100%;
+                background: #fff;
+            }
+
+            .net--planning [type="radio"]:checked + label:after,
+            .net--planning [type="radio"]:not(:checked) + label:after {
+                content: '';
+                width: 10px;
+                height: 10px;
+                background: #449d44;
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                border-radius: 100%;
+                -webkit-transition: all 0.2s ease;
+                transition: all 0.2s ease;
+            }
+
+            .net--planning [type="radio"]:not(:checked) + label:after {
+                opacity: 0;
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            .net--planning [type="radio"]:checked + label:after {
+                opacity: 1;
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+
+
+.Boxes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+    gap: 10px;
+}
+
+.displayRows {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    width: 66px;
+}
+
+    .displayRows input[type="text"] {
+        margin-bottom: 0.6rem;
+        padding: 0.7rem 1rem;
+    }
+
+.pose-relate {
+    position: relative;
+}
+
+.plan_name-circle {
+    color: var(--secondary-color);
+    font-size: 10px !important;
+}
+
+.plan_name-text {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-color-primary);
+}
+
+.mainPart .btn {
+    padding: 4px 8px !important;
+}
+
+.ActiveMultiSelect {
+    background: var(--oth-green-light);
+    color: var(--white-color);
+}
+#nearestSitesTable th,
+#nearestSitesTable td {
+    padding: 2px 6px;
+    line-height: 1.1;
+    font-size: 12px;
+}
+
+#nearestSitesTable input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+}
+

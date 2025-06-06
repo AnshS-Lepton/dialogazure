@@ -12030,27 +12030,17 @@ namespace SmartInventory.Controllers
             if (plan_id > 0)
             {
                 string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
-                string fileName = plan_name + "_Network_Planing_BomBOQ_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+                string fileName = plan_name + "_BackBone_Planing_BomBOQ_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
                 int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                List<PlanBom> lstBomReport = new BLPlan().GetPlanBomByPlanId(plan_id, user_id);
+                List<BackBonePlanBom> lstBomReport = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
 
-                DataTable dtReport = MiscHelper.ListToDataTable<PlanBom>(lstBomReport);
+                DataTable dtReport = MiscHelper.ListToDataTable<BackBonePlanBom>(lstBomReport);
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
                     if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }
                     if (dtReport.Columns.Contains("length_qty")) { dtReport.Columns["length_qty"].ColumnName = "Length/Qty"; }
                     if (dtReport.Columns.Contains("cost_per_unit")) { dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per " + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
                     if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
-
-                    //if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = /*Resources.Resources.SI_OSP_GBL_NET_RPT_017 + " " + */string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_017, ApplicationSettings.Currency); }
-                    if (dtReport.Columns.Contains("amount")) { dtReport.Columns["amount"].ColumnName = string.Format(Resources.Resources.SI_OSP_ROW_NET_FRM_085, ApplicationSettings.Currency); }
-                    if (dtReport.Columns.Contains("msg")) { dtReport.Columns.Remove("msg"); }
-                    if (dtReport.Columns.Contains("is_template_extis")) { dtReport.Columns.Remove("is_template_extis"); }
-                    if (dtReport.Columns.Contains("temp_plan_id")) { dtReport.Columns.Remove("temp_plan_id"); }
-                    if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns.Remove("cable_length"); }
-                    if (dtReport.Columns.Contains("geometry")) { dtReport.Columns.Remove("geometry"); }
-                    //if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
-                    //if (dtReport.Columns.Contains("system Id")) { dtReport.Columns.Remove("system Id"); }
                 }
                 if (dtReport.Rows.Count > 0)
                 {

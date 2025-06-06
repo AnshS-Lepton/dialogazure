@@ -1,10 +1,10 @@
-﻿@model Models.ModelNetworkPlanningDetails
+﻿@model Models.ModelBackbonePlanningDetails
 
 
 <!DOCTYPE html>
 <div class="sideAutoDatabar" id="divNetworkPlanningData">
-    @using (Ajax.BeginForm("GetBackbonePlanData", "Plan",
-        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "planInfo", LoadingElementId = "dvexternalDataLoader" },
+    @using (Ajax.BeginForm("GetBackbonePlanHistoryData", "BackBonePlan",
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "planHistotry", LoadingElementId = "dvexternalDataLoader" },
            new { id = "frmGetPlanData", enctype = "multipart/form-data", autocomplete = "off" }))
     {
         @Html.HiddenFor(m => m.objPlanDataFilter.currentPage, new { id = "hdnCurrentPage" })
