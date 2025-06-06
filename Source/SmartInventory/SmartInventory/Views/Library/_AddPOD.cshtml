@@ -50,6 +50,7 @@
 {
     { Html.RenderPartial("~/Views/Library/_SiteDtls.cshtml", (ISite)Model); }
 }
+
 @{
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.POD.ToString());
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
@@ -266,7 +267,15 @@
                         {
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
                         }
-                    </ul>
+                        @*@if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#PrjDetails":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_767</a></li>
+                        }*@
+                        @if (Model.system_id > 0 && layerDetail != null)
+                        {
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "roledisabled")" title="Site Project" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "#PRojectAssoctn" : "")" id="Pod_Association" onclick="si.GetSiteProjectDetail('@Model.site_id');" data-toggle="tab"><label>Site Project</label></a></li>
+                        }
+                        </ul>
                 </div>
                 <div id="divRightMenu" style="display:none;">
                     <span class="spanSide go-right"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
@@ -310,7 +319,15 @@
                             {
                                 <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
                             }
-                        </ul>
+                            @*@if (Model.system_id > 0 && layerDetail != null)
+        {
+            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_767 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#PrjDetails":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_767</a></li>
+        }*@
+                            @if (Model.system_id > 0 && layerDetail != null)
+                            {
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "roledisabled")" title="Site Project" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "#PRojectAssoctn" : "")" id="Pod_Association" onclick="si.GetSiteProjectDetail('@Model.site_id');" data-toggle="tab"> <label>Site Project</label></a></li>
+                            }
+                            </ul>
                     </div>
                 </div>
             </div>
@@ -322,19 +339,19 @@
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SF_GBL_GBL_NET_FRM_051</legend>
                         @*<div class="form-group">
-                                <label class="control-label col-sm-2" for="txtPODCode">
-                                    POD Code
-                                    @if (Model.networkIdType == NetworkIdType.M.ToString())
-                                    {
-                                        <i class="clsMandatory">*</i>
-                                    }
-                                    :
-                                </label>
-                                <div class="col-sm-9" style="width: 81%;">
-                                    <div id="txtMaskedNetworkId"></div>
+                    <label class="control-label col-sm-2" for="txtPODCode">
+                        POD Code
+                        @if (Model.networkIdType == NetworkIdType.M.ToString())
+                        {
+                            <i class="clsMandatory">*</i>
+                        }
+                        :
+                    </label>
+                    <div class="col-sm-9" style="width: 81%;">
+                        <div id="txtMaskedNetworkId"></div>
 
-                                </div>
-                            </div>*@
+                    </div>
+                </div>*@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtPODCode">
                                 @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
@@ -368,13 +385,13 @@
                                 @*@Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })*@
 
                                 @*@if (Model.system_id > 0)
-                                    {
-                                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
-                                    }
-                                    else
-                                    {
-                                    @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
-                                    }*@
+                        {
+                        @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
+                        }*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -424,9 +441,9 @@
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-        <div class="col-sm-45">
-            @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-        </div>*@
+                    <div class="col-sm-45">
+                        @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                    </div>*@
                             <label class="control-label col-sm-2">
                                 @layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023 :
                             </label>
@@ -434,13 +451,13 @@
                                 @Html.DropDownListFor(m => m.pod_type, new SelectList(Model.listPODType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                             </div>
 
-                            <label class="control-label col-md-2 col-sm-2" >Is Aggregate:</label>
+                            <label class="control-label col-md-2 col-sm-2">Is Aggregate:</label>
 
 
                             <div class="col-md-4 col-sm-4">
                                 <label>
-                                    
-                                    <input type="checkbox" name="is_agg_site" id="is_agg_site" @(Model.is_agg_site == true ? "checked" : "")  value="true" />
+
+                                    <input type="checkbox" name="is_agg_site" id="is_agg_site" @(Model.is_agg_site == true ? "checked" : "") value="true" />
                                     <input type="hidden" name="is_agg_site" value="false" />
                                 </label>
 
@@ -448,9 +465,9 @@
 
 
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-        <div class="col-sm-45">
-            @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-        </div>*@
+                    <div class="col-sm-45">
+                        @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+                    </div>*@
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_ISP_GBL_GBL_GBL_015:</label>
@@ -482,6 +499,10 @@
                 <div class="tab-pane" id="SiteDtls">
                     @SiteDetails()
                 </div>
+                <div class="tab-pane" id="PRojectAssoctn"></div>
+                @*<div class="tab-pane" id="PrjDetails">
+            @ProjectDetails()
+        </div>*@
                 <div class="tab-pane" id="ItemAsso">
                     @Html.Partial("~/Views/ItemTemplate/_ItemAssociation.cshtml", Model.objIspEntityMap)
                 </div>
@@ -509,6 +530,11 @@
                 <div class="tab-pane" id="Reference">
                     @Reference()
                 </div>
+
+                @*<div class="tab-pane" id="PrjDetails">
+
+            @Html.Action("ShowProjectDetails", "Library")
+        </div>*@
             </div>
         </div>
 
@@ -584,7 +610,7 @@
         }, 0);
     });
     function formPost() {
-
+        debugger;
         //$('#parent_system_id').val(0);
         //$('#parent_entity_type').val('Province');
         if ($('#ddlUnitList').length > 0 && $('#ddlUnitList').val() != '' && $('#ddlUnitList').val() != '0') {
@@ -605,17 +631,17 @@
             e.preventDefault();
             alert(MultilingualKey.Required_Fields || "Please fill in all required fields.");
 
-        } 
+        }
        if (!validateFieldsInDiv('dvChildModalBody')) {
             e.preventDefault();
             alert("Please fill in all required fields.");
-           
+
         } else {
            $("#frmAddPOD").submit();
 
-        } 
-        
-        
+        }
+
+
     }
     function validateFields() {
         debugger;

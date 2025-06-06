@@ -1,0 +1,121 @@
+﻿@model Models.SiteProjectDetails
+@using Models;
+@using SmartInventory.Settings;
+
+@{
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
+}
+
+@*@Html.Hidden("primary_pod_system_id")
+    @Html.Hidden("secondary_pod_system_id")*@
+
+<style>
+    .grid-header {
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white;
+    }
+</style>
+<!DOCTYPE html>
+@{
+    var grid = new WebGrid(source: Model.lstSiteProjectDetails, canPage: true, canSort: false, rowsPerPage: 10);
+}
+
+<div id="projectGridContainer" class="table-responsive">
+    @if (Model.lstSiteProjectDetails != null && Model.lstSiteProjectDetails.Any())
+    {
+       
+           @grid.GetHtml(tableStyle: "grid tableWFont",
+            htmlAttributes: new { id = "projectGrid" },
+            columns: grid.Columns(
+                grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
+                        <input type="hidden" class="siteIdValue" value="@item.id" />
+
+                        <div class="fDisBtn d-flex --gap-05">
+                            <button type="button"
+                                    class="fa fa-fw fa-edit i-icons-style i-icons-ptpb"
+                                    id="iconEdit"
+                                    title="Edit"
+                                    tabindex="5"
+                                    onclick="editNetworkTicket(@item.id);">
+                            </button>
+
+                            <i  class="fa fa-fw fa-trash i-icons-style i-icons-ptpb"
+                               id="DeleteTicket"
+                               title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002"
+                               onclick="deleteTicket(@item.id);">
+                            </i>
+                        </div>
+                </text>, canSort: false),
+
+  grid.Column("site_id", "Site ID"),
+  grid.Column("site_name", "Site Name"),
+  grid.Column("project_category", "Project Category"),
+  grid.Column("site_owner", "Site Owner"),
+
+  grid.Column("cable_plan_cores", "Cable Plan Cores"),
+  grid.Column("comment", "Comment"),
+   grid.Column("maximum_cost", "Maximum Cost"),
+ grid.Column("location_address", "Address"),
+ grid.Column("ds_cmc_area", "Ds CMC Area")
+)
+)
+    }
+    else
+    {
+        <div class="alert alert-info text-center mt-3">
+            No project data available.
+        </div>
+    }
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        var siteIdExists = false;
+
+        $('.siteIdValue').each(function () {
+            if ($(this).val()) {
+                siteIdExists = true;
+                return false; // break the loop
+            }
+        });
+
+        // If a valid site ID exists, hide the button
+        if (siteIdExists) {
+            //$('#btnUpdateItemTemplate').hide();
+        }
+        else
+        {
+            $('#btnUpdateItemTemplate').show();
+        }
+    });
+    function editNetworkTicket(siteId) {
+        showConfirm('Are you sure to edit project details?', function () {
+            popup.LoadModalDialog('CHILD', 'Library/EditProject', { 'siteId': siteId }, 'Update Project Details', 'modal-xl');
+        });
+    }
+    function deleteTicket(id) {
+        showConfirm('Are you sure to delete project?', function () {
+            ajaxReq('Library/DeleteProject', { id: id, }, true, function (resp) {
+                //if (resp.status == "OK") {
+                debugger
+                //ajaxReq('Library/GetSiteProjectDetail', {
+                //    site_id: id
+                //}, true, function (resp) {
+                //    $("#PRojectAssoctn").html(resp);
+                //    $("#PRojectAssoctn").css('background-image', 'none');
+                //}, false, false);
+                    alert('Record deleted successfully');
+                   
+                //}
+                //else {
+                //    alert(resp.message);
+                //}
+            }, false, false)
+        });
+
+    }
+</script>

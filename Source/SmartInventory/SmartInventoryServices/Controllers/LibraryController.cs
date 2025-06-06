@@ -2342,7 +2342,7 @@ namespace SmartInventoryServices.Controllers
 				fillRegionProvAbbr(objPOD);
 			}
 			objPOD.lstUserModule = new BLLayer().GetUserModuleAbbrList(user_id, UserType.Web.ToString());
-			return objPOD;
+            return objPOD;
 		}
 
 		#endregion
