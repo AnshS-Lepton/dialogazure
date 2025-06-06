@@ -1476,6 +1476,7 @@ LAYER
 			'NetworkFilter' '.*'		
 			'userid' '.*'			
 		END
+		
 		METADATA
 			'ows_title' 'SPLICECLOSURE'
 		END
@@ -1485,8 +1486,9 @@ LAYER
 			NAME 'Splice Closure'
             EXPRESSION ('[network_status]'  eq 'P' && ('[is_virtual]'  = 'false'))  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Planned/spliceclosure.png" 
+				SIZE 30	
+				OFFSET 0 -5
 			END
             			
 		END
@@ -1494,7 +1496,7 @@ LAYER
 			NAME 'Splice Closure'
             EXPRESSION ('[network_status]'  eq 'A' && ('[is_virtual]'  = 'false'))  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/AsBuild/spliceclosure.png" 
 				SIZE 18			
 			END
             			
@@ -1503,13 +1505,14 @@ LAYER
 			NAME 'Splice Closure'
             EXPRESSION ('[network_status]'  eq 'D' && ('[is_virtual]'  = 'false'))  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/spliceclosure.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
 		END	
-
-	CLASS
+		
+		CLASS
 			NAME 'Splice Closure'
             EXPRESSION (('[network_status]'  eq 'A') && ('[is_virtual]'  = 'true'))  			
 			STYLE
@@ -1537,8 +1540,10 @@ LAYER
 				OFFSET 0 -5				
 			END
             			
-		END		
+		END
+		
 	END	
+
 	# ==============================MPOD============================================ 
 	LAYER
 		NAME 'MOD'

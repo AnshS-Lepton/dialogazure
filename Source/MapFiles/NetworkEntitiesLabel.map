@@ -3621,42 +3621,39 @@ CLASS
 		
 			#====================As-Built======================
 		CLASS 
-			NAME "count_ducts"
-			#TEXT "[count_ducts]"
-			#EXPRESSION "count_ducts"
-			EXPRESSION ('[network_status]'  eq 'A')	
-			STYLE
-				WIDTH 3
-				COLOR 114 26 26
-				LINECAP ROUND
-				#PATTERN 10 10 END
-			END
-			LABEL
-			    OUTLINEWIDTH 5
-				OUTLINECOLOR 255 255 255
-				FONT arial
-				TYPE truetype
-				COLOR 0 0 0
-				#COLOR  255 0 0
-				SIZE 8
-				STYLE
-					GEOMTRANSFORM 'labelpoly'
-					COLOR 255 0 0  # background rect.
-				END
-				STYLE
-					GEOMTRANSFORM 'labelunderline'
-					COLOR   0 0 255 # underline
-					OFFSET 	0 -1 	# with some offset
-				END
-				OFFSET 0 0
-				ANTIALIAS TRUE
-				POSITION CC
-				ANGLE AUTO
-				FORCE FALSE
-				PARTIALS FALSE
-			END
-		END
-		
+    NAME "count_ducts"
+    EXPRESSION ('[network_status]' eq 'A')    
+    STYLE
+        WIDTH 3
+        COLOR 255 0 0  # red line color
+        LINECAP ROUND
+        PATTERN 10 5 1 5 END
+    END
+    LABEL
+        OUTLINEWIDTH 5
+        OUTLINECOLOR 255 255 255
+        FONT arial
+        TYPE truetype
+        COLOR 0 0 0  # black text
+        SIZE 8
+        STYLE
+            GEOMTRANSFORM 'labelpoly'
+            COLOR 255 0 0  # red background rectangle
+        END
+        STYLE
+            GEOMTRANSFORM 'labelunderline'
+            COLOR 0 0 255  # optional: blue underline
+            OFFSET 0 -1
+        END
+        OFFSET 0 0
+        ANTIALIAS TRUE
+        POSITION CC
+        ANGLE AUTO
+        FORCE FALSE
+        PARTIALS FALSE
+    END
+END
+
 		#====================Dormant======================
 		CLASS 
 			NAME "count_ducts"

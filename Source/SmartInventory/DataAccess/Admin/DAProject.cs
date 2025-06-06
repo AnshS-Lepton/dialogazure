@@ -834,32 +834,75 @@ namespace DataAccess.Admin
 
         }
 
+        public List<bool> getValidRoute(string geom, int agg1, int agg2, int user_id)
+        {
+            return repo.ExecuteProcedure<bool>("fn_getvalidateToplogyroute", new
+            {
+                
+                p_agg1 = agg1,
+                p_agg2 = agg2,
+                p_geom = geom,
+                p_user_id = user_id
+            });
+
+        }
+        public List<routeDetails> GetSelectedRoute(string geom,int agg1,int agg2, int user_id)
+        {
+            
+            var sites = repo.ExecuteProcedure<routeDetails>(
+                 "fn_topology_get_selectedroute",
+                 new
+                 {
+                     route_geom = geom,
+                     p_agg1 = agg1,
+                     p_agg2 = agg2,
+                     p_user_id = user_id
+                 },
+                 false
+             ).ToList();
+            return sites;
+
+        }
+
         public TopologySegment SaveSegment(TopologySegment objTopologyPlan)
         {
-            if (objTopologyPlan.id != 0)
-            {
 
+            var Segmentcode = repo.GetAll().Where(a => a.segment_code == objTopologyPlan.segment_code).Select(a => a.segment_code).FirstOrDefault();    
+            if (Segmentcode !=null)
+                return objTopologyPlan;
             
 
-                return repo.Update(objTopologyPlan);
+            int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            int newSequence = maxSequence + 1;
+            objTopologyPlan.sequence = newSequence;
+            // Insert the new segment into the database
+            var topologyResp = repo.Insert(objTopologyPlan);
+            return topologyResp;
+
+            //if (objTopologyPlan.id != 0)
+            //{
 
 
 
-            }
+            //    return repo.Update(objTopologyPlan);
 
-            else
-            {
-                int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
-                int newSequence = maxSequence + 1;
-                objTopologyPlan.sequence = newSequence;
-                // Insert the new segment into the database
-                var topologyResp = repo.Insert(objTopologyPlan);
-                return topologyResp;
 
-            }
 
-            
-            
+            //}
+
+            //else
+            //{
+            //    int maxSequence = repo.GetAll().Max(m => (int?)m.sequence) ?? 0;
+            //    int newSequence = maxSequence + 1;
+            //    objTopologyPlan.sequence = newSequence;
+            //    // Insert the new segment into the database
+            //    var topologyResp = repo.Insert(objTopologyPlan);
+            //    return topologyResp;
+
+            //}
+
+
+
         }
 
 

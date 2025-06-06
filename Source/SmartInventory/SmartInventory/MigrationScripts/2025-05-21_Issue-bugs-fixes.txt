@@ -1,0 +1,43 @@
+
+UPDATE module_master
+SET  is_active=false
+WHERE  module_abbr='BLK-SDU';
+
+
+------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_fiber_link_columns_mappings()
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+ 
+BEGIN
+    -- EXECUTE AND RETURN QUERY RESULT..
+    RETURN QUERY EXECUTE 'SELECT ROW_TO_JSON(ROW) FROM(SELECT column_name,is_active,display_name FROM fiber_link_columns_settings where is_active=true
+    and id in (2,3,29) order by column_sequence) ROW';
+    --and column_name=''link_id'' and display_name=''Link/Route Id'' order by column_sequence) ROW';
+    
+
+END
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_get_fiber_link_columns_mappings() OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_fiber_link_columns_mappings() TO public;
+GRANT ALL ON FUNCTION public.fn_get_fiber_link_columns_mappings() TO postgres;
+
+
+--------------------------------------------------------------------------
+
+
+UPDATE layer_action_mapping
+SET   action_title='Add FTC', res_field_key=''
+WHERE layer_id=13 and action_name='AddBDB';
+
+
+-----------------------------------------------------------------------------
+
+update data_uploader_template set
+default_value='Own' where layer_id=14 and db_column_name='ownership_type'

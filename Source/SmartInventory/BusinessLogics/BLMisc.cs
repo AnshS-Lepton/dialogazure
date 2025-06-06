@@ -68,6 +68,17 @@ namespace BusinessLogics
             return objDAMisc.getNearByEntities(latitude, longitude, bufferInMtr, source_ref_id, source_ref_type, user_id);
 
         }
+
+        public List<bool> validateTopologyEntity(double latitude, double longitude, string geom,int user_id = 0)
+        {
+            return objDAMisc.validateTopologyEntity(latitude, longitude, geom, user_id);
+
+        }
+        public List<EntityDetail> GetNearByTopologyEntity(double latitude, double longitude, int bufferInMtr, string source_ref_id, string source_ref_type, int user_id = 0)
+        {
+            return objDAMisc.GetNearByTopologyEntity(latitude, longitude, bufferInMtr, source_ref_id, source_ref_type, user_id);
+
+        }
         public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
         {
             return objDAMisc.getNearByFeasibility(latitude, longitude, bufferInMtr);

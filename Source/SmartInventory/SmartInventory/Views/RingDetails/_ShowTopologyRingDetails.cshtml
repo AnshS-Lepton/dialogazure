@@ -2,8 +2,6 @@
 @using Models;
 @using Utility;
 
-
-
 <!DOCTYPE html>
 
 @if (Model.objRingDetails != null && Model.objRingDetails.SearchbyRingTypes != null && Model.objRingDetails.SearchbyRingTypes.Any())
@@ -52,9 +50,7 @@ else
 
 
         });
-        
 
-       
         this.clearUserTempOverlay = function (lyrObj) {
             debugger;
             if (lyrObj) {
@@ -77,96 +73,9 @@ else
 
             return gmarkernew;
         }
-        this.ShowEntityOnMap = function (ringId) {
-            //if ($(event).hasClass("glyphicon-eye-open")) {
-            var app = this;
-            var gMapObj = {};
-            this.ParentModel = 'PARENT';
-            this.isSwapped = false;
-            this.mainJSPlumb = null;
-            this.gMapObj = {};
-            var bounds = new google.maps.LatLngBounds();
-            ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
-                if (resp.status = 'OK') {
 
 
-                    if (resp.lstSitedetails != null || resp.lstSitedetails != undefined) {
-
-                        $(popup.DE.MinimizeModel).trigger("click");
-                        app.clearUserTempOverlay(gMapObj.TraceRoute);
-                        gMapObj.TraceRoute = [];
-                        app.gMapObj.pointMarkers = [];
-                        var bounds = new google.maps.LatLngBounds();
-                        var highlightLineList = [];
-                        var oms = new OverlappingMarkerSpiderfier(si.map, {
-                            markersWontMove: true,
-                            markersWontHide: true,
-                            keepSpiderfied: true,
-                            circleFootSeparation: 35, // radius of circle
-                            nearbyDistance: 30, // distance in which it include the markers in spiderfier..
-                            circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
-                            legWeight: 2.4
-                        });
-                        var objInfoWindow = new google.maps.InfoWindow();
-                        var infowindow = new google.maps.InfoWindow({
-                            content: contentString
-                        });
-
-                        debugger;
-                        for (var i = 0; i < resp.lstSitedetails.length; i++) {
-
-                            var en_type = 'POD';
-                            var system_id = resp.lstSitedetails[i].system_id;
-                            // var port_no = resp.lstSitedetails[i].connected_port_no;
-                            var network_id = resp.lstSitedetails[i].network_id;
-                            var is_virtual_port_allowed = false;
-                            var geometry = getLatLongArr(resp.lstSitedetails[i].geom);
-
-                            var ptObj = null;
-                            //if (resp.lstSitedetails[i].system_id != null && resp.lstSitedetails[i].system_id != '') {
-                            //    ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.lstSitedetails[i].connected_entity_category + '_' + en_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
-                            //}
-                            //else {
-                            ptObj = si.createMarkerForPathFinder(geometry[0], 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/images/icons/lib/circle/' + 'POD' + '.png', system_id, en_type, '', network_id, is_virtual_port_allowed);
-                            //ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
-
-                            //}
-                            // add info window
-                            var contentString = '<div id="content">' +
-                                '<input type="button" id="export" enType="' + en_type + '" systemId="' + system_id + '"  value="export"/>' +
-                                '</div>';
-                            google.maps.event.addListener(ptObj, 'click', (function (ptObj, i) {
-                                //if (ptObj.portNo != null) {
-                                //    var PortNo = ptObj.portNo > 0 ? ptObj.portNo.toString() + " OUT" : ptObj.portNo.toString().replace('-', '') + " IN";
-                                //}
-                                return function () {
-
-                                    var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
-                                    //if (!ptObj.isVirtualPortAllowed) {
-                                    //    content += '<p><span  class="Info-content">Port No :</span> ' + PortNo + '</p>';
-                                    //}
-                                    objInfoWindow.setContent(content);
-                                    objInfoWindow.open(si.map, ptObj);
-                                }
-                            })(ptObj, i));
-                            debugger;
-                            ptObj.setMap(si.map);
-                            gMapObj.TraceRoute.push(ptObj);
-                            si.gMapObj.pointMarkers.push(ptObj);
-                            oms.addMarker(ptObj);
-
-                        }
-
-                        debugger;
-                    }
-                }
-            }, true, true);
-        }
-
-
-
-
-        this.GetSLDDaigramFiberLink = function (ringId, ring_code) {
+        this.getslddaigramfiberlink = function (ringId, ring_code) {
             debugger;
             var ringId = ringId.toString();
             ajaxReq('main/Encrypt', { systemId: ringId + '/' + ring_code }, false, function (resp) {
@@ -238,102 +147,121 @@ else
         }
 </style>
 
-<div id="dvViewRingDetails">
-    <div class="update_panel fullWidth">
+
+@{
 
 
-        @{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRingDeatils",
+ajaxUpdateCallback: "onGridHeaderClick('tblRingDetail');");
+    grid.Bind(Model.lstRingDetails, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
+    if (Model.objGridAttributes.totalRecord > 0)
+    {
+        grid.PageIndex = Model.objGridAttributes.currentPage - 1;
+    }
 
 
-            WebGrid grid = new WebGrid(rowsPerPage: Model.objGridAttributes.pageSize, canSort: true, ajaxUpdateContainerId: "dvViewRingDeatils",
-    ajaxUpdateCallback: "onGridHeaderClick('tblRingDetail');");
-            grid.Bind(Model.lstRingDetails, autoSortAndPage: false, rowCount: Model.objGridAttributes.totalRecord);
-            if (Model.objGridAttributes.totalRecord > 0)
-            {
-                grid.PageIndex = Model.objGridAttributes.currentPage - 1;
-            }
+}
+
+<div class="libDetail">
+
+    @using (Ajax.BeginForm("ShowTopologyRingDetails", "RingDetails", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "dvModalBody",
+        //LoadingElementId = "dvViewLinkProgress",
+        InsertionMode = InsertionMode.Replace
+    }, new { id = "frmViewRingDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+    {
+        
+            @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
+            @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
+            @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
+            <!-- Filters Section -->
+            <div class="libTabContent">
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="GISInfo">
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">Region:</label>
+                            <div class="col-sm-4">
+
+                                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
+                                    new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                                    "--Select--",
+                                    new { @class = "chosen-select", @id = "ddllstRegionName" })
 
 
-        }
+                            </div>
+                            <label class="control-label col-sm-2" for="searchby">Segment:</label>
+                            <div class="col-sm-4">
 
-        <div class="tablePad--tn">
-            @using (Ajax.BeginForm("ShowTopologyRingDetails", "RingDetails", new AjaxOptions
-            {
-                HttpMethod = "POST",
-                UpdateTargetId = "dvViewRingDetails",
-                //LoadingElementId = "dvViewLinkProgress",
-                InsertionMode = InsertionMode.Replace
-            }, new { id = "frmViewRingDetails", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
-            {
-                @Html.HiddenFor(m => m.objRingDetails.region_name, new { id = "hdnregionname" })
-                @Html.HiddenFor(m => m.objRingDetails.segment_code, new { id = "hdnsegmentname" })
-                @Html.HiddenFor(m => m.objRingDetails.ring_capacity, new { id = "hdnringname" })
-                <!-- Filters Section -->
-                <div class="filter-container">
-                    <label>Region:</label>
-                    @Html.DropDownListFor(m => m.objRingDetails.SearchbyRegionName,
-                        new SelectList(Model.lstRegionName.Select(x => new { Value = x.value.ToString().ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                        "--Select--",
-                        new { @class = "chosen-select", @id = "ddllstRegionName" })
+                                @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
+                                    new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
+                                    "--Select--",
+                                    new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
 
-
-
-                    <label>Segment:</label>
-                    @Html.DropDownListFor(m => m.objRingDetails.SearchbySegmentName,
-                        new SelectList(Model.lstSegmentName.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"),
-                        "--Select--",
-                        new { @class = "chosen-select col-sm-12", @id = "ddllstSegmentName" })
-
-
-
-                    <label class="white-space">Ring Code:</label>
-                    @*@Html.dropdownlistfor(m => m.objringdetails.searchbyringtype,
-                        new SelectList(model.lstringtype.select(x => new { value = x.value.tostring(), text = x.value.tostring() }), "value", "text"),
-                        "--select--",
-                        new { @class = "chosen-select col-sm-12", @id = "ddllstringname", multiple = "multiple" })*@
-
-                    @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingTypes, new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
-
-
-
-
-
-
-                    <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
-                    <button id="btnExportLinks" class="btn btn-success ml-auto">Export</button>
-                    @*<input type="button" id="btnExportLinks" class="btn btn-success ml-auto" value="Export" />*@
-                    <input type="submit" id="btnRingReset" class="btn btn-default ml" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
-
-                </div>
-
-
-                if (Model.lstRingDetails.Count > 0)
-                {
-                    <div class="table-responsive">
-                        <div class="d-flex mb-15">
-                            <div class="div_totalRecord">
-                                <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
                             </div>
                         </div>
-                        @grid.GetHtml(tableStyle: "grid",
-                                htmlAttributes: new { id = "tblRingDetail" },
-                                mode: WebGridPagerModes.All,
-                                columns: grid.Columns(
-                                           grid.Column("", "Action", format:@<text>
-                                                    <a href="javascript:void(0);"
-                                                       class="ShowEntityOnMap"
-                                                       title="Show on Map"
-                                                       onclick="si.showRingDetailsOnMap(@item.id);">
-                                                        <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
-                                                        @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
-                                                    </a>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="searchby">Ring Code:</label>
+
+                            <div class="col-sm-4">
 
 
+                                @Html.DropDownListFor(m => m.objRingDetails.SearchbyRingTypes, new SelectList(Model.lstRingType.Select(x => new { Value = x.value.ToString(), Text = x.value.ToString() }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", @id = "ddllstRingName" })
+
+                            </div>
+                            <label class="control-label col-sm-2" for="searchby">Site Id:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.objRingDetails.site_id, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_RPT_357, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_RPT_357, @maxlength = 50 })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="ModalFooter d-flex pos-rel" id="dvBtnAction">
+                <button type="submit" class="btn btn-success ml-auto" onclick="validateSearch(event)" id="tes"> Search</button>
+
+                <button id="btnExportLinks" class="btn btn-default ml-10">Export</button>
+
+                <input type="submit" id="btnRingReset" class="btn btn-default ml-10" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005" />
+            </div>
+
+
+
+            if (Model.lstRingDetails.Count > 0)
+            {
+<div class="table-responsive">
+    <div class="d-flex mb-15">
+        <div class="div_totalRecord">
+            <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.objGridAttributes.totalRecord</span></b>
+        </div>
+    </div>
+
+    @*@RingDetails()*@
+
+    @grid.GetHtml(tableStyle: "grid",
+                               htmlAttributes: new { id = "tblRingDetail" },
+                               mode: WebGridPagerModes.All,
+                               columns: grid.Columns(
+                                          grid.Column("", "Action", format:@<text>
+                                                <a href="javascript:void(0);"
+                                                   class="ShowEntityOnMap"
+                                                   title="Show on Map"
+                                                   onclick="si.showRingDetailsOnMap(@item.id);">
+                                                    <i class="fa fa-globe action_icon fa-fw m-r-xs"></i>
+                                                    @*<i class="cptr fa fa-bullseye m-r-xs" title="Schematic View" onclick="GetSLDDaigramFiberLink(@item.id, '@item.ring_code')" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>*@
+                                                </a>
+                                                <a href="javascript:void(0);"
+                                                   title="Schematic View"
+                                                   onclick="getslddaigramfiberlink(@item.id, '@item.ring_code')">
+                                                    <i class="cptr fa fa-bullseye m-r-xs" style="color: #FFA500; font-size: 14px; padding-left: 7px"></i>
+                                                </a>
 
                                         </text>, canSort: false
 ),
-
-@*grid.Column(header: "S.No.", format: @<text>@item.id</text>, canSort: false),*@
 grid.Column("segment_code", "Segment", format: @<text>@item.segment_code</text> , canSort: true),
 grid.Column("ring_code", "Ring Code", format: @<text>@item.ring_code</text>, canSort: true),
 grid.Column("site_id", "Site Id", format: @<text>@item.site_id</text>, canSort: true),
@@ -352,27 +280,27 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
 
 ))
 
-                        @Html.Hidden("dir", grid.SortDirection)
-                        @Html.Hidden("col", grid.SortColumn)
-                        @Html.HiddenFor(m => m.objGridAttributes.searchBy)
-                        @Html.HiddenFor(m => m.objGridAttributes.searchText)
-                    </div>
-
-                }
-                else
-                {
-                    <div class="nr-found">
-                        <strong>No Records Found.</strong>
-                    </div>
-                }
-            }
-        </div>
-
-    </div>
+    @Html.Hidden("dir", grid.SortDirection)
+    @Html.Hidden("col", grid.SortColumn)
+    @Html.HiddenFor(m => m.objGridAttributes.searchBy)
+    @Html.HiddenFor(m => m.objGridAttributes.searchText)
 </div>
+
+            }
+            else
+            {
+            <div class="nr-found">
+                <strong>No Records Found.</strong>
+            </div>
+            }
+
+            }
+        
+</div>
+
 <script>
 
-    
+
     function isDivEnabledByClass(className) {
         const divs = document.getElementsByClassName(className);
         for (let div of divs) {
@@ -391,7 +319,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
         return false; // no enabled divs
     }
 
-    
+
     $("#btnRingReset").on("click", function () {
         $("#ddllstRingName")[0].selectedIndex = -1; // removes all selections
         $("#ddllstRingName").trigger("chosen:updated");
@@ -400,6 +328,7 @@ grid.Column("ring_b_site_distance", "Distances From Peer Site 2 (KM)", format: @
         document.getElementById("ddllstRegionName").selectedIndex = 0;
         $("#ddllstRegionName").trigger("chosen:updated");
         $('#btnExport').attr('disabled', 'disabled');
+        $('#txtSearchText').val('');
     });
 
     $("#btnExportLinks").on("click", function () {

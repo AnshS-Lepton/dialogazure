@@ -93,7 +93,7 @@ namespace DataAccess.DBHelpers
                 if (propInfo.GetValue(inputParams, null) == null)
                     return "";
                 else
-                    return propInfo.GetValue(inputParams, null);
+                    return Convert.ToString(propInfo.GetValue(inputParams, null)).Replace("'", "''").Replace("--", "");
             }
             else
             {

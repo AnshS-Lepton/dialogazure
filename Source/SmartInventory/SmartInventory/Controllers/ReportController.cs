@@ -13809,6 +13809,25 @@ namespace SmartInventory.Controllers
            
             return Json(cableList, JsonRequestBehavior.AllowGet);
         }
+
+        #region Manual Route 
+        public JsonResult getManualRouteDetails( string geom, int agg1, int agg2 )
+        {
+            List<routeDetails> routeList = new List<routeDetails>();
+            var isValid = new BLProject().getValidRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
+            if (!isValid[0])
+            {
+                return Json(new { status = "VALIDATION_FAILED", message = "The route must include all aggregate sites located between the source (starting point) and the destination (end point)!", result = routeList });
+            }
+            else
+                 routeList = new BLProject().GetSelectedRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
+
+            return Json(new { status = "OK", message = "Route attached successfully!", result= routeList });
+           
+            }
+        #endregion
+
+
         public JsonResult GetSiteIds(string term)
         {
             var siteList = new BLProject().getSiteIdList(term);
@@ -13900,7 +13919,7 @@ namespace SmartInventory.Controllers
             try
             {
                 TopologySegment topologySegment = new TopologySegment();
-                topologySegment.id = SegmentId;
+                // topologySegment.id = SegmentId;
                 topologySegment.sequence = SequenceId;
                 topologySegment.segment_code = segmentcode;
                 topologySegment.region_id = region_code;
@@ -13914,6 +13933,11 @@ namespace SmartInventory.Controllers
 
                 // Save to segment database
                 topologySegment = new BLProject().SaveSegment(topologySegment);
+
+                if(topologySegment.id ==0)
+                {
+                    return Json(new { success = false, message = "Segment code already exist!" });
+                }
                 // Save to segment database
                 new BLProject().Savetopsegmentcablemapping(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"]), topologySegment.id, route_id);
 
@@ -13928,7 +13952,7 @@ namespace SmartInventory.Controllers
         #endregion
 
         #region Create segment
-        public ActionResult CreateSegment()
+        public ActionResult CreateSegment(LineEntityIn objIn)
         {
             PageMessage objMsg = new PageMessage();
             PODMaster pODMaster = new PODMaster();
@@ -13936,7 +13960,8 @@ namespace SmartInventory.Controllers
 
             try
             {
-
+                Session["routeGeom"] = objIn.geom;
+               // pODMaster.lstroute = new BLProject().GetSelectedRoute(objIn.geom, Convert.ToInt32(Session["user_id"]));
                 pODMaster.lstTopologyRegionMaster = new BLProject().getTopologyRegionDetails();
 
             }

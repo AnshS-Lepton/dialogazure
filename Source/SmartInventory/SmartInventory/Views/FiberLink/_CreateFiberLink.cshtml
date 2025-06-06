@@ -49,12 +49,12 @@
                         </div>
                         @if (Model.system_id == 0)
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @oninput = "validateInput(this)", @maxlength = "12", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @id = "txtLinkId", @oninput = "validateInput(this)", @maxlength = "30", @onblur = "fiberLink.validateLinkId(this.value,'link_id');" })
 
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @oninput = "validateInput(this)", @id = "txtLinkId", @maxlength = "12" })
+                            @Html.TextBoxFor(m => m.link_id, new { @class = "form-control remove-white-space", @oninput = "validateInput(this)", @id = "txtLinkId", @maxlength = "30" })
                         }
 
                     </div>
@@ -93,11 +93,11 @@
 
                 </div>
 
-                <div class="form-group row" style="display:none;">
+                <div class="form-group row">
                     <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_190:</label>
 
                     <div class="col-md-4">
-                        @Html.TextBoxFor(m => m.main_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtmainlinkid", @readonly = true })
+                        @Html.TextBoxFor(m => m.main_link_id, new { @class = "form-control", @maxlength = "50", @id = "txtmainlinkid"})
                     </div>
                     <label class="control-label col-sm-2" for="entities">
 
@@ -453,8 +453,8 @@
             $('#link_prefix').val($('ddlLinkPrifixType').val())
         }
        // else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
-        
-      
+
+
     });
     $("#liAddFiberLink a").on("click", function () {
         debugger;
@@ -463,8 +463,8 @@
             $('#txtNetworkId').val(''); $('#ddlLinkPrifixType').val('0'); $('#txtGISLength').val('0');
             $('#txtTotalRouteLength').val('0'); $('#txtTotalRouteLength').val('0'); $('#ddlLinkType').val('0').trigger("chosen:updated");
             $('#txtLinkId').val(''); $('#txtServiceId').val('');
-        }   
-        
+        }
+
     });
 
     function validateInput(input) {

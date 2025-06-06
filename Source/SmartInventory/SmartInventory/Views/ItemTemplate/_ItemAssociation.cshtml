@@ -15,7 +15,7 @@
     <legend class="the-legend">@String.Format(Resources.Resources.SI_OSP_GBL_NET_FRM_420, SmartInventory.Settings.ApplicationSettings.nearByStructureBuffer)</legend>
 
     <div class="form-group row">
-        <label class="control-label col-sm-2" for="txtType">@Resources.Resources.SI_OSP_GBL_NET_FRM_032<i class="clsMandatory">*</i>:</label>
+        <label class="control-label col-sm-2" for="txtType">@Resources.Resources.SI_OSP_GBL_NET_FRM_032:</label>
         <div class="col-md-4">
             @Html.DropDownList("objIspEntityMap.AssociateStructure", new SelectList(Model.lstStructure.Select(x => new { Value = x.system_id.ToString(), Text = x.structure_name }), "Value", "Text"), "Select Structure", new { @id = "ddlStructureList", name = "objIspEntityMap.AssociateStructure", @class = "chosen-select col-sm-12", @style = "padding:0;", @onchange = "GetShaftNFloorList('" + Model.entity_type + "');" })
         </div>

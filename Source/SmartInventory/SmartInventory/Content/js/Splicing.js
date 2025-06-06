@@ -2222,7 +2222,7 @@
         ajaxReq('FiberLink/showFiberLinkOnMap', { linkSystemID: _linkSystemID }, true, function (resp) {
             if (resp.status = 'OK') {
                 var highlightLineList = [];
-
+                debugger;
                 if (resp.result != null && resp.result != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
                     app.clearUserTempOverlay(gMapObj.TraceRoute);
@@ -2277,19 +2277,37 @@
                                     '</div>';
 
                                 google.maps.event.addListener(lineObj, 'click', (function (lineObj, i) {
-
+                                    debugger;
                                     var _cableNetworkId = resp.result.lstCableInfo[i].cable_network_id;
                                     var _cableFiberNumber = resp.result.lstCableInfo[i].fiber_number;
+                                    var _total_core = resp.result.lstCableInfo[i].total_core;
+                                    var _cable_measured_length = resp.result.lstCableInfo[i].cable_measured_length;
 
+                                    
                                     // Add the fiber number to the corresponding cable network ID in the map
                                     if (!cableNetworkFiberMap[_cableNetworkId]) {
                                         cableNetworkFiberMap[_cableNetworkId] = [];
                                     }
                                     cableNetworkFiberMap[_cableNetworkId].push(_cableFiberNumber);
+                                    // Initialize _total_core key if not present
+                                    if (!cableNetworkFiberMap[_total_core]) {
+                                        cableNetworkFiberMap[_total_core] = [];
+                                    }
+                                    cableNetworkFiberMap[_total_core].push(_total_core);
 
+                                    // Initialize _cable_measured_length key if not present
+                                    if (!cableNetworkFiberMap[_cable_measured_length]) {
+                                        cableNetworkFiberMap[_cable_measured_length] = [];
+                                    }
+                                    cableNetworkFiberMap[_cable_measured_length].push(_cable_measured_length);
                                     return function () {
 
-                                        var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
+                                        //var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Network Id : </span>' + _cableNetworkId + '</p>';
+                                        //content += '<p><span  class="Info-content">Core / Port No :</span> ' + cableNetworkFiberMap[_cableNetworkId].join(', ') + '</p>';
+
+                                        var content = '<div><h4>' + 'Cable Detail </h3><p><span  class="Info-content">Total Core : </span>' + _total_core + '</p>';
+                                        content += '<p><span  class="Info-content">Distance :</span> ' + _cable_measured_length + '</p>';
+
                                         content += '<p><span  class="Info-content">Core / Port No :</span> ' + cableNetworkFiberMap[_cableNetworkId].join(', ') + '</p>';
                                         objInfoWindow.setContent(content);
                                         objInfoWindow.open(si.map, lineObj);
@@ -2321,13 +2339,14 @@
                             var network_id = resp.result.lstConnectedElements[i].connected_network_id;
                             var is_virtual_port_allowed = resp.result.lstConnectedElements[i].is_virtual_port_allowed;
                             var geometry = getLatLongArr(resp.result.lstConnectedElements[i].connected_entity_geom);
-
+                            var network_name = resp.result.lstConnectedElements[i].network_name;
                             var ptObj = null;
+                            debugger;
                             if (resp.result.lstConnectedElements[i].connected_entity_category != null && resp.result.lstConnectedElements[i].connected_entity_category != '') {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result.lstConnectedElements[i].connected_entity_category + '_' + resp.result.lstConnectedElements[i].connected_entity_type.toUpperCase() + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + resp.result.lstConnectedElements[i].connected_entity_category + '_' + resp.result.lstConnectedElements[i].connected_entity_type.toUpperCase() + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name);
                             }
                             else {
-                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed);
+                                ptObj = si.createMarkerForPathFinder(geometry[0], 'Content/images/icons/lib/circle/' + (resp.result.lstConnectedElements[i].is_virtual ? 'v_' : '') + resp.result.lstConnectedElements[i].connected_entity_type + '.png', system_id, en_type, port_no, network_id, is_virtual_port_allowed, network_name);
                             }
                             // add info window
                             var contentString = '<div id="content">' +
@@ -2338,9 +2357,14 @@
                                     var PortNo = ptObj.portNo > 0 ? ptObj.portNo.toString() + " OUT" : ptObj.portNo.toString().replace('-', '') + " IN";
                                 }
                                 return function () {
+                                    debugger;
+                                    if (ptObj.eType == "SpliceClosure") {
+                                        var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Name: </span>' + ptObj.network_name + '</p>';
 
-                                    var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
-                                    if (!ptObj.isVirtualPortAllowed) {
+                                    } else {
+                                        var content = '<div><h4>' + ptObj.eType + ' Detail </h3><p><span  class="Info-content">Network Id : </span>' + ptObj.networkId + '</p>';
+                                 }
+                                      if (!ptObj.isVirtualPortAllowed) {
                                         content += '<p><span  class="Info-content">Port No :</span> ' + PortNo + '</p>';
                                     }
                                     objInfoWindow.setContent(content);

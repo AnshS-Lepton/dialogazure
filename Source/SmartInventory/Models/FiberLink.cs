@@ -298,6 +298,10 @@ namespace Models
         public int? connected_port_no { get; set; }
         public string connected_entity_type { get; set; }
         public string core_number { get; set; }
+        public int? total_core { get; set; }
+        public double cable_measured_length { get; set; }
+
+
 
 
     }
@@ -311,6 +315,10 @@ namespace Models
         public bool is_virtual_port_allowed { get; set; }
         public string connected_entity_category { get; set; }
         public bool is_virtual { get; set; }
+        public string network_name { get; set; }
+
+        
+
     }
 
 
