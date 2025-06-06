@@ -346,7 +346,7 @@ namespace Models
 
 		public string sector_type { get; set; }
 		public string frequency { get; set; }
-		public int primary_pop_system_id { get; set; }
+		public List<int> primary_pop_system_id { get; set; }
 		public int secondary_pop_system_id { get; set; }
 		public Boolean is_middleware { get; set; }
 		[NotMapped]

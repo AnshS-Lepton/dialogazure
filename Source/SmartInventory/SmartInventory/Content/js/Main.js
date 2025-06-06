@@ -297,6 +297,7 @@ var Main = function () {
     this.fIs_new_entity = false;
     this.fStatus = '';
     this.LayerLoadingStatusMap = new Map();
+    this.pod_system_id='';
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -9212,20 +9213,31 @@ var Main = function () {
     }
 
     this.SetPODFilters = function () {
+
         app.filterPODvalue = "";
         app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
         app.secondary_pod_system_id = $("#ddlSecondaryPOD").val();
-        if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
-            app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
-        }
-        if (app.secondary_pod_system_id != "" && app.secondary_pod_system_id != undefined) {
+        app.pod_system_id = $("#ddlPrimaryPOD").val();
+
+        if (app.pod_system_id != "" && app.pod_system_id != undefined) {
             if (app.filterPODvalue == "") {
-                app.filterPODvalue += " ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+                app.filterPODvalue += " ([system_id] in (" + app.pod_system_id + "))";
             }
-            else {
-                app.filterPODvalue += " and ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
-            }
+
         }
+
+        //if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
+        //    app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
+        //}
+        //if (app.secondary_pod_system_id != "" && app.secondary_pod_system_id != undefined) {
+        //    if (app.filterPODvalue == "") {
+        //        app.filterPODvalue += " ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //    else {
+        //        app.filterPODvalue += " and ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //}
+        
         if (app.filterPODvalue == "") {
             app.filterPODvalue = "1 = 1";
         }
@@ -9293,8 +9305,7 @@ var Main = function () {
     }
 
     this.clearDraggableLibrary = function () { //remove draggable library element
-        //;
-        debugger;
+   
         LandBase.clearTempNewEntity();
         app.clearTempNewEntity();
         app.ClearMapAddressTool();
@@ -9378,14 +9389,15 @@ var Main = function () {
             }
         });
         //
-        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }];
+
+        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.pod_system_id }];
         // LAND BASE LAYERS
         // GET ACTIVE LAYERS Without Label
         app.addLandBaseLayerWithoutLabel();
 
         //
         //load reg , province layers..
-        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }];
+        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.pod_system_id }];
         var layerParam = { Name: 'REG,PRO', DisplayName: "Region_Province_Layer", Filters: regProvinceFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: false, network_status: '', isWithLabel: false };
         var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
         app.addNewOverlay(overlayLayer);

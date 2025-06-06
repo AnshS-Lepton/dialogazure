@@ -29,6 +29,7 @@ using Lepton.Entities;
 using System.Web.Script.Serialization;
 using System.Collections;
 using System.Runtime.Remoting;
+using static Mono.Security.X509.X520;
 
 
 
@@ -8823,6 +8824,22 @@ namespace SmartInventory.Controllers
 
             return PartialView("_ProjectSpeciFilter", objProj);
         }
+
+        [HttpGet]
+        public JsonResult searchSite(string term)
+        {
+            var sitenameList = new BLProject().getAGG1List(term);
+
+            var results = sitenameList.Select(s => new
+            {
+                label = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Correct formatting
+                Name = (s.site_id ?? "N/A") + " (" + (s.site_name ?? "Unknown") + ")",  // Ensuring consistency with label
+                systemId = s.system_id // Handle null system_id
+            }).ToList();
+
+            return Json(new { results = results }, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         private void BindSectorDropdown(ProjectSpecificView objProj)
