@@ -180,7 +180,7 @@
                         <fieldset class="the-fieldset">
                             <legend class="the-legend">@lyrPOD.layer_title @Resources.Resources.SI_OSP_POP_NET_FRM_001</legend>
                             <div class="form-group row">
-                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_009 @lyrPOD.layer_title:</label>
+                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc"> @lyrPOD.layer_title:</label>
                                 <div class="col-md-4 col-sm-4">
                                     @*@Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD1", @multiple = "multiple" })*@
 
@@ -234,7 +234,6 @@
                     data: { term: searchText },
                     success: function (resp) {
 
-                        debugger;
                         if (resp.results && resp.results.length > 0) {
                             const selected = $ddl.val() || [];
 
@@ -243,7 +242,6 @@
 
                             // Add new options if not already present
                             $.each(resp.results, function (index, item) {
-                                debugger;
                                 if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
                                     $ddl.append($('<option>', {
                                         value: item.systemId,
@@ -262,7 +260,6 @@
             }
         });
 
-        debugger;
         // Bind initial selected values (if needed before typing)
         if (preselectedValues.length > 0) {
             $.ajax({
