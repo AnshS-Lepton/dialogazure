@@ -229,7 +229,7 @@
 
             if (searchText.length >= 3) {
                 $.ajax({
-                    url: '/Library/searchSite',
+                    url: "@Url.Content("~/Library/searchSite")",
                     type: 'GET',
                     data: { term: searchText },
                     success: function (resp) {
@@ -263,7 +263,7 @@
         // Bind initial selected values (if needed before typing)
         if (preselectedValues.length > 0) {
             $.ajax({
-                url: '/Library/searchSite',
+                url: "@Url.Content("~/Library/searchSite")",
                 type: 'GET',
                 data: { term: '' }, // fetch all or with logic to return selected
                 success: function (resp) {
