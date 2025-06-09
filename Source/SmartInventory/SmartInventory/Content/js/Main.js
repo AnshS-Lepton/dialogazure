@@ -9390,14 +9390,14 @@ var Main = function () {
         });
         //
 
-        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.pod_system_id }];
+        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.filterPODvalue }];
         // LAND BASE LAYERS
         // GET ACTIVE LAYERS Without Label
         app.addLandBaseLayerWithoutLabel();
 
         //
         //load reg , province layers..
-        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.pod_system_id }];
+        var regProvinceFilter = [{ Field: 'regionFilter', value: app.RegionFilter }, { Field: 'provinceFilter', value: app.ProvinceFilter }, { Field: 'PODFilter', value: app.filterPODvalue }];
         var layerParam = { Name: 'REG,PRO', DisplayName: "Region_Province_Layer", Filters: regProvinceFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: false, network_status: '', isWithLabel: false };
         var overlayLayer = createOverlayLayer(layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
         app.addNewOverlay(overlayLayer);
