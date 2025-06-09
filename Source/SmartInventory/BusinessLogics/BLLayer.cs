@@ -78,8 +78,6 @@ namespace BusinessLogics
         {
             return objDALayer.GetUserModuleAbbrList(userId, userType);
         }
-
-
         //priyanka
 
         public List<BoundaryPushToGis> GetBoundaryPushToGis(BoundaryPushFilter objFilter)
