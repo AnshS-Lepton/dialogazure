@@ -1,6 +1,7 @@
-﻿using Models;
+﻿using Models.Admin;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,9 @@ namespace Models
         {
             legendList = new List<LegendDetail>();
         }
+
+        public List<CableMapColorSettings> CableColorCode { get; set; }
+
     }
 
     public class LegendDetail 
@@ -44,7 +48,7 @@ namespace Models
         public string color_code_hex { get; set; }
         public string outline_color_hex { get; set; }
 
-    } 
-
+    }
+    
 
 }

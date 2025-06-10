@@ -33,6 +33,11 @@ namespace DataAccess.Admin
             var obj = repo.Get(m => m.id == id);
             return obj != null ? obj : new CableMapColorSettings();
         }
+        public List<CableMapColorSettings> GetCablMapColorDetails()
+        {
+            return repo.GetAll()?.ToList() ?? new List<CableMapColorSettings>();
+        }
+
         public int DeleteCableColourSettingsById(int id)
         {
             try

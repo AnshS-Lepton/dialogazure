@@ -10381,3 +10381,19 @@ tfoot tr td a:hover {
     position: relative !important;
     top: 3px !important;
 }
+.layerCable-fieldset{
+    border-radius:3px;
+    padding:0.5rem;
+    border:1px solid #d9dcdf;
+}
+.layerCable-fieldset-legend {
+    margin-bottom: 0.3rem !important;
+    width: auto !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 4px !important;
+    background: #f1f2f4 !important;
+    font-weight: 600 !important;
+}
+.layerCable-fieldset .l-title{
+    margin-top:0;
+}
