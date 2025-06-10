@@ -59,8 +59,8 @@ var BackbonePlanning = function () {
             $("#dvAutoBackBonePlanData").slideToggle('slow', function () {
 
                 si.ActiveNetworkPlanning = false;
-                if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
-                    si.autoplanid = 0;
+                if (app.autoplanningplanid > 0 || si.autobackboneplanid > 0) {
+                    si.autobackboneplanid = 0;
                     app.autoplanningplanid = 0;
                     si.LoadLayersOnMap();
                 }
@@ -84,7 +84,7 @@ var BackbonePlanning = function () {
         removeOldMarkersWithRemoveActive();
         if (si.gMapObj.entitySrchObj)
             si.gMapObj.entitySrchObj.setMap(null);
-        si.autoplanid = 0;
+        si.autobackboneplanid = 0;
         app.autoplanningPlanId = 0;
         if (si.distanceWidget) {
             si.distanceWidget.set("map", null);
@@ -127,7 +127,7 @@ var BackbonePlanning = function () {
         $('#startPointErrorMsg').text('');
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
-        }        
+        }
         $('#sproutFiberDropdown').val('').trigger("chosen:updated");
         $('#backboneFiberDropdown').val('').trigger("chosen:updated");
         $('#threshold').val('');
@@ -139,7 +139,7 @@ var BackbonePlanning = function () {
         $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
         $('#siteDropdownToggle').val('--Select Site--');
         // Clear previously drawn polylines from the map
-        if (si.backboneself.polylines && si.backboneself.polylines.length > 0) {
+        if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
             si.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
@@ -147,6 +147,7 @@ var BackbonePlanning = function () {
             });
             si.backboneself.polylines = [];
         }
+        $('#plan_name').val('');
     }
 
 
@@ -169,13 +170,13 @@ var BackbonePlanning = function () {
         $("#btnProcessPlan").attr("disabled", true);
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
-        }      
+        }
     }
 
     this.ViewBackbonePlanningData = function () {
 
-        if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
-            si.autoplanid = 0;
+        if (app.autoplanningplanid > 0 || si.autobackboneplanid > 0) {
+            si.autobackboneplanid = 0;
             app.autoplanningplanid = 0;
             si.LoadLayersOnMap();
         }
@@ -192,10 +193,12 @@ var BackbonePlanning = function () {
         let startPointNetworkId = $('#startpoint_network_id').val();
         let endPointNetworkId = $('#endpoint_network_id').val();
         $('#siteDropdownToggle').val('--Select Site--');
+        $('#selectAll').prop('checked', false);
+        $('.rowCheckbox').prop('checked', false);
         if (!isNaN(buffer)) {
             ajaxReq('BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId }, true, function (resp) {
                 if (resp.status === "OK") {
-                    
+
                     showPolygonBufferGeometryOnMap(resp.result.buffer_geometry);
 
                     const $tbody = $('#nearestSitesTable tbody');
@@ -209,8 +212,7 @@ var BackbonePlanning = function () {
                         <tr>
                             <td><input type="checkbox" class="rowCheckbox" data-id="${site.common_name}"></td>
                             <td>${site.common_name}</td>
-                            <td>${site.display_name}</td>
-                            <td>${site.network_status}</td>
+                            <td>${site.display_name}</td>                           
                         </tr>`;
                             $tbody.append(row);
                         });
@@ -288,32 +290,25 @@ var BackbonePlanning = function () {
         $('#selectedSites').val(selectedSites.join(','));
         if (selectedSites.length > 0) {
             $('#siteDropdownToggle').val(`Selected Site ${firstSiteName}...`);
+        } else {
+            $('#siteDropdownToggle').val(`--Select Site--`);
         }
     }
 
     this.createBackbonePlanNetwork = function () {
-        
+
         ajaxReq('BackBonePlan/SaveBackboneProcess', $('form').serialize(), true, function (resp) {
             app.autoPlanningShowNetworkLayer(resp);
-
-            if (si.backboneself && si.backboneself.polylines.length > 0) {
-                si.backboneself.polylines.forEach(line => {
-                    if (line && line.setMap) {
-                        line.setMap(null);
-                    }
-                });
-                si.backboneself.polylines = [];
-            }
-
+            app.ResetPlanForm();
         }, false, true, false);
     }
 
 
     this.autoPlanningShowNetworkLayer = function (resp) {
-       
+
         if (resp.objPM.status == "True") {
             alert(resp.objPM.message);
-             app.autoplanningPlanId = resp.v_plan_id;
+            app.autoplanningPlanId = resp.v_plan_id;
             //$('.lyrRefresh').trigger("click");
             backbonedata.ShowBackbonePlanEntityOnMap(resp.plan_id);
             app.hideAllNetworkFile();
@@ -334,14 +329,15 @@ var BackbonePlanning = function () {
     this.ShowBackbonePlanEntityOnMap = function (planId) {
         $('.pull-right').find('.activemarker').removeClass('activemarker')
         $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
+        $('i[id^="dvHighlight_"]').removeClass('activemarker'); // Remove from all
 
         ajaxReq('BackBonePlan/GetBackboneForMap', { plan_id: planId }, true, function (resp) {
             if (resp.status.toLowerCase() == "ok") {
-               
+
                 $('#dvHighlight' + '_' + planId).addClass('activemarker');
-                app.autoplanid = planId;
-                si.autoplanid = planId;
-                si.LoadLayersOnMap();
+                app.autobackboneplanid = planId;
+                si.autobackboneplanid = planId;
+                // si.LoadLayersOnMap();
                 si.resetTreeLayer();
                 //si.map.setZoom(18);
                 var startlatlong = resp.result.start_point.split(',');
@@ -379,12 +375,9 @@ var BackbonePlanning = function () {
 
                 app.fitElementOnMap(resp.result.start_point, resp.result.end_point);
                 si.map.setZoom(si.map.getZoom() - 1);
-               // si.LoadLayersOnMap();
-                if (app.autoplanningplanid > 0 || si.autoplanid > 0) {
-                    si.autoplanid = 0;
-                    app.autoplanningplanid = 0;
-                    si.LoadLayersOnMap();
-                }
+                si.LoadLayersOnMap();
+
+
             }
         }, true, true);
     }
@@ -523,46 +516,66 @@ var BackbonePlanning = function () {
     //}
 
     this.NetworkPlanning = function (ismappicker, destination_point) {
-       
         $('#endPointErrorMsg').text('');
         $('#startPointErrorMsg').text('');
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
         }
         $('#siteDropdownPanel').hide();
+
         const $thead = $('#nearestSitesTable thead');
         const $tbody = $('#nearestSitesTable tbody');
-        $thead.hide(); // hide header on error
+        $thead.hide();
         $tbody.empty();
         $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
 
         if (ismappicker) {
-            if (destination_point == 'start') {
-                $("#startpointmap").addClass('activemarker');
+            if (destination_point === 'start') {
+                $("#startpointmap").addClass('activemarker activeicon');
+
                 google.maps.event.addListener(si.map, 'click', function (e) {
                     app.startLatLng = e.latLng;
                     var startLatLog = e.latLng.lat().toFixed(6) + "," + e.latLng.lng().toFixed(6);
                     app.NetworkStartPoint = e.latLng.lat() + "," + e.latLng.lng();
-                    // $('#start_point').val(startLatLog);
-                    app.P2PNetworkManual(destination_point);
+
+                    app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'start_point')
+                        .then(function (isSite) {
+                            if (isSite) {
+                                app.P2PNetworkManual(destination_point);
+                                app.ResetBomDetails();
+                            }
+                        })
+                        .catch(function (err) {
+                            console.error("Error during GetNearByEntitiesBySiteLatLong:", err);
+                        });
                 });
             }
-        }
 
-        if (ismappicker) {
-            if (destination_point == 'end') {
-                $("#endpointmap").addClass('activemarker');
+            if (destination_point === 'end') {
+                $("#endpointmap").addClass('activemarker activeicon');
+
                 google.maps.event.addListener(si.map, 'click', function (f) {
                     app.endLatLng = f.latLng;
                     var endLatLog = f.latLng.lat().toFixed(6) + "," + f.latLng.lng().toFixed(6);
                     app.NetworkEndPoint = f.latLng.lat() + "," + f.latLng.lng();
-                    // $('#end_point').val(endLatLog);
-                    app.P2PNetworkManual(destination_point);
+
+                    app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, 'end_point')
+                        .then(function (isSite) {
+                            if (isSite) {
+                                app.P2PNetworkManual(destination_point);
+                                app.ResetBomDetails();
+                            }
+                        })
+                        .catch(function (err) {
+                            console.error("Error during GetNearByEntitiesBySiteLatLong:", err);
+                        });
                 });
             }
         }
+
         return true;
-    }
+    };
+
 
 
     this.createStartMarker = function () {
@@ -595,7 +608,7 @@ var BackbonePlanning = function () {
     }
 
     this.createEndMarker = function () {
-       
+
 
         if (app.NetworkEndPoint != null) {
             var endlat = parseFloat(app.NetworkEndPoint.split(',')[0]);
@@ -638,18 +651,18 @@ var BackbonePlanning = function () {
         }
 
         if (end == app.NP.end_type.START && app.NetworkStartPoint != null) {
-            app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, "start_point");
+            //app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, "start_point");
             app.createStartMarker();
         }
 
         if (end == app.NP.end_type.END && app.NetworkEndPoint != null) {
 
-            app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "end_point");
+            //app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "end_point");
             app.createEndMarker();
 
         }
         if (app.NetworkStartPoint != null && app.NetworkEndPoint != null) {
-            
+
             //app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "start_point");
             //app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "end_point");
             app.createCableBetweenMakers();
@@ -777,9 +790,9 @@ var BackbonePlanning = function () {
             });
         }
     }
-  
+
     this.BindPlanningPaths = function (paths, IsCheck) {
-        
+
         app.selectedPlanningPath = [];
         var selectedResponse = [];
         app.sortedPlan = [];
@@ -855,8 +868,9 @@ var BackbonePlanning = function () {
 
 
     this.createDirectionMarker = function (NetworkStartPoint, NetworkEndPoint) {
+        debugger;
         app.MarkerList = [];
-        //app.ResetOffSet();
+        // app.ResetOffSet();
 
         var startlat = parseFloat(NetworkStartPoint.lat());
         var startlong = parseFloat(NetworkStartPoint.lng());
@@ -866,17 +880,20 @@ var BackbonePlanning = function () {
             si.startMarker.setMap(null);
         si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
         si.startMarker.addListener('dragend', function (event) {
-           // app.ResetOffSet();
             app.NetworkStartPoint = event.latLng.lat() + "," + event.latLng.lng();
-            // $('#start_point').val(app.NetworkStartPoint);
-            // if (app.plan_mode == 'auto') {
-            // app.autoPlanningEndPoint();
-            // } else {
-            //  app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'start_point');
-            app.P2PNetworkManual('start');
-            app.ResetBomDetails();
-            // }
+
+            app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'start_point')
+                .then(function (isSite) {
+                    if (isSite) {
+                        app.P2PNetworkManual('start');
+                        app.ResetBomDetails();
+                    }
+                })
+                .catch(function (err) {
+                    console.error("Error fetching nearby start site:", err);
+                });
         });
+
         si.startMarker.setMap(si.map);
         app.MarkerList.push(si.startMarker);
 
@@ -888,18 +905,24 @@ var BackbonePlanning = function () {
             si.endMarker.setMap(null);
         si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
         si.endMarker.addListener('dragend', function (event) {
-           
-            // $('#endpoint').val(app.NetworkStartPoint);
             app.NetworkEndPoint = event.latLng.lat() + "," + event.latLng.lng();
-            // app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'end_point');
-            app.P2PNetworkManual('end');
-            app.ResetBomDetails();
+
+            app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, 'end_point')
+                .then(function (isSite) {
+                    if (isSite) {
+                        app.P2PNetworkManual('end');
+                        app.ResetBomDetails();
+                    }
+                })
+                .catch(function (err) {
+                    console.error("Error fetching nearby end site:", err);
+                });
         });
+
         backbonedata.TempNetworkEndPoint = endLatlng.lat + "," + endLatlng.lng;
         si.endMarker.setMap(si.map);
         app.MarkerList.push(si.endMarker);
-    }
-
+    };
 
 
 
@@ -952,7 +975,7 @@ var BackbonePlanning = function () {
             }
         }
         app.networkPlanningcable(latLngArr);
-       // ShowAutoPlanLineLength(latLngArr);
+        // ShowAutoPlanLineLength(latLngArr);
 
     }
 
@@ -994,7 +1017,7 @@ var BackbonePlanning = function () {
 
 
     this.createAutoPlanLine = function (_path, LineEdiTable, Is_DashedLine = false, strokeWdth) {
-      
+
         strokeWdth = (strokeWdth == undefined || strokeWdth == null || strokeWdth == '' || strokeWdth == 0) ? 2 : strokeWdth * 10;
         var tmpLine;
         if (Is_DashedLine == false) {
@@ -1033,14 +1056,15 @@ var BackbonePlanning = function () {
     }
 
     this.initialClickForAutoEditLine = function () {
-        
+
         if (!si.gMapObj.infoEntity || !si.gMapObj.infoEntity.getPath) {
             return;
         }
 
         google.maps.event.addListener(si.gMapObj.infoEntity, 'rightclick', function (event) {
-           
+
             app.deleteAllMiddleMarker();
+            backbonedata.ResetBomDetails();
 
             // app.ResetOffSet();
             if (event.vertex == undefined) {
@@ -1070,13 +1094,13 @@ var BackbonePlanning = function () {
         });
         google.maps.event.addListener(si.gMapObj.infoEntity.getPath(), 'set_at', function (indx) {
             debugger;
-            //app.ResetOffSet();
-            debugger;
 
             OldendIndex = si.gMapObj.libPath.length - 1;
             var newPath = si.gMapObj.infoEntity.getPath();
             var newLibPath = newPath.getArray();
             app.deleteAllMiddleMarker();
+            backbonedata.ResetBomDetails();
+
             if (indx == 0) {
                 si.gMapObj.libPath = newLibPath;
                 var startlatlng = newLibPath[0].lat() + ',' + newLibPath[0].lng();
@@ -1145,7 +1169,7 @@ var BackbonePlanning = function () {
                                 app.AllPlanningPaths.push(Paths[i]);
                             }
                             if (app.AllPlanningPaths.length > 0) {
-                               // app.BindPlanningPaths(app.AllPlanningPaths, true);
+                                // app.BindPlanningPaths(app.AllPlanningPaths, true);
                                 ShowAutoPlanLineLength();
 
                             }
@@ -1163,6 +1187,7 @@ var BackbonePlanning = function () {
             /* app.ResetOffSet();*/
             debugger;
             app.deleteAllMiddleMarker();
+            backbonedata.ResetBomDetails();
 
             var newPath = si.gMapObj.infoEntity.getPath();
             si.gMapObj.libPath = newPath.getArray();
@@ -1215,7 +1240,7 @@ var BackbonePlanning = function () {
                                 app.AllPlanningPaths.push(Paths[i]);
                             }
                             if (app.AllPlanningPaths.length > 0) {
-                               // app.BindPlanningPaths(app.AllPlanningPaths, true);
+                                // app.BindPlanningPaths(app.AllPlanningPaths, true);
                                 ShowAutoPlanLineLength();
 
                             }
@@ -1230,7 +1255,6 @@ var BackbonePlanning = function () {
         google.maps.event.addListener(si.gMapObj.infoEntity, 'click', function (evt) {
             debugger;
 
-            //app.ResetOffSet();
 
             var selectPoint = '';
             selectPoint = si.roundNumber(evt.latLng.lng(), 6) + ' ' + si.roundNumber(evt.latLng.lat(), 6);
@@ -1274,7 +1298,7 @@ var BackbonePlanning = function () {
     }
 
     this.planBomAndBOQ = function (resp) {
-         $('#plan_id').val(resp.result.plan_id);
+        $('#plan_id').val(resp.result.plan_id);
         let planId = $('#plan_id').val();
 
         ajaxReq('BackBonePlan/GetBomBOQData', $('form').serialize(), true, function (resp) {
@@ -1293,7 +1317,7 @@ var BackbonePlanning = function () {
         if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
         if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
         // Clear previously drawn polylines from the map
-        if (si.backboneself.polylines && si.backboneself.polylines.length > 0) {
+        if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
             si.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
@@ -1301,9 +1325,11 @@ var BackbonePlanning = function () {
             });
             si.backboneself.polylines = [];
         }
-        if (si.fadeMap) {
-            si.fadeMap.setMap(null);
-        }  
+
+        const $thead = $('#nearestSitesTable thead');
+        const $tbody = $('#nearestSitesTable tbody');
+        $thead.hide();  // hide header when no data
+        $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
         ajaxReq('BackBonePlan/GetDraftLineGeometry', { planId: planId }, false, function (geometryList) {
             geometryList.forEach(feature => {
                 const geo = JSON.parse(feature.geojson); // parse the GeoJSON string
@@ -1311,7 +1337,7 @@ var BackbonePlanning = function () {
                 if (geo.type === 'LineString') {
                     debugger;
                     const path = geo.coordinates.map(coord => new google.maps.LatLng(coord[1], coord[0]));
-                    si.backbonePolyline = si.backboneself.createAutoPlanLine(path, true, false , 3);
+                    si.backbonePolyline = si.backboneself.createAutoPlanLine(path, true, false, 3);
                     si.backbonePolyline.setMap(si.map);
 
                     si.backboneself.polylines = si.backboneself.polylines || [];
@@ -1359,7 +1385,7 @@ var BackbonePlanning = function () {
             startPointLineArr.push(startPoint);
             app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
             app.StartTmpLine.setMap(si.map);
-            si.gMapObj.infoEntity = app.StartTmpLine; 
+            si.gMapObj.infoEntity = app.StartTmpLine;
             app.initialClickForAutoEditLine();
 
             const EndPoint = new google.maps.LatLng(app.endLatLng.lat, app.endLatLng.lng);
@@ -1370,7 +1396,7 @@ var BackbonePlanning = function () {
             EndPointLineArr.push(EndPoint);
             app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
             app.EndTmpLine.setMap(si.map);
-            si.gMapObj.infoEntity = app.EndTmpLine; 
+            si.gMapObj.infoEntity = app.EndTmpLine;
 
             app.initialClickForAutoEditLine();
 
@@ -1389,7 +1415,7 @@ var BackbonePlanning = function () {
             startPointLineArr.push(startPoint);
             app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, true, false);
             app.StartTmpLine.setMap(si.map);
-            si.gMapObj.infoEntity = app.StartTmpLine; 
+            si.gMapObj.infoEntity = app.StartTmpLine;
 
             app.initialClickForAutoEditLine();
 
@@ -1401,7 +1427,7 @@ var BackbonePlanning = function () {
             EndPointLineArr.push(EndPoint);
             app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, true, false);
             app.EndTmpLine.setMap(si.map);
-            si.gMapObj.infoEntity = app.EndTmpLine; 
+            si.gMapObj.infoEntity = app.EndTmpLine;
 
             app.initialClickForAutoEditLine();
 
@@ -1412,111 +1438,7 @@ var BackbonePlanning = function () {
             ShowAutoPlanLineLength(latLngArr);
         }
     };
-    //this.createOffsetCable = function () {
-
-    //    //networkdata.geomToForm();
-    //    var cablegemo = $('#geometry').val();
-    //    if (cablegemo != '') {
-
-
-    //        if (cablegemo != '') {
-    //            if ($('#offset_value').val() == '') {
-    //                $('#offset_value').val(0);
-    //                //networkdata.createOffsetCable();
-    //                //alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_034);
-    //                return false;
-    //            }
-    //            else if (parseInt($('#offset_value').val()) > parseInt($('#hdnMaxOffsetNetworkPlanning').val())) {
-    //                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_107);
-    //                return false;
-    //            }
-    //            var offSet = '';
-    //            if ($('#is_offset_requiredLeft').prop('checked'))
-    //                offSet = '-' + parseFloat($('#offset_value').val()) / 100000;
-    //            else
-    //                offSet = parseFloat($('#offset_value').val()) / 100000;
-
-    //            if (app.temp_gemo == "") {
-    //                app.temp_gemo = cablegemo;
-    //            }
-
-    //            if ($('#offset_value').val() == 0) {
-    //                var latLngArr = [];
-    //                var longLatArr = app.temp_gemo.split(',');
-
-
-    //                for (var i = 0; i < longLatArr.length; i++) {
-    //                    var LongLatsingle = longLatArr[i].split(' ');
-    //                    latLngArr.push(new google.maps.LatLng(parseFloat(LongLatsingle[1]), parseFloat(LongLatsingle[0])));
-    //                }
-
-    //                var startlatlng = latLngArr[0].lat().toFixed(6) + ',' + latLngArr[0].lng().toFixed(6);
-    //                $('#start_point').val(startlatlng);
-    //                app.NetworkStartPoint = startlatlng;
-    //                app.createStartMarker();
-
-    //                if (app.plan_mode == 'manual_planning') {
-    //                    var endIndex = latLngArr.length - 1;
-    //                    var endLatLngr = latLngArr[endIndex].lat().toFixed(6) + ',' + latLngArr[endIndex].lng().toFixed(6);
-    //                    $('#end_point').val(endLatLngr);
-    //                    app.NetworkEndPoint = endLatLngr;
-    //                    app.createEndMarker();
-    //                }
-    //                app.networkPlanningcable(latLngArr);
-    //                $('#geometry').val(longLatArr);
-    //                ShowAutoPlanLineLength(latLngArr);
-    //            }
-    //            else {
-
-    //                ajaxReq('plan/getOffSetPolyLineCurve', { cablegemo: app.temp_gemo, offset: offSet }, false, function (jSonResp) {
-    //                    var latLngArr = [];
-    //                    var longLat = jSonResp.offsetGeom.substring(jSonResp.offsetGeom.indexOf('(') + 1, jSonResp.offsetGeom.lastIndexOf(')')).replace(/\(/, '').replace(/\)/, '');
-    //                    var longLatArr = longLat.split(',');
-
-    //                    if ($('#is_offset_requiredLeft').prop('checked')) { longLatArr.reverse(); }
-
-    //                    if (app.plan_mode == 'auto') {
-
-
-    //                        var latlngEndPoint = null;
-    //                        if ($('#ddledit_path').val() == "manually") {
-    //                            latlngEndPoint = app.NetworkEndPoint.split(',');
-    //                        }
-    //                        else {
-    //                            latlngEndPoint = backbonedata.TempNetworkEndPoint.split(',');
-    //                        }
-    //                        longLatArr.push(latlngEndPoint[1] + ' ' + latlngEndPoint[0]);
-    //                    }
-
-    //                    for (var i = 0; i < longLatArr.length; i++) {
-    //                        var LongLatsingle = longLatArr[i].split(' ');
-    //                        latLngArr.push(new google.maps.LatLng(parseFloat(LongLatsingle[1]), parseFloat(LongLatsingle[0])));
-    //                    }
-
-    //                    var startlatlng = latLngArr[0].lat().toFixed(6) + ',' + latLngArr[0].lng().toFixed(6);
-    //                    $('#start_point').val(startlatlng);
-    //                    app.NetworkStartPoint = startlatlng;
-    //                    app.createStartMarker();
-
-    //                    if (app.plan_mode == 'manual_planning') {
-    //                        var endIndex = latLngArr.length - 1;
-    //                        var endLatLngr = latLngArr[endIndex].lat().toFixed(6) + ',' + latLngArr[endIndex].lng().toFixed(6);
-    //                        $('#end_point').val(endLatLngr);
-    //                        app.NetworkEndPoint = endLatLngr;
-    //                        app.createEndMarker();
-    //                    }
-    //                    $('#geometry').val(longLatArr);
-    //                    app.networkPlanningcable(latLngArr);
-    //                    ShowAutoPlanLineLength(latLngArr);
-    //                }, true, false);
-    //            }
-
-    //        }
-    //    }
-
-
-
-    //}
+ 
 
     this.onChangeEditPath = function (input) {
         debugger;
@@ -1539,118 +1461,70 @@ var BackbonePlanning = function () {
         }
     }
 
-    //this.getNewPathGeom = function (result) {
-    //    si.point2pointgeom = [];
-    //    var path = [];
-    //    if (result.routes.length) {
-    //        path = google.maps.geometry.encoding.decodePath(result.routes[0].overview_polyline);
-    //        for(ll of path) {
-    //            si.point2pointgeom.push(ll.lng() + ' ' + ll.lat());
-    //        }
-    //    }
-    //    return si.path;
-    //}
-
-    //this.createBufferCircle = function () {
-
-    //    var centerPoint = app.NetworkStartPoint;
-    //    var sepVals = centerPoint.split(',');
-    //    if (sepVals.length == 1) {
-    //        sepVals = address.split(' ');
-    //    }
-    //    if (sepVals.length == 2) {
-    //        var lat = parseFloat(sepVals[0]);
-    //        var lng = parseFloat(sepVals[1]);
-
-    //        if (!isNaN(lat) && !isNaN(lng))
-    //            gcFlag = false;
-
-    //        if (lat > -90 && lat < 90 && lng > -180 && lng < 180) {
-
-    //            var addrLocation = new google.maps.LatLng(lat, lng);
-    //            si.map.setCenter(addrLocation);
-    //            //app.map.setZoom(18);
-    //            // app.showTempDownArrow(addrLocation, true);
-
-    //            startWidget();
-
-    //            //var addrLocation = new google.maps.LatLng(lat, lng);
-    //            //var latlng = { lat: lat, lng: lng };
-    //            //app.geocoder.geocode({ 'location': latlng }, function (results, status) {
-    //            //    if (status === 'OK') {
-    //            //        $('#placesSearch').val(results[0].formatted_address);
-    //            //        si.placeChange(results[0]);
-    //            //    }
-    //            //    else {
-    //            //        window.alert('Geocoder failed due to: ' + status);
-    //            //    }
-    //            //});
-    //        }
-    //    }
-    //};
-
     this.GetNearByEntitiesBySiteLatLong = function (geom, end_point_type) {
+        return new Promise((resolve, reject) => {
+            let geomObj = geom.split(",");
+            let lat = parseFloat(geomObj[0]);
+            let lng = parseFloat(geomObj[1]);
+            const latLng = new google.maps.LatLng(lat, lng);
 
-        debugger;
-        let geomObj = geom.split(",");
-        let lat = parseFloat(geomObj[0]);
-        let lng = parseFloat(geomObj[1]);
-        const latLng = new google.maps.LatLng(lat, lng);
-        si.collapseRemove();
-        si.map.setCenter(latLng);
-        si.map.setZoom(20);
-        $('#lengthAutoSitePlaningDiv').text('');
+            si.collapseRemove();
+            si.map.setCenter(latLng);
+            si.map.setZoom(20);
+            $('#lengthAutoSitePlaningDiv').text('');
 
-        $.ajax({
-            url: '/Main/GetNearBySiteEntitiesByLatLong',
-            type: 'GET',
-            data: {
-                latitude: latLng.lat(),
-                longitude: latLng.lng(),
-                bufferInMtrs: getMeterDistanceFromZoom(20)
-            },
-            success: function (resp) {
-                if (resp.length >= 1) {
-                    let podEntity = resp.find(item => item.entity_title === 'Site');
-                    if (podEntity) {
-                        debugger;
-                        end_point_type === "start_point" ? $('#start_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6)) : $('#end_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6))
-                        end_point_type === "start_point" ? $('#startpoint_network_id').val(podEntity.common_name) : $('#endpoint_network_id').val(podEntity.common_name)
-                    } else {
-                        $('#start_point').val('');
-                        $('#end_point').val('');
-                        end_point_type === "start_point" ? app.NetworkStartPoint = null : app.NetworkEndPoint = null;
-                        end_point_type === "start_point" ? $('#startPointErrorMsg').text('No sites are available near the selected location!') : $('#endPointErrorMsg').text('No sites are available near the selected location!');
-                        $('#lengthAutoSitePlaningDiv').text('');
-                        //ulNE.html('No Found Site.');
-                        //$('#searchNBEntities').show();                      
-                        if (si.endMarker) { si.endMarker.setMap(null); }
-                        if (si.startMarker) { si.startMarker.setMap(null); }
-                        if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
-                        if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
-
+            $.ajax({
+                url: 'Main/GetNearBySiteEntitiesByLatLong',
+                type: 'GET',
+                data: {
+                    latitude: latLng.lat(),
+                    longitude: latLng.lng(),
+                    bufferInMtrs: getMeterDistanceFromZoom(20)
+                },
+                success: function (resp) {
+                    if (resp.length >= 1) {
+                        let podEntity = resp.find(item => item.entity_title === 'Site');
+                        if (podEntity) {
+                            if (end_point_type === "start_point") {
+                                $('#start_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
+                                $('#startpoint_network_id').val(podEntity.common_name);
+                            } else {
+                                $('#end_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
+                                $('#endpoint_network_id').val(podEntity.common_name);
+                            }
+                            resolve(true);
+                            return;
+                        }
                     }
-                }
-                else {
+
+                    // If no site found
                     $('#start_point').val('');
                     $('#end_point').val('');
-                    end_point_type === "start_point" ? app.NetworkStartPoint = null : app.NetworkEndPoint = null;
-                    end_point_type === "start_point" ? $('#startPointErrorMsg').text('No sites are available near the selected location!') : $('#endPointErrorMsg').text('No sites are available near the selected location!');
-                    //$('#end_point').val('');
-                    $('#lengthAutoSitePlaningDiv').text('');
-                    if (si.endMarker) { si.endMarker.setMap(null); }
-                    if (si.startMarker) { si.startMarker.setMap(null); }
-                    if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
-                    if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
+                    $('#cable_length').val('');
+                    if (end_point_type === "start_point") {
+                        $('#startPointErrorMsg').text('No sites are available near the selected location!');
+                    } else {
+                        $('#endPointErrorMsg').text('No sites are available near the selected location!');
+                    }
+                    app.NetworkStartPoint = null;
+                    app.NetworkEndPoint = null;
+                    if (si.endMarker) si.endMarker.setMap(null);
+                    if (si.startMarker) si.startMarker.setMap(null);
+                    if (backbonedata.StartTmpLine) backbonedata.StartTmpLine.setMap(null);
+                    if (backbonedata.EndTmpLine) backbonedata.EndTmpLine.setMap(null);
 
+                    resolve(false);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error: ' + error);
+                    reject(error);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.log('Error: ' + error);
-            }
+            });
         });
     }
+
 }
+
 function ShowAutoPlanLineLength(_path) {
 
     debugger;
@@ -1666,97 +1540,13 @@ function ShowAutoPlanLineLength(_path) {
 
     backbonedata.GemoValidation(arr);
 
-    //ajaxReq('Plan/GetNetworkPlanningLineLength', { geom: $('#geometry').val() }, true, function (resp) {
-    //    distance = resp.result;
-    //    backbonedata.cable_calculated_length = parseFloat(distance.toFixed(2));
-    //    $('#lengthAutoPlaningDiv').html('<p>' + MultilingualKey.SI_OSP_ROW_NET_GBL_021 + ': <i>' + distance.toFixed(2) + '(m)' + '</i></p>');
-    //}, true, false, true);
+    ajaxReq('Plan/GetNetworkPlanningLineLength', { geom: $('#geometry').val() }, true, function (resp) {
+        distance = resp.result;
+        $('#cable_length').val(parseFloat(distance.toFixed(2)));
+    }, true, false, true);
 
-    var startlatlng = arrLinePath[0];
-    var endlatlng = arrLinePath[arrLinePath.length - 1];
-
-   // $('#start_point').val(startlatlng.lat().toFixed(6) + ',' + startlatlng.lng().toFixed(6));
-
-   // $('#end_point').val(endlatlng.lat().toFixed(6) + ',' + endlatlng.lng().toFixed(6));
 }
 
-//function showAutoPlanDist(_path) {
-
-//    var distance = google.maps.geometry.spherical.computeLength(_path);
-//    if (parseInt(distance) > 1000)
-//        return (distance / 1000).toFixed(2) + ' km';
-//    else
-//        return distance.toFixed(2) + ' m';
-//}
-//$('#demo').on('change', function (input) {
-//    var id = $(this).val();
-//    var lat_long = $('tr[data-content="' + id + '"]').find('td:last').text();
-//    var lat_longArr = lat_long.split(',');
-//    var endpointLat_long = parseFloat(lat_longArr[0]).toFixed(6) + "," + parseFloat(lat_longArr[1]).toFixed(6);
-//    $('#end_point').val(endpointLat_long);
-//    $('#end_point_entity').val(id);
-//    //endLatlng = { lat: parseFloat(lat_longArr[0]), lng: parseFloat(lat_longArr[1]) };
-//    backbonedata.NetworkEndPoint = lat_long;
-//    backbonedata.P2PNetworkManual('end');
-//});
-
-// create buffer circle
-//function startWidget() {
-//    si.fademap = [new google.maps.LatLng(85, 180), new google.maps.LatLng(85, 0), new google.maps.LatLng(85, -180), new google.maps.LatLng(-85, -180), new google.maps.LatLng(-85, 0), new google.maps.LatLng(-85, 180)];
-
-//    //Create Circle on Google Address Search
-//    var bufferArea = $('#end_point_buffer').val() / 1000;
-//    //var maxdistance = 2;
-//    var maxdistance = $('#MaxAutoPlanEndPointBuffer').val() / 1000;;
-//    var mindistance = $('#MinAutoPlanEndPointBuffer').val() / 1000;
-//    initDistanceWidget(si, bufferArea, maxdistance, mindistance);
-//    fadeOuter(si.map.getCenter(), bufferArea);
-
-//}
-
-//function initDistanceWidget(si, startdistance, maxdistance, mindistance) {
-
-//    if (si.distanceWidget) {
-//        si.distanceWidget.set("map", null);
-//        si.distanceWidget = null;
-//    }
-
-//    this.si.distanceWidget = new DistanceWidget({
-//        map: si.map,
-//        distance: startdistance, // Starting distance in km.
-//        maxDistance: maxdistance, // Twitter has a max distance of 2500km.
-//        minDistance: mindistance,
-//        color: '#3a79c8',
-//        activeColor: '#3a79c8',
-//        sizerIcon: {
-//            url: 'Content/images/resize.png',
-//            size: new google.maps.Size(24, 24),
-//            origin: new google.maps.Point(0, 0),
-//            anchor: new google.maps.Point(12, 12)
-//        },
-//        icon: {
-//            url: 'Content/images/center.png',
-//            size: new google.maps.Size(21, 21),
-//            origin: new google.maps.Point(0, 0),
-//            anchor: new google.maps.Point(10, 10)
-//        }
-//    });
-//}
-
-//function fadeOuter(_center, _radius) {
-
-//    if (si.fadeMap) {
-//        si.fadeMap.setMap(null);
-//    }
-//    var fadeOptions = {
-//        strokeWeight: 0,
-//        fillColor: '#ffffff',
-//        fillOpacity: 0.6,
-//        map: si.map,
-//        paths: [si.fademap, drawCircle(_center, _radius, -1)]
-//    };
-//    si.fadeMap = new google.maps.Polygon(fadeOptions);
-//}
 
 function showPolygonBufferGeometryOnMap(geojson) {
     if (si.fadeMap) {
@@ -1779,46 +1569,6 @@ function showPolygonBufferGeometryOnMap(geojson) {
     si.fadeMap = new google.maps.Polygon(fadeOptions);
 }
 
-
-//function drawCircle(point, radius, dir) {
-
-//    var d2r = Math.PI / 180;   // degrees to radians
-//    var r2d = 180 / Math.PI;   // radians to degrees
-//    var earthsradius = 6371; // 3963 is the radius of the earth in miles
-//    var points = 360;
-
-//    // find the raidus in lat/lon
-//    var rlat = (radius / earthsradius) * r2d;
-//    var rlng = rlat / Math.cos(point.lat() * d2r);
-
-//    var extp = new Array();
-//    if (dir == 1) { var start = 0; var end = points + 1 } // one extra here makes sure we connect the ends
-//    else { var start = points + 1; var end = 0 }
-//    for (var i = start; (dir == 1 ? i < end : i > end); i = i + dir) {
-//        var theta = Math.PI * (i / (points / 2));
-//        ey = point.lng() + (rlng * Math.cos(theta)); // center a + radius x * cos(theta)
-//        ex = point.lat() + (rlat * Math.sin(theta)); // center b + radius y * sin(theta)
-//        extp.push(new google.maps.LatLng(ex, ey));
-//    }
-//    return extp;
-//}
-
-//function powerBackupTrue() {
-
-//    $("#txtPwrBkpCapacity").prop("readonly", false);
-//}
-//function validateSpanlength() {
-//    var Spanlength = parseFloat(document.getElementById('pole_manhole_distance').value);
-//    var Cabledrumlength = parseFloat(document.getElementById('cable_length').value);
-//    var status = "true"
-
-//    if (Spanlength > Cabledrumlength) {
-//        alert('Span length equal or less then drum length');
-//        document.getElementById('pole_manhole_distance').value = '';
-//        status = "false"
-//    }
-//    return status;
-//}
 
 
 

@@ -2712,7 +2712,8 @@ namespace DataAccess
                         p_user_id= userId, 
                         p_backbone_fiber_type= model.backbone_fiber,
                         p_sprout_fibertype = model.sprout_fiber,
-                        p_backbone_line_geom = model.geometry
+                        p_backbone_line_geom = model.geometry,
+                        p_endpoint_network_id = model.endpoint_network_id
                     }, true).ToList();
                 if(result == null || result.Count == 0)
                 {

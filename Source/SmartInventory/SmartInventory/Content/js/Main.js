@@ -94,6 +94,7 @@ var Main = function () {
     this.workordercodevalue = '0';
     this.purposecodevalue = '0';
     this.autoplanid = '0';
+    this.autobackboneplanid = '0';
     this.distanceWidget = null;
     this.networkstatus = '';
     this.mappedId = 0;
@@ -7155,9 +7156,9 @@ var Main = function () {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
             $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
 
-            if (si.autoplanid > 0) {
+            if (si.autobackboneplanid > 0) {
                 if ($('#openNetworkPlanningData:visible').length == 0 && $('#openBackBonePlanningData:visible').length == 0) {
-                    si.autoplanid = 0;
+                    si.autobackboneplanid = 0;
                     si.LoadLayersOnMap();
                 }
             }
@@ -9154,6 +9155,15 @@ var Main = function () {
         }
 
     }
+    this.SetAutoBackBoneNetworkFilters = function () {
+        debugger;
+        app.filterAutoNetworkValue = "1 = 1";
+
+        if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
+            app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
+        }
+
+    }
 
     this.getcablecategoryfilters = function () {
          
@@ -9356,6 +9366,7 @@ var Main = function () {
         app.SetBuildingRFSFilters();
         app.SetSectorFilters();
         app.SetAutoNetworkFilters();
+        app.SetAutoBackBoneNetworkFilters();
         if (_isClearMapObject) {
             app.clearDraggableLibrary();
             app.mapReport.clearSelection();
@@ -9393,7 +9404,7 @@ var Main = function () {
         app.layerManager = [];
 
         // Clear previously drawn polylines from the map
-        if (app.backboneself && app.backboneself.polylines.length > 0) {
+        if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
             app.backboneself.polylines.forEach(line => {
                 if (line && line.setMap) {
                     line.setMap(null);
@@ -32864,6 +32875,7 @@ var Main = function () {
         if (si.gMapObj.entitySrchObj)
             si.gMapObj.entitySrchObj.setMap(null);
         si.autoplanid = 0;
+        si.autobackboneplanid = 0;
         app.autoplanningPlanId = 0;
         if (si.distanceWidget) {
             si.distanceWidget.set("map", null);

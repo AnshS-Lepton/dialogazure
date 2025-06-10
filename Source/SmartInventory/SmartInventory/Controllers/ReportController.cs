@@ -12036,6 +12036,7 @@ namespace SmartInventory.Controllers
                 List<BackBonePlanBom> lstBomReport = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
 
                 DataTable dtReport = MiscHelper.ListToDataTable<BackBonePlanBom>(lstBomReport);
+                dtReport.TableName = "BOMBOQ";
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
                     if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }

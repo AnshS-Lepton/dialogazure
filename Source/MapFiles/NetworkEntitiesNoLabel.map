@@ -1646,14 +1646,15 @@ LAYER
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_pod_map USING UNIQUE system_id USING srid=4326'	
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%) and (%NetworkFilter%)  and (%PODFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter%) AND (%prjectspecificationFilter%) AND (%ownershipFilter%) AND (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'		
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'  
 			'ownershipFilter'   '.*' 
-			'NetworkFilter'   '.*'
-			'PODFilter'   '.*' 
+			'NetworkFilter'   '.*' 	
+			'AutoPlanningNetworkFilter'    '.*'     
 		END 
 		METADATA
 			'ows_title' 'POD'
