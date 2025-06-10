@@ -180,14 +180,18 @@
                         <fieldset class="the-fieldset">
                             <legend class="the-legend">@lyrPOD.layer_title @Resources.Resources.SI_OSP_POP_NET_FRM_001</legend>
                             <div class="form-group row">
-                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_009 @lyrPOD.layer_title:</label>
+                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc"> @lyrPOD.layer_title:</label>
                                 <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD" })
+                                    @*@Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD1", @multiple = "multiple" })*@
+
+
+                                    <select id="ddlPrimaryPOD" class="form-control chosen-select" multiple="multiple"></select>
+
                                 </div>
-                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdSecPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_010 @lyrPOD.layer_title:</label>
+                                @*<label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdSecPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_010 @lyrPOD.layer_title:</label>
                                 <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.secondary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "ddlSecondaryPOD" })
-                                </div>
+                                    @Html.DropDownListFor(m => m.secondary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "ddlSecondaryPOD", @multiple = "multiple" })
+                                </div>*@
                             </div>
                         </fieldset>
 
@@ -207,6 +211,91 @@
 </div>
 
 <script type="text/javascript">
+
+
+
+    function bindPrimaryPODDropdown(preselectedValues = []) {
+        var $ddl = $('#ddlPrimaryPOD');
+
+        // Init Chosen once
+        $ddl.chosen({
+            width: "100%",
+            placeholder_text_multiple: "Type to search POD..."
+        });
+
+        // Attach event on Chosen's internal search input
+        $ddl.siblings('.chosen-container').find('.search-field input').on('keyup', function () {
+            var searchText = $(this).val();
+
+            if (searchText.length >= 3) {
+                $.ajax({
+                    url: "@Url.Content("~/Library/searchSite")",
+                    type: 'GET',
+                    data: { term: searchText },
+                    success: function (resp) {
+
+                        if (resp.results && resp.results.length > 0) {
+                            const selected = $ddl.val() || [];
+
+                            // Clear non-selected options
+                            $ddl.find('option').not(':selected').remove();
+
+                            // Add new options if not already present
+                            $.each(resp.results, function (index, item) {
+                                if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
+                                    $ddl.append($('<option>', {
+                                        value: item.systemId,
+                                        text: item.Name
+                                    }));
+                                }
+                            });
+
+                            // Reapply selected values
+                            $ddl.val([...new Set([...selected, ...preselectedValues.map(String)])]);
+
+                            $ddl.trigger("chosen:updated");
+                        }
+                    }
+                });
+            }
+        });
+
+        // Bind initial selected values (if needed before typing)
+        if (preselectedValues.length > 0) {
+            $.ajax({
+                url: "@Url.Content("~/Library/searchSite")",
+                type: 'GET',
+                data: { term: '' }, // fetch all or with logic to return selected
+                success: function (resp) {
+                    if (resp.results && resp.results.length > 0) {
+                        $ddl.empty();
+                        $.each(resp.results, function (index, item) {
+                            $ddl.append($('<option>', {
+                                value: item.systemId,
+                                text: item.Name
+                            }));
+                        });
+
+                        $ddl.val(preselectedValues.map(String));
+                        $ddl.trigger("chosen:updated");
+                    }
+                }
+            });
+        }
+    }
+
+
+    $(document).ready(function () {
+
+        var selectedPODIds = @Html.Raw(Json.Encode(Model.primary_pop_system_id));
+
+        bindPrimaryPODDropdown();
+    });
+
+
+
+
+
     //$(document).ready(function () {
     //    $(".chosen-container").each(function () {
     //        debugger;
