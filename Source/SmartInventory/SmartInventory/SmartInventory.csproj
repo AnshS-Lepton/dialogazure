@@ -22,8 +22,7 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2464,6 +2463,10 @@
     <Content Include="Views\Report\_ViewSegment.cshtml" />
     <Content Include="Views\Library\_UpdateProjectDetails.cshtml" />
     <Content Include="Views\Library\PODProject.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackbonePlanDataList.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackbonePlanTool.cshtml" />
+    <Content Include="Views\BackBonePlan\_BackboneViewPlanData.cshtml" />
+    <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

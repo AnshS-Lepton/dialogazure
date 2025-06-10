@@ -209,5 +209,12 @@ namespace SmartInventory.Controllers
             var detailedList = geometryList.Select(r => JsonConvert.DeserializeObject<siteLineGeometry>(r.geojson)).ToList();
             return Json( geometryList, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetBackBonePlanningLineLength(string geom)
+        {
+            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
+            objResp.result = new BLPlan().GetLineLength(geom);
+            objResp.status = ResponseStatus.OK.ToString();
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
     }
 }

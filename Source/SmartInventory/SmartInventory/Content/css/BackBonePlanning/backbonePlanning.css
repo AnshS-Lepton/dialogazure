@@ -240,7 +240,7 @@ hr {
 }
 
 
-.icon-Find_Direction {
+.direction-icon {
     position: absolute;
     right: 13px;
     top: 5px;
@@ -417,4 +417,16 @@ hr {
     height: 14px;
     margin: 0;
 }
+.custStyle {
+    color: #333333 ;
+    display: block;
+    cursor: pointer;
+}
+.activeicon {
+    color: #0418f5;
+}
 
+input[readonly].dropdown-input {
+    background-color: white !important;
+    cursor: pointer; 
+}

@@ -77,7 +77,7 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.start_point, new { @class = "form-control", @onblur = "return networkdata.networkPlanningManualmode('start',true);", Value = "", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30 })
-                                        <i id="startpointmap" onclick="return networkdata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction"></i>
+                                        <i id="startpointmap" onclick="return networkdata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction direction-icon custStyle"></i>
                                     </div>
                                 </div>
 
@@ -129,7 +129,7 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_073<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.end_point, new { @class = "form-control", @onblur = "return networkdata.networkPlanningManualmode('end',true)", Value = "", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30 })
-                                        <i id="endpointmap" onclick="return networkdata.NetworkPlanning(true, 'end');" class="icon-Find_Direction" title="Click on map to choose end point"></i>
+                                        <i id="endpointmap" onclick="return networkdata.NetworkPlanning(true, 'end');" class="icon-Find_Direction direction-icon custStyle" title="Click on map to choose end point"></i>
                                     </div>
                                 </div>
 

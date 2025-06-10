@@ -433,6 +433,12 @@ namespace SmartInventory.Controllers
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
-      
+        public JsonResult GetNetworkPlanningLineLength(string geom)
+        {
+            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
+            objResp.result = new BLPlan().GetLineLength(geom);
+            objResp.status = ResponseStatus.OK.ToString();
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
     }
 }

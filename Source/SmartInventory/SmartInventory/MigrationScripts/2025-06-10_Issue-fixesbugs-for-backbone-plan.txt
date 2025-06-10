@@ -1,0 +1,203 @@
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_bom(p_plan_id integer, p_user_id integer, p_backbone_fiber_type character varying, p_sprout_fibertype character varying, p_backbone_line_geom character varying, p_endpoint_network_id character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ v_line_geom geometry;
+ v_line_geom_length double precision;
+begin
+	
+select ST_GeomFromText(concat('LINESTRING(', p_backbone_line_geom, ')'), 4326) into v_line_geom;
+select st_length(v_line_geom,false) into v_line_geom_length;
+
+return query
+ select row_to_json(row_result) from (select t1.entity_type,t1.qty as cable_Length_qty,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Pole') and entity_network_id not in (p_endpoint_network_id) group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where itm.cost_per_unit <> 0 and  itm.service_cost_per_unit <> 0
+  
+  UNION all
+  
+ select t1.entity_type,t1.qty,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Manhole') and entity_network_id not in (p_endpoint_network_id) group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where itm.cost_per_unit <> 0 and  itm.service_cost_per_unit <> 0 
+ 
+   UNION ALL
+  
+  select
+  t.entity_type,
+   round(SUM(t.qty)::numeric,3) AS total_qty,
+  SUM(t.cost_per_unit) AS total_cost_per_unit,
+  SUM(t.service_cost_per_unit) AS total_service_cost_per_unit,
+  round(SUM(t.total_cost)::numeric,3) AS grand_total_cost
+FROM (select t1.entity_type,t1.qty,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select 'Cable' as entity_type,v_line_geom_length as qty ,fiber_type from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type <> 'Cable' and fiber_type = p_backbone_fiber_type group by entity_type,fiber_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where '(' || itm.code::varchar || ')' || itm.other::varchar = t1.fiber_type
+  
+  UNION ALL 
+  select t1.entity_type,t1.qty,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select entity_type,sum(cable_length) as qty ,fiber_type from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Cable') and fiber_type = p_sprout_fibertype group by entity_type,fiber_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where '(' || itm.code::varchar || ')' || itm.other::varchar = t1.fiber_type)t group by t.entity_type)row_result ;
+ 
+ 
+END;
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, varchar) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, varchar) TO public;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, varchar) TO postgres;
+
+
+--------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_auto_create_cable(p_a_system_id integer, p_a_entity_type character varying, p_a_network_id character varying, p_b_system_id integer, p_b_entity_type character varying, p_b_network_id character varying, p_longlat character varying, p_structure_id integer, p_region_id integer, p_province_id integer, p_user_id integer, p_rfs_type character varying, p_length double precision, itm_spec_cable character varying, p_plan_id integer, p_cable_type character varying, p_duct_id integer, p_duct_network_id character varying)
+ RETURNS record
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_arow_cable record;
+v_arow_network_id record;
+v_cable_display_value CHARACTER VARYING;
+v_a_display_value CHARACTER VARYING;
+v_b_display_value CHARACTER VARYING;
+v_display_value CHARACTER VARYING;
+v_display_name CHARACTER VARYING;
+v_duct_value character varying;
+itm_spec_rec record;
+itm_code character varying;
+BEGIN
+V_IS_VALID:=true;
+V_MESSAGE:='Successfully';
+ 
+    SELECT split_part(itm_spec_cable, ')', 1) AS itm_code, split_part(itm_spec_cable, ')', 2) AS fiber_core into itm_spec_rec;
+  itm_code = REPLACE(itm_spec_rec.itm_code,'(','');
+	--RAISE INFO 'itm_spec_rec: %', REPLACE(itm_spec_rec.itm_code,'(','') ;
+
+	select * into v_arow_network_id from fn_get_line_network_code('Cable',p_a_network_id,p_b_network_id,p_longlat,'OSP');
+		
+	INSERT INTO ATT_DETAILS_CABLE(is_visible_on_map,audit_item_master_id,network_id,cable_name,a_location,b_location,total_core,no_of_tube,no_of_core_per_tube,cable_measured_length,cable_calculated_length,
+	cable_type,specification,category,subcategory1,subcategory2,subcategory3,item_code,	
+	vendor_id,network_status,status,province_id,region_id,created_by,created_on,a_system_id,a_network_id,a_entity_type,
+	b_system_id,b_network_id,b_entity_type,sequence_id,cable_category,parent_system_id,parent_network_id,parent_entity_type,start_reading,	
+	end_reading,structure_id,utilization,duct_id,trench_id,is_used,source_ref_type,source_ref_id,ownership_type)
+
+select  true,audit_id,v_arow_network_id.network_code,v_arow_network_id.network_code,p_a_network_id,p_b_network_id,other::integer,no_of_tube,no_of_core_per_tube,ST_Length(ST_GeomFromText('LINESTRING('||p_longlat||')',4326),false),ST_Length(ST_GeomFromText('LINESTRING('||p_longlat||')',4326),false),
+	p_cable_type,specification,'Cable', null, null, null,code,
+	vendor_id,'P','A',p_province_id,p_region_id,p_user_id,now(),p_a_system_id,p_a_network_id,
+	p_a_entity_type,p_b_system_id,p_b_network_id,p_b_entity_type,v_arow_network_id.sequence_id,'Feeder',v_arow_network_id.parent_system_id,
+	v_arow_network_id.parent_network_id,v_arow_network_id.parent_entity_type,
+	0,0,p_structure_id,'L',0,0,true,'backbone planning',p_plan_id,'OWN' from item_template_master itm where category_reference ='Cable' and code = itm_code and other = itm_spec_rec.fiber_core limit 1 
+	RETURNING system_id,network_id,no_of_tube,total_core into v_arow_cable;
+
+		RAISE INFO 'v_arow_cable: %', v_arow_cable.SYSTEM_ID;
+
+	INSERT INTO LINE_MASTER(system_id,entity_type,approval_flag,sp_geometry,creator_remark,approver_remark,created_by,approver_id,
+	common_name,network_status,is_virtual,display_name,source_ref_type,source_ref_id)
+	values(v_arow_cable.SYSTEM_ID,'Cable','A',
+	ST_GeomFromText('LINESTRING('||p_longlat||')',4326)	
+	,'','',
+	p_user_id,0,v_arow_cable.network_id,'P',false,fn_get_display_name(v_arow_cable.SYSTEM_ID,'Cable'),'backbone planning',p_plan_id);
+	
+	select display_name into v_a_display_value from point_master where system_id=p_a_system_id and upper(entity_type)=upper(p_a_entity_type);
+	select display_name into v_b_display_value from point_master where system_id=p_b_system_id and upper(entity_type)=upper(p_b_entity_type);
+
+	insert into associate_entity_info(entity_system_id,entity_network_id,entity_type,entity_display_name,associated_system_id,associated_network_id,
+	associated_entity_type,associated_display_name,created_on,created_by,is_termination_point)
+	values(v_arow_cable.system_id,v_arow_cable.network_id,'Cable',v_display_value,p_a_system_id,p_a_network_id,p_a_entity_type,v_a_display_value,now(),p_user_id,true),
+	(v_arow_cable.system_id,v_arow_cable.network_id,'Cable',v_display_value,p_b_system_id,p_b_network_id,p_b_entity_type,v_b_display_value,now(),p_user_id,true);
+
+	if(p_duct_id >0)
+	then
+	
+	insert into associate_entity_info(associated_entity_type,associated_system_id,associated_network_id,entity_network_id,entity_system_id,
+		entity_type,created_on,created_by,associated_display_name,entity_display_name)
+		values('Cable',v_arow_cable.system_id,v_arow_cable.network_id,p_duct_network_id,p_duct_id,'Duct',now(),p_user_id,
+		fn_get_display_name(v_arow_cable.system_id,'Cable'),fn_get_display_name(p_duct_id,'Duct')); 
+		
+	end if;
+
+	
+	
+	perform(fn_set_cable_color_info(v_arow_cable.system_id,p_user_id,v_arow_cable.no_of_tube,v_arow_cable.total_core));					
+		
+	RETURN v_arow_cable;          
+END
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_auto_create_cable(int4, varchar, varchar, int4, varchar, varchar, varchar, int4, int4, int4, int4, varchar, float8, varchar, int4, varchar, int4, varchar) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_auto_create_cable(int4, varchar, varchar, int4, varchar, varchar, varchar, int4, int4, int4, int4, varchar, float8, varchar, int4, varchar, int4, varchar) TO public;
+GRANT ALL ON FUNCTION public.fn_backbone_auto_create_cable(int4, varchar, varchar, int4, varchar, varchar, varchar, int4, int4, int4, int4, varchar, float8, varchar, int4, varchar, int4, varchar) TO postgres;
+
+
+-------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_network(p_plan_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+ DECLARE
+ lyrtitle record;
+ v_entity_name character varying;
+ v_new_entity_name character varying;
+ sql text='';
+ v_region_ids character varying='';
+ v_province_ids character varying='';
+ v_sub_sql text='';
+ v_layer_id text;
+BEGIN
+
+SELECT string_agg(layer_id::text, ',') into v_layer_id
+FROM layer_details 
+WHERE upper(layer_name) IN ('POLE', 'MANHOLE', 'CABLE', 'SPLICECLOSURE','POD');
+
+
+		FOR lyrtitle IN select distinct layer_title,layer_table,layer_name,geom_type from layer_details 
+		where is_auto_plan_end_point=true or upper(layer_name) in (upper('cable'),upper('manhole'),upper('pole'))
+LOOP
+			v_entity_name:=lower(lyrtitle.layer_name)||'_name';
+			
+			select coalesce((SELECT column_name into v_new_entity_name FROM information_schema.columns
+			WHERE table_name=lyrtitle.layer_table and column_name in('name',v_entity_name)),'Null');
+IF EXISTS 		(SELECT 1  FROM information_schema.columns WHERE table_name=lyrtitle.layer_table and column_name ='source_ref_id')THEN
+BEGIN
+
+ IF(sql!='')THEN
+ sql:=sql||' UNION ';
+ END IF; 
+			--execute 'insert into temp_nwt_entity_detalis
+			sql:=sql||'Select lv.region_id,lv.province_id  from '||lyrtitle.layer_table||' as lv 
+ 			where lv.source_ref_id='||p_plan_id||'::character varying and Upper(source_ref_type)=''BACKBONE PLANNING''';
+ END;
+ END IF	;		
+END LOOP;
+
+ 
+ v_sub_sql:= 'select array_to_string(array_agg(row.region_id), '','')as region_id ,array_to_string(array_agg(row.province_id), '','')as province_id from('||sql||') row';
+
+Execute v_sub_sql into v_region_ids,v_province_ids;
+
+RAISE INFO ' v_sub_sql =%', v_region_ids;
+
+v_sub_sql:='select '||v_region_ids||' as  region_ids, '||v_province_ids||' as province_ids, '|| quote_literal(v_layer_id)||' as layer_id ,* from backbone_plan_details where plan_id='||p_plan_id;
+
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||v_sub_sql||') row';
+END ;
+
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_get_plan_network(int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_network(int4) TO postgres;
+
+----------------------------------------------------------------------------------------------------
