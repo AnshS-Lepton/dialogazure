@@ -279,6 +279,12 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getAllAGGListRoutewise(siteid, user_id,site_name);
         }
+
+        public List<PODMaster> getSiteList(string site_name)
+        {
+            return new DAPodMaster().getSiteList(site_name);
+        }
+
         public List<PODMaster> getAGG1List(string site_name)
         {
             return new DAPodMaster().getAGG1List(site_name);

@@ -9156,7 +9156,6 @@ var Main = function () {
 
     }
     this.SetAutoBackBoneNetworkFilters = function () {
-        debugger;
         app.filterAutoNetworkValue = "1 = 1";
 
         if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {

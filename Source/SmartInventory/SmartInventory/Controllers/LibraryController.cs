@@ -8827,7 +8827,7 @@ namespace SmartInventory.Controllers
         [HttpGet]
         public JsonResult searchSite(string term)
         {
-            var sitenameList = new BLProject().getAGG1List(term);
+            var sitenameList = new BLProject().getSiteList(term);
 
             var results = sitenameList.Select(s => new
             {

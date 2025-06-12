@@ -62,7 +62,7 @@ namespace SmartInventory.Controllers
                     segment_code = objRingFilter.objRingDetails.SearchbySegmentName;
                     site_id = objRingFilter.objRingDetails.site_id;
                     if (objRingFilter.objRingDetails.SearchbyRingTypes != null)
-                        ring_code = string.Join("','", objRingFilter.objRingDetails.SearchbyRingTypes);
+                        ring_code = string.Join(":", objRingFilter.objRingDetails.SearchbyRingTypes);
                 }
                 else {
                     region_id = objRingFilter.objRingDetails.region_name;

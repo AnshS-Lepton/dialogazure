@@ -987,6 +987,16 @@ namespace DataAccess.Admin
             return sitname;
         }
 
+        public List<PODMaster> getSiteList(string site)
+        {
+
+            var sitname = repo.GetAll(m =>
+                (m.site_id.ToString().Contains(site.ToUpper()) ||
+                m.site_name.ToUpper().Contains(site.ToUpper()))
+            ).ToList();
+
+            return sitname;
+        }
         public List<PODMaster> getAGG1List(string site)
         {
 

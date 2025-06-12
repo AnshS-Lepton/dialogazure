@@ -218,13 +218,13 @@
 <script>
 
     function isValidFormat(input) {
-        const pattern = /^[A-Z]{3}\d{2}$/;
+        const pattern = /^[A-Z]{3}\d{1,3}$/;
         return pattern.test(input);
     }
 
     $("#txtagg1").autocomplete({
         source: function (request, response) {
-            debugger;
+     
     $.ajax({
         url: '@Url.Action("GetAGG1", "Report")',
         type: "GET",
@@ -276,7 +276,7 @@ source: function (request, response) {
             response([{ label: "No results found", value: "", Name: "", systemId: "" }]);
             $(".txtagg2ShowOnMap").hide();  // hide if no data found
         } else {
-            debugger;
+            
         response($.map(data, function (item) {
         return {
             value: item.value, // Set site_name
@@ -290,7 +290,7 @@ source: function (request, response) {
         minLength: 3,
         select: function (event, ui) {
         if (ui.item.value !== "") {
-            debugger;
+          
             $("#txtagg2").val(ui.item.value); // Set corresponding site_name
             $("#hdnAgg2SystemId").val(ui.item.systemId); // Set system_id in hidden field
             $(".txtagg2ShowOnMap").show();  // Show if selected
@@ -327,7 +327,7 @@ source: function (request, response) {
     });
 
     function toggleMapLink() {
-        debugger;
+      
         if ($("#txtagg1").val()) {
             $(".txtagg1ShowOnMap").show();  // Show if selected
         } else {
@@ -379,7 +379,6 @@ source: function (request, response) {
     // Show On Map
     $('#btnmanualroute').on("click", function () {
 
-        debugger;
         si.createsegmentroute();
         $(popup.DE.MinimizeModel).trigger("click");
     });
@@ -401,7 +400,7 @@ source: function (request, response) {
 
     $('#ddlregionid').change(function () {
 
-        debugger;
+ 
         getSegmentDetails();
     });
 
@@ -450,7 +449,7 @@ source: function (request, response) {
                 var segmentcode = data.segment_code;
                 var routename = data.route_name;
                 var description = data.description;
-                $("#txtsegcode").val(segmentcode);
+               // $("#txtsegcode").val(segmentcode);
                 $("#txtdesc").val(description);
                 $("#hdnsegmentid").val(SegmentId);
                 $("#hdnSequenceId").val(sequence);
@@ -504,7 +503,7 @@ source: function (request, response) {
                return false;
            }
            if (!isValidFormat(segmentcode)) {
-               alert("Please enter valid segment code !");
+               alert("Please enter a valid segment code in the format of three letters followed by three digits (e.g., 'ACC001')!");
                return false;
            }
 
@@ -518,10 +517,10 @@ source: function (request, response) {
            }
 
            confirm("Are you sure you want to save this with selected aggregate sites ?", function () {
-               debugger;
+          
                    $("#dvProgress").show();
     $('#dvProgress').css('display', 'block');
-               debugger;
+           
 $.ajax({
 url: '@Url.Action("SaveSegment", "Report")',
 type: "POST",
@@ -537,7 +536,7 @@ Agg2SystemId: Agg2SystemId,
     SequenceId: SequenceId
 },
     success: function (response) {
-        debugger;
+   
     if (response.success) {
         $("#dvProgress").hide();
         $('#dvProgress').css('display', 'none');
