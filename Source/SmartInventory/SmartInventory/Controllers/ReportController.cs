@@ -4422,7 +4422,7 @@ namespace SmartInventory.Controllers
                                     try
                                     {
                                         //LogHelper.GetInstance.WriteDebugLogTest($"====================================={layer.layer_name}====Start  {DateTime.Now}========================", layer.layer_name);
-
+  
                                         objExportEntitiesReport.objReportFilters.layerName = layer.layer_name;
                                         var layerDetail = ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == objExportEntitiesReport.objReportFilters.layerName.ToUpper()).FirstOrDefault();
 
@@ -4450,49 +4450,50 @@ namespace SmartInventory.Controllers
 
 
                                         List<string> reportTypeString = reportType;
-
-                                        if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
+                                        if (layerDetail != null)
                                         {
-                                            if (reportTypeString[0].Contains("GIS"))
+                                            if (total_entity_count > ApplicationSettings.ExcelReportLimitCount)
                                             {
-                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-                                            {
-                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            //if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
-                                            //{
-                                            //    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                if (reportTypeString[0].Contains("GIS"))
+                                                {
+                                                    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }
+                                                if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                                {
+                                                    lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }
+                                                //if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
+                                                //{
+                                                //    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewCSV(objExportEntitiesReport.objReportFilters, layer.layer_name);
 
-                                            //    if (layerDetail.is_dynamic_control_enable)
-                                            //    {
-                                            //        lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            //    }
-                                            //}
+                                                //    if (layerDetail.is_dynamic_control_enable)
+                                                //    {
+                                                //        lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewCSVAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                //    }
+                                                //}
+                                            }
+                                            else
+                                            {
+                                                if (reportTypeString[0].Contains("GIS"))
+                                                {
+                                                    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }
+                                                if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
+                                                {
+                                                    lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                }
+                                                //if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
+                                                //{
+                                                //    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                //    if (layerDetail.is_dynamic_control_enable)
+                                                //    {
+                                                //        lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
+                                                //    }
+                                                //}
+
+                                            }
                                         }
-                                        else
-                                        {
-                                            if (reportTypeString[0].Contains("GIS"))
-                                            {
-                                                lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            if (reportTypeString[0].Contains("ADDITIONAL") && layerDetail.is_dynamic_control_enable)
-                                            {
-                                                lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            }
-                                            //if (reportTypeString.Contains("") || reportTypeString.Contains("ALL"))
-                                            //{
-                                            //    lstExportEntitiesDetail = new BLLayer().GetExportReportSummaryViewNew(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            //    if (layerDetail.is_dynamic_control_enable)
-                                            //    {
-                                            //        lstExportEntitiesDetailAdditional = new BLLayer().GetExportReportSummaryViewNewAdditional(objExportEntitiesReport.objReportFilters, layer.layer_name);
-                                            //    }
-                                            //}
-
-                                        }
-
-
+                                       
 
                                         DataTable dtReportShape = new DataTable();
                                         DataTable dtReport = new DataTable();
