@@ -26,5 +26,9 @@ namespace BusinessLogics.Admin
         {
             return new DACableColorSettings().SaveCableMapColorSettingDetails(objAddCableColrSetting);
         }
+        public List<CableMapColorSettings> GetCablMapColorDetails()
+        {
+            return new DACableColorSettings().GetCablMapColorDetails();
+        }
     }
 }

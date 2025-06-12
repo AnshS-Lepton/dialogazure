@@ -27,7 +27,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'P')
 		STYLE
-			SYMBOL "icons/Planned/Pole6.7.png"
+			SYMBOL "icons/Planned/pole6.7.png"
 			SIZE 30
 			OFFSET 0 -5				
 		END
@@ -37,7 +37,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'A')  			
 		STYLE
-			SYMBOL "icons/AsBuild/Pole6.7.png"
+			SYMBOL "icons/AsBuild/pole6.7.png"
 			SIZE 20			
 		END
 					
@@ -47,7 +47,7 @@ LAYER
 		NAME 'Pole'
 		EXPRESSION ('[specification]' ~* '7 M' AND '[network_status]'  eq 'D')   			
 		STYLE
-			SYMBOL "icons/Dorment/Pole6.7.png"
+			SYMBOL "icons/Dorment/pole6.7.png"
 			SIZE 30
 			OFFSET 0 -5				
 		END

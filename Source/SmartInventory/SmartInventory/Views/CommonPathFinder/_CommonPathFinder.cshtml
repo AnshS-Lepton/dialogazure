@@ -1,14 +1,12 @@
 ﻿<!DOCTYPE html>
 <style>
     .resizable {
-        min-height: 300px; /* Minimum height */
-        min-width: 500px; /* Minimum width */
+        height: calc(100vh - 230px);
+        min-width: 500px;
         width: 800px;
-        height: 560px;
-        /*    border: 1px solid #000;*/
-        /*    position: relative;*/
         resize: both;
         overflow: auto;
+        /*max-height: calc(100vh - 300px);*/
     }
 
         .resizable:after {
@@ -32,17 +30,17 @@
                     <div class="pos-rel mb-01">
                         <textarea id="txtLinkIds" class="fullWidth" maxlength="200" style="resize: none;" placeholder="Enter comma seperated Link Ids" rows="5" resize: none;></textarea>
                     </div>
-                    <div id="charCounter" style="text-align: right; margin-bottom: 5px;">
-                        0 / 200
+                    <div id="charCounter" class="d-flex mb-01">
+                        <span class="ml-auto"> 0 / 200</span>
                     </div>
 
                     <div class="d-flex mb-01 --gap05">
-                        <button type="button" class="btn btn-success ml-auto" id="btnSearchLinkIds" onclick="return SearchLinkIds(event);">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
-                        <button type="button" class="btn btn-default" id="btnClearLinkIds" onclick="resetLinkdata();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
+                        <button type="button" class="btn btn-default ml-auto" id="btnClearLinkIds" onclick="resetLinkdata();">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</button>
                         <button type="button" class="btn btn-default" style="display:none" id="btnShowOnMapLinkIds" onclick="linkShowOnMap();">Show on Map</button>
                         <button type="button" class="btn btn-default" style="display:none" id="btnShowOnMapFiberLinks" onclick="FiberLinkShowOnMap();">Show on Map</button>
+                        <button type="button" class="btn btn-success" id="btnSearchLinkIds" onclick="return SearchLinkIds(event);">@Resources.Resources.SI_OSP_GBL_GBL_GBL_046</button>
                     </div>
-                    <div id="divChkSearchResult" class="mainLegend" style="display:none">
+                    <div id="divChkSearchResult" class="mainLegend mb-01" style="display:none">
                         <label>
                             <input type="checkbox" id="chkCommonPath" name="chkoption" value="common" /> Common Path
                         </label>

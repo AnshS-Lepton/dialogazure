@@ -731,10 +731,15 @@
                         imgData = footer.toDataURL("image/png", 1.0);
                         $("#TempDataDiv").html("");
                         var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                        var midContentText = document.querySelector('.midContent')?.innerText.trim() || '';
                         pdf.deletePage(1);
                         pdf.addPage(PDF_Width, PDF_Height + 50);
-                        pdf.setFontSize(16);
-                        pdf.text(pageTitle, (FOOTER_Width / 2), 20, 'center');
+                        pdf.setFontSize(18);
+                        pdf.text(pageTitle, (FOOTER_Width / 2), 20, { align: 'center' });
+                        if (midContentText) {
+                            pdf.setFontSize(14);
+                            pdf.text(midContentText, FOOTER_Width / 2, 50, { align: 'center' });
+                        }
                         pdf.setFontSize(14);
                         pdf.addImage(dataURL, 'PNG', top_left_margin, top_left_margin + 20, CANVAS_Width, CANVAS_Height, '', 'FAST');
                         pdf.addImage(imgData, 'PNG', top_left_margin, CANVAS_Height + 20, FOOTER_Width, FOOTER_Height);
@@ -745,8 +750,8 @@
                     return false;
 
                 },
-  function (error) { /* code if some error */ }
-);
+                     function (error) { /* code if some error */ }
+             );
 
         }
 

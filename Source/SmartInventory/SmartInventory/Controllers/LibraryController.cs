@@ -9561,6 +9561,7 @@ namespace SmartInventory.Controllers
             var usrDetail = (User)Session["userDetail"];
             Legend objLegend = new Legend();
             objLegend.legendList = new BLMisc().GetLegendDetail(usrDetail.user_id, usrDetail.role_id);
+            objLegend.CableColorCode = new BLCableColorSettings().GetCablMapColorDetails();
             return PartialView("_Legend", objLegend);
         }
         #endregion
