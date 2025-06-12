@@ -552,7 +552,7 @@ namespace Models
         [NotMapped]
         public string Ring_desc { get; set; }
 
-        public bool is_agg_site { get; set; }
+        public bool? is_agg_site { get; set; }
         [NotMapped]
         public int sequence { get; set; }
        

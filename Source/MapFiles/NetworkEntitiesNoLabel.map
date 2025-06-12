@@ -1645,8 +1645,8 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_pod_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%) and (%NetworkFilter%)  and (%PODFilter%))
-		FILTER (%provinceFilter% AND (%layerFilter%) AND (%prjectspecificationFilter%) AND (%ownershipFilter%) AND (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%) and (%NetworkFilter%)  and (%PODFilter%)  AND (%AutoPlanningNetworkFilter%))
+		
 		
 		VALIDATION		
 			'provinceFilter'   '.*'		
@@ -1654,7 +1654,9 @@ LAYER
 			'prjectspecificationFilter'   '.*'  
 			'ownershipFilter'   '.*' 
 			'NetworkFilter'   '.*' 	
-			'AutoPlanningNetworkFilter'    '.*'     
+			'AutoPlanningNetworkFilter'    '.*'
+			'PODFilter'    '.*' 
+			'AutoPlanningNetworkFilter'    '.*' 
 		END 
 		METADATA
 			'ows_title' 'POD'
