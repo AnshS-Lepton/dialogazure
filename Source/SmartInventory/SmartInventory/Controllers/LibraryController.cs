@@ -200,7 +200,7 @@ namespace SmartInventory.Controllers
             obj.system_id = systemId;
             obj.geom = geom;
             string url = "api/Library/EntityOperations";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, obj, EntityType.Restricted_Area.ToString(), EntityAction.Get.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, obj, EntityType.RestrictedArea.ToString(), EntityAction.Get.ToString());
             return PartialView("_AddRestrictedArea", response.results);
         }
 
@@ -210,7 +210,7 @@ namespace SmartInventory.Controllers
             objArea.geom = geom;
             objArea.networkIdType = networkIdType;
 
-            var objDDL = new BLMisc().GetDropDownList(EntityType.Restricted_Area.ToString());
+            var objDDL = new BLMisc().GetDropDownList(EntityType.RestrictedArea.ToString());
             DropDownMaster drp = new DropDownMaster();
             //objDDL.Insert(0, new DropDownMaster { dropdown_key = "Select", dropdown_status = false, dropdown_type = DropDownType.Area_RFS.ToString(), dropdown_value = "0" });
 
@@ -220,12 +220,12 @@ namespace SmartInventory.Controllers
                 //NEW ENTITY->Fill Region and Province Detail..
                 fillRegionProvinceDetail(objArea, GeometryType.Polygon.ToString(), geom);
                 //Fill Parent detail...              
-                fillParentDetail(objArea, new NetworkCodeIn() { eType = EntityType.Restricted_Area.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objArea.geom }, networkIdType);
+                fillParentDetail(objArea, new NetworkCodeIn() { eType = EntityType.RestrictedArea.ToString(), gType = GeometryType.Polygon.ToString(), eGeom = objArea.geom }, networkIdType);
             }
             else
             {
                 // Get entity detail by Id...
-                objArea = new BLMisc().GetEntityDetailById<RestrictedArea>(systemId, EntityType.Restricted_Area);
+                objArea = new BLMisc().GetEntityDetailById<RestrictedArea>(systemId, EntityType.RestrictedArea);
             }
 
             objArea.lstRestrictedAreaRFS = objDDL.Where(x => x.dropdown_type == DropDownType.RestrictedArea_RFS.ToString()).ToList();
@@ -236,7 +236,7 @@ namespace SmartInventory.Controllers
             objResArea.isDirectSave = isDirectSave;
             objResArea.user_id = Convert.ToInt32(Session["user_id"]);
             string url = "api/Library/EntityOperations";
-            var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, objResArea, EntityType.Restricted_Area.ToString(), EntityAction.Save.ToString());
+            var response = WebAPIRequest.PostIntegrationAPIRequest<RestrictedArea>(url, objResArea, EntityType.RestrictedArea.ToString(), EntityAction.Save.ToString());
             if (isDirectSave)
             {
                 return Json(response.results.objPM, JsonRequestBehavior.AllowGet);

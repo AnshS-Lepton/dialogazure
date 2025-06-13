@@ -15,8 +15,8 @@
     { Html.RenderPartial("~/Views/Library/_GeographicDetails.cshtml", (IGeographicDetails)Model); }
 }
 @{
-    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Restricted_Area.ToString().ToUpper()).FirstOrDefault() : null;
-    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], NetworkStatus.P.ToString(), EntityType.Restricted_Area.ToString());
+    var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.RestrictedArea.ToString().ToUpper()).FirstOrDefault() : null;
+    var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], NetworkStatus.P.ToString(), EntityType.RestrictedArea.ToString());
 }
 <!DOCTYPE html>
 <div class="libDetail">
@@ -26,7 +26,7 @@
         UpdateTargetId = "dvModalBody",
         LoadingElementId = "dvProgress",
         OnFailure = "si.handleError",
-        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.Restricted_Area.ToString() + "');"
+        OnBegin = "return ValidateNetworkId(" + Model.system_id + ",'" + Model.network_id + "','" + Model.networkIdType + "','" + EntityType.RestrictedArea.ToString() + "');"
     },
         new { id = "frmAddRestrictedArea", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {

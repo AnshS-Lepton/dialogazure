@@ -354,7 +354,7 @@ namespace DataAccess
                     objitem.is_feasibility_allowed = restricted_Area.is_feasibility_allowed;
                     objitem.allowed_network= restricted_Area.allowed_network;
                     var RAreaResp = repo.Update(objitem);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(RAreaResp.system_id, Models.EntityType.Restricted_Area.ToString(), RAreaResp.province_id, 1);
+                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(RAreaResp.system_id, Models.EntityType.RestrictedArea.ToString(), RAreaResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.RestrictedArea.ToString(), RAreaResp.province_id);
                     return RAreaResp;
                 }
@@ -371,11 +371,11 @@ namespace DataAccess
                     geom.systemId = resultItem.system_id;
                     geom.longLat = resultItem.geom;
                     geom.userId = userId;
-                    geom.entityType = EntityType.Restricted_Area.ToString();
+                    geom.entityType = EntityType.RestrictedArea.ToString();
                     geom.commonName = resultItem.network_id;
                     geom.geomType = GeometryType.Polygon.ToString();
                     DASaveEntityGeometry.Instance.SaveEntityGeom(geom);
-                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(resultItem.system_id, Models.EntityType.Restricted_Area.ToString(), resultItem.province_id, 0);
+                    DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(resultItem.system_id, Models.EntityType.RestrictedArea.ToString(), resultItem.province_id, 0);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.RestrictedArea.ToString(), resultItem.province_id);
                     return resultItem;
                 }

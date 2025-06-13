@@ -771,8 +771,8 @@ namespace SmartInventory.Controllers
                     case EntityType.PatchPanel:
                         response = new BLMisc().deleteEntity(systemId, EntityType.PatchPanel.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
                         break;
-                    case EntityType.Restricted_Area:
-                        response = new BLMisc().deleteEntity(systemId, EntityType.Restricted_Area.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
+                    case EntityType.RestrictedArea:
+                        response = new BLMisc().deleteEntity(systemId, EntityType.RestrictedArea.ToString(), GeometryType.Polygon.ToString(), usrDetail.user_id);
                         break;
                     case EntityType.Slack:
                         response = new BLMisc().deleteEntity(systemId, EntityType.Slack.ToString(), GeometryType.Point.ToString(), usrDetail.user_id);
