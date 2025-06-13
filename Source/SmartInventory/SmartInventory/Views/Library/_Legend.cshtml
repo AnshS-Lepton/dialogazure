@@ -64,109 +64,165 @@
                                 </div>
                             </div>
 
-                            @foreach (var grpLayer in groupItem)
-                            {
-                                <div id="LayerTitle" class="l-title">@grpLayer</div>
+                            <fieldset class="layerCable-fieldset">
+                                <legend class="layerCable-fieldset-legend">Cable</legend>
 
+                                <div class="l-title">Pattern</div>
                                 <div class="d-fx flex-dir-column">
-                                    @if (ApplicationSettings.IsWMSLayerLoadingEnabled)
-                                    {
-
-                                        foreach (var item in Model.legendList.Where(x => x.group_name == grpLayer).ToList())
-                                        {
-
-                                            if (item.group_name == "Duct" && ctrD == 0)
-                                            {
-                                                ctrD = ctrD + 1;
-                                                <div id="subLayer" class="d-flex bm-nl-child">
-
-                                                    <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
-                                                </div>
-                                            }
-                                            if (item.group_name == "Microduct" && ctrM == 0)
-                                            {
-                                                ctrM = ctrM + 1;
-                                                <div id="subLayer" class="d-flex bm-nl-child">
-
-                                                    <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
-                                                </div>
-                                            }
-
-                                            if (item.group_name == "Trench" && ctrT == 0)
-                                            {
-                                                ctrT = ctrT + 1;
-                                                <div id="subLayer" class="d-flex bm-nl-child">
-                                                    <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
-                                                </div>
-                                            }
-                                            if (item.group_name != "Trench" && item.group_name != "Duct" && item.group_name != "Microduct")
-                                            {
-                                                <div id="subLayer" class="d-flex bm-nl-child">
-                                                    <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "16px;")">
-
-                                                    @if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable")
-                                                    {
-                                                        <span>@item.sub_Layer.Substring(0, 8)</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>@item.sub_Layer</span>
-                                                    }
-                                                </div>
-                                            }
+                                    @{
+                                        var patternItems = Model.legendList
+                                            .Where(x => x.sub_Layer.Contains("As-Built") || x.sub_Layer.Contains("Dormant") || x.sub_Layer.Contains("Planned"))
+                                            .GroupBy(x =>
+                                                x.sub_Layer.Contains("As-Built") ? "As-Built" :
+                                                x.sub_Layer.Contains("Dormant") ? "Dormant" :
+                                                "Planned")
+                                            .Select(g => g.First())
+                                            .ToList();
 
 
-
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach (var item in Model.legendList.Where(x => x.group_name == grpLayer).ToList())
+                                        foreach (var item in patternItems)
                                         {
                                             <div id="subLayer" class="d-flex bm-nl-child">
-
-                                                @if (item.group_name == "Boundary")
+                                                @if (item.sub_Layer.Contains("As-Built"))
                                                 {
-                                                    <div id="@item.layer_id" style="outline-width: thin; width: 15px; height: 10px; background-color: @item.color_code_hex; outline-style: solid; outline-color: @item.outline_color_hex;"></div>
+                                                    <span style="width: 64px; border-bottom:3px solid; color: @item.color_code_hex; margin-left:0"></span>
+                                                    <span>As-Built</span>
                                                 }
-                                                else if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable" || item.group_name.ToUpper() == "DUCT" || item.group_name.ToUpper() == "TRENCH" || item.group_name.ToUpper() == "MICRODUCT")
+                                                else if (item.sub_Layer.Contains("Dormant"))
                                                 {
-                                                    if (item.sub_Layer.Contains("As-Built"))
+                                                    <span style="width: 64px; height: 3px; background: repeating-linear-gradient(90deg,@item.color_code_hex 0 20px,#0000 0 23px); margin-left: 0"></span>
+                                                    <span>Dormant</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="width: 64px; border-bottom: 3px dashed; color: @item.color_code_hex; margin-left: 0"></span>
+                                                    <span>Planned</span>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </div>
+
+
+                                <div class="l-title">Color</div>
+                                <div class="d-fx flex-dir-column">
+                                    @foreach (var fiberCount in Model.CableColorCode.Select(x => x.fiber_count).Distinct().OrderBy(x => x))
+                                    {
+                                        var colorItem = Model.CableColorCode.Where(x => x.fiber_count == fiberCount && x.color_code.ToLower() != "#ffffff").FirstOrDefault();
+
+
+                                        if (colorItem == null)
+                                        {
+                                            colorItem = Model.CableColorCode.FirstOrDefault(x => x.fiber_count == fiberCount);
+                                        }
+
+                                        if (colorItem != null)
+                                        {
+                                            <div class="d-flex bm-nl-child">
+                                                <span style="width: 64px; height: 3px; background-color: @colorItem.color_code;"></span>
+                                                <span>@colorItem.fiber_count F</span>
+                                            </div>
+                                        }
+                                    }
+
+
+                                </div>
+
+                                <div class="layerCable-line"></div>
+                            </fieldset>
+
+
+                            @foreach (var grpLayer in groupItem.Where(g => g != "Feeder Cable" && g != "Distribution Cable" && g != "Access Cable"))
+                            {
+                                <fieldset class="layerCable-fieldset">
+                                    <legend class="layerCable-fieldset-legend">@grpLayer</legend>
+
+                                    <div class="d-fx flex-dir-column">
+                                        @if (ApplicationSettings.IsWMSLayerLoadingEnabled)
+                                        {
+                                            foreach (var item in Model.legendList.Where(x => x.group_name == grpLayer).ToList())
+                                            {
+                                                if (item.group_name == "Duct" && ctrD == 0)
+                                                {
+                                                    ctrD++;
+                                                    <div id="subLayer" class="d-flex bm-nl-child">
+                                                        <img src="@(Model.baseUrl + "Content/images/icons/lib/Legend/" + item.icon_path)"
+                                                             alt="printLayerImg"
+                                                             style="width:@(item.layer_id == 19 ? "35px" : "16px")">
+                                                    </div>
+                                                }
+                                                else if (item.group_name == "Microduct" && ctrM == 0)
+                                                {
+                                                    ctrM++;
+                                                    <div id="subLayer" class="d-flex bm-nl-child">
+                                                        <img src="@(Model.baseUrl + "Content/images/icons/lib/Legend/" + item.icon_path)"
+                                                             alt="printLayerImg"
+                                                             style="width:@(item.layer_id == 19 ? "35px" : "16px")">
+                                                    </div>
+                                                }
+                                                else if (item.group_name == "Trench" && ctrT == 0)
+                                                {
+                                                    ctrT++;
+                                                    <div id="subLayer" class="d-flex bm-nl-child">
+                                                        <img src="@(Model.baseUrl + "Content/images/icons/lib/Legend/" + item.icon_path)"
+                                                             alt="printLayerImg"
+                                                             style="width:@(item.layer_id == 19 ? "35px" : "16px")">
+                                                    </div>
+                                                }
+                                                else if (item.group_name != "Trench" && item.group_name != "Duct" && item.group_name != "Microduct")
+                                                {
+                                                    <div id="subLayer" class="d-flex bm-nl-child">
+                                                        <img src="@(Model.baseUrl + "Content/images/icons/lib/Legend/" + item.icon_path)"
+                                                             alt="printLayerImg"
+                                                             style="width:@(item.layer_id == 19 ? "35px" : "16px")">
+                                                        <span>@item.sub_Layer</span>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (var item in Model.legendList.Where(x => x.group_name == grpLayer).ToList())
+                                            {
+                                                <div id="subLayer" class="d-flex bm-nl-child">
+                                                    @if (item.group_name == "Boundary")
                                                     {
-                                                        <span style=" width: 64px; border-bottom:3px solid; color: @item.color_code_hex; margin-left:0"></span>
+                                                        <div id="@item.layer_id"
+                                                             style="outline-width: thin; width: 15px; height: 10px; background-color: @item.color_code_hex; outline-style: solid; outline-color: @item.outline_color_hex;">
+                                                        </div>
                                                     }
-                                                    else if (item.sub_Layer.Contains("Dormant"))
+                                                    else if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable" ||
+                                                             item.group_name.ToUpper() == "DUCT" || item.group_name.ToUpper() == "TRENCH" || item.group_name.ToUpper() == "MICRODUCT")
                                                     {
-                                                        <span style="width: 64px; height: 3px; background: repeating-linear-gradient(90deg,@item.color_code_hex 0 20px,#0000 0 23px); margin-left: 0"></span>
-                                                        @*<div class="dash-dot"></div>*@
+                                                        if (item.sub_Layer.Contains("As-Built"))
+                                                        {
+                                                            <span style="width: 64px; border-bottom:3px solid; color: @item.color_code_hex;"></span>
+                                                        }
+                                                        else if (item.sub_Layer.Contains("Dormant"))
+                                                        {
+                                                            <span style="width: 64px; height: 3px; background: repeating-linear-gradient(90deg, @item.color_code_hex 0 20px, #0000 0 23px);"></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="width: 64px; border-bottom: 3px dashed; color: @item.color_code_hex;"></span>
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        <span style=" width: 64px; border-bottom: 3px dashed; color: @item.color_code_hex; margin-left: 0"></span>
+                                                        <img src="@(Model.baseUrl + "Content/images/icons/lib/Legend/" + item.icon_path)"
+                                                             alt="printLayerImg"
+                                                             style="width:@(item.layer_id == 19 ? "35px" : "20px")">
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id == 19 ? "35px" : "20px;")">
-                                                }
-                                                @*<img src="@(String.Format("{0}{1}{2}", Model.baseUrl, "Content/images/icons/lib/Legend/", @item.icon_path))" alt="printLayerImg" style="width:@(item.layer_id== 19 ? "35px" : "16px;")">*@
-                                                @if (item.group_name == "Feeder Cable" || item.group_name == "Distribution Cable" || item.group_name == "Access Cable")
-                                                {
-                                                    <span>@item.sub_Layer.Substring(0, 8)</span>
-                                                }
-                                                else
-                                                { <span>@item.sub_Layer</span>}
 
-                                            </div>
+                                                    <span>@item.sub_Layer</span>
+                                                </div>
+                                            }
                                         }
-
-
-
-                                    }
-
-                                </div>
+                                    </div>
+                                </fieldset>
                             }
+
+
                         </div>
                     }
                 </div>
