@@ -2467,6 +2467,7 @@
     <Content Include="Views\BackBonePlan\_BackbonePlanTool.cshtml" />
     <Content Include="Views\BackBonePlan\_BackboneViewPlanData.cshtml" />
     <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
+    <Content Include="Views\BackBonePlan\_LoopManage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
