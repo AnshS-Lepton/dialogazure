@@ -2057,6 +2057,7 @@ namespace SmartInventory.Controllers
             {
                 System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
                 {
+                    var userdetails = (User)Session["userDetail"];
                     objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
                     objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
                     objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
@@ -2071,7 +2072,7 @@ namespace SmartInventory.Controllers
                     string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
 
                     ExportReportLog exportReportLog = new ExportReportLog();
-                    exportReportLog.user_id = 5; //userdetails.user_id;
+                    exportReportLog.user_id = userdetails.user_id;
                     exportReportLog.export_started_on = DateTime.Now;
                     exportReportLog.file_name = filename;
                     exportReportLog.file_type = "Excel";
@@ -2083,14 +2084,22 @@ namespace SmartInventory.Controllers
                     exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                     try
                     {
-                        IWorkbook workbook = new XSSFWorkbook(); int i = 1; int j = 1;
-
+                        IWorkbook workbook = new XSSFWorkbook(); int i = 1; int j = 1; bool IsFMS = false;
                         var distinctFmsId = lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList().Select(m => m.source_network_id).ToList();
                         var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
                         ISheet sheet1 = workbook.CreateSheet("Summary");
                         IRow currRowH = sheet1.CreateRow(0);
                         NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 0, "FMS Id", cellstyle, true, false);
                         NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 1, "Sheet Name", cellstyle, true, false);
+
+
+                        var prvR = 0;
+                        var currR = 0;
+                        IRow currRow = null;
+                        IRow prvRow = null;
+
+
+
                         foreach (var item in distinctFmsId)
                         {
                             ICellStyle hyperlinkStyle = workbook.CreateCellStyle();
@@ -2099,59 +2108,85 @@ namespace SmartInventory.Controllers
                             hyperlinkFont.Color = IndexedColors.Blue.Index; // Set the text color to blue
                             hyperlinkStyle.SetFont(hyperlinkFont);
 
-                            IRow currRow = sheet1.CreateRow(j);
-                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 0, item, cellstyle, true, false);
-                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRow, 1, "Sheet-" + j, hyperlinkStyle, true, false);
+                            IRow currRowSum = sheet1.CreateRow(j);
+                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 0, item, cellstyle, true, false);
+                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 1, "Sheet-" + j, hyperlinkStyle, true, false);
                             XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.Document);
                             var sheetname = "Sheet-" + j;
                             hyperlink.Address = $"'{sheetname}'!B1";
                             hyperlink.Tooltip = "Click to go to " + sheetname;
-                            currRow.GetCell(1).Hyperlink = hyperlink;
+                            currRowSum.GetCell(1).Hyperlink = hyperlink;
                             j = j + 1;
                         }
                         foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
                         {
-                            var filteredData = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
+                            IsFMS = true;
+                            int incrforOther = 0;
+                            var filteredData3 = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
+                            var filteredData1 = filteredData3.Where(m => m.destination_entity_type == "Splitter").Take(1);// first splitter
+                            var filteredData2 = filteredData3.Where(m => m.destination_entity_type != "Splitter" && m.source_entity_type != "Splitter");
+                            var filteredData = filteredData2.Concat(filteredData1).ToList();
+                            var link = lstrouteconnectionInfo.Where(m => m.client_core_id == item.client_id).ToList();
                             ISheet sheet = workbook.CreateSheet("Sheet-" + i);
                             var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
                             var headerCount = filteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
-                            var distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
+                            int distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
                             bool isSpl = false;
                             int? fromsplId = 0;
+                            int incrforSpl = 0;
 
-                            foreach (var spl in filteredData.Where(m => m.splitter_id != null)
-                                 .GroupBy(m => m.splitter_id)
-                                 .Select(group => group.First())
-                                 .ToList())
+                            //--------------------------------for splitter as source-----------------------------------
+                            int Countspl = 0;
+                            foreach (var spl in filteredData3.Where(m => m.splitter_id != null)
+                             .GroupBy(m => new { m.path_id, m.splitter_id })
+                             .Select(group => group.First())
+                             .ToList())
                             {
-
-                                var splfilteredData = filteredData.Where(m => m.splitter_id == spl.splitter_id).ToList();
+                                isSpl = true;
+                                var splfilteredData = filteredData3.Where(m => m.splitter_id == spl.splitter_id).ToList();
                                 var fromspl = splfilteredData.Select(m => m.source_network_id).FirstOrDefault();
-
                                 var headerCountspl = splfilteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
-
-                                if (fromsplId != splfilteredData.Select(m => m.splitter_id).FirstOrDefault())
+                                if (incrforSpl == 0)
                                 {
-                                    isSpl = true;
-                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, isSpl, distinctPathCount);
+                                    currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5);
+                                    prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 4);
+                                    prvR = prvRow.RowNum;
+                                    currR = currRow.RowNum;
+                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, distinctPathCount, isSpl);
+                                    Countspl = headerCountspl;
+                                    workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow, 0);
                                 }
+                                else
+                                {
+                                    //currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5+ Countspl+15);
+                                    //prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5 + Countspl + 15-1);
 
-                                workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, isSpl, distinctPathCount);
-                                // isSpl = false;
+                                    //currRow = sheet.CreateRow(5 +currR+ headerCountspl *3);
+                                    // prvRow = sheet.CreateRow(5+prvR+ headerCountspl *3);
+                                    currRow = sheet.CreateRow(5 + currR + Countspl + 8);
+                                    prvRow = sheet.CreateRow(5 + prvR + Countspl + 8);
+                                    prvR = prvRow.RowNum;
+                                    currR = currRow.RowNum;
+                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, headerCountspl, isSpl);
+                                    Countspl = headerCountspl;
+                                    workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow);
+                                }
+                                incrforSpl = incrforSpl + 1;
                                 fromsplId = splfilteredData.Select(m => m.splitter_id).FirstOrDefault();
-                                //  isSpl = false;
                             }
 
+                            currRow = sheet.CreateRow(incrforOther * 2 + 5);
+                            prvRow = sheet.CreateRow(incrforOther * 2 + 4);
 
-                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from);
-                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from);
+                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from, 0, 0, distinctPathCount);
+                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from, currRow, prvRow, distinctPathCount, IsFMS);
                             i = i + 1;
+                            incrforOther = incrforOther + 1;
+                            incrforSpl = 0;
                         }
 
                         using (var exportData = new MemoryStream())
                         {
-
-
                             LogHelper.GetInstance.WriteDebugLog("\r\n");
                             LogHelper.GetInstance.WriteDebugLog($"Start Process to write the data in excel: {DateTime.Now}");
 
@@ -2169,12 +2204,10 @@ namespace SmartInventory.Controllers
                             LogHelper.GetInstance.WriteDebugLog($"FTP Connection created: {DateTime.Now}");
                             CommonUtility.FTPFileUpload(tempfilePath, filename, ftpFilePath, ftpUserName, ftpPwd);
                             LogHelper.GetInstance.WriteDebugLog($"File uploaded and FTP Connection closed: {DateTime.Now}");
-
                             System.IO.File.Delete(tempfilePath);
-
                         }
 
-                        exportReportLog.user_id = 5;
+                        exportReportLog.user_id = userdetails.user_id;
                         exportReportLog.export_started_on = DateTime.Now;
                         exportReportLog.file_name = filename;
                         exportReportLog.file_type = "Excel";
@@ -2198,8 +2231,6 @@ namespace SmartInventory.Controllers
             {
                 throw ex;
             }
-
-
         }
         public void DownloadEntityReportNewIntoPDF(string entityids)
         {
@@ -8416,7 +8447,15 @@ namespace SmartInventory.Controllers
         }
         public ActionResult ExportFiberAllocationReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
         {
+            if (objExportEntitiesReport.objReportFilters.IsISP)
+            {
 
+                var networkid = new BLMisc().Getnetworkid(objExportEntitiesReport.objReportFilters.SearchbyText);
+                ModelState.Clear();
+                objExportEntitiesReport.objReportFilters.SearchbyText = networkid;
+                objExportEntitiesReport.objReportFilters.SearchbyColumnName = "network_id";
+            }
+            var userdetails = (User)Session["userDetail"];
             objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
             objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
             objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
@@ -8436,10 +8475,14 @@ namespace SmartInventory.Controllers
                 string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
                 string[] ftplogReportDirectory = new string[] { ftpFolder.Replace("/", "") };
                 CreateNestedDirectoryOnFTP(ftpFilePath, ftpUserName, ftpPwd, ftplogReportDirectory);
-                DownloadFiberAllocationReportIntoExcel(objExportEntitiesReport);
+                //if (objExportEntitiesReport.objReportFilters.fileType == "PDF")
+                //    DownloadFiberAllocationReportIntoPdf(objExportEntitiesReport);
+                //else
+                    DownloadFiberAllocationReportIntoExcel(objExportEntitiesReport);
                 objMsg.status = ResponseStatus.OK.ToString();
-                objMsg.message = "Request is processing in background.Please check the export report log page.";
+                objMsg.message = "Request is processing in background.Please check the FMS Splicing report log page.";
                 objExportEntitiesReport.pageMsg = objMsg;
+
 
             }
             Session["ExportReportFilter"] = objExportEntitiesReport.objReportFilters;
