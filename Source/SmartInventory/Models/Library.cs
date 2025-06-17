@@ -4186,6 +4186,11 @@ namespace Models
         public string maximum_cost { get; set; }
         public string location_address { get; set; }
         public string ds_cmc_area { get; set; }
+        public string destination_site_id { get; set; }
+        public string destination_port_type { get; set; }
+        public string no_of_cores { get; set; }
+        public string project_id { get; set; }
+        
     }
     public class SiteProjectDetails
     {
@@ -5771,7 +5776,10 @@ namespace Models
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_link_id_prefix { get; set; }
         public string comment { get; set; }
-       
+        public string destination_site_id { get; set; }
+        public string destination_port_type { get; set; }
+        public int? no_of_cores { get; set; }
+
         [NotMapped]
         public int totalRecord { get; set; }
         [NotMapped]

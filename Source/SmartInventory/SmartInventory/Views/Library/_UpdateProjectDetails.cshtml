@@ -6,7 +6,7 @@
         <div class="form-group row">
             <label class="control-label col-sm-2" for="searchby">SiteId<i class="clsMandatory">*</i>:</label>
             <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsiteid", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text",Readonly=true, @maxlength = 100 })
+                @Html.TextBoxFor(m => m.site_id, new { @id = "txtsiteid", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", Readonly = true, @maxlength = 100 })
 
                 @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
             </div>
@@ -16,6 +16,12 @@
             </div>
         </div>
         <div class="form-group row">
+
+            <label class="control-label col-sm-2" for="txtSearchtext">Project Id<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.project_id, new { @id = "txtProjectId", @title = "Project Id", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+            </div>
+
             <label class="control-label col-sm-2" for="searchby">Project Category<i class="clsMandatory">*</i>:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.project_category, new { @id = "txtprojectcategory", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
@@ -56,7 +62,25 @@
                 @Html.TextBoxFor(m => m.ds_cmc_area, new { @id = "txtdscmcarea", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })
 
             </div>
+            <label class="control-label col-sm-2" for="searchby">Destination Site Id<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.destination_site_id, new { @id = "txtDestinationSiteId", @title = "Destination Site Id", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+
+            </div>
         </div>
+        <div class="form-group row">
+            <label class="control-label col-sm-2" for="searchby">Destination Port Type<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.destination_port_type, new { @id = "txtDestinationPortType", @title = "Destination Port Type", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+
+            </div>
+            <label class="control-label col-sm-2" for="searchby">Number Of Cores<i class="clsMandatory">*</i>:</label>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(m => m.no_of_cores, new { @id = "txtNumberOfCores", @title = "Number Of Cores", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
+
+            </div>
+        </div>
+
     </form>
 </div>
 <div class="ModalFooter d-flex --gap05">
@@ -84,7 +108,11 @@
         var siteowner = $("#txtsiteowner").val();
         var maximumcost = $("#txtmaximumcost").val();
         var address = $("#txtlocationaddress").val();
-        var scmcarea = $("#txtdscmcarea").val();
+      var scmcarea = $("#txtdscmcarea").val();
+      var destinationsiteid = $("#txtDestinationSiteId").val();
+      var destinationporttype = $("#txtDestinationPortType").val();
+      var noofcores = $("#txtNumberOfCores").val();
+      var projectid = $("#txtProjectId").val();
 
 
     $.ajax({
@@ -100,10 +128,13 @@
             site_owner: siteowner,
             maximum_cost: maximumcost,
             location_address: address,
-            ds_cmc_area: scmcarea
+            ds_cmc_area: scmcarea,
+            destination_site_id: destinationsiteid,
+            destination_port_type: destinationporttype,
+            no_of_cores: noofcores,
+            project_id: projectid
         },
         success: function (response) {
-            debugger;
             if (response.success) {
                 alert("Project updated successfully!");
                 $('#myModal').modal('hide'); // close modal using jQuery

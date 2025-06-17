@@ -22,7 +22,8 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1640,6 +1641,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\17-06-2025.sql" />
     <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
     <Content Include="MigrationScripts\04-06-2025.sql" />
     <Content Include="MigrationScripts\23-05-2025.sql" />
@@ -3004,6 +3006,7 @@
     <Folder Include="Content\UploadedFiles\Buildings\" />
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
+    <Folder Include="Content\UploadedFiles\Site\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />

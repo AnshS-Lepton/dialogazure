@@ -56,7 +56,11 @@
   grid.Column("comment", "Comment"),
    grid.Column("maximum_cost", "Maximum Cost"),
  grid.Column("location_address", "Address"),
- grid.Column("ds_cmc_area", "Ds CMC Area")
+ grid.Column("ds_cmc_area", "Ds CMC Area"),
+ grid.Column("destination_site_id", "Destination Site Id"),
+ grid.Column("destination_port_type", "Destination Port Type"),
+ grid.Column("no_of_cores", "No Of Cores"),
+ grid.Column("project_id", "Project Id")
 )
 )
     }
@@ -73,7 +77,6 @@
 
 <script>
     $(document).ready(function () {
-        debugger;
         var siteIdExists = false;
 
         $('.siteIdValue').each(function () {
@@ -101,7 +104,6 @@
         showConfirm('Are you sure to delete project?', function () {
             ajaxReq('Library/DeleteProject', { id: id, }, true, function (resp) {
                 //if (resp.status == "OK") {
-                debugger
                 //ajaxReq('Library/GetSiteProjectDetail', {
                 //    site_id: id
                 //}, true, function (resp) {

@@ -3,6 +3,7 @@ using Models;
 using Models.Admin;
 using Models.API;
 using Models.WFM;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1106,7 +1107,12 @@ namespace DataAccess.Admin
                         existingRecord.fiber_link_type = pod.fiber_link_type;
                         existingRecord.fiber_link_code = pod.fiber_link_code;
                         existingRecord.is_site_imported = true;
-
+                        //// newly added fields
+                        //existingRecord.destination_site_id = pod.destination_site_id;
+                        //existingRecord.destination_port_type = pod.destination_port_type;
+                        //existingRecord.no_of_cores = pod.no_of_cores;
+                        //existingRecord.project_id_dialog = pod.project_id_dialog;
+                       
                         // Update in DB
                         repo.Update(existingRecord);
 
@@ -1122,6 +1128,34 @@ namespace DataAccess.Admin
             }
 
             return updatedRecords;
+        }
+
+        public PODMaster UpdateSiteProjectAdditionDetails(PODMaster PODMaster)
+        {
+            try
+            {
+
+                // Check if the record exists
+                var existingSite = repo.GetAll().FirstOrDefault(x => x.destination_site_id == PODMaster.destination_site_id);
+
+                if (existingSite != null)
+                {
+                    existingSite.destination_site_id = PODMaster.destination_site_id;
+                    existingSite.destination_port_type = PODMaster.destination_port_type;
+                    existingSite.no_of_cores = PODMaster.no_of_cores;
+                    existingSite.project_id = PODMaster.project_id;
+
+                    repo.Update(existingSite); // Ensure this commits changes properly
+                }
+
+                return existingSite;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("UpdateSiteProjectAdditionDetails()", "Library Controller", ex.Message.ToString(), ex);
+                throw;
+            }
         }
 
 
@@ -1213,29 +1247,35 @@ namespace DataAccess.Admin
             var sitenameList = repo.GetAll().Where(x => x.id == id).FirstOrDefault();
             return sitenameList;
         }
-        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
+        public List<siteprojectdetails> GetProjectSiteDetailsById(int id)
         {
             try
             {
-                // Check if the record exists
-                var existingRecord = repo.GetAll().FirstOrDefault(x => x.id == siteprojectdetails.id);
+                return repo.ExecuteProcedure<siteprojectdetails>("get_site_project_detailsbyId", new { p_site_id = id }, true);
+            }
+            catch { throw; }
+        }
+        public DbMessage UpdateSiteProject(siteprojectdetails siteprojectdetails, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("update_site_project_detail", new { p_id = siteprojectdetails.id, p_userId = userId,
+                    p_site_name = siteprojectdetails.site_name,
+                p_project_category = siteprojectdetails.project_category,
+                    p_cable_plan_cores = siteprojectdetails.cable_plan_cores,
+                    p_comment = siteprojectdetails.comment,
+                    p_site_owner = siteprojectdetails.site_owner,
+                    p_maximum_cost = siteprojectdetails.maximum_cost,
+                    p_location_address = siteprojectdetails.location_address,
+                    p_ds_cmc_area = siteprojectdetails.ds_cmc_area,
+                    p_destination_site_id = siteprojectdetails.destination_site_id,
+                    p_destination_port_type = siteprojectdetails.destination_port_type,
+                    p_no_of_cores = siteprojectdetails.no_of_cores,
+                    p_project_id = siteprojectdetails.project_id,
+                    site_id = siteprojectdetails.site_id
 
-                if (existingRecord != null)
-                {
-                    // Update fields
-                    existingRecord.site_name = siteprojectdetails.site_name;
-                    existingRecord.project_category = siteprojectdetails.project_category;
-                    existingRecord.cable_plan_cores = siteprojectdetails.cable_plan_cores;
-                    existingRecord.comment = siteprojectdetails.comment;
-                    existingRecord.site_owner = siteprojectdetails.site_owner;
-                    existingRecord.maximum_cost = siteprojectdetails.maximum_cost;
-                    existingRecord.location_address = siteprojectdetails.location_address;
-                    existingRecord.ds_cmc_area = siteprojectdetails.ds_cmc_area;
+                }).FirstOrDefault();
 
-                    repo.Update(existingRecord); // Ensure this commits changes properly
-                }
-
-                return existingRecord;
             }
             catch (Exception ex)
             {
@@ -1244,6 +1284,8 @@ namespace DataAccess.Admin
                 throw;
             }
         }
+
+        
 
         public DbMessage DeleteProjectById(int id, int userId)
         {
