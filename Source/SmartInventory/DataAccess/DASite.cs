@@ -170,6 +170,53 @@ namespace DataAccess
             }
             catch (Exception ex) { throw ex; }
         }
+
+        
+             public List<NearestSiteDetails> getUpdateSiteFiberDistance( string linestring, int nearestsite_system_id,int system_id, double nearestsiteDistance)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<NearestSiteDetails>("fn_get_update_site_fiber_details",
+                    new
+                    {
+                        linestring = linestring,
+                        nearestsite_system_id = nearestsite_system_id,
+                        p_system_id = system_id,
+                        nearestsite_distance = nearestsiteDistance
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public List<NearestSiteDetails> getNearestSitelistData(int system_id, string network_id, int buffer)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<NearestSiteDetails>("fn_get_nearest_site_records",
+                    new
+                    {
+                        p_system_id = system_id,
+                        p_network_id = network_id,
+                        v_buffer = buffer,
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        public List<NearestSiteDetails> GetSitelistData(int systemId)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<NearestSiteDetails>("fn_get_site_list",
+                    new
+                    {
+                        p_system_id = systemId
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
         public List<ExportReportKML> GetExportReportDataKML(ExportReportFilter objReportFilter)
         {
             try
