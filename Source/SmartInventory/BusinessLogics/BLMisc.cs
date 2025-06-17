@@ -28,6 +28,10 @@ namespace BusinessLogics
         {
             return new DAMisc().GetMicroWaveLinkAssociatedElements(systemId);
         }
+        public string Getnetworkid(string systemid)
+        {
+            return new FMSDAMisce().Getnetworkid(Convert.ToInt32(systemid)).ToString();
+        }
         public List<ViewEntityNotifications> GetEntityNotificationList(EntityNotificationsFilter objEntityNotiFilter)
         {
             return new DAMiscNoti().GetEntityNotificationList(objEntityNotiFilter);

@@ -977,6 +977,10 @@ namespace Models
         public string destination_tube_name { get; set; }
         public int fms_id { get; set; }
         public int? splitter_id { get; set; }
+        public string client_id { get; set; }
+        public string client_link_id { get; set; }
+        public string client_core_id { get; set; }
+        public double? otdr_length { get; set; }
 
     }
     public class connectionInfoPath
