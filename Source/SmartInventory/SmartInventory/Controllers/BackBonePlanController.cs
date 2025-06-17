@@ -143,8 +143,8 @@ namespace SmartInventory.Controllers
             JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
             var siteLst = new BLPlan().GetNearestSiteList(geom, buffer);
             var filterSiteLst = siteLst.sites.Where(s =>
-              (string.IsNullOrEmpty(startPointNetworkId) || s.common_name != startPointNetworkId) &&
-              (string.IsNullOrEmpty(endPointNetworkId) || s.common_name != endPointNetworkId));
+              (string.IsNullOrEmpty(startPointNetworkId) || s.network_id != startPointNetworkId) &&
+              (string.IsNullOrEmpty(endPointNetworkId) || s.network_id != endPointNetworkId));
             siteLst.sites = filterSiteLst.ToList();
             objResp.result = siteLst;
             objResp.status = ResponseStatus.OK.ToString();
@@ -216,5 +216,52 @@ namespace SmartInventory.Controllers
             objResp.status = ResponseStatus.OK.ToString();
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult SaveLoop(List<BackbonePlanNetworkDetails> model)
+        {
+            new BLPlan().UpdateBackBoneLoopLength(model);
+            return PartialView("_LoopManage", model);
+        }
+        public PartialViewResult GetLoopManage(int planid, double looplength, bool is_loop_updated)
+        {
+            List<BackbonePlanNetworkDetails> list = new BLPlan().GetBackBoneLoopList(planid, looplength);
+
+            if (!is_loop_updated)
+            {
+                list.ForEach(x => x.loop_length = looplength);
+            }
+            return PartialView("_LoopManage", list);
+        }
+        public JsonResult getLoopLength(int plan_id)
+        {
+            BackBonePlanning model = new BackBonePlanning();
+            model.temp_plan_id = plan_id;
+            model.is_loop_update = true;
+            JsonResponse<BackBoneBOMOBOQResponse> objResp = new JsonResponse<BackBoneBOMOBOQResponse>();
+            try
+            {
+                var usrDetail = (User)Session["userDetail"];
+                if (usrDetail != null)
+                {
+                    int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                    if (user_id != 0)
+                    {
+                        objResp.result = new BLPlan().BackBonePlanBom(model, user_id).FirstOrDefault();
+                    }
+                    objResp.status = ResponseStatus.OK.ToString();
+                }
+                else
+                {
+                    objResp.status = ResponseStatus.FAILED.ToString();
+                    objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_145;
+                }
+            }
+            catch (Exception ex)
+            {
+                objResp.status = ResponseStatus.ERROR.ToString();
+                objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_146;
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

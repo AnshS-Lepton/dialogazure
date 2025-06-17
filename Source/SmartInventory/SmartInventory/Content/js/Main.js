@@ -9148,20 +9148,22 @@ var Main = function () {
     }
 
     this.SetAutoNetworkFilters = function () {
+        if (app.autobackboneplanid == '0' || app.autobackboneplanid == undefined) {
         app.filterAutoNetworkValue = "1 = 1";
 
         if (app.autoplanid != '0' && app.autoplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
         }
-
+        }
     }
     this.SetAutoBackBoneNetworkFilters = function () {
+        if (app.autoplanid == '0' || app.autoplanid == undefined) {
         app.filterAutoNetworkValue = "1 = 1";
 
         if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
         }
-
+        }
     }
 
     this.getcablecategoryfilters = function () {
@@ -21582,6 +21584,7 @@ var Main = function () {
         if ($("#dvAutoBackBonePlanData").is(":visible")) {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
         } 
+        app.autobackboneplanid = 0;
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();
@@ -21623,7 +21626,8 @@ var Main = function () {
         $("#divBackBonePlanTool").hide();
         if ($("#dvAutoPlanData").is(":visible")) {
             $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
-        } 
+        }
+        app.autoplanid = 0;
         if ($("#dvAutoBackBonePlanData").css('display') == 'none') {
             if (typeof backbonedata != "undefined") {
                 backbonedata.hideAllNetworkFile();
@@ -32910,14 +32914,14 @@ var Main = function () {
             si.distanceWidget.set("map", null);
             si.distanceWidget = null;
         }
-        if (si.fadeMap) {
-            si.fadeMap.setMap(null);
-        }
+        //if (si.fadeMap) {
+        //    si.fadeMap.setMap(null);
+        //}
         if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
         if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
 
-        //app.NetworkStartPoint = null;
-        //app.startLatLng = null;
+        app.NetworkStartPoint = null;
+        app.startLatLng = null;
         app.endLatLng = null;
         app.NetworkEndPoint = null;
 

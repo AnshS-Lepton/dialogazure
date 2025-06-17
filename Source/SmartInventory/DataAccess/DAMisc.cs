@@ -2698,7 +2698,9 @@ namespace DataAccess
                         v_buffer = plan.buffer,
                         START_SITE_NETWORK_ID = plan.startpoint_network_id,
                         END_SITE_NETWORK_ID = plan.endpoint_network_id,
-                        p_threshold = plan.threshold
+                        p_threshold = plan.threshold,
+                        p_looplength = plan.loop_length,
+                        p_is_looprequired = plan.is_loop_required
                     }, true).ToList();
                 return res;
             }
@@ -2767,6 +2769,47 @@ namespace DataAccess
                 },true);
             }
             catch { throw; }
+        }
+
+    }
+    public class DABackBonePlan : Repository<BackbonePlanNetworkDetails>
+    {
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id,double loopLength)
+        {
+            try
+            {
+                return repo.GetAll(x => x.plan_id == plan_id && x.loop_length == loopLength).OrderBy(x => x.system_id).ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void UpdateLoopLengthByBackBonePlanId(int planId, double looplength)
+        {
+            try
+            {
+                var allPointByPlan_idList = repo.GetAll(x => x.plan_id == planId).OrderBy(x => x.system_id).ToList();
+                allPointByPlan_idList.ForEach(x => x.loop_length = looplength);
+                repo.Update(allPointByPlan_idList);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void UpdateBackBoneLoopLength(List<BackbonePlanNetworkDetails> model)
+        {
+            try
+            {
+                repo.Update(model);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }

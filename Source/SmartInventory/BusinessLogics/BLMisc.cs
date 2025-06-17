@@ -1088,7 +1088,7 @@ namespace BusinessLogics
         public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id)
         {
             return new DAtemp_auto_network_plan().GetTempNetwork(temp_plan_id);
-        }
+        } 
 
         public void UpdateLoopLengthByPlanId(int temp_plan_id, double looplength)
         {
@@ -1247,9 +1247,9 @@ namespace BusinessLogics
         {
              new DAPlan().updateSiteLineGeometry(lineGeom, systemId, cableLength, threshold, planId);
         }
-        public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int systemId)
+        public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int userId)
         {
-             return new DAPlan().BackBonePlanBom(model, systemId);
+             return new DAPlan().BackBonePlanBom(model, userId);
         }
         public List<BackBonePlanBom> GetBackBonePlanBomByPlanId(int plan_id, int user_id)
         {
@@ -1264,6 +1264,16 @@ namespace BusinessLogics
         {
              return new DAPlan().GetBackboneFiberTypeDropDownList();
         }
+
+        public void UpdateBackBoneLoopLength(List<BackbonePlanNetworkDetails> model)
+        {
+            new DABackBonePlan().UpdateBackBoneLoopLength(model);
+        }
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, double loopLength)
+        {
+            return new DABackBonePlan().GetBackBoneLoopList(plan_id, loopLength);
+        }
+
     }
     public class BLSiteCircle
     {

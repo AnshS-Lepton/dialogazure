@@ -53,13 +53,6 @@ namespace Models
         public string layer_id { get; set; }
         [NotMapped]
         public int temp_plan_id { get; set; }
-
-        [NotMapped]
-        public bool is_offset_required { get; set; }
-        [NotMapped]
-        public bool offset_position { get; set; }
-        [NotMapped]
-        public double? offset_value { get; set; }
         public bool is_loop_required { get; set; }
         public double loop_length { get; set; }
         [NotMapped]
@@ -104,8 +97,8 @@ namespace Models
     }
     public class SitePlanList
     {
-        public string common_name { get; set; }
-        public string display_name { get; set; }
+        public string site_name { get; set; }
+        public string network_id { get; set; }
         public string geometry { get; set; }
         public string network_status { get; set; }
     }
@@ -182,5 +175,29 @@ namespace Models
         public double service_cost_per_unit { get; set; }
         public double amount { get; set; }
     }
+
+    public class BackbonePlanNetworkDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int system_id { get; set; }
+        public int plan_id { get; set; }
+        public string entity_type { get; set; }
+        public string entity_network_id { get; set; }
+        public double longitude { get; set; }
+        public double latitude { get; set; }
+        public int created_by { get; set; }
+        public int cable_id { get; set; }
+        public int? entity_system_id { get; set; }
+        public string cable_network_id { get; set; }
+        public int duct_id { get; set; }
+        public int trench_id { get; set; }
+        public string trench_network_id { get; set; }
+        public string duct_network_id { get; set; }
+        public string fiber_type { get; set; }
+        public double loop_length { get; set; }
+        public bool is_loop_required { get; set; }
+    }
+
 
 }

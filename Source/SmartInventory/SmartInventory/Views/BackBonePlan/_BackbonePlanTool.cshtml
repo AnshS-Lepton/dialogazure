@@ -93,8 +93,8 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                                 <thead>
                                                     <tr>
                                                         <th><input type="checkbox" id="selectAll"></th>
+                                                        <th>Site ID</th>
                                                         <th>Network ID</th>
-                                                        <th>Name</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -129,7 +129,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
-                                        Manhole Span(mtr)  <i class="clsMandatory">*</i>:
+                                        Manhole Span(m)  <i class="clsMandatory">*</i>:
                                     </label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.manhole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
@@ -137,7 +137,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
-                                        Pole @Resources.Resources.SI_OSP_GBL_GBL_FRM_156 <i class="clsMandatory">*</i>:
+                                        Pole Span(m) <i class="clsMandatory">*</i>:
                                     </label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.pole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
@@ -150,16 +150,31 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Route Length <i class="clsMandatory">*</i>:</label>
+                                    <label class="control-label col-md-5">Route Length :</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.cable_length, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
+                                        @Html.TextBoxFor(m => m.cable_length, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-12" id="lengthAutoPlaningDiv"></label>
+                                    <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_161:</label>
+                                    <div class="col-md-7">
+                                        <div class="splicing--Box-check">
+                                            @Html.RadioButtonFor(m => m.is_loop_required, true, new { @id = "is_loop_requiredYes", @onclick = "backbonedata.CheckLoopRequired(this);" })
+                                            <label for="is_loop_requiredYes">Yes</label>
+
+                                            @Html.RadioButtonFor(m => m.is_loop_required, false, new { @id = "is_loop_requiredNo", @onclick = "backbonedata.CheckLoopRequired(this);" })
+                                            <label for="is_loop_requiredNo">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="DvloopLength" class="form-group input-Bton" style="display:none">
+                                    <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_162:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return backbonedata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-default" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
-                                <button type="submit" class="btn btn-default" id="btnApply">Apply</button>
+                                <button type="submit" class="btn btn-default" id="btnApply"  onclick="return backbonedata.loopValidation()" >Apply</button>
                                 <input type="button" class="btn btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
                                        value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
                                 <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
@@ -196,7 +211,9 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
             if ($('#BomBoqDetails').html() != "")
             {
                 $("#BomBoqDetails").html("");
-                $("#btnProcessPlan").attr("disabled", true);             
+                $("#btnProcessPlan").attr("disabled", true);   
+                $("#ManageLoop").attr("disabled", true);
+                backbonedata.CheckLoopRequired();
             }
         });
     });
