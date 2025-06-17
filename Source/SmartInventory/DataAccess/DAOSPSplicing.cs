@@ -218,14 +218,6 @@ namespace DataAccess
 
                 return repo.ExecuteProcedure<connectionInfoCable>("fn_get_fms_connection_report", new
                 {
-                    //p_region = reg,
-                    //p_province= pro,
-                    //p_layerColumns = scol,
-                    //p_txtSearchText = stext,
-                    //p_layerDurationBasedColumns = dbcol,
-                    //p_customedate = objExportEntitiesReport.objReportFilters.customDate.ToString(),
-                    //p_txtDateFrom = objExportEntitiesReport.objReportFilters.fromDate,
-                    //p_txtDateTo = objExportEntitiesReport.objReportFilters.toDate,
                     p_networkstatues = objExportEntitiesReport.SelectedNetworkStatues,
                     p_provinceids = objExportEntitiesReport.SelectedProvinceIds,
                     p_regionids = objExportEntitiesReport.SelectedRegionIds,

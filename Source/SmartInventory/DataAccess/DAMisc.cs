@@ -2374,6 +2374,18 @@ namespace DataAccess
             catch { throw; }
         }
     }
+    public class FMSDAMisce : Repository<FMSMaster>
+    {
+        public string Getnetworkid(int system_id)
+        {
+            try
+            {
+                var objExisiting = repo.GetById(m => m.system_id == system_id).network_id;
+                return objExisiting;
+            }
+            catch { throw; }
+        }
+    }
     public class DAFormInputSettings : Repository<FormInputSettings>
     {
         public List<FormInputSettings> getformInputSettings()

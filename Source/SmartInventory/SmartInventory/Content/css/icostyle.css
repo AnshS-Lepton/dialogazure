@@ -842,7 +842,7 @@
 .icon-site_report:before {
     content: "\e9c9";
 }
-.icon-FMS-Splicing:before {
+.icon-FMS-Splicing:before, .icon-FiberAllocationReport:before {
     content: "\e9ca";
 }
 .icon-topology:before {

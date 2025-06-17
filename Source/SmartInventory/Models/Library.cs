@@ -3100,7 +3100,8 @@ namespace Models
         public int customDate { get; set; }
         public string DurationBasedColumnName { get; set; }
         public double radius { get; set; }
-
+        public bool IsISP { get; set; }
+        public string fileType { get; set; }
     }
 
 

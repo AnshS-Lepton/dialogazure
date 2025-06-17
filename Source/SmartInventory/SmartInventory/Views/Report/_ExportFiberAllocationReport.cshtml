@@ -14,7 +14,7 @@
 
 }
 <style>
-   
+
     .btn {
         font-weight: bold !important;
         line-height: 1.42857143 !important;
@@ -34,13 +34,15 @@
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)
         @Html.HiddenFor(m => m.objReportFilters.radius)
+        @Html.HiddenFor(m => m.objReportFilters.fileType, new { id = "hdnfileType" })
         @Html.HiddenFor(m => m.objReportFilters.layerName, new { id = "hdnLayerName" })
 
         <input type="hidden" id="hdnApproveCount" value="0">
         <div class="libTabContent">
             <div id="dvPageMessage">
-                @if(Model.pageMsg!=null){
-                {Html.RenderPartial("_PageMessage", Model.pageMsg);}
+                @if (Model.pageMsg != null)
+                {
+                    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
                 }
             </div>
             <!-- Tab panes -->
@@ -126,12 +128,14 @@
             </div>
         </div>
         <div class="ModalFooter d-flex pos-rel" id="dvBtnAction">
-            <button type="submit" class="btn btn-success ml-auto" id="btnShowReportData">Generate</button>
-            <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009" class="btn btn-default ml-10" />
+            @*<button type="submit" class="btn btn-success ml-auto" style="float:right;" id="btnDownloadReportPdf">Generate Graphical View</button>*@
+            <button type="submit" class="btn btn-success ml-10" id="btnShowReportData">Generate</button>
+
+            <input type="button" id="btnEntityExportClear" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009"  class="btn btn-default ml-10" />
         </div>
         @*<div id="divNoRecordFound" class="nr-found filtersBg">
-            Use the above filers to export Fiber Allocation report!
-        </div>*@
+                Use the above filers to export Fiber Allocation report!
+            </div>*@
 
     }
 
@@ -140,11 +144,18 @@
     $('.chosen-select').chosen({ placeholder_text_multiple: '-Select-', width: '100%' });
     $(document).ready(function () {
         $('#hdnLayerName').val('FMS');
+
         if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
 
             $('#imgFromDate').hide();
             $('#imgToDate').hide();
         }
+        //if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() != "") {
+        //    $("#ddlProvinces").attr("readonly", true).trigger("chosen:updated"); $("#ddlRegions").attr("readonly", true).trigger("chosen:updated"); $("#txtSearchText").attr("readonly", true);
+        //    $("#ddlLayerColumns").attr("readonly", true).trigger("chosen:updated");;
+        //    $("#ddlLayerDurationBasedColumns").attr("readonly", true).trigger("chosen:updated");; $("#SelectedNetworkStatus").attr("readonly", true).trigger("chosen:updated");;
+        //    $("#customedate").attr("readonly", true).trigger("chosen:updated"); $("#txtDateFrom").attr("readonly", true);
+        //}
 
         var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
         $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
@@ -161,7 +172,7 @@
 
         $("#btnShowReportData").on("click", function () {
             debugger;
-
+            $('#hdnfileType').val('Excel');
             if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() == "") {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
                 return false;
@@ -175,6 +186,46 @@
                 return false;
             }
             else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "" ) {
+                alert("Please Select Duration!");
+                return false;
+            }
+            else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+                return false;
+            }
+
+            else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+                return false;
+            }
+
+            else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+                var startDate = new Date($('#txtDateFrom').val());
+                var endDate = new Date($('#txtDateTo').val());
+                var configuredDay = 365;
+                return si.GetDaysDifference(startDate, endDate, configuredDay);
+            }
+            else {
+                si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
+            }
+        });
+
+        $("#btnDownloadReportPdf").on("click", function () {
+            debugger;
+            $('#hdnfileType').val('PDF');
+            if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
+                return false;
+            }
+            else if ($('#ddlLayerColumns option:selected').text() == '-Select-' && $('#txtSearchText').val() != "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
+                return false;
+            }
+            else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "") {
+                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+                return false;
+            }
+            else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "") {
                 alert("Please Select Duration!");
                 return false;
             }
