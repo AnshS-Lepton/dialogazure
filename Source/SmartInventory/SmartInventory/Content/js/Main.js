@@ -9246,6 +9246,36 @@ var Main = function () {
         }
     }
 
+    this.SetSiteFilters = function () {
+
+        app.filterPODvalue = "";
+        app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
+        app.secondary_pod_system_id = $("#ddlSecondaryPOD").val();
+        app.pod_system_id = $("#ddlPrimaryPOD").val();
+
+        if (app.pod_system_id != "" && app.pod_system_id != undefined) {
+            if (app.filterPODvalue == "") {
+                app.filterPODvalue += " ([system_id] in (" + app.pod_system_id + "))";
+            }
+
+        }
+
+        //if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
+        //    app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
+        //}
+        //if (app.secondary_pod_system_id != "" && app.secondary_pod_system_id != undefined) {
+        //    if (app.filterPODvalue == "") {
+        //        app.filterPODvalue += " ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //    else {
+        //        app.filterPODvalue += " and ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //}
+
+        if (app.filterPODvalue == "") {
+            app.filterPODvalue = "1 = 1";
+        }
+    }
     this.SetPODFilters = function () {
 
         app.filterPODvalue = "";

@@ -256,7 +256,11 @@
             ajaxReqforFileUpload('Report/UploadSiteFiles', formData, true, function (result) {
                 if (result.success) {
                     alert(result.message);
+
                     $("#updExcel").val("");
+                    popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
+                        eType: ''
+                    }, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
                 } else {
                     alert("Import failed: " + (result.message || "Unknown error"));
                 }
@@ -285,5 +289,6 @@
         $("#downloadTemplate").on("click", function () {
             window.location.href = '/Report/DownloadTemplate';
         });
+
     });
 </script>

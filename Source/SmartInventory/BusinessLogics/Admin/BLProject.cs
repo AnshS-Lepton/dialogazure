@@ -329,9 +329,19 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().GetProjectDetailsById(id);
         }
-        public siteprojectdetails UpdateSiteProject(siteprojectdetails siteprojectdetails)
+
+        public List<siteprojectdetails> GetProjectsuteDetailsById(int id)
         {
-            return new DAProjectDetails().UpdateSiteProject(siteprojectdetails);
+            return new DAProjectDetails().GetProjectSiteDetailsById(id);
+        }
+
+        public DbMessage UpdateSiteProject(siteprojectdetails siteprojectdetails, int userId)
+        {
+            return new DAProjectDetails().UpdateSiteProject(siteprojectdetails, userId);
+        }
+        public PODMaster UpdateSiteProjectAdditionDetails(PODMaster PODMaster)
+        {
+            return new DASiteDetails().UpdateSiteProjectAdditionDetails(PODMaster);
         }
         public DbMessage DeleteProjectById(int ticket_id, int userId)
         {

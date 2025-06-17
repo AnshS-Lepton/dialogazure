@@ -115,6 +115,7 @@ $(document).ready(function () {
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
         /* rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="icon-topology"></i></a>';*/
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><span class="icon-topology"></span></a>';
+        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataSync" title= "' + 'Update Service' + '"><span class="fa fa-refresh"></span></a>';
 
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
     });
@@ -134,6 +135,17 @@ $(document).ready(function () {
     $('.rowShowTopology').on("click", function () {
         var systemId = $(this).attr('data-value');
         si.SiteReport.SiteTopology(null, systemId, null, this);
+
+    });
+    $('.rowDataSync').on("click", function () {
+
+        var input = $(this).attr('data-value');
+      
+        ajaxReq('Report/updateSiteDataservice', { systemId: input }, true, function (data) {
+
+           
+            
+        }, false, false);
 
     });
 

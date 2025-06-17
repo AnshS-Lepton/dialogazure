@@ -1,5 +1,6 @@
 ﻿using BusinessLogics;
 using BusinessLogics.Admin;
+using BusinessLogics.DaFiFeasibilityAPI;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -13,6 +14,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NetTopologySuite.Noding;
 using Newtonsoft.Json;
+using Npgsql;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
@@ -25,6 +27,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -13289,6 +13292,87 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+
+        [HttpPost]
+        public JsonResult updateSiteDataservice(int systemId)
+        {
+           
+            try
+            {
+                systemId = 20164;// fixed for test
+                string mapkey = ConfigurationManager.AppSettings["MapKey"];
+                List<NearestSiteDetails> siteList = new List<NearestSiteDetails>();
+                siteList = new BLSite().GetSitelistData(systemId);
+                var nearestSiteList = new List<NearestSiteDetails>();
+                foreach (var site in siteList)
+                {
+                    nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, 100);
+                    if (nearestSiteList != null && nearestSiteList.Count > 0)
+                    {
+                        int index = 0;
+                        foreach (var nearestSite in nearestSiteList)
+                        {
+                            var lst = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSite.site_geometry, mapkey);
+
+
+                            try
+                            {
+                                if (lst.Result.LengthInMeters <= 1)
+                                {
+                                    string[] startGeomParts = site.sp_geometry.Split(' ');
+                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+
+                                    string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
+                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                    nearestSiteList[index].line_geometry = lineGeom;
+                                }
+                                else
+                                {
+                                    var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(lst.Result.GeoJson);
+                                    string lineGeom = string.Empty;
+                                    string[] startGeomParts = site.sp_geometry.Split(' ');
+                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+                                    lineGeom = startGeomParts[1] + " " + startGeomParts[0] + ",";
+                                    foreach (var cordinates in newbuilt.coordinates)
+                                    {
+                                        lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+                                    }
+                                    lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
+                                    lineGeom = lineGeom.TrimEnd(',');
+                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                    nearestSiteList[index].line_geometry = lineGeom;
+                                }
+                                index++;
+                            }
+                            catch (Exception ex)
+                            {
+                                nearestSiteList[index].google_site_distance = 0;
+                                nearestSiteList[index].line_geometry = string.Empty;
+                            }
+                        }
+                    }
+                    // Here you can save the updated nearestSiteList to the database or perform further processing
+                    if (nearestSiteList != null && nearestSiteList.Count > 0)
+                    {
+                        var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
+
+                        new BLSite().getUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance);
+                    }
+                }
+
+
+                return Json(new { success = true, message = "Updated successfully !" });
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("updateSiteDataservice()", "Report", ex);
+
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+   
         #endregion
 
         #region Site Awarding process 
@@ -14535,9 +14619,8 @@ namespace SmartInventory.Controllers
                 site_id = row["Site ID"]?.ToString()?.Trim(),
                 site_name = row["Site Name"]?.ToString()?.Trim(),
 
-                maximum_cost = int.TryParse(row["Maximum Cost"]?.ToString(), out var maxCost) ? maxCost : (int?)null,
                 project_category = row["Project Category"]?.ToString()?.Trim(),
-                priority = int.TryParse(row["Priority"]?.ToString(), out var Priority) ? maxCost : (int?)null,
+                priority = int.TryParse(row["Priority"]?.ToString(), out var Priority) ? Priority : (int?)null,
 
 
                 cable_plan_cores = row["Cable Plan(Cores)"]?.ToString()?.Trim(),
