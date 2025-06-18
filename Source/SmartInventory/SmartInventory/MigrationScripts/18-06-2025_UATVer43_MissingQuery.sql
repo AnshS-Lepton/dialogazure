@@ -307,6 +307,59 @@ $BODY$;
 ALTER FUNCTION public.fn_get_nearest_site_records(integer, character varying, integer)
     OWNER TO postgres;
 
+    ------------------------------------------------------function for the backbone planning---------------------------------
+
+    CREATE OR REPLACE FUNCTION public.fn_get_backbone_planning_network(p_plan_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+ DECLARE
+ lyrtitle record;
+ v_entity_name character varying;
+ v_new_entity_name character varying;
+ sql text='';
+ v_region_ids character varying='';
+ v_province_ids character varying='';
+ v_sub_sql text='';
+ v_layer_id text;
+BEGIN
+SELECT string_agg(layer_id::text, ',') into v_layer_id
+FROM layer_details 
+WHERE upper(layer_name) IN ('POLE', 'MANHOLE', 'CABLE', 'SPLICECLOSURE','POD');
+        FOR lyrtitle IN select distinct layer_title,layer_table,layer_name,geom_type from layer_details 
+        where is_auto_plan_end_point=true or upper(layer_name) in (upper('cable'),upper('manhole'),upper('pole'))
+LOOP
+            v_entity_name:=lower(lyrtitle.layer_name)||'_name';
+            
+            select coalesce((SELECT column_name into v_new_entity_name FROM information_schema.columns
+            WHERE table_name=lyrtitle.layer_table and column_name in('name',v_entity_name)),'Null');
+IF EXISTS         (SELECT 1  FROM information_schema.columns WHERE table_name=lyrtitle.layer_table and column_name ='source_ref_id')THEN
+BEGIN
+ IF(sql!='')THEN
+ sql:=sql||' UNION ';
+ END IF; 
+            --execute 'insert into temp_nwt_entity_detalis
+            sql:=sql||'Select lv.region_id,lv.province_id  from '||lyrtitle.layer_table||' as lv 
+             where lv.source_ref_id='||p_plan_id||'::character varying and Upper(source_ref_type)=''BACKBONE PLANNING''';
+ END;
+ END IF    ;        
+END LOOP;
+ 
+ v_sub_sql:= 'select array_to_string(array_agg(row.region_id), '','')as region_id ,array_to_string(array_agg(row.province_id), '','')as province_id from('||sql||') row';
+Execute v_sub_sql into v_region_ids,v_province_ids;
+RAISE INFO ' v_sub_sql =%', v_region_ids;
+v_sub_sql:='select '||v_region_ids||' as  region_ids, '||v_province_ids||' as province_ids, '|| quote_literal(v_layer_id)||' as layer_id ,* from backbone_plan_details where plan_id='||p_plan_id;
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||v_sub_sql||') row';
+END ;
+$function$
+;
+-- Permissions
+ALTER FUNCTION public.fn_get_backbone_planning_network(int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_get_backbone_planning_network(int4) TO public;
+GRANT ALL ON FUNCTION public.fn_get_backbone_planning_network(int4) TO postgres;
+
+
     ------------------------------------------- Modify function to get FMS connection report data --------------------------------
 
  DROP FUNCTION IF EXISTS public.fn_get_fms_connection_report(character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer, integer, character varying, character varying, character varying, character varying, double precision, integer);
@@ -677,6 +730,7 @@ from cpf_temp_result order by id) x) as lstConnectionInfo
 )result ;
 END; 
 $BODY$;
+
 
 
 -------------------------------------------Select query to sync layer columns--------------------------------
