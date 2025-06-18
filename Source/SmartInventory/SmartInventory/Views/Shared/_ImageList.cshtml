@@ -8,11 +8,99 @@
     <input type="hidden" id="hdnEntityType" value="@entityType" />
 
 }
+<style>
+    .imageBox {
+        height: 261px;
+        overflow: auto;
+        visibility: visible;
+        width: 100%;
+        float: left;
+    }
+
+        .imageBox .panel {
+            margin-bottom: 5px;
+        }
+
+        .imageBox .panel-body {
+            padding: 0;
+        }
+
+        .imageBox .panel-title {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .imageBox .panel-heading {
+            padding: 8px 12px;
+        }
+
+        .imageBox .docs-main-div {
+            width: 100%;
+            background-color: transparent;
+            border:none;
+            min-height: 40px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+        .imageBox .docs-main-div:not(:last-child){
+            border-bottom: solid 1px #e9e9e9;
+        }
+        .imageBox .docs-main-div:first-child{
+            border-top: solid 1px #e9e9e9;
+        }
+
+        .imageBox .docs-main-div .img-div {
+            width: 19%;
+            border-right: solid 1px #d9dcdf;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .imageBox .panel-default > .panel-heading {
+            color: #333;
+            background-color: #fbfbfb;
+            border-color: transparent;
+        }
+
+        .imageBox .contentList {
+            flex-direction: column;
+            padding: 0.5rem 0.7rem;
+            width: calc(100% - 36px);
+        }
+        .imageBox .content-div {
+            display: flex;
+            width: 100%;
+        }
+
+        .imageBox .content-div .contentlbl {
+            align-self: flex-start;
+        }
+
+        .imageBox .content-div .doc-lists {
+            padding: 1px 5px;
+        }
+
+        .imageBox .content-div .icons {
+            padding: 6px;
+            text-align: center;
+            background: #ededed;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .imageBox .content-div .icons:hover {
+            background-color: #ddd;
+        }
+</style>
+
 @if (Model != null && Model.Count > 0)
 {
     string sysHref = "Main/DownloadFilesAll?system_Id=" + @Model[0].EntitySystemId + "&entity_type=" + @Model[0].EntityType + "&DocumentType=Image";
     <div>
-        <div class="col-sm-12 UploadAction" style="padding: 0px 10px 5px; border-bottom: solid 1px #ccc;">
+        <div class="d-flex mb-01">
             @*<div class="col-sm-9" id="divImageUpload" style="padding: 0px;">
                     <input type="checkbox" class="checkbox-custom img_doc_parentcheck" id="checkAll11"><b>
                         <label for="checkAll11" class="checkbox-custom-label" style="font-weight: bold;"> Select All</label>
@@ -29,74 +117,74 @@
                     </a>
                 </div>*@
             @*<div class="col-sm-1 icon-Delete cptr" id="divDeleteImages" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">*@
-            <a href="@sysHref" style="cursor: pointer;"> @Resources.Resources.SI_GBL_GBL_JQ_FRM_038 </a>
-            <label class="pull-right">@Resources.Resources.SI_OSP_GBL_NET_FRM_188: @Model.Count()</label>
+            <strong><a href="@sysHref"> @Resources.Resources.SI_GBL_GBL_JQ_FRM_038 </a></strong>
+            <strong class="ml-auto">@Resources.Resources.SI_OSP_GBL_NET_FRM_188: @Model.Count()</strong>
         </div>
-        <div class="ImagesContainer" style="height: 261px; margin-bottom: 10px; overflow: auto; visibility: visible; float: left;">
-
-            <div style="">
-                <div id='ImgHolderdiv'>
-                    @if (Model != null && Model.Any())
+        <div class="ImagesContainer imageBox">
+            <div id='ImgHolderdiv'>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var group in Model.GroupBy(x => x.entity_feature_name ?? "No Feature Name"))
                     {
-                        foreach (var group in Model.GroupBy(x => x.entity_feature_name ?? "No Feature Name"))
-                        {
-                            string collapseId = "collapse_" + group.Key.Replace(" ", "_");
+                        string collapseId = "collapse_" + group.Key.Replace(" ", "_");
 
-                            <div class="panel panel-default" style="margin-bottom: 10px; border: 1px solid #ccc;">
-                                <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; cursor: pointer;"
-                                     data-toggle="collapse" data-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
-                                    <h5 class="panel-title" style="font-weight: bold; padding: 10px;">
-                                        @group.Key
-                                        <span class="pull-right">
-                                            <i class="fa fa-plus"></i>
-                                        </span>
-                                    </h5>
-                                </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading"
+                                 data-toggle="collapse" data-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                                <h5 class="panel-title">
+                                    @group.Key
+                                    <span class="pull-right">
+                                        <i class="fa fa-plus"></i>
+                                    </span>
+                                </h5>
+                            </div>
 
-                                <div id="@collapseId" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <div class="ImagesContainer" style="display: flex; flex-wrap: wrap;">
-                                            @foreach (var item in group)
-                                            {
-                                                <div class="docs-main-div" style="width: 300px; margin: 10px;">
-                                                    <div class="img-div">
-                                                        <div class="UploadedImageBox" title="@item.OrgFileName">
-                                                            <div class="ImageSelectDiv">
-                                                                <a href="@item.FileLocation" class="example-image-link" data-lightbox="example-set">
-                                                                    <img src="@item.FileLocation" class="img-thumbnail" style="width: 100%; max-height: 180px;" />
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="content-div" style="padding-top: 5px;">
-                                                        <div class="contentlbl">@item.EntityType @item.entity_feature_name @item.OrgFileName (@item.file_size)</div>
-                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031:</b> @item.UploadedBy</div>
-                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189:</b> @item.created_on</div>
-
-                                                        <div style="margin-top: 5px;">
-                                                            <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');" title="Download">
-                                                                <i class="icon-Download" style="font-size:15px;"></i>
+                            <div id="@collapseId" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="ImagesContainer">
+                                        @foreach (var item in group)
+                                        {
+                                            <div class="docs-main-div">
+                                                <div class="img-div">
+                                                    <div class="UploadedImageBox" title="@item.OrgFileName">
+                                                        <div class="ImageSelectDiv">
+                                                            <a href="@item.FileLocation" class="example-image-link" data-lightbox="example-set">
+                                                                <img src="@item.FileLocation" class="img-thumbnail" />
                                                             </a>
-
-                                                            @if (item.delete_action)
-                                                            {
-                                                                <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages, '', 'Image');" title="Delete">
-                                                                    <i class="icon-Delete" style="color:red; font-size:15px; margin-left: 10px;"></i>
-                                                                </a>
-                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
-                                            }
-                                        </div>
+
+                                                <div class="content-div">
+                                                    <div class="contentList d-flex --gap03">
+                                                        <div class="contentlbl">@item.EntityType @item.entity_feature_name @item.OrgFileName (@item.file_size)</div>
+                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031:</b> @item.UploadedBy</div>
+                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189:</b> @item.created_on</div>
+                                                    </div>
+                                                    <div class="d-flex flex-dir-column iconBox-style justify-cont-center --gap03">
+                                                        <div class="icons">
+                                                            <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');" title="Download">
+                                                                <i class="icon-Download"></i>
+                                                            </a>
+                                                        </div>
+                                                        @if (item.delete_action)
+                                                        {
+                                                            <div class="icons">
+                                                                <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages, '', 'Image');" title="Delete">
+                                                                    <i class="icon-Delete"></i>
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
-                </div>
-
+                }
             </div>
         </div>
     </div>
@@ -131,7 +219,7 @@ else
 
     function DownloadImgDocs(systemid, Location) {
         debugger;
-        var EntityType=$('#hdnEntityType').val();
+        var EntityType = $('#hdnEntityType').val();
         var ettType = $("#infoTB").attr("att_entitytype");
         si.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, EntityType);
     }
