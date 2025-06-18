@@ -230,7 +230,7 @@
 <script>
     $(document).ready(function () {
 
-       
+
         var SelectedRegionIds = '@Model.objReportFilters.SelectedRegionIds';
         $("#ddlRegions").val(SelectedRegionIds.split(',')).trigger("chosen:updated");
 
@@ -286,9 +286,15 @@
             });
         }
 
-        $("#downloadTemplate").on("click", function () {
-            window.location.href = '/Report/DownloadTemplate';
-        });
+       $("#downloadTemplate").on("click", function () {
+      debugger;
+        var appRoot = '@Url.Content("~")';
+        var applicationUrl = window.location.origin + appRoot;
+      window.location.href = applicationUrl + '/Content/Templates/Site/ImportSite.xlsx';
+
+      //window.location.href = 'http://networkaccess.st.leptonsoftware.com/Dialogs/Content/Templates/Site/ImportSite.xlsx';
+  });
+
 
     });
 </script>

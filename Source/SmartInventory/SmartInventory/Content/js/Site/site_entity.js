@@ -143,7 +143,7 @@ $(document).ready(function () {
       
         ajaxReq('Report/updateSiteDataservice', { systemId: input }, true, function (data) {
 
-           
+            alert(data.message);
             
         }, false, false);
 
