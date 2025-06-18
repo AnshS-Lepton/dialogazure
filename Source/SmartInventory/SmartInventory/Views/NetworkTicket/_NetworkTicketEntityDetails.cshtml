@@ -763,13 +763,15 @@ grid.Column("province", Resources.Resources.SI_OSP_GBL_NET_FRM_066, format: @<te
 
     }
     function getNWntitySummary(ticket_id) {
-
+        debugger;
+       
         popup.LoadModalDialog('CHILD', 'NetworkTicket/NWEntitySummaryReport', {ticket_id:ticket_id},  MultilingualKey.SI_OSP_GBL_GBL_FRM_034, 'modal-xxl');
 
     }
     function getNWEntityAction(system_id,entity_type,geom_type,entity_action_atr) {
-
-        popup.LoadModalDialog('CHILD', 'NetworkTicket/GetDraftEntityInfo', { 'objNetworkTicketFilters.system_id': system_id, 'objNetworkTicketFilters.entity_type': entity_type,'objNetworkTicketFilters.geom_type': geom_type,'objNetworkTicketFilters.entity_action': entity_action_atr },  MultilingualKey.SI_OSP_GBL_GBL_FRM_033, 'modal-md');
+        debugger;
+        var ticketid = $("#hdnticketid").val();
+        popup.LoadModalDialog('CHILD', 'NetworkTicket/GetDraftEntityInfo', { 'objNetworkTicketFilters.system_id': system_id, 'objNetworkTicketFilters.entity_type': entity_type, 'objNetworkTicketFilters.geom_type': geom_type, 'objNetworkTicketFilters.entity_action': entity_action_atr, 'objNetworkTicketFilters.ticket_id': ticketid },  MultilingualKey.SI_OSP_GBL_GBL_FRM_033, 'modal-md');
 
     }
     // below function for get manual enter FAT barcode and image

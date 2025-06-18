@@ -2456,6 +2456,9 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                     var systemId = collection["system_Id"];
                     var entityType = collection["entity_type"];
                     var featureName = collection["feature_name"];
+                    var document_type = collection["document_type"];
+                    var features = featureName.Replace("/", "");
+
                     HttpFileCollectionBase files = Request.Files;
                     VailidateAttachment obj = ValidateDocumentFileType(files);
                     if (!string.IsNullOrEmpty(obj.invalidattachmentType))
@@ -2486,7 +2489,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                             HttpPostedFileBase file = files[i];
                             string FileName = file.FileName;
                             string strNewfilename = Path.GetFileNameWithoutExtension(FileName) + "_" + MiscHelper.getTimeStamp() + Path.GetExtension(FileName);
-                            string strFilePath = UploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, featureName);
+                            string strFilePath = UploadfileOnFTP(entityType, systemId, file, "Images", strNewfilename, features);
                             // get User Detail..
                             User objUser = (User)(Session["userDetail"]);
                             LibraryAttachment objAttachment = new LibraryAttachment();
@@ -2499,7 +2502,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                             objAttachment.upload_type = "Image";
                             objAttachment.uploaded_by = objUser.user_id.ToString();
                             objAttachment.file_size = file.ContentLength;
-                            objAttachment.entity_feature_name = featureName;
+                            objAttachment.entity_feature_name = features;
                             objAttachment.uploaded_on = DateTime.Now;
                             //Save Image on FTP and related detail in database..
                             var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
@@ -4221,7 +4224,67 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                         file_size = BytesToString(Convert.ToInt32(item.file_size)),
                         File_ShortName = Utility.CommonUtility.ConvertStringToShortFormat(item.OrgFileName, 19, 10, 9),
                         categorytype = item.categorytype,
-                        delete_action = item.delete_action
+                        delete_action = item.delete_action,
+                        entity_feature_name=item.entity_feature_name
+                    });
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("getEntityImagesList()", "Main", ex);
+            }
+
+            return PartialView("_ImageList", lstImageResult);
+        }
+        public ActionResult getEntityImagesListByTicketId(int ticket_id,int system_Id, string entity_type)
+        {
+            List<DocumentResult> lstImageResult = new List<DocumentResult>();
+            try
+            {
+                string FtpUrl = Convert.ToString(ConfigurationManager.AppSettings["FTPAttachment"]);
+                string UserName = Convert.ToString(ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
+                string PassWord = Convert.ToString(ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
+                // var lstImages = new BLAttachment().getEntityImages(system_Id, entity_type, "Image");
+                var lstImages = new BLAttachment().getAttachmentDetailsDocsByTicketId(ticket_id,system_Id, entity_type, "Image");
+                foreach (var item in lstImages)
+                {
+                    var _imgSrc = "";
+                    string imageUrl = string.Concat(FtpUrl, item.FileLocation, item.FileName);
+
+                    WebClient request = new WebClient();
+                    if (!string.IsNullOrEmpty(UserName)) //Authentication require..
+                        request.Credentials = new NetworkCredential(UserName, PassWord);
+
+                    byte[] objdata = null;
+                    if (isFileExistOnFTP(imageUrl))
+                    {
+                        objdata = request.DownloadData(imageUrl);
+                    }
+                    if (objdata != null && objdata.Length > 0)
+                        _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
+                    ImageResult Imr = new ImageResult();
+
+                    getLatLongFromImage(objdata, Imr);
+
+                    lstImageResult.Add(new DocumentResult()
+                    {
+                        Id = item.Id,
+                        EntitySystemId = item.EntitySystemId,
+                        FileName = item.FileName,
+                        EntityType = item.EntityType,
+                        UploadedBy = item.UploadedBy,
+                        created_on = MiscHelper.FormatDateTime(item.Uploaded_on.ToString()),
+                        OrgFileName = item.OrgFileName,
+                        FileExtension = item.FileExtension,
+                        FileLocation = _imgSrc,
+                        UploadType = item.UploadType,
+                        file_size = BytesToString(Convert.ToInt32(item.file_size)),
+                        File_ShortName = Utility.CommonUtility.ConvertStringToShortFormat(item.OrgFileName, 19, 10, 9),
+                        categorytype = item.categorytype,
+                        delete_action = item.delete_action,
+                        entity_feature_name = item.entity_feature_name
                     });
                 }
 
@@ -4374,7 +4437,12 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                             var data = new BLAttachment().getEntityDocumentById(item.systemId);
                             fullPath = FtpUrl + data.file_location + "/" + data.file_name;
                             FileName = data.file_location + "/" + data.file_name;
+                            string relativePath = System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]; // e.g., "~/Uploads/Temp/Attachments"
+                            string localDirectory = System.Web.HttpContext.Current.Server.MapPath(relativePath); // maps to D:\...\SmartInventory\Uploads\Temp\Attachments
+
                             localPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["ReportFolderPath"]) + "/" + data.file_name + "";
+                            localPath = Path.Combine(localDirectory, data.file_name);
+
                         }
                         else if (item.location.ToLower() == "specification")
                         {
@@ -4435,7 +4503,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             }
             finally
             {
-                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + "/Attachments";
+                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
                 System.IO.DirectoryInfo di = new DirectoryInfo(FileAddress);
                 foreach (FileInfo file in di.GetFiles())
                 {
@@ -4542,7 +4610,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             }
             finally
             {
-                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]) + "/Attachments";
+                string FileAddress = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
                 System.IO.DirectoryInfo di = new DirectoryInfo(FileAddress);
                 foreach (FileInfo file in di.GetFiles())
                 {

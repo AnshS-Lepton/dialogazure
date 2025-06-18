@@ -3,6 +3,10 @@
 @{
     var EntyLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "entity").ToList();
     var SpecifnLst = ((List<Models.DocumentResult>)@Model).Where(m => m.categorytype.ToLower() == "specification").ToList();
+    string entityType = EntyLst.Any() ? EntyLst.First().EntityType : "";
+
+    <input type="hidden" id="hdnEntityType" value="@entityType" />
+
 }
 @if (Model != null && Model.Count > 0)
 {
@@ -32,110 +36,67 @@
 
             <div style="">
                 <div id='ImgHolderdiv'>
-                    @if (EntyLst.Count > 0)
+                    @if (Model != null && Model.Any())
                     {
-                        <div class="div-upload-seprator">@Resources.Resources.SI_OSP_GBL_GBL_FRM_193</div>
-                    }
+                        foreach (var group in Model.GroupBy(x => x.entity_feature_name ?? "No Feature Name"))
+                        {
+                            string collapseId = "collapse_" + group.Key.Replace(" ", "_");
 
-                    @foreach (var item in EntyLst)
-                    {
-                        <div class="docs-main-div">
-                            <div class="img-div">
-                                <div class="UploadedImageBox" title="@item.OrgFileName">
-                                    <div class="ImageSelectDiv">
-                                        @*<input id="chk_image_@item.Id" name="chk_image_@item.Id" data-system-id="@item.Id" data-image-location="@item.EntityType" class="checkbox-custom img_doc_childcheck" type="checkbox" style="width: 0px;">
-                                            <b style="height: 0px; float: left;margin-left: 10px;margin-top: 11px;">
-                                                <label for="chk_image_@item.Id" class="checkbox-custom-label"></label>
-                                            </b>*@
-                                        <a href="@item.FileLocation" class="example-image-link" data-lightbox="example-set" style="padding:0">
-                                            <img src="@item.FileLocation" />
-                                        </a>
+                            <div class="panel panel-default" style="margin-bottom: 10px; border: 1px solid #ccc;">
+                                <div class="panel-heading" style="background-color: #f5f5f5; border-bottom: 1px solid #ddd; cursor: pointer;"
+                                     data-toggle="collapse" data-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                                    <h5 class="panel-title" style="font-weight: bold; padding: 10px;">
+                                        @group.Key
+                                        <span class="pull-right">
+                                            <i class="fa fa-plus"></i>
+                                        </span>
+                                    </h5>
+                                </div>
+
+                                <div id="@collapseId" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="ImagesContainer" style="display: flex; flex-wrap: wrap;">
+                                            @foreach (var item in group)
+                                            {
+                                                <div class="docs-main-div" style="width: 300px; margin: 10px;">
+                                                    <div class="img-div">
+                                                        <div class="UploadedImageBox" title="@item.OrgFileName">
+                                                            <div class="ImageSelectDiv">
+                                                                <a href="@item.FileLocation" class="example-image-link" data-lightbox="example-set">
+                                                                    <img src="@item.FileLocation" class="img-thumbnail" style="width: 100%; max-height: 180px;" />
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="content-div" style="padding-top: 5px;">
+                                                        <div class="contentlbl">@item.EntityType @item.entity_feature_name @item.OrgFileName (@item.file_size)</div>
+                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031:</b> @item.UploadedBy</div>
+                                                        <div class="contentlbl"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189:</b> @item.created_on</div>
+
+                                                        <div style="margin-top: 5px;">
+                                                            <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');" title="Download">
+                                                                <i class="icon-Download" style="font-size:15px;"></i>
+                                                            </a>
+
+                                                            @if (item.delete_action)
+                                                            {
+                                                                <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages, '', 'Image');" title="Delete">
+                                                                    <i class="icon-Delete" style="color:red; font-size:15px; margin-left: 10px;"></i>
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="content-div">
-                                <div style="width:88%; float:left;">
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"> @item.OrgFileName    (@item.file_size)</div>
-                                    </div>
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031: </b> @item.UploadedBy</div>
-                                    </div>
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189: </b> @item.created_on</div>
-                                    </div>
-                                </div>
-                                <div style="width:36px; float:right; padding:5px">
-                                    <div class="col-sm-1 pull-right icons" id="divDownloadImages" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
-                                        <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
-                                            <i class="icon-Download" style="font-size:15px;"></i>
-                                        </a>
-                                    </div>
-                                    @if (item.delete_action)
-                                    {
-                                    <div class="col-sm-1 pull-right icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
-                                        <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages,'','Image');">
-                                            <i class="icon-Delete" style="color:red; font-size:16px;"></i>
-                                        </a>
-                                        @*onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', 'data-system-id', si.getElementImages);*@
-                                    </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                    }
-
-                    @if (SpecifnLst.Count > 0)
-                    {
-                        <div class="div-upload-seprator">@Resources.Resources.SI_OSP_GBL_GBL_FRM_194</div>
-                    }
-
-
-                    @foreach (var item in SpecifnLst)
-                    {
-                        <div class="docs-main-div">
-                            <div class="img-div">
-                                <div class="UploadedImageBox" title="@item.OrgFileName">
-                                    <div class="ImageSelectDiv">
-                                        @*<input id="chk_image_@item.Id" name="chk_image_@item.Id" data-system-id="@item.Id" data-image-location="@item.EntityType" class="checkbox-custom img_doc_childcheck" type="checkbox" style="width: 0px;">
-                                            <b style="height: 0px; float: left;margin-left: 10px;margin-top: 11px;">
-                                                <label for="chk_image_@item.Id" class="checkbox-custom-label"></label>
-                                            </b>*@
-                                        <a href="@item.FileLocation" class="example-image-link" data-="example-set" style="padding:0">
-                                            <img src="@item.FileLocation" />
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="content-div">
-                                <div style="width:88%; float:left;">
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"> @item.OrgFileName    (@item.file_size)</div>
-                                    </div>
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_031: </b> @item.UploadedBy</div>
-                                    </div>
-                                    <div class="col-sm-12 doc-lists">
-                                        <div class="contentlbl" style="width:100%;"><b>@Resources.Resources.SI_OSP_GBL_GBL_FRM_189: </b> @item.created_on</div>
-                                    </div>
-                                </div>
-                                <div style="width:36px; float:right; padding:5px">
-                                    <div class="col-sm-1 pull-right icons" id="divDownloadImages" title="@Resources.Resources.SI_ISP_GBL_GBL_GBL_038">
-                                        <a href="javascript:void(0)" onclick="DownloadImgDocs('@item.Id','@item.categorytype');">
-                                            <i class="icon-Download" style="font-size:15px;"></i>
-                                        </a>
-                                    </div>
-                                    @*<div class="col-sm-1 pull-right icons" id="divDeleteImg" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002">
-                                            <a href="javascript:void(0)" onclick="si.deleteImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DeleteEntityImages', '@item.Id', si.getElementImages);">
-                                                <i class="icon-Delete" style="color:red; font-size:16px;"></i>
-                                            </a>
-                                        </div>*@
-                                </div>
-                            </div>
-                        </div>
+                        }
                     }
                 </div>
+
             </div>
         </div>
     </div>
@@ -145,10 +106,16 @@ else
     <div class="nr-found">
         <span>
             @Resources.Resources.SI_GBL_GBL_JQ_FRM_010
-         </span>
+        </span>
     </div>
-        }
+}
 <script>
+
+    $(document).on('click', '.panel-heading', function () {
+        debugger;
+        var icon = $(this).find('i.fa');
+        icon.toggleClass('fa-plus fa-minus');
+    });
     $(document).ready(function () {
         $('.UploadAction [title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
         $('#divImage [title!=""]').tooltip({ title: '', html: true, placement: "bottom" });
@@ -163,7 +130,9 @@ else
     });
 
     function DownloadImgDocs(systemid, Location) {
+        debugger;
+        var EntityType=$('#hdnEntityType').val();
         var ettType = $("#infoTB").attr("att_entitytype");
-        si.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, ettType);
+        si.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, EntityType);
     }
 </script>

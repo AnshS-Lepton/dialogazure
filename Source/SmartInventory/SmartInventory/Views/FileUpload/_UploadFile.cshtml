@@ -38,16 +38,70 @@
     <div class="libTabContent pad-0">
         <!-- Tab panes -->
         <div class="tab-content">
+            <!--<div class="tab-pane active" id="UploadImage">
+        <div class="space-pad">
+            <fieldset class="@(Model.lstUserModule.Contains("ENT-UID-I")?"the-fieldset":"the-fieldset dvdisabled")">
+                <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_193</legend>
+                <div class="form-group row">
+                    <label class="control-label col-sm-2" for="txtCableCode">@Resources.Resources.SI_OSP_UPP_NET_FRM_001:</label>
+                    <div class="col-md-10">
+                        <input type="file" name="fuImgUpload" id="fuImgUpload" accept=@ApplicationSettings.validImageTypes multiple>
+                    </div>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="control-label ml-auto flex-cont" for="txtCableCode"><i class="clsMandatory">*</i>Supported file formats:@ApplicationSettings.validImageTypes</label>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="ml-auto flex-cont" for="txtLatitude"><i class="clsMandatory">*</i>Maximum image file size: @(ApplicationSettings.MaxFileUploadSizeLimit/1000) MB</label>
+                </div>
+            </fieldset>
+        </div>
+        <div class="d-flex ModalFooter" id="dvBtnAction">
+            <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>-->
+            @*<button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultipleImageFile();" id="btnSaveFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>*@
+            <!--<button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultipleImageFile();" id="btnSaveFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
+        </div>
+    </div>-->
+
             <div class="tab-pane active" id="UploadImage">
                 <div class="space-pad">
                     <fieldset class="@(Model.lstUserModule.Contains("ENT-UID-I")?"the-fieldset":"the-fieldset dvdisabled")">
                         <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_FRM_193</legend>
                         <div class="form-group row">
-                            <label class="control-label col-sm-2" for="txtCableCode">@Resources.Resources.SI_OSP_UPP_NET_FRM_001:</label>
-                            <div class="col-md-10">
-                                <input type="file" name="fuImgUpload" id="fuImgUpload" accept=@ApplicationSettings.validImageTypes multiple>
+                            @*<label class="control-label col-sm-2">Upload Type:</label>*@
+                            <div class="col-md-12">
+                                @foreach (var item in Model.lstImageUpload)
+                                {
+                                    var key = item.dropdown_key;
+                                    <div class="form-group row mb-3 align-items-center">
+
+                                        <label class="control-label col-sm-2" for="fileUpload_@key">
+                                            @item.dropdown_value
+                                        </label>
+
+                                        <div class="col-sm-6">
+                                            <input type="file" style="width:175px;"
+                                                   class="form-control"
+                                                   name="uploadedFiles[@key]"
+                                                   id="fileUpload_@key"
+                                                   accept="@ApplicationSettings.validImageTypes"
+                                                   multiple />
+
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <button type="button" class="btn btn-primary" style=" margin-left: 112px;" onclick="si.uploadSingleFile('@key')">
+                                                Upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
                             </div>
+
+
+
                         </div>
+
                         <div class="form-group d-flex">
                             <label class="control-label ml-auto flex-cont" for="txtCableCode"><i class="clsMandatory">*</i>Supported file formats:@ApplicationSettings.validImageTypes</label>
                         </div>
@@ -56,7 +110,7 @@
                         </div>
                     </fieldset>
                 </div>
-                <div class="d-flex ModalFooter" id="dvBtnAction">
+                <div class="d-flex ModalFooter" id="dvBtnAction" style="display:none;">
                     <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
                     @*<button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultipleImageFile();" id="btnSaveFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>*@
                     <button type="submit" class="btn btn-primary ml-10" onclick="si.uploadMultipleImageFile();" id="btnSaveFile">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004</button>
