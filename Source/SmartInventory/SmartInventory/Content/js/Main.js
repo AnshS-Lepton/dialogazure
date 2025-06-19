@@ -11137,6 +11137,64 @@ var Main = function () {
     }
 
 
+    this.createFiberlinkLineWithCore = function (_path, core_number, cable_measured_length, total_core) {
+        var tmpLine = new google.maps.Polyline({
+            strokeColor: '#FF8800',
+            strokeOpacity: 1,
+            strokeWeight: 2,
+            zIndex: 1,
+            path: _path,
+            map: si.map  // Ensure it's added to the map
+        });
+
+        // Function to compute the geographic midpoint
+        function getMidpoint(path) {
+            let totalDistance = 0;
+            let distances = [];
+
+            for (let i = 0; i < path.length - 1; i++) {
+                let distance = google.maps.geometry.spherical.computeDistanceBetween(
+                    new google.maps.LatLng(path[i]),
+                    new google.maps.LatLng(path[i + 1])
+                );
+                distances.push(distance);
+                totalDistance += distance;
+            }
+
+            let halfDistance = totalDistance / 2;
+            let traveled = 0;
+
+            for (let i = 0; i < path.length - 1; i++) {
+                traveled += distances[i];
+                if (traveled >= halfDistance) {
+                    return google.maps.geometry.spherical.interpolate(
+                        new google.maps.LatLng(path[i]),
+                        new google.maps.LatLng(path[i + 1]),
+                        (halfDistance - (traveled - distances[i])) / distances[i]
+                    );
+                }
+            }
+            return path[Math.floor(path.length / 2)]; // Fallback
+        }
+
+        // Calculate the accurate midpoint of the polyline
+        var midLatLng = getMidpoint(_path);
+        // Create a Fixed Tooltip (InfoWindow)
+        //css code is written in main.js file
+        infoWindow = new google.maps.InfoWindow({
+            content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
+        (${total_core}F)(${cable_measured_length} m)(${core_number})
+               </div>`,
+            position: midLatLng
+        });
+
+        // Open the tooltip immediately so it stays fixed
+        infoWindow.open(si.map);
+        app.previousInfoWindow.push(infoWindow);
+        ShowLineLength(_path);
+        return tmpLine;
+    };
+
     this.createLineWithCore = function (_path, core_number) {
         var tmpLine = new google.maps.Polyline({
             strokeColor: '#FF8800',
