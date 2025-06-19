@@ -3224,7 +3224,7 @@ namespace SmartInventoryServices.Controllers
                     var isBarcodeImage = HttpContext.Current.Request.Params["is_barcode_image"];
                     var isMeterReadingImage = HttpContext.Current.Request.Params["is_meter_reading_image"];
                     int ticketId = 0; 
-                    int.TryParse(HttpContext.Current.Request.Params["ticket_id"], out ticketId);
+                    int.TryParse(HttpContext.Current.Request.Params["source_ref_id"], out ticketId);
 
 
                     if (attachmentType.ToUpper() == "DOCUMENT") { obj = ValidateDocumentFileType(HttpContext.Current.Request.Files); }
