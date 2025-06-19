@@ -285,7 +285,8 @@ namespace Models
         Topology_Type,
         Ring_Capacity,
         FiberStatus,
-        NoOf_Sites
+        NoOf_Sites,
+        Image_upload
 
     }
     public enum VendorType

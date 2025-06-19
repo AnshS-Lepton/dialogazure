@@ -21308,8 +21308,10 @@ var Main = function () {
         popup.LoadModalDialog('PARENT', 'Library/HelpPage', null, "Help & FAQ's", 'modal-md');
     }
     this.uploadImage = function (_systemId, _entityType) {
+        debugger;
+        var ettType = $("#infoTB").attr("att_entitytype");
         popup.LoadModalDialog('PARENT', 'FileUpload/GetFileUploader', {
-            eType: ''
+            eType: ettType
         }, "Upload Image/Document", 'modal-sm');
     }
 
@@ -22401,6 +22403,7 @@ var Main = function () {
 
 
     this.getElementImages = function () {
+        debugger;
         var _system_Id = $('#infoTB').attr('att_systemid');
         var _entity_type = $('#infoTB').attr('att_entityType');
 
@@ -23083,6 +23086,81 @@ var Main = function () {
     }
 
 
+    this.uploadSingleFile = function (key) {
+        debugger;
+        var fileInput = document.getElementById("fileUpload_" + key);
+        if (!fileInput || fileInput.files.length === 0) {
+            alert("Please select at least one file to upload.");
+            return;
+        }
+
+        var filesizeKB = parseInt($('#hdnMaxFileUploadSizeLimit').val()); // in KB
+        var maxSizeInBytes = filesizeKB * 1024;
+        var allowedTypes = $('#allowedImageAttachmentType').val().toLowerCase().split(',');
+        var frmData = new FormData();
+        var totalSize = 0;
+        var invalidFiles = [];
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            totalSize += file.size;
+
+            if (file.name.length > 100) {
+                alert("File name must be less than 100 characters: " + file.name);
+                return;
+            }
+
+            let ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (!allowedTypes.includes(ext)) {
+                invalidFiles.push(file.name);
+                continue;
+            }
+
+            if (totalSize > maxSizeInBytes) {
+                let allowedMB = (filesizeKB / 1024).toFixed(2);
+                alert("Total size exceeds " + allowedMB + " MB.");
+                return;
+            }
+
+            frmData.append('images[]', file);
+        }
+
+        if (invalidFiles.length > 0) {
+            alert("Invalid file types:\n" + invalidFiles.join("\n"));
+            return;
+        }
+
+        frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+        frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+        frmData.append('document_type', key); // using key as type
+        frmData.append('feature_name', key);
+
+        ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+            if (resp.status === "OK") {
+                uploadImage(frmData);
+            } else if (resp.status === "DUPLICATE_EXIST") {
+                confirm(resp.message, function () {
+                    uploadImage(frmData);
+                });
+            } else {
+                alert(resp.message);
+            }
+        }, true);
+
+        function uploadImage(data) {
+            ajaxReqforFileUpload('Main/UploadImage', data, true, function (resp) {
+                if (resp.status === "OK") {
+                    $('#closeModalPopup').trigger("click");
+                    app.getElementImages();
+                    alert(resp.message);
+                } else {
+                    alert(resp.message);
+                }
+            }, true);
+        }
+    };
+
+
     this.getUserProfileImage = function () {
         //;
         var _userId = $("#hdnCurrentUserId").val()
@@ -23357,6 +23435,24 @@ var Main = function () {
             $("#PRojectAssoctn").css('background-image', 'none');           
         }, false, false);
     }
+    //##Getimages 
+    let imagesLoaded = false;
+    this.GetImagesDetail = function (ticket_id, system_id, entity_type) {
+        debugger;
+        //if (imagesLoaded) return;
+        //imagesLoaded = true;
+
+        ajaxReq('Main/getEntityImagesListByTicketId', {
+            ticket_id: ticket_id,
+            system_Id: system_id,
+            entity_type: entity_type
+        }, true, function (resp) {
+            $("#images").html(resp);
+            // $("#images").css('background-image', 'none');
+        }, false, false);
+    };
+
+
 
     // ## AT Acceptance
     this.GetATAcceptance = function (_entityId, _entityType, editPermission) {
