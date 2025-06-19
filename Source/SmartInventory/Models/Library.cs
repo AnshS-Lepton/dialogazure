@@ -5776,8 +5776,11 @@ namespace Models
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_link_id_prefix { get; set; }
         public string comment { get; set; }
+        [NotMapped]
         public string destination_site_id { get; set; }
+        [NotMapped]
         public string destination_port_type { get; set; }
+        [NotMapped]
         public int? no_of_cores { get; set; }
 
         [NotMapped]

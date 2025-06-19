@@ -175,14 +175,13 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_wallmount_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'			
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
@@ -228,14 +227,14 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_pep_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )  and (%NetworkFilter%))	
 
 		VALIDATION		
 			'provinceFilter'   '.*'	
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			
             'NetworkFilter'   '.*'			
 		END 
 		METADATA
@@ -328,14 +327,14 @@ MAP
 		INCLUDE "datashare.inc"	
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
 		DATA 'sp_geometry FROM vw_att_details_ont_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
 			'layerFilter'   '.*'
 			'ownershipFilter'   '.*'				
-			'PODFilter'   '.*'
+			
 			'NetworkFilter' '.*'
 		END 
 		METADATA
@@ -382,11 +381,10 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_customer_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND(%PODFilter% ) and (%NetworkFilter%)) 
+		FILTER (%provinceFilter%  and (%NetworkFilter%)) 
 		
 		VALIDATION		
-			'provinceFilter'   '.*'	 
-			'PODFilter'   '.*'	 
+			'provinceFilter'   '.*'	 			 
             'NetworkFilter'   '.*'          	
 		END 
 		METADATA
@@ -454,14 +452,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_spliceclosure_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'				
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter' '.*'
 			'AutoPlanningNetworkFilter' '.*'
 		END 
@@ -539,14 +536,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_fms_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'				
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
@@ -594,14 +590,13 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_trench_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )   and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
             'NetworkFilter'   '.*'	
 			'AutoPlanningNetworkFilter' '.*'
 		END 	
@@ -802,14 +797,13 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_reinstatement_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )   and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
             'NetworkFilter'   '.*'	
 			'AutoPlanningNetworkFilter' '.*'
 		END 	
@@ -902,14 +896,13 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_rebar_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )   and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
             'NetworkFilter'   '.*'	
 			'AutoPlanningNetworkFilter' '.*'
 		END 	
@@ -1001,13 +994,12 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_duct_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%)  AND (%AutoPlanningNetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%)  AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'
-			'ownershipFilter'   '.*'			
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'					
 			'NetworkFilter'   '.*'
 			'AutoPlanningNetworkFilter' '.*'
 		END 	
@@ -1057,13 +1049,12 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_conduit_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%)  AND (%PODFilter%) and (%NetworkFilter%) )
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%)   and (%NetworkFilter%) )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
 			'NetworkFilter'   '.*'			
 		END 	
 		METADATA
@@ -1111,13 +1102,12 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM "vw_att_details_microduct_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%) )
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%) )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'
-			'ownershipFilter'   '.*'			
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'						
 			'NetworkFilter'   '.*'
 		END 	
 		METADATA
@@ -1254,15 +1244,14 @@ LAYER
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"		
 		DATA 'sp_geometry FROM vw_att_details_cable_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%) AND (%CableCategoryFilter%))		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%) AND (%CableCategoryFilter%))		
 		#FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))
 		VALIDATION		
 			'provinceFilter'   '.*'		
             'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'	
 			'cableFilter'   '.*'				
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
 			'NetworkFilter' '.*'
 			'AutoPlanningNetworkFilter' '.*'
 			'CableCategoryFilter' '.*'
@@ -1366,14 +1355,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_manhole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%)AND (%PODFilter%) AND (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%) AND (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'            		
-			'ownershipFilter'   '.*'    
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'    			
 			'NetworkFilter'   '.*'
 			'AutoPlanningNetworkFilter' '.*'
 		END 
@@ -1486,14 +1474,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_coupler_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'  
-			'ownershipFilter'   '.*'          		
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'          					
 			'NetworkFilter'   '.*'			
 		END 
 		METADATA
@@ -1539,13 +1526,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_tree_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'
 			'prjectspecificationFilter'   '.*'				
-			'PODFilter'   '.*'	
+				
 			'NetworkFilter'   '.*'	
 		END 
 		METADATA
@@ -1592,14 +1579,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_mpod_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'			
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'						
 			'NetworkFilter'   '.*'			
 		END 
 		METADATA
@@ -1831,15 +1817,14 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_splitter_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%splitterFilter%)  AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%splitterFilter%)   and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'
-			'splitterFilter' '.*'			
-			'PODFilter' '.*'
+			'splitterFilter' '.*'						
 			'NetworkFilter' '.*'			
 		END 
 		METADATA
@@ -2016,14 +2001,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_cdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'			
 			'NetworkFilter' '.*'
 		END 
 		METADATA
@@ -2099,14 +2083,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_bdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
@@ -2180,14 +2163,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_adb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
 			'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter' '.*'			
 		END 
 		
@@ -2801,14 +2783,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_fdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
@@ -2859,14 +2840,13 @@ CLASS
 		INCLUDE "datashare.inc"	
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
 		DATA 'sp_geometry FROM vw_att_details_htb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'	
+			'ownershipFilter'   '.*'					
 			'NetworkFilter' '.*'
 		END 
 		METADATA
@@ -3282,12 +3262,11 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_fault_map USING UNIQUE system_id USING srid=4326'	
-		FILTER  (%provinceFilter% AND (%faultFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		FILTER  (%provinceFilter% AND (%faultFilter% )  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
-			'faultFilter'   '.*'
-			'PODFilter'   '.*'
+			'faultFilter'   '.*'			
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
@@ -3536,14 +3515,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_handhole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%)AND (%PODFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )AND (%ownershipFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'            		
-			'ownershipFilter'   '.*'    
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'    			
 		END 
 		METADATA
 			'ows_title' 'HANDHOLE'
@@ -3654,14 +3632,13 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_patchpanel_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)  and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'				
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'ownershipFilter'   '.*'	
-			'PODFilter'   '.*'
+			'ownershipFilter'   '.*'				
 			'NetworkFilter'   '.*'
 		END 
 		METADATA
