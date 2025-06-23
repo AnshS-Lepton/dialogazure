@@ -143,12 +143,19 @@ namespace DataAccess
         {
             try
             {
-                return repo.ExecuteProcedure<DocumentResult>("fn_get_library_attachments_details_OPSISP", new { entity_system_id = system_id, entity_type = entity_type, upload_type = upload_type, p_feature_name = fetureName });
+                return repo.ExecuteProcedure<DocumentResult>("fn_get_library_attachments_details_opsisp", new { entity_system_id = system_id, entity_type = entity_type, upload_type = upload_type, p_feature_name = fetureName });
             }
             catch { throw; }
         }
-
-
+        public List<DocumentResult> getAttachmentDetailsDocsByTicketId(int ticket_id,int system_id, string entity_type, string upload_type, string fetureName)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DocumentResult>("fn_get_library_attachments_details_opsispByTicketId", new { entity_system_id = system_id, entity_type = entity_type, upload_type = upload_type, p_feature_name = fetureName, p_ticket_id = ticket_id });
+            }
+            catch { throw; }
+        }
+        
     }
 
     public class DAAttachments : Repository<UploadVendorSpecificationImageDoc>

@@ -1641,6 +1641,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
     <Content Include="MigrationScripts\17-06-2025.sql" />
     <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
     <Content Include="MigrationScripts\04-06-2025.sql" />
@@ -2054,6 +2055,7 @@
     <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\ViewItemVendorCost.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\AddItemVendorCost.cshtml" />
+    <Content Include="Content\Templates\Site\ImportSite.xlsx" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2470,6 +2472,7 @@
     <Content Include="Views\BackBonePlan\_BackboneViewPlanData.cshtml" />
     <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_LoopManage.cshtml" />
+    <Content Include="Views\Shared\_TopologyAction.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

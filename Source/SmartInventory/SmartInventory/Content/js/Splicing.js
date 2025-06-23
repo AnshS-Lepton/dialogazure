@@ -2246,18 +2246,21 @@
                         var cableNetworkFiberMap = {};
                         var coreNumber = [];
                         let cableSystemId = null;
+                        let cable_measured_length = null;
+                        let total_core = null;
 
                         for (var i = 0; i < resp.result.lstCableInfo.length; i++) {
                             coreNumber = cableSystemId === resp.result.lstCableInfo[i].cable_system_id ? coreNumber : [];
                             coreNumber.push(resp.result.lstCableInfo[i].fiber_number);
                             cableSystemId = resp.result.lstCableInfo[i].cable_system_id;
-
+                            cable_measured_length = resp.result.lstCableInfo[i].cable_measured_length;
+                            total_core = resp.result.lstCableInfo[i].total_core;
                             if (resp.result.lstCableInfo[i].cable_geom != null) {
                                 var geometry = getLatLongArr(resp.result.lstCableInfo[i].cable_geom);
                                 for (var z = 0; z < geometry.length; z++) {
                                     bounds.extend(geometry[z]);
                                 }
-                                var lineObj = si.createLineWithCore(geometry, coreNumber);
+                                var lineObj = si.createFiberlinkLineWithCore(geometry, coreNumber, cable_measured_length, total_core);
                                 lineObj.strokeColor = 'blue';
                                 var _lineIcon = [{
                                     icon: {

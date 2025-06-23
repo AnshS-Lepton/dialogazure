@@ -11116,6 +11116,7 @@
         popup.LoadModalDialog('PARENT', 'Library/HelpPage', null, "Help & FAQ's", 'modal-md');
     }
     this.uploadImage = function (_systemId, _entityType) {
+        debugger;
         popup.LoadModalDialog('PARENT', 'FileUpload/GetFileUploader', {
             eType: ''
         }, "Upload Image/Document", 'modal-sm');

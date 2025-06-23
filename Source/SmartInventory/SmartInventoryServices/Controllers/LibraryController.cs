@@ -1427,7 +1427,7 @@ namespace SmartInventoryServices.Controllers
            
             //objPoleMaster.lstServedByRing = obj_DDL.Where(x => x.dropdown_type == DropDownType.served_by_ring.ToString()).ToList();
         }
-		private void BindPoleRoute(PoleMaster objPoleMaster)
+        private void BindPoleRoute(PoleMaster objPoleMaster)
 		{
             if (objPoleMaster.system_id == 0)
                 objPoleMaster.lstRouteInfo = new BLMisc().getRouteEntityInLineBuffer(objPoleMaster.geom);

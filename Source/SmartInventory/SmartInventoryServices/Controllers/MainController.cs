@@ -3223,6 +3223,10 @@ namespace SmartInventoryServices.Controllers
                     var validImageTypes = ApplicationSettings.validImageTypes.Split(new string[] { "," }, StringSplitOptions.None);
                     var isBarcodeImage = HttpContext.Current.Request.Params["is_barcode_image"];
                     var isMeterReadingImage = HttpContext.Current.Request.Params["is_meter_reading_image"];
+                    int ticketId = 0; 
+                    int.TryParse(HttpContext.Current.Request.Params["source_ref_id"], out ticketId);
+
+
                     if (attachmentType.ToUpper() == "DOCUMENT") { obj = ValidateDocumentFileType(HttpContext.Current.Request.Files); }
                     else {  obj = ValidateImageFileType(HttpContext.Current.Request.Files); }
 
@@ -3318,6 +3322,8 @@ namespace SmartInventoryServices.Controllers
                         objAttachment.is_barcode_image = Convert.ToBoolean(isBarcodeImage);
                         objAttachment.is_meter_reading_image = Convert.ToBoolean(isMeterReadingImage);
                         objAttachment.document_type = uploaddocType;
+                        objAttachment.ticket_id = ticketId;
+                        
                         //Save Image on FTP and related detail in database..
                         var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
                         if (Convert.ToBoolean(isBarcodeImage) && entityType== Convert.ToString(EntityType.FDB))//"FDB"

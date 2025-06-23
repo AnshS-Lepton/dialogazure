@@ -88,6 +88,10 @@ namespace BusinessLogics
         {
             return new DAAttachment().getAttachmentDetailsDocs(system_id, entity_type, upload_type, fetureName);
         }
+        public List<DocumentResult> getAttachmentDetailsDocsByTicketId(int ticket_id,int system_id, string entity_type, string upload_type, string fetureName = "")
+        {
+            return new DAAttachment().getAttachmentDetailsDocsByTicketId(ticket_id,system_id, entity_type, upload_type, fetureName);
+        }
         public bool CheckSpecificationFileExist(string fileName, int system_id,string documentType,string doctype)
         {
             return new DAAttachments().CheckSpecificationFileExist(fileName, system_id, documentType, doctype);

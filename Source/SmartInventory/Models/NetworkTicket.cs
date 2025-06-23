@@ -162,7 +162,11 @@ namespace Models
 		public bool isTraceEnabled { get; set; }
 		[NotMapped]
 		public bool isAllSplitterTraceStatus { get; set; }
-		public NetworkTicketFilter()
+        [NotMapped]
+        public List<DocumentResult> lstDocumentResult { get; set; }
+
+
+        public NetworkTicketFilter()
         {
             webColumns = new List<WebGridColumn>();
 
@@ -173,6 +177,7 @@ namespace Models
             lstNWEntityHistory = new List<dynamic>();
             //lstNetworkTicketEntityAction = new List<dynamic>();
             lstentityInfo = new List<entityInfo>();
+            lstDocumentResult= new List<DocumentResult>();
         }
     }
     public class DashboardInfo

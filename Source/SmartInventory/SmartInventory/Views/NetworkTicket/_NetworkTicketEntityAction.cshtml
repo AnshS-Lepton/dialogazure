@@ -1,8 +1,10 @@
 ﻿@model Models.NetworkTicketFilter
 @using Models;
+
+
 <style>
-   
-      .table-scroll {
+
+    .table-scroll {
         position: relative;
         width: 100%;
         z-index: 1;
@@ -10,124 +12,167 @@
         overflow: auto;
         height: 380px;
     }
+
         .table-scroll table {
             width: 100%;
             margin: auto;
             border-collapse: collapse;
             border-spacing: 0;
         }
-    .table-scroll th,
-    .table-scroll td {
-        vertical-align: top;
-    }
-    .table-scroll thead th {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-    }
-    /* safari and ios need the tfoot itself to be position:sticky also */
-    .table-scroll tfoot,
-    .table-scroll tfoot th,
-    .table-scroll tfoot td {
-        position: -webkit-sticky;
-        position: sticky;
-        bottom: 0;
-        z-index: 4;
-    }
-  .redClass > td { color: #f50404!important;}
 
+        .table-scroll th,
+        .table-scroll td {
+            vertical-align: top;
+        }
+
+        .table-scroll thead th {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+        }
+        /* safari and ios need the tfoot itself to be position:sticky also */
+        .table-scroll tfoot,
+        .table-scroll tfoot th,
+        .table-scroll tfoot td {
+            position: -webkit-sticky;
+            position: sticky;
+            bottom: 0;
+            z-index: 4;
+        }
+
+    .redClass > td {
+        color: #f50404 !important;
+    }
 </style>
 
 <div class="libDetail viewReport" id="dvChildModalBody">
     @using (Ajax.BeginForm("NetworkTicketEntityAction", "NetworkTicket",
-                                                            new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvViewNWEAction" },
-                                                            new { id = "frmNWEntityAction", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvViewNWEAction" },
+        new { id = "frmNWEntityAction", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
         @Html.HiddenFor(m => m.objNetworkTicket.ticket_id)
-        <div class="libTabContent" style="overflow:visible;">
-            <div id="dvViewNWEdetails" class="ViewReportProgress">
-                <div class="progressHeader"></div>
-                <div class="progressBody"></div>
+        //$("#hdnticketid").val();
+    <ul class="nav nav-tabs" id="networkTabs" role="tablist">
+        <li class="nav-item active">
+            <a class="nav-link active" id="summary-tab" data-toggle="tab" href="#summary" role="tab">
+                @Resources.Resources.SI_OSP_GBL_NET_GBL_160
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="images-tab" data-toggle="tab" href="#images" role="tab"
+               onclick="si.GetImagesDetail('@Model.ticket_id','@Model.system_id','@Model.entity_type');">
+                Images
+            </a>
+        </li>
+    </ul>
+
+        <div class="tab-content" id="networkTabsContent" style="margin-top: 15px;">
+            <!-- Summary Tab -->
+            <div class="tab-pane fade in active" id="summary" role="tabpanel">
+                <div class="libTabContent" style="overflow: visible;">
+                    <div id="dvViewNWEdetails" class="ViewReportProgress">
+                        <div class="progressHeader"></div>
+                        <div class="progressBody"></div>
+                    </div>
+                </div>
+
+                @if (Model.lstentityInfo.Count > 0)
+                {
+                    <div class="space-pad">
+                        <div class="table-responsive" id="dvscroll">
+                            <table class="grid" id="tblSummaryAll">
+                                <thead>
+                                    @if (Model.entity_action == "NW")
+                                    {
+                                        <tr>
+                                            <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_161</th>
+                                            <th>@Resources.Resources.SI_GBL_GBL_NET_FRM_167</th>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_161</th>
+                                            <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_162</th>
+                                            <th>@Resources.Resources.SI_OSP_GBL_NET_GBL_163</th>
+                                        </tr>
+                                    }
+                                </thead>
+                                <tbody>
+                                    @if (Model.entity_action == "NS")
+                                    {
+                                        foreach (var item in Model.lstentityInfo.Where(x => x.db_column_name == "network_status"))
+                                        {
+                                            <tr class="@(item.is_updated ? "redClass" : "")">
+                                                <td>@item.display_column_name</td>
+                                                <td>@item.old_value</td>
+                                                <td>@item.updated_value</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foreach (var item in Model.lstentityInfo)
+                                        {
+                                            if (Model.entity_action == "NW")
+                                            {
+                                                <tr class="@(item.is_updated ? "redClass" : "")">
+                                                    <td>@item.display_column_name</td>
+                                                    <td>@item.old_value</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr class="@(item.is_updated ? "redClass" : "")">
+                                                    <td>@item.display_column_name</td>
+                                                    <td>@item.old_value</td>
+                                                    <td>@item.updated_value</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                    </div>
+                }
             </div>
+          
+
+            <div class="tab-content" id="networkTabsContent" style="margin-top: 15px;">
+                <!-- Summary Tab -->
+                <div class="tab-pane fade show active" id="summary" role="tabpanel">
+                    <!-- Your existing summary content -->
+                </div>
+
+                <!-- Images Tab -->
+                <div class="tab-pane fade" id="images" role="tabpanel">
+                    <!-- Only image content will load here on tab click -->
+                </div>
+            </div>
+
         </div>
-       
-        if (Model.lstentityInfo.Count > 0)
-        {
-<div class="space-pad">
-    <div class="table-responsive" id="dvscroll">
-        <table class="grid" id="tblSummaryAll">
-            <thead>
-                @if (Model.entity_action == "NW")
-                {
-                    <tr>
-                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_GBL_161</th>
-                        <th scope="col">@Resources.Resources.SI_GBL_GBL_NET_FRM_167</th>
-                    </tr>
-                }
-                else
-                {
-                    <tr>
-                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_GBL_161</th>
-                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_GBL_162</th>
-                        <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_GBL_163</th>
-                    </tr>
-                }
-            </thead>
-            <tbody>
-                @if (Model.entity_action == "NS")
-                {
-                    foreach (var item in Model.lstentityInfo)
-                    {
-                        if (item.db_column_name == "network_status")
-                        {
-                            <tr class="@(item.is_updated == true ? "redClass" : "" )">
-                                <td>@item.display_column_name</td>
-                                <td>@item.old_value</td>
-                                <td>@item.updated_value</td>
-                            </tr>
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var item in Model.lstentityInfo)
-                    {
-                        if (Model.entity_action == "NW")
-                        {
-                            <tr class="@(item.is_updated == true ? "redClass" : "" )">
-                                <td>@item.display_column_name</td>
-                                <td>@item.old_value</td>
-                            </tr>
-                        }
-
-                        else
-                        {
-                            <tr class="@(item.is_updated == true ? "redClass" : "" )">
-                                <td>@item.display_column_name</td>
-                                <td>@item.old_value</td>
-                                <td>@item.updated_value</td>
-                            </tr>
-                        }
-                    }
-                }
-            </tbody>
-
-        </table>
-    </div>
-</div>
-        }
-        else
-        {
-            <div class="nr-found">
-                <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
-            </div>
-        }
     }
-
 </div>
+
 <script>
     $(document).ready(function () {
-       
+        $('#images-tab').on('shown.bs.tab', function () {
+            $('#images').show();
+            $('#summary').hide();
+        });
+
+        $('#summary-tab').on('shown.bs.tab', function () {
+            $('#summary').show();
+            $('#images').hide();
+        });
+
         if ('@Model.entity_action' != 'NS')
         {
             $("#dvscroll").addClass('scrollDiv table-scroll');
