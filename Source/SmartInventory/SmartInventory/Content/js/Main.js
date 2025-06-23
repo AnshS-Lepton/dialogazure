@@ -9154,7 +9154,7 @@ var Main = function () {
         if (app.autoplanid != '0' && app.autoplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
         }
-        }
+    }
     }
     this.SetAutoBackBoneNetworkFilters = function () {
         if (app.autoplanid == '0' || app.autoplanid == undefined) {
@@ -9163,7 +9163,7 @@ var Main = function () {
         if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
         }
-        }
+    }
     }
 
     this.getcablecategoryfilters = function () {
@@ -9435,14 +9435,14 @@ var Main = function () {
         app.layerManager = [];
 
         // Clear previously drawn polylines from the map
-        if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
-            app.backboneself.polylines.forEach(line => {
-                if (line && line.setMap) {
-                    line.setMap(null);
-                }
-            });
-            app.backboneself.polylines = [];
-        }
+        //if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
+        //    app.backboneself.polylines.forEach(line => {
+        //        if (line && line.setMap) {
+        //            line.setMap(null);
+        //        }
+        //    });
+        //    app.backboneself.polylines = [];
+        //}
         //load covid-19 layer..  
         if ($("#chk_covid_lyr").is(':checked')) {
             var layerParam = { Name: "Covid", DisplayName: "Covid-19", Filters: null, MapFilePath: "D:/CovidMapFiles/Covid.map" };
@@ -21584,6 +21584,17 @@ var Main = function () {
         if ($("#dvAutoBackBonePlanData").is(":visible")) {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
         } 
+        if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
+            si.backboneself.polylines.forEach(line => {
+                if (line && line.setMap) {
+                    line.setMap(null);
+                }
+            });
+            si.backboneself.polylines = [];
+        }
+        if (si.fadeMap) {
+            si.fadeMap.setMap(null);
+        }
         app.autobackboneplanid = 0;
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
@@ -21628,6 +21639,10 @@ var Main = function () {
             $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
         }
         app.autoplanid = 0;
+        if (typeof networkdata !== 'undefined' && networkdata != null) {
+            networkdata.hideAllNetworkFile();
+         }
+
         if ($("#dvAutoBackBonePlanData").css('display') == 'none') {
             if (typeof backbonedata != "undefined") {
                 backbonedata.hideAllNetworkFile();

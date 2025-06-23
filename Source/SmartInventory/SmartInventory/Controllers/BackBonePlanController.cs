@@ -223,7 +223,9 @@ namespace SmartInventory.Controllers
         }
         public PartialViewResult GetLoopManage(int planid, double looplength, bool is_loop_updated)
         {
-            List<BackbonePlanNetworkDetails> list = new BLPlan().GetBackBoneLoopList(planid, looplength);
+            var usrDetail = (User)Session["userDetail"];
+
+            List<BackbonePlanNetworkDetails> list = new BLPlan().GetBackBoneLoopList(planid, usrDetail.user_id);
 
             if (!is_loop_updated)
             {
@@ -231,12 +233,18 @@ namespace SmartInventory.Controllers
             }
             return PartialView("_LoopManage", list);
         }
-        public JsonResult getLoopLength(int plan_id)
-        {
-            BackBonePlanning model = new BackBonePlanning();
-            model.temp_plan_id = plan_id;
-            model.is_loop_update = true;
+        public JsonResult getLoopLength(int plan_id,string sproutType,string backboneType,string geometry, bool isCreateDuct,bool isCreateTrench)
+        {         
             JsonResponse<BackBoneBOMOBOQResponse> objResp = new JsonResponse<BackBoneBOMOBOQResponse>();
+            BackBonePlanning model = new BackBonePlanning
+            {
+                plan_id = plan_id,
+                sprout_fiber = sproutType,
+                backbone_fiber = backboneType,
+                geometry = geometry,
+                is_create_duct = isCreateDuct,
+                is_create_trench = isCreateTrench
+            };
             try
             {
                 var usrDetail = (User)Session["userDetail"];
@@ -245,7 +253,10 @@ namespace SmartInventory.Controllers
                     int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
                     if (user_id != 0)
                     {
-                        objResp.result = new BLPlan().BackBonePlanBom(model, user_id).FirstOrDefault();
+                        //objResp.result = new BLPlan().BackBonePlanBom(model, user_id).FirstOrDefault().entity_type == "Loop";
+                        objResp.result = new BLPlan().BackBonePlanBom(model, user_id)
+                             .FirstOrDefault(x => x.entity_type == "Loop");
+
                     }
                     objResp.status = ResponseStatus.OK.ToString();
                 }
