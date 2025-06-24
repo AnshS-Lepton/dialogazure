@@ -1269,9 +1269,9 @@ namespace BusinessLogics
         {
             new DABackBonePlan().UpdateBackBoneLoopLength(model);
         }
-        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, double loopLength)
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, int userId)
         {
-            return new DABackBonePlan().GetBackBoneLoopList(plan_id, loopLength);
+            return new DABackBonePlan().GetBackBoneLoopList(plan_id, userId);
         }
 
     }

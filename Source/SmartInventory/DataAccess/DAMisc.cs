@@ -2727,7 +2727,8 @@ namespace DataAccess
                         p_backbone_fiber_type= model.backbone_fiber,
                         p_sprout_fibertype = model.sprout_fiber,
                         p_backbone_line_geom = model.geometry,
-                        p_endpoint_network_id = model.endpoint_network_id
+                        p_iscreateduct = model.is_create_duct,
+                        p_iscreatetrench = model.is_create_trench
                     }, true).ToList();
                 if(result == null || result.Count == 0)
                 {
@@ -2774,11 +2775,11 @@ namespace DataAccess
     }
     public class DABackBonePlan : Repository<BackbonePlanNetworkDetails>
     {
-        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id,double loopLength)
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id,int userId)
         {
             try
             {
-                return repo.GetAll(x => x.plan_id == plan_id && x.loop_length == loopLength).OrderBy(x => x.system_id).ToList();
+                return repo.GetAll(x => x.plan_id == plan_id && x.is_loop_required == true && x.created_by == userId).OrderBy(x => x.system_id).ToList();
             }
             catch (Exception)
             {
@@ -2946,7 +2947,7 @@ namespace DataAccess
 
             try
             {
-                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_get_backbone_planning_network", new
+                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_backbone_plan_network", new
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();

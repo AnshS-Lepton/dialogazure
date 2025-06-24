@@ -43,6 +43,9 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                     @Html.HiddenFor(m => m.selectedSites)
                     @Html.HiddenFor(m => m.startpoint_network_id)
                     @Html.HiddenFor(m => m.endpoint_network_id)
+                    @Html.HiddenFor(m => m.cable_length)
+                    @Html.HiddenFor(m => m.start_point)
+                    @Html.HiddenFor(m => m.end_point)
                   
                     <div class="prowindowNetworkData">
                         <div class="createPlan">
@@ -57,7 +60,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.start_point, new { @class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30, @readonly = "readonly" })
+                                        @Html.TextBoxFor(m => m.start_point, new { @id="startpoint",@class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30, @readonly = "readonly" })
                                         <i id="startpointmap" onclick="return backbonedata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction direction-icon custStyle"></i>
                                         <i id="startPointErrorMsg" style="color: red; font-size: 10px;"></i>
                                     </div>
@@ -65,7 +68,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_073<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.end_point, new { @class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30, @readonly = "readonly" })
+                                        @Html.TextBoxFor(m => m.end_point, new { @id = "endpoint", @class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30, @readonly = "readonly" })
                                         <i id="endpointmap" onclick="return backbonedata.NetworkPlanning(true, 'end');" class="icon-Find_Direction direction-icon custStyle" title="Click on map to choose end point"></i>
                                         <i id="endPointErrorMsg" style="color: red; font-size: 10px;"></i>
                                     </div>
@@ -111,7 +114,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
 
-                                <div id="trenchduct" style="display:none;">
+                                <div id="trenchduct">
                                     <div class="form-group mb-15">
                                         <div class="col-md-5">
                                         </div>
@@ -152,7 +155,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">Route Length :</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.cable_length, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
+                                        @Html.TextBoxFor(m => m.cable_length, new { @id="cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
                                 </div>
                                 <div class="form-group">

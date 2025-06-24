@@ -68,7 +68,14 @@ var BackbonePlanning = function () {
                 app.hideAllNetworkFile();
                 removeOldMarkers();
                 $('.BackBonePlan').removeClass('activeToolBar');
-
+                if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
+                    si.backboneself.polylines.forEach(line => {
+                        if (line && line.setMap) {
+                            line.setMap(null);
+                        }
+                    });
+                    si.backboneself.polylines = [];
+                }
             });
         });
     }
@@ -105,13 +112,11 @@ var BackbonePlanning = function () {
         backbonedata.NetworkEndPoint = null;
         $('#manhole_distance').val('');
         $('#pole_distance').val('');
-        $('#cable_length').val('');
-        $('#start_point').val('');
-        $('#end_point').val('');
+        $('#cablelength').val('');
+        $('#startpoint').val('');
+        $('#endpoint').val('');
         $('#is_create_trench').prop('checked', false);
         $('#is_create_duct').prop('checked', false);
-        $('#trenchduct').hide();
-        //app.ResetOffSet();
         $("#startpointmap").removeClass('activemarker');
         $("#endpointmap").removeClass('activemarker');
         $("#btnBomCable").attr("disabled", false);
@@ -147,7 +152,7 @@ var BackbonePlanning = function () {
             si.backboneself.polylines = [];
         }
         $('#plan_name').val('');
-        $('#cable_length').val('');
+        $('#cablelength').val('');
         $('#loop_length').val('');
     }
 
@@ -545,6 +550,7 @@ var BackbonePlanning = function () {
                     app.startLatLng = e.latLng;
                     var startLatLog = e.latLng.lat().toFixed(6) + "," + e.latLng.lng().toFixed(6);
                     app.NetworkStartPoint = e.latLng.lat() + "," + e.latLng.lng();
+                    $('#startpoint').val(startLatLog);
                     $('#start_point').val(startLatLog);
 
                    // app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'start_point')
@@ -567,6 +573,7 @@ var BackbonePlanning = function () {
                     app.endLatLng = f.latLng;
                     var endLatLog = f.latLng.lat().toFixed(6) + "," + f.latLng.lng().toFixed(6);
                     app.NetworkEndPoint = f.latLng.lat() + "," + f.latLng.lng();
+                    $('#endpoint').val(endLatLog);
                     $('#end_point').val(endLatLog);
 
                   //  app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, 'end_point')
@@ -600,7 +607,7 @@ var BackbonePlanning = function () {
             if (si.startMarker)
                 si.startMarker.setMap(null);
             si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
-            $('#start_point').val(startlat.toFixed(6) + ',' + startlong.toFixed(6));
+            $('#startpoint').val(startlat.toFixed(6) + ',' + startlong.toFixed(6));
             si.startMarker.addListener('drag', function (startLatlng) {
 
                 app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();              
@@ -630,12 +637,12 @@ var BackbonePlanning = function () {
             if (si.endMarker)
                 si.endMarker.setMap(null);
             si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
-            $('#end_point').val(endlat.toFixed(6) + ',' + endlong.toFixed(6));
+            $('#endpoint').val(endlat.toFixed(6) + ',' + endlong.toFixed(6));
             si.endMarker.addListener('drag', function (endLatlng) {
 
                 //app.ResetOffSet();
                 app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
-                app.fillnetworkPlanningMarker(endLatlng, 'end');
+                app.fillnetworkPlanningMarker(endLatlng, 'end');             
                 app.ResetBomDetails();
             });
             si.endMarker.setMap(si.map);
@@ -678,7 +685,7 @@ var BackbonePlanning = function () {
 
             //app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "start_point");
             //app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, "end_point");
-            app.createCableBetweenMakers();
+            app.createCableBetweenMakers();          
 
         }
     }
@@ -843,6 +850,10 @@ var BackbonePlanning = function () {
                 }
             }
             backbonedata.SuggestedRoute();
+            let isBuffer = $('#planbuffer').val();
+            if (isBuffer.trim() !== '' && isBuffer > 0) {
+                app.PlanningBufferPoint();
+            }
 
 
         }
@@ -857,6 +868,7 @@ var BackbonePlanning = function () {
             app.startLatLng = LatLong.latLng;
             lat = LatLong.latLng.lat();
             lng = LatLong.latLng.lng();
+            $('#startpoint').val(lat.toFixed(6) + ',' + lng.toFixed(6));
             $('#start_point').val(lat.toFixed(6) + ',' + lng.toFixed(6));
             if (app.NetworkStartPoint != null && app.NetworkEndPoint != null) {
                 if (si.Network_Path == "manually" || si.gMapObj.infoEntity != undefined && si.gMapObj.infoEntity != null) {
@@ -869,6 +881,7 @@ var BackbonePlanning = function () {
             app.endLatLng = LatLong.latLng;
             lat = LatLong.latLng.lat();
             lng = LatLong.latLng.lng();
+            $('#endpoint').val(lat.toFixed(6) + ',' + lng.toFixed(6));
             $('#end_point').val(lat.toFixed(6) + ',' + lng.toFixed(6));
             if (app.NetworkStartPoint != null && app.NetworkEndPoint != null) {
                 if (si.Network_Path == "manually" || si.gMapObj.infoEntity != undefined && si.gMapObj.infoEntity != null) {
@@ -892,6 +905,9 @@ var BackbonePlanning = function () {
         if (si.startMarker)
             si.startMarker.setMap(null);
         si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
+        $('#startpoint').val(startlat.toFixed(6) + ',' + startlong.toFixed(6));
+        $('#start_point').val(startlat.toFixed(6) + ',' + startlong.toFixed(6));
+
         si.startMarker.addListener('dragend', function (event) {
             app.NetworkStartPoint = event.latLng.lat() + "," + event.latLng.lng();
 
@@ -909,7 +925,7 @@ var BackbonePlanning = function () {
 
         si.startMarker.setMap(si.map);
         app.MarkerList.push(si.startMarker);
-
+       
         var endlat = parseFloat(NetworkEndPoint.lat());
         var endlong = parseFloat(NetworkEndPoint.lng());
         var endLatlng = { lat: endlat, lng: endlong };
@@ -917,6 +933,9 @@ var BackbonePlanning = function () {
         if (si.endMarker)
             si.endMarker.setMap(null);
         si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
+        $('#endpoint').val(endlat.toFixed(6) + ',' + endlong.toFixed(6));
+        $('#end_point').val(endlat.toFixed(6) + ',' + endlong.toFixed(6));
+
         si.endMarker.addListener('dragend', function (event) {
             app.NetworkEndPoint = event.latLng.lat() + "," + event.latLng.lng();
 
@@ -1104,16 +1123,19 @@ var BackbonePlanning = function () {
             debugger;
 
             ShowAutoPlanLineLength();
+            let isBuffer = $('#planbuffer').val();
+            if (isBuffer.trim() !== '' && isBuffer > 0) {
+                app.PlanningBufferPoint();
+            }
         });
         google.maps.event.addListener(si.gMapObj.infoEntity.getPath(), 'set_at', function (indx) {
-            debugger;
+
+            //app.ResetOffSet();
 
             OldendIndex = si.gMapObj.libPath.length - 1;
             var newPath = si.gMapObj.infoEntity.getPath();
             var newLibPath = newPath.getArray();
             app.deleteAllMiddleMarker();
-            backbonedata.ResetBomDetails();
-
             if (indx == 0) {
                 si.gMapObj.libPath = newLibPath;
                 var startlatlng = newLibPath[0].lat() + ',' + newLibPath[0].lng();
@@ -1131,138 +1153,24 @@ var BackbonePlanning = function () {
             else {
                 si.gMapObj.libPath = newLibPath;
             };
-            debugger;
 
             ShowAutoPlanLineLength();
-
-            if (newPath.getLength() >= 2) {
-                var newStart = newPath.getAt(0);
-                var newEnd = newPath.getAt(newPath.getLength() - 1);
-
-                app.NetworkStartPoint = newStart.lat() + "," + newStart.lng();
-                app.NetworkEndPoint = newEnd.lat() + "," + newEnd.lng();
-                // Extract waypoints if any
-                var waypoints = [];
-                for (let i = 1; i < newPath.getLength() - 1; i++) {
-                    let latLng = newPath.getAt(i);
-                    waypoints.push({
-                        location: latLng,
-                        stopover: false
-                    });
-                }
-
-                // Build and call Google Directions API
-                var request = {
-                    origin: newStart,
-                    destination: newEnd,
-                    waypoints: waypoints,
-                    travelMode: google.maps.TravelMode.DRIVING,
-                    optimizeWaypoints: true
-                };
-
-                directionsService.route(request, function (response, status) {
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        app.AllPathResponses.push(response);
-
-                        var Paths = response.routes;
-                        //console.log(Paths);
-                        for (let i = 0; i < Paths.length; i++) {
-                            let totalDist = 0;
-                            for (let j = 0; j < Paths[i].legs.length; j++) {
-                                totalDist += Paths[i].legs[j].distance.value;
-                            }
-                            app.AllDistances.push({ 'overview_polyline': Paths[i].overview_polyline, 'route_distance': totalDist, 'Is_Start': true });
-                            if (app.minDistance != 0 && app.minDistance > totalDist) {
-                                app.minDistance = totalDist;
-                                app.AllPlanningPaths.push(Paths[i]);
-                            }
-                            else if (app.minDistance == 0) {
-                                app.minDistance = totalDist;
-
-                                app.AllPlanningPaths.push(Paths[i]);
-                            }
-                            if (app.AllPlanningPaths.length > 0) {
-                                // app.BindPlanningPaths(app.AllPlanningPaths, true);
-                                ShowAutoPlanLineLength();
-
-                            }
-                        }
-                    } else {
-                        alert('Directions request failed due to ' + status);
-                    }
-                });
-                //app.createCableBetweenMakers();
+            let isBuffer = $('#planbuffer').val();
+            if (isBuffer.trim() !== '' && isBuffer > 0) {
+                app.PlanningBufferPoint();
             }
         });
 
         google.maps.event.addListener(si.gMapObj.infoEntity.getPath(), 'insert_at', function (indx) {
             debugger;
             /* app.ResetOffSet();*/
-            debugger;
-            app.deleteAllMiddleMarker();
-            backbonedata.ResetBomDetails();
 
             var newPath = si.gMapObj.infoEntity.getPath();
             si.gMapObj.libPath = newPath.getArray();
             ShowAutoPlanLineLength();
-
-            if (newPath.getLength() >= 2) {
-                var newStart = newPath.getAt(0);
-                var newEnd = newPath.getAt(newPath.getLength() - 1);
-
-                app.NetworkStartPoint = newStart.lat() + "," + newStart.lng();
-                app.NetworkEndPoint = newEnd.lat() + "," + newEnd.lng();
-                // Extract waypoints if any
-                var waypoints = [];
-                for (let i = 1; i < newPath.getLength() - 1; i++) {
-                    let latLng = newPath.getAt(i);
-                    waypoints.push({
-                        location: latLng,
-                        stopover: false
-                    });
-                }
-
-                // Build and call Google Directions API
-                var request = {
-                    origin: newStart,
-                    destination: newEnd,
-                    waypoints: waypoints,
-                    travelMode: google.maps.TravelMode.DRIVING,
-                    optimizeWaypoints: true
-                };
-
-                directionsService.route(request, function (response, status) {
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        app.AllPathResponses.push(response);
-
-                        var Paths = response.routes;
-                        //console.log(Paths);
-                        for (let i = 0; i < Paths.length; i++) {
-                            let totalDist = 0;
-                            for (let j = 0; j < Paths[i].legs.length; j++) {
-                                totalDist += Paths[i].legs[j].distance.value;
-                            }
-                            app.AllDistances.push({ 'overview_polyline': Paths[i].overview_polyline, 'route_distance': totalDist, 'Is_Start': true });
-                            if (app.minDistance != 0 && app.minDistance > totalDist) {
-                                app.minDistance = totalDist;
-                                app.AllPlanningPaths.push(Paths[i]);
-                            }
-                            else if (app.minDistance == 0) {
-                                app.minDistance = totalDist;
-
-                                app.AllPlanningPaths.push(Paths[i]);
-                            }
-                            if (app.AllPlanningPaths.length > 0) {
-                                // app.BindPlanningPaths(app.AllPlanningPaths, true);
-                                ShowAutoPlanLineLength();
-
-                            }
-                        }
-                    } else {
-                        alert('Directions request failed due to ' + status);
-                    }
-                });
-
+            let isBuffer = $('#planbuffer').val();
+            if (isBuffer.trim() !== '' && isBuffer > 0) {
+                app.PlanningBufferPoint();
             }
         });
         google.maps.event.addListener(si.gMapObj.infoEntity, 'click', function (evt) {
@@ -1320,11 +1228,19 @@ var BackbonePlanning = function () {
             $("#ManageLoop").attr("disabled", false);
              app.CheckLoopRequired();
             app.drawGeoJsonLinesOnMap(planId);
+            si.startMarker.setOptions({
+                draggable: false,
+                clickable: false, // optional, if you also want to disable clicking
+            });
+            si.endMarker.setOptions({
+                draggable: false,
+                clickable: false, // optional, if you also want to disable clicking
+            }); 
         }, false, true, false);
     }
 
     this.loopValidation = function () {
-        var cableLength = parseFloat($('#cable_length').val());
+        var cableLength = parseFloat($('#cablelength').val());
         var loop_length = parseFloat($('#loop_length').val());
         var threshold = parseFloat($('#threshold').val());
         var pole_distance = parseFloat($('#pole_distance').val());
@@ -1362,7 +1278,7 @@ var BackbonePlanning = function () {
         debugger;
         si.backboneself = this;
         si.gMapObj.infoEntity = null;
-        si.gMapObj.libPath = null;
+        //si.gMapObj.libPath = null;
         si.point2pointgeom = [];
         if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
         if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
@@ -1484,7 +1400,7 @@ var BackbonePlanning = function () {
 
             app.createDirectionMarker(startPoint, EndPoint);
             latLngArr.splice(0, 0, startPoint);
-            latLngArr.push(EndPoint);
+            latLngArr.push(EndPoint);            
 
             ShowAutoPlanLineLength(latLngArr);
         }
@@ -1540,19 +1456,26 @@ var BackbonePlanning = function () {
     }
     this.loopDetails = function () {
 
-        var temp_plan_id = $('#plan_id').val();
-        /* $('#temp_plan_id').val(temp_plan_id);*/
-        ajaxReq('BackBonePlan/getLoopLength', { plan_id: temp_plan_id }, false, function (resp) {
+        let plan_id = $('#plan_id').val();
+        let sproutDropdownType = $('#sproutFiberDropdown').val();
+        let backboneDropdownType = $('#backboneFiberDropdown').val();
+        let geometry = $('#geometry').val();
+        let isTrench = $('#is_create_trench').is(':checked');
+        let isDuct = $('#is_create_duct').is(':checked');
+        ajaxReq('BackBonePlan/getLoopLength', { plan_id: plan_id, sproutType: sproutDropdownType, backboneType: backboneDropdownType, geometry: geometry, isCreateDuct : isDuct,isCreateTrench :isTrench }, false, function (resp) {
 
             if (resp.status.toLowerCase() == "ok") {
-                var length = resp.result.length_qty;
+                debugger;
+                var length = resp.result.cable_Length_qty;
                 var cost_per_unit = resp.result.cost_per_unit;
                 var service_cost_per_unit = resp.result.service_cost_per_unit;
-                var amount = resp.result.amount;
+                var amount = resp.result.total_cost;
                 $('#tblRecurringCharges').find('#Loop > .lngqty').text(length);
                 $('#tblRecurringCharges').find('#Loop > .cost_per_unit').text(cost_per_unit);
                 $('#tblRecurringCharges').find('#Loop > .service_cost_per_unit').text(service_cost_per_unit);
                 $('#tblRecurringCharges').find('#Loop > .amount').text(amount);
+                $('#tblRecurringCharges tr#Loop').trigger('click');
+
                 $('#closeModalPopup').trigger("click");
             }
         }, true, false);
@@ -1581,10 +1504,12 @@ var BackbonePlanning = function () {
                     if (resp.length >= 1) {
                         let podEntity = resp.find(item => item.entity_title === 'Site');
                         if (podEntity) {
-                            if (end_point_type === "start_point") {
+                            if (end_point_type === "startpoint") {
+                                $('#startpoint').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
                                 $('#start_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
                                 $('#startpoint_network_id').val(podEntity.common_name);
                             } else {
+                                $('#endpoint').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
                                 $('#end_point').val(latLng.lat().toFixed(6) + "," + latLng.lng().toFixed(6));
                                 $('#endpoint_network_id').val(podEntity.common_name);
                             }
@@ -1594,10 +1519,10 @@ var BackbonePlanning = function () {
                     }
 
                     // If no site found
-                    $('#start_point').val('');
-                    $('#end_point').val('');
-                    $('#cable_length').val('');
-                    if (end_point_type === "start_point") {
+                    $('#startpoint').val('');
+                    $('#endpoint').val('');
+                    $('#cablelength').val('');
+                    if (end_point_type === "startpoint") {
                         $('#startPointErrorMsg').text('No sites are available near the selected location!');
                     } else {
                         $('#endPointErrorMsg').text('No sites are available near the selected location!');
@@ -1621,7 +1546,7 @@ var BackbonePlanning = function () {
 
     this.CheckLoopLenght = function (event) {
 
-        var cableLength = parseFloat($('#cable_length').val());
+        var cableLength = parseFloat($('#cablelength').val());
         var loopLength = parseFloat($('#' + event.id).val());
         if (loopLength >= cableLength) {
             alert("Loop length cannot be greater and equal than Cable Drum Length!");
@@ -1653,7 +1578,7 @@ function ShowAutoPlanLineLength(_path) {
 
     ajaxReq('Plan/GetNetworkPlanningLineLength', { geom: $('#geometry').val() }, true, function (resp) {
         distance = resp.result;
-        $('#cable_length').val(parseFloat(distance.toFixed(2)));
+        $('#cablelength').val(parseFloat(distance.toFixed(2)));
     }, true, false, true);
 
 }
