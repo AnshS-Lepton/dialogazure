@@ -212,6 +212,11 @@
             alert(MultilingualKey.SI_OSP_GBL_NET_FRM_461);
             return false;
         }
+        else if (!/^\d+(\.\d+)?$/.test($('#txt_loop_length').val())) {
+            alert("Please enter a valid numeric loop length.");
+            return false;
+        }
+
         else if ($('#txt_loop_length').val() == 0) {
             alert(MultilingualKey.SI_OSP_GBL_NET_FRM_462);
             return false;
