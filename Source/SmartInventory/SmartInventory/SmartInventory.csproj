@@ -1650,6 +1650,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\23-06-2025.sql" />
     <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
     <Content Include="MigrationScripts\17-06-2025.sql" />
     <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
@@ -2065,6 +2066,7 @@
     <Content Include="Areas\Admin\Views\Vendor\ViewItemVendorCost.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\AddItemVendorCost.cshtml" />
     <Content Include="Content\Templates\Site\ImportSite.xlsx" />
+    <Content Include="Content\Templates\Bulk\FiberData.xlsx" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />

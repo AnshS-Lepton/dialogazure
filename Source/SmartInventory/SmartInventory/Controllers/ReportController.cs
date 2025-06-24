@@ -13353,7 +13353,7 @@ namespace SmartInventory.Controllers
            
             try
             {
-                systemId = 20164;// fixed for test
+               
                 string mapkey = ConfigurationManager.AppSettings["MapKeyBackend"];
                 List<NearestSiteDetails> siteList = new List<NearestSiteDetails>();
                 siteList = new BLSite().GetSitelistData(systemId);

@@ -305,6 +305,7 @@ namespace SmartInventory.Controllers
                                 objTempFiberLink.link_name = linkid.ToString();//dr["Link/Route ID"].ToString();
                                 objTempFiberLink.link_type = dr["Link Type"].ToString();
                                 objTempFiberLink.service_id = dr["OP_ALIAS"].ToString();
+                                objTempFiberLink.main_link_id = dr["Main_link_id"].ToString();
 
                                 objTempFiberLink.created_by = Convert.ToInt32(((User)Session["userDetail"]).user_id);
                                 objTempFiberLink.created_on = DateTimeHelper.Now;
