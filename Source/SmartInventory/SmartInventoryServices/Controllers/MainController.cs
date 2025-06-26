@@ -6493,5 +6493,40 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
+
+        [System.Web.Http.HttpPost]
+        public ApiResponse<List<DropdownMaster>> GetDropmaster(ReqInput data)
+        {
+            var response = new ApiResponse<List<DropdownMaster>>();
+            try
+            {
+                DropdownMaster objDropdownMaster = ReqHelper.GetRequestData<DropdownMaster>(data);
+
+                // Assume this returns List<GenericDropdown>
+                var rawList = new BLMisc().GetDropDownList(objDropdownMaster.EntityType, objDropdownMaster.DropdownType);
+
+                // Manually map to DropdownMaster
+                var result = rawList.Select(x => new DropdownMaster
+                {
+                    dropdown_key = x.dropdown_key,
+                    dropdown_value = x.dropdown_value,
+                    dropdown_status= x.dropdown_status
+                }).ToList();
+
+                response.status = StatusCodes.OK.ToString();
+                response.results = result;
+            }
+            catch (Exception ex)
+            {
+                new ErrorLogHelper().ApiLogWriter("GetDropmaster", "Dropdown Controller", data.data, ex);
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Processing Request.";
+            }
+
+            return response;
+        }
+
+
+
     }
 }

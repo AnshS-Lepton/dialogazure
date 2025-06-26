@@ -5781,6 +5781,15 @@ namespace Models
         public DateTime? created_on { get; set; }
 
     }
+    public class DropdownMaster
+    {
+        public string EntityType { get; set; }
+        public string DropdownType { get; set; }
+        public string dropdown_value { get; set; }
+        public string dropdown_key { get; set; }
+        public bool dropdown_status { get; set; }
+        // Add more fields as per your table
+    }
 
 }
 

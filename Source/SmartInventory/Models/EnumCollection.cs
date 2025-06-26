@@ -286,7 +286,7 @@ namespace Models
         Ring_Capacity,
         FiberStatus,
         NoOf_Sites,
-        Image_upload
+        ddl_entity_checklist
 
     }
     public enum VendorType
