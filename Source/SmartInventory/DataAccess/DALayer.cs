@@ -679,7 +679,7 @@ namespace DataAccess
                         p_ownership_type = objReportFilter.SelectedOwnerShipType,
                         p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
                         p_radious = objReportFilter.radius,
-                        p_route = objReportFilter.selected_route_ids,
+                        p_route = objReportFilter.selected_route_ids
                     }, false);
                 return lst;
 
