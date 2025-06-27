@@ -5542,7 +5542,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
 
                 string url = "api/Main/GetNearByEntities ";
                 var response = WebAPIRequest.PostIntegrationAPIRequest<List<EntityDetail>>(url, nearByEntitiesIn, "", "").results;
-                var filteredResults = response.Where(r => r.entity_type == EntityType.FMS.ToString() ||  r.entity_type == EntityType.POD.ToString()  || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
+                var filteredResults = response.Where(r => r.entity_type == EntityType.FMS.ToString() || r.entity_type == EntityType.SpliceClosure.ToString()).ToList();
 
                 return Json(filteredResults, JsonRequestBehavior.AllowGet);
             }

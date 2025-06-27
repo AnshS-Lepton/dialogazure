@@ -468,7 +468,10 @@
         else
             if (myValues.length == 1) {
                 var strs = myValues == "P" ? "Planned" : myValues == "A" ? "As-Built" : myValues == "D" ? "Dormant" : "";
-                $('#ddlNetworkStatus').append('<option value="' + myValues + '" selected>' + strs + '</option>');
+                if ($('#ddlNetworkStatus option[value="' + myValues + '"]').length === 0) {
+
+                    $('#ddlNetworkStatus').append('<option value="' + myValues + '" selected>' + strs + '</option>');
+                }
             }
             else {
                 var arra = myValues.split(',');

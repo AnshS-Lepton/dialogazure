@@ -1,0 +1,37 @@
+INSERT INTO public.search_settings
+(layer_id, search_columns, created_by, created_on, modified_by, modified_on)
+VALUES((select layer_id from layer_details where layer_name ='LandBase'), 'network_id', 1,now() , NULL, NULL);
+
+
+UPDATE public.layer_details
+SET isvisible=true
+WHERE layer_id=(select layer_id from layer_details where layer_name ='LandBase') ;
+
+
+UPDATE layer_columns_settings
+SET  is_utilization_column=true
+where column_name='network_id' and layer_id = (select layer_id from layer_details where layer_name ='Duct') and setting_type ='Report';
+
+UPDATE layer_details
+SET is_utilization_enabled=false
+WHERE layer_name='FiberLink';
+
+
+UPDATE layer_columns_settings
+SET  is_utilization_column=true
+where column_name='network_id' and layer_id = (select layer_id from layer_details where layer_name ='Splitter') and setting_type ='Report';
+
+ WITH duplicates AS (
+  SELECT
+    ctid,  -- unique identifier for each row
+    ROW_NUMBER() OVER (
+      PARTITION BY layer_id, db_column_name
+      ORDER BY ctid
+    ) AS rn
+  FROM data_uploader_template
+  WHERE layer_id = (select layer_id  from layer_details ld where layer_name='Cable') 
+  )
+	DELETE FROM data_uploader_template
+	WHERE ctid IN (
+	  SELECT ctid FROM duplicates WHERE rn > 1
+    );
