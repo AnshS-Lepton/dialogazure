@@ -5,14 +5,13 @@ LAYER
 	TEMPLATE fooOnlyForWMSGetFeatureInfo 
 	INCLUDE "datashare.inc"	
 	DATA 'sp_geometry FROM vw_att_details_pole_map USING UNIQUE system_id USING srid=4326'	
-	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))
+	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))
 			
 	VALIDATION		
 		'provinceFilter'   '.*'
 		'layerFilter'   '.*'
 		'prjectspecificationFilter'   '.*'
 		'ownershipFilter'   '.*'							
-		'PODFilter'   '.*'
 		'NetworkFilter'   '.*'
 		'AutoPlanningNetworkFilter' '.*'
 	END 
