@@ -13982,6 +13982,30 @@ namespace SmartInventory.Controllers
 
             return Json(objResp.result, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public ActionResult getNearestSiteDetail(int nearestsite_id, string geomType)
+        {
+            JsonResponse<GeometryDetail> objResp = new JsonResponse<GeometryDetail>();
+            var objGeometryDetail = new BLProject().getNearestSiteDetail(nearestsite_id, geomType);
+           
+            if (objGeometryDetail.geometry_extent != null)
+            {
+                var extent = objGeometryDetail.geometry_extent.TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+                string[] bounds = extent.Split(',');
+                string[] southWest = bounds[0].Split(' ');
+                string[] northEast = bounds[1].Split(' ');
+                objGeometryDetail.southWest = new latlong { Lat = southWest[1], Long = southWest[0] };
+                objGeometryDetail.northEast = new latlong { Lat = northEast[1], Long = northEast[0] };
+                objResp.result = objGeometryDetail;
+                objResp.status = ResponseStatus.OK.ToString();
+            }
+            else
+            {
+                objResp.status = ResponseStatus.ZERO_RESULTS.ToString();
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult getCableRouteDetails(string regionId, string agg1_site_id, string agg2_site_id)
         {
             TopologySegment topologySegment = new TopologySegment();

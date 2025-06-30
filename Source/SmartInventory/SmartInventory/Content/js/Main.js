@@ -10496,7 +10496,6 @@ var Main = function () {
         }
     }
 
-
     this.showRingDetailsOnMap = function (ringId) {
 
         if (splicing) {
@@ -10649,6 +10648,21 @@ var Main = function () {
                 }
             }
         }, true, true);
+    }
+
+    this.ShowNearestSiteOnMap = function (system_Id,gType) {
+
+        ajaxReq('Report/getNearestSiteDetail', { nearestsite_id: system_Id, geomType: gType }, false, function (resp) {
+            ;
+            if (resp.status = 'OK') {
+                //;
+                if (resp.result != null && resp.result != undefined) {
+                    app.HighlightEntityOnMap(gType, resp.result);
+                    //app.printPolygonEntityArea(resp.result);
+                    app.fitElementOnMap(resp.result)
+                }
+            }
+        }, true, false);
     }
 
     this.showRouteDetailsOnMap = function (routeid) {

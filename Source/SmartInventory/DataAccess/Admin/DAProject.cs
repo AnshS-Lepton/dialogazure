@@ -814,6 +814,16 @@ namespace DataAccess.Admin
             }
             catch { throw; }
         }
+        public GeometryDetail getNearestSiteDetail(int nearestsite_id, string geomType)
+        {
+            try
+            {
+                var lstGeomDetails = repo.ExecuteProcedure<GeometryDetail>("fn_getnearestsite_geometrydetail", new { p_nearestsite_id = nearestsite_id, p_geomType = geomType });
+                return lstGeomDetails != null && lstGeomDetails.Count > 0 ? lstGeomDetails[0] : new GeometryDetail();
+            }
+            catch { throw; }
+        }
+
         public List<routeDetails> GetCableRoute(TopologySegment topologySegment,int user_id)
         {
             if (topologySegment == null || string.IsNullOrEmpty(topologySegment.agg1_site_id) || string.IsNullOrEmpty(topologySegment.agg2_site_id))
