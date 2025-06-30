@@ -9148,20 +9148,22 @@ var Main = function () {
     }
 
     this.SetAutoNetworkFilters = function () {
+        if (app.autobackboneplanid == '0' || app.autobackboneplanid == undefined) {
         app.filterAutoNetworkValue = "1 = 1";
 
         if (app.autoplanid != '0' && app.autoplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
         }
-
+    }
     }
     this.SetAutoBackBoneNetworkFilters = function () {
+        if (app.autoplanid == '0' || app.autoplanid == undefined) {
         app.filterAutoNetworkValue = "1 = 1";
 
         if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
             app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
         }
-
+    }
     }
 
     this.getcablecategoryfilters = function () {
@@ -9246,6 +9248,36 @@ var Main = function () {
         }
     }
 
+    this.SetSiteFilters = function () {
+
+        app.filterPODvalue = "";
+        app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
+        app.secondary_pod_system_id = $("#ddlSecondaryPOD").val();
+        app.pod_system_id = $("#ddlPrimaryPOD").val();
+
+        if (app.pod_system_id != "" && app.pod_system_id != undefined) {
+            if (app.filterPODvalue == "") {
+                app.filterPODvalue += " ([system_id] in (" + app.pod_system_id + "))";
+            }
+
+        }
+
+        //if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
+        //    app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
+        //}
+        //if (app.secondary_pod_system_id != "" && app.secondary_pod_system_id != undefined) {
+        //    if (app.filterPODvalue == "") {
+        //        app.filterPODvalue += " ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //    else {
+        //        app.filterPODvalue += " and ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
+        //    }
+        //}
+
+        if (app.filterPODvalue == "") {
+            app.filterPODvalue = "1 = 1";
+        }
+    }
     this.SetPODFilters = function () {
 
         app.filterPODvalue = "";
@@ -9403,14 +9435,14 @@ var Main = function () {
         app.layerManager = [];
 
         // Clear previously drawn polylines from the map
-        if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
-            app.backboneself.polylines.forEach(line => {
-                if (line && line.setMap) {
-                    line.setMap(null);
-                }
-            });
-            app.backboneself.polylines = [];
-        }
+        //if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
+        //    app.backboneself.polylines.forEach(line => {
+        //        if (line && line.setMap) {
+        //            line.setMap(null);
+        //        }
+        //    });
+        //    app.backboneself.polylines = [];
+        //}
         //load covid-19 layer..  
         if ($("#chk_covid_lyr").is(':checked')) {
             var layerParam = { Name: "Covid", DisplayName: "Covid-19", Filters: null, MapFilePath: "D:/CovidMapFiles/Covid.map" };
@@ -10481,7 +10513,6 @@ var Main = function () {
         app.gMapObj = {};
         ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
             if (resp.status = 'OK') {
-
                 if (resp.lstcableinfo != null && resp.lstcableinfo != undefined) {
                     $(popup.DE.MinimizeModel).trigger("click");
                     splicing.clearUserTempOverlay(app.gMapObj.TraceRoute);
@@ -10511,7 +10542,7 @@ var Main = function () {
                                 for (var z = 0; z < geometry.length; z++) {
                                     bounds.extend(geometry[z]);
                                 }
-                                /*  var lineObj = si.createLineWithCore(geometry, resp.lstcableinfo[i].core_number);*/
+                                var lineObj = si.createRingdetailsLineWithLength(geometry, resp.lstcableinfo[i].cable_length, resp.lstcableinfo[i].cable_network_id);
                                 var lineObj = si.createLine(geometry);
                                 lineObj.strokeColor = 'blue';
                                 var _lineIcon = [{
@@ -10568,9 +10599,7 @@ var Main = function () {
                         }
 
                     }
-                    debugger;
                     if (resp.lstconnectedelements != null || resp.lstconnectedelements != undefined) {
-                        debugger;
                         for (var i = 0; i < resp.lstconnectedelements.length; i++) {
 
                             var en_type = resp.lstconnectedelements[i].connected_entity_type;
@@ -10604,7 +10633,6 @@ var Main = function () {
                                 }
                             })(ptObj, i));
 
-                            debugger;
                             ptObj.setMap(si.map);
                             app.gMapObj.TraceRoute.push(ptObj);
                             splicing.gMapObj.pointMarkers.push(ptObj);
@@ -10625,7 +10653,6 @@ var Main = function () {
 
     this.showRouteDetailsOnMap = function (routeid) {
         
-        debugger;
         if (splicing) {
             $.each(splicing.gMapObj.pointMarkers, function (indx, itm) {
                 itm.setMap(null);
@@ -10723,9 +10750,7 @@ var Main = function () {
                         }
 
                     }
-                    debugger;
                     if (resp.lstconnectedelements != null || resp.lstconnectedelements != undefined) {
-                        debugger;
                         for (var i = 0; i < resp.lstconnectedelements.length; i++) {
 
                             var en_type = resp.lstconnectedelements[i].connected_entity_type;
@@ -10758,8 +10783,6 @@ var Main = function () {
                                     objInfoWindow.open(si.map, ptObj);
                                 }
                             })(ptObj, i));
-
-                            debugger;
                             ptObj.setMap(si.map);
                             app.gMapObj.TraceRoute.push(ptObj);
                             splicing.gMapObj.pointMarkers.push(ptObj);
@@ -11104,6 +11127,122 @@ var Main = function () {
         return tmpLine;
     }
 
+
+    this.createRingdetailsLineWithLength = function (_path, cable_length, cable_network_id) {
+        var tmpLine = new google.maps.Polyline({
+            strokeColor: '#FF8800',
+            strokeOpacity: 1,
+            strokeWeight: 2,
+            zIndex: 1,
+            path: _path,
+            map: si.map  // Ensure it's added to the map
+        });
+
+        // Function to compute the geographic midpoint
+        function getMidpoint(path) {
+            let totalDistance = 0;
+            let distances = [];
+
+            for (let i = 0; i < path.length - 1; i++) {
+                let distance = google.maps.geometry.spherical.computeDistanceBetween(
+                    new google.maps.LatLng(path[i]),
+                    new google.maps.LatLng(path[i + 1])
+                );
+                distances.push(distance);
+                totalDistance += distance;
+            }
+
+            let halfDistance = totalDistance / 2;
+            let traveled = 0;
+
+            for (let i = 0; i < path.length - 1; i++) {
+                traveled += distances[i];
+                if (traveled >= halfDistance) {
+                    return google.maps.geometry.spherical.interpolate(
+                        new google.maps.LatLng(path[i]),
+                        new google.maps.LatLng(path[i + 1]),
+                        (halfDistance - (traveled - distances[i])) / distances[i]
+                    );
+                }
+            }
+            return path[Math.floor(path.length / 2)]; // Fallback
+        }
+
+        // Calculate the accurate midpoint of the polyline
+        var midLatLng = getMidpoint(_path);
+        // Create a Fixed Tooltip (InfoWindow)
+        //css code is written in main.js file
+        infoWindow = new google.maps.InfoWindow({
+            content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
+        (${cable_length} m)
+               </div>`,
+            position: midLatLng
+        });
+
+        // Open the tooltip immediately so it stays fixed
+        infoWindow.open(si.map);
+        app.previousInfoWindow.push(infoWindow);
+        ShowLineLength(_path);
+        return tmpLine;
+    };
+
+    this.createFiberlinkLineWithCore = function (_path, core_number, cable_measured_length, total_core) {
+        var tmpLine = new google.maps.Polyline({
+            strokeColor: '#FF8800',
+            strokeOpacity: 1,
+            strokeWeight: 2,
+            zIndex: 1,
+            path: _path,
+            map: si.map  // Ensure it's added to the map
+        });
+
+        // Function to compute the geographic midpoint
+        function getMidpoint(path) {
+            let totalDistance = 0;
+            let distances = [];
+
+            for (let i = 0; i < path.length - 1; i++) {
+                let distance = google.maps.geometry.spherical.computeDistanceBetween(
+                    new google.maps.LatLng(path[i]),
+                    new google.maps.LatLng(path[i + 1])
+                );
+                distances.push(distance);
+                totalDistance += distance;
+            }
+
+            let halfDistance = totalDistance / 2;
+            let traveled = 0;
+
+            for (let i = 0; i < path.length - 1; i++) {
+                traveled += distances[i];
+                if (traveled >= halfDistance) {
+                    return google.maps.geometry.spherical.interpolate(
+                        new google.maps.LatLng(path[i]),
+                        new google.maps.LatLng(path[i + 1]),
+                        (halfDistance - (traveled - distances[i])) / distances[i]
+                    );
+                }
+            }
+            return path[Math.floor(path.length / 2)]; // Fallback
+        }
+
+        // Calculate the accurate midpoint of the polyline
+        var midLatLng = getMidpoint(_path);
+        // Create a Fixed Tooltip (InfoWindow)
+        //css code is written in main.js file
+        infoWindow = new google.maps.InfoWindow({
+            content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
+        (${total_core}F)(${cable_measured_length} m)(${core_number})
+               </div>`,
+            position: midLatLng
+        });
+
+        // Open the tooltip immediately so it stays fixed
+        infoWindow.open(si.map);
+        app.previousInfoWindow.push(infoWindow);
+        ShowLineLength(_path);
+        return tmpLine;
+    };
 
     this.createLineWithCore = function (_path, core_number) {
         var tmpLine = new google.maps.Polyline({
@@ -21276,8 +21415,10 @@ var Main = function () {
         popup.LoadModalDialog('PARENT', 'Library/HelpPage', null, "Help & FAQ's", 'modal-md');
     }
     this.uploadImage = function (_systemId, _entityType) {
+        debugger;
+        var ettType = $("#infoTB").attr("att_entitytype");
         popup.LoadModalDialog('PARENT', 'FileUpload/GetFileUploader', {
-            eType: ''
+            eType: ettType
         }, "Upload Image/Document", 'modal-sm');
     }
 
@@ -21552,6 +21693,18 @@ var Main = function () {
         if ($("#dvAutoBackBonePlanData").is(":visible")) {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
         } 
+        if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
+            si.backboneself.polylines.forEach(line => {
+                if (line && line.setMap) {
+                    line.setMap(null);
+                }
+            });
+            si.backboneself.polylines = [];
+        }
+        if (si.fadeMap) {
+            si.fadeMap.setMap(null);
+        }
+        app.autobackboneplanid = 0;
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();
@@ -21593,7 +21746,12 @@ var Main = function () {
         $("#divBackBonePlanTool").hide();
         if ($("#dvAutoPlanData").is(":visible")) {
             $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
-        } 
+        }
+        app.autoplanid = 0;
+        if (typeof networkdata !== 'undefined' && networkdata != null) {
+            networkdata.hideAllNetworkFile();
+         }
+
         if ($("#dvAutoBackBonePlanData").css('display') == 'none') {
             if (typeof backbonedata != "undefined") {
                 backbonedata.hideAllNetworkFile();
@@ -22367,6 +22525,7 @@ var Main = function () {
 
 
     this.getElementImages = function () {
+        debugger;
         var _system_Id = $('#infoTB').attr('att_systemid');
         var _entity_type = $('#infoTB').attr('att_entityType');
 
@@ -23049,6 +23208,81 @@ var Main = function () {
     }
 
 
+    this.uploadSingleFile = function (key) {
+        debugger;
+        var fileInput = document.getElementById("fileUpload_" + key);
+        if (!fileInput || fileInput.files.length === 0) {
+            alert("Please select at least one file to upload.");
+            return;
+        }
+
+        var filesizeKB = parseInt($('#hdnMaxFileUploadSizeLimit').val()); // in KB
+        var maxSizeInBytes = filesizeKB * 1024;
+        var allowedTypes = $('#allowedImageAttachmentType').val().toLowerCase().split(',');
+        var frmData = new FormData();
+        var totalSize = 0;
+        var invalidFiles = [];
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            let file = fileInput.files[i];
+            totalSize += file.size;
+
+            if (file.name.length > 100) {
+                alert("File name must be less than 100 characters: " + file.name);
+                return;
+            }
+
+            let ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (!allowedTypes.includes(ext)) {
+                invalidFiles.push(file.name);
+                continue;
+            }
+
+            if (totalSize > maxSizeInBytes) {
+                let allowedMB = (filesizeKB / 1024).toFixed(2);
+                alert("Total size exceeds " + allowedMB + " MB.");
+                return;
+            }
+
+            frmData.append('images[]', file);
+        }
+
+        if (invalidFiles.length > 0) {
+            alert("Invalid file types:\n" + invalidFiles.join("\n"));
+            return;
+        }
+
+        frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+        frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+        frmData.append('document_type', key); // using key as type
+        frmData.append('feature_name', key);
+
+        ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+            if (resp.status === "OK") {
+                uploadImage(frmData);
+            } else if (resp.status === "DUPLICATE_EXIST") {
+                confirm(resp.message, function () {
+                    uploadImage(frmData);
+                });
+            } else {
+                alert(resp.message);
+            }
+        }, true);
+
+        function uploadImage(data) {
+            ajaxReqforFileUpload('Main/UploadImage', data, true, function (resp) {
+                if (resp.status === "OK") {
+                    $('#closeModalPopup').trigger("click");
+                    app.getElementImages();
+                    alert(resp.message);
+                } else {
+                    alert(resp.message);
+                }
+            }, true);
+        }
+    };
+
+
     this.getUserProfileImage = function () {
         //;
         var _userId = $("#hdnCurrentUserId").val()
@@ -23323,6 +23557,24 @@ var Main = function () {
             $("#PRojectAssoctn").css('background-image', 'none');           
         }, false, false);
     }
+    //##Getimages 
+    let imagesLoaded = false;
+    this.GetImagesDetail = function (ticket_id, system_id, entity_type) {
+        debugger;
+        //if (imagesLoaded) return;
+        //imagesLoaded = true;
+
+        ajaxReq('Main/getEntityImagesListByTicketId', {
+            ticket_id: ticket_id,
+            system_Id: system_id,
+            entity_type: entity_type
+        }, true, function (resp) {
+            $("#images").html(resp);
+            // $("#images").css('background-image', 'none');
+        }, false, false);
+    };
+
+
 
     // ## AT Acceptance
     this.GetATAcceptance = function (_entityId, _entityType, editPermission) {
@@ -32880,14 +33132,14 @@ var Main = function () {
             si.distanceWidget.set("map", null);
             si.distanceWidget = null;
         }
-        if (si.fadeMap) {
-            si.fadeMap.setMap(null);
-        }
+        //if (si.fadeMap) {
+        //    si.fadeMap.setMap(null);
+        //}
         if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
         if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
 
-        //app.NetworkStartPoint = null;
-        //app.startLatLng = null;
+        app.NetworkStartPoint = null;
+        app.startLatLng = null;
         app.endLatLng = null;
         app.NetworkEndPoint = null;
 

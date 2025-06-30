@@ -13513,16 +13513,27 @@ namespace SmartInventory.Controllers
         //}
         public PartialViewResult EditProject(int siteId)
         {
-            var projectList = new BLProject().GetProjectDetailsById(siteId);
+            var projectList = new BLProject().GetProjectsuteDetailsById(siteId);
+           
+            siteprojectdetails lstsite = projectList.FirstOrDefault();
             
-            return PartialView("_UpdateProjectDetails", projectList);
+            return PartialView("_UpdateProjectDetails", lstsite);
         }
         [HttpPost]
         public JsonResult UpdateSiteProject(siteprojectdetails siteprojectdetails)
         {
             try
             {
-                var siteproject = new BLProject().UpdateSiteProject(siteprojectdetails);
+                var siteproject = new BLProject().UpdateSiteProject(siteprojectdetails, Convert.ToInt32(Session["user_id"]));
+                //PODMaster POD = new PODMaster();
+                //List<PODMaster> lstPOD = new List<PODMaster>();
+                //POD.site_id = siteprojectdetails.site_id;
+                //POD.no_of_cores = siteprojectdetails.no_of_cores;
+                //POD.destination_site_id = siteprojectdetails.destination_site_id;
+                //POD.destination_port_type = siteprojectdetails.destination_port_type;
+                //POD.project_id = siteprojectdetails.id;
+                //lstPOD.Add(POD);
+                //var sitedetails = new BLProject().UpdateSiteProjectAdditionDetails(POD);
                 return Json(new { success = true });
             }
             catch (Exception ex)

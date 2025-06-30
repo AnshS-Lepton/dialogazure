@@ -1,5 +1,6 @@
 ﻿using BusinessLogics;
 using BusinessLogics.Admin;
+using BusinessLogics.DaFiFeasibilityAPI;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -13,6 +14,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using NetTopologySuite.Noding;
 using Newtonsoft.Json;
+using Npgsql;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
@@ -25,12 +27,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Remoting;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12094,6 +12098,59 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+        public void ExportKMLBackbonePlanBOMBOQReport(int plan_id)
+        {
+
+            if (plan_id > 0)
+            {
+                string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
+                string fileName = plan_name + "_BackBone_Planing_BomBOQ_KMLReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".kml";
+                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                var sbKml = new StringBuilder();
+                // ── Standard KML header + a single folder ──────────────────────────────
+                sbKml.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                sbKml.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
+                sbKml.AppendLine("<Document>");
+                sbKml.AppendLine("<Folder><name>BOM / BOQ</name>");
+
+                // ── Fetch the data (no geom required) ──────────────────────────────────
+                var filter = (ExportReportFilter)Session["ExportReportFilter"];
+                //List<BackBonePlanBom> rows = new BLSite().GetExportReportDataKML(filter);
+                List<BackBonePlanBom> rows = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+                foreach (var row in rows)
+                {
+                    // Escape XML‑sensitive chars once
+                    string name = SecurityElement.Escape(row.entity_type);
+                    string qty = SecurityElement.Escape(row.length_qty.ToString());
+                    string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
+                    string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
+                    string total = SecurityElement.Escape(row.amount.ToString());
+
+                    sbKml.AppendLine($"  <Placemark>");
+                    sbKml.AppendLine($"    <name>{name}</name>");
+                    sbKml.AppendLine($"    <ExtendedData>");
+                    sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
+                    sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
+                    sbKml.AppendLine($"      <Data name=\"Service Cost Per Unit\"><value>{scpu}</value></Data>");
+                    sbKml.AppendLine($"      <Data name=\"Total Cost\"><value>{total}</value></Data>");
+                    sbKml.AppendLine($"    </ExtendedData>");
+                    sbKml.AppendLine($"  </Placemark>");
+                }
+
+                // ── Close folder & document ────────────────────────────────────────────
+                sbKml.AppendLine("</Folder>");
+                sbKml.AppendLine("</Document>");
+                sbKml.AppendLine("</kml>");
+
+                // ── Push to browser ────────────────────────────────────────────────────
+                //string fileName = $"BOM_BOQ_{DateTime.Now:yyyyMMdd_HHmmss}.kml";
+                Response.Clear();
+                Response.ContentType = "application/vnd.google-earth.kml+xml";
+                Response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\"");
+                Response.Write(sbKml.ToString());
+                Response.End();
+            }
+        }
         #endregion
 
 
@@ -13289,6 +13346,87 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+
+        [HttpPost]
+        public JsonResult updateSiteDataservice(int systemId)
+        {
+           
+            try
+            {
+               
+                string mapkey = ConfigurationManager.AppSettings["MapKeyBackend"];
+                List<NearestSiteDetails> siteList = new List<NearestSiteDetails>();
+                siteList = new BLSite().GetSitelistData(systemId);
+                var nearestSiteList = new List<NearestSiteDetails>();
+                foreach (var site in siteList)
+                {
+                    nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, 100);
+                    if (nearestSiteList != null && nearestSiteList.Count > 0)
+                    {
+                        int index = 0;
+                        foreach (var nearestSite in nearestSiteList)
+                        {
+                            var lst = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSite.site_geometry, mapkey);
+
+
+                            try
+                            {
+                                if (lst.Result.LengthInMeters <= 1)
+                                {
+                                    string[] startGeomParts = site.sp_geometry.Split(' ');
+                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+
+                                    string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
+                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                    nearestSiteList[index].line_geometry = lineGeom;
+                                }
+                                else
+                                {
+                                    var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(lst.Result.GeoJson);
+                                    string lineGeom = string.Empty;
+                                    string[] startGeomParts = site.sp_geometry.Split(' ');
+                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+                                    lineGeom = startGeomParts[1] + " " + startGeomParts[0] + ",";
+                                    foreach (var cordinates in newbuilt.coordinates)
+                                    {
+                                        lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+                                    }
+                                    lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
+                                    lineGeom = lineGeom.TrimEnd(',');
+                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                    nearestSiteList[index].line_geometry = lineGeom;
+                                }
+                                index++;
+                            }
+                            catch (Exception ex)
+                            {
+                                nearestSiteList[index].google_site_distance = 0;
+                                nearestSiteList[index].line_geometry = string.Empty;
+                            }
+                        }
+                    }
+                    // Here you can save the updated nearestSiteList to the database or perform further processing
+                    if (nearestSiteList != null && nearestSiteList.Count > 0)
+                    {
+                        var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
+
+                        new BLSite().getUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance);
+                    }
+                }
+
+
+                return Json(new { success = true, message = "Updated successfully !" });
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("updateSiteDataservice()", "Report", ex);
+
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+   
         #endregion
 
         #region Site Awarding process 
@@ -14535,9 +14673,8 @@ namespace SmartInventory.Controllers
                 site_id = row["Site ID"]?.ToString()?.Trim(),
                 site_name = row["Site Name"]?.ToString()?.Trim(),
 
-                maximum_cost = int.TryParse(row["Maximum Cost"]?.ToString(), out var maxCost) ? maxCost : (int?)null,
                 project_category = row["Project Category"]?.ToString()?.Trim(),
-                priority = int.TryParse(row["Priority"]?.ToString(), out var Priority) ? maxCost : (int?)null,
+                priority = int.TryParse(row["Priority"]?.ToString(), out var Priority) ? Priority : (int?)null,
 
 
                 cable_plan_cores = row["Cable Plan(Cores)"]?.ToString()?.Trim(),

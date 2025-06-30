@@ -327,6 +327,8 @@ namespace Models
         public override string other { get; set; }
         [NotMapped]
         public  string is_specification_allowed { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> lstImageUpload { get; set; }
 
     }
     public class PoleItemMaster : PoleTemplateMaster

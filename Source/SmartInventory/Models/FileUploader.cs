@@ -66,6 +66,7 @@ namespace Models
         public bool is_barcode_image { get; set; }
         public bool is_meter_reading_image { get; set; }
         public string document_type { get; set; }
+        public int ticket_id { get; set; }
     }
     public class VailidateAttachment 
     {
@@ -127,6 +128,8 @@ namespace Models
         public string document_type { get; set; } 
         [NotMapped]
         public Boolean delete_action { get; set; } = false;
+        public string entity_feature_name { get; set; }
+      
     }
     public class ExternalDataFilter : CommonGridAttributes
     {
@@ -143,6 +146,11 @@ namespace Models
         public string document_type { get; set; }
         [NotMapped]
         public List<DropDownMaster> doctypeddllist { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> lstImageUpload { get; set; }
+        [NotMapped]
+        public string eType { get; set; }
+        
         public ModelExternalDataDetails()
         {
             lstFileDetails = new List<ExternalDataFileList>();

@@ -22,7 +22,8 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -778,6 +779,8 @@
     <Content Include="Content\images\icons\lib\Legend\Dorment.png" />
     <Content Include="Content\images\icons\lib\Legend\DSA.svg" />
     <Content Include="Content\images\icons\lib\Legend\Duct.png" />
+    <Content Include="Content\images\icons\lib\Legend\Duct.svg" />
+    <Content Include="Content\images\icons\lib\Legend\Duct1.svg" />
     <Content Include="Content\images\icons\lib\Legend\D_3rdParty.png" />
     <Content Include="Content\images\icons\lib\Legend\D_OH.png" />
     <Content Include="Content\images\icons\lib\Legend\D_OH.svg" />
@@ -813,6 +816,7 @@
     <Content Include="Content\images\icons\lib\Legend\manhole.png" />
     <Content Include="Content\images\icons\lib\Legend\manhole.svg" />
     <Content Include="Content\images\icons\lib\Legend\Microduct.png" />
+    <Content Include="Content\images\icons\lib\Legend\Microduct.svg" />
     <Content Include="Content\images\icons\lib\Legend\MicroPOD.png" />
     <Content Include="Content\images\icons\lib\Legend\MPOD.png" />
     <Content Include="Content\images\icons\lib\Legend\N-RFECommercialHighRise.png" />
@@ -852,6 +856,12 @@
     <Content Include="Content\images\icons\lib\Legend\point.png" />
     <Content Include="Content\images\icons\lib\Legend\pole.png" />
     <Content Include="Content\images\icons\lib\Legend\pole.svg" />
+    <Content Include="Content\images\icons\lib\Legend\Pole5.6.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole6.7.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole8.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole9.png" />
+    <Content Include="Content\images\icons\lib\Legend\PoleFTTX.png" />
+    <Content Include="Content\images\icons\lib\Legend\PoleLECO.png" />
     <Content Include="Content\images\icons\lib\Legend\PolygonStructure.png" />
     <Content Include="Content\images\icons\lib\Legend\Primary.svg" />
     <Content Include="Content\images\icons\lib\Legend\PrimarySplitter.svg" />
@@ -1640,6 +1650,9 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\23-06-2025.sql" />
+    <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
+    <Content Include="MigrationScripts\17-06-2025.sql" />
     <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
     <Content Include="MigrationScripts\04-06-2025.sql" />
     <Content Include="MigrationScripts\23-05-2025.sql" />
@@ -2052,6 +2065,8 @@
     <Content Include="Areas\Admin\Views\FeTools\Viewfetools.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\ViewItemVendorCost.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\AddItemVendorCost.cshtml" />
+    <Content Include="Content\Templates\Site\ImportSite.xlsx" />
+    <Content Include="Content\Templates\Bulk\FiberData.xlsx" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2467,6 +2482,8 @@
     <Content Include="Views\BackBonePlan\_BackbonePlanTool.cshtml" />
     <Content Include="Views\BackBonePlan\_BackboneViewPlanData.cshtml" />
     <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
+    <Content Include="Views\BackBonePlan\_LoopManage.cshtml" />
+    <Content Include="Views\Shared\_TopologyAction.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3003,6 +3020,7 @@
     <Folder Include="Content\UploadedFiles\Buildings\" />
     <Folder Include="Content\UploadedFiles\Fiber\" />
     <Folder Include="Content\UploadedFiles\Resources\" />
+    <Folder Include="Content\UploadedFiles\Site\" />
     <Folder Include="Content\UploadedFiles\VendorSpecifications\" />
     <Folder Include="shp2kml_convertor\" />
     <Folder Include="Uploads\ExternalData\KMZ\" />

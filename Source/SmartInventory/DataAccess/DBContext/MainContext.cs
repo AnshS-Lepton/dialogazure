@@ -675,6 +675,7 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<TopringCableMapping>().ToTable("top_ring_cable_mapping", dbschema);
 
             modelBuilder.Entity<siteprojectdetails>().ToTable("site_project_details", dbschema);
+            modelBuilder.Entity<BackbonePlanNetworkDetails>().ToTable("backbone_plan_network_details", dbschema);
 
             
         }

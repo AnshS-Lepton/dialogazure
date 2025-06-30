@@ -2698,7 +2698,9 @@ namespace DataAccess
                         v_buffer = plan.buffer,
                         START_SITE_NETWORK_ID = plan.startpoint_network_id,
                         END_SITE_NETWORK_ID = plan.endpoint_network_id,
-                        p_threshold = plan.threshold
+                        p_threshold = plan.threshold,
+                        p_looplength = plan.loop_length,
+                        p_is_looprequired = plan.is_loop_required
                     }, true).ToList();
                 return res;
             }
@@ -2725,7 +2727,8 @@ namespace DataAccess
                         p_backbone_fiber_type= model.backbone_fiber,
                         p_sprout_fibertype = model.sprout_fiber,
                         p_backbone_line_geom = model.geometry,
-                        p_endpoint_network_id = model.endpoint_network_id
+                        p_iscreateduct = model.is_create_duct,
+                        p_iscreatetrench = model.is_create_trench
                     }, true).ToList();
                 if(result == null || result.Count == 0)
                 {
@@ -2767,6 +2770,47 @@ namespace DataAccess
                 },true);
             }
             catch { throw; }
+        }
+
+    }
+    public class DABackBonePlan : Repository<BackbonePlanNetworkDetails>
+    {
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id,int userId)
+        {
+            try
+            {
+                return repo.GetAll(x => x.plan_id == plan_id && x.is_loop_required == true && x.created_by == userId).OrderBy(x => x.system_id).ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void UpdateLoopLengthByBackBonePlanId(int planId, double looplength)
+        {
+            try
+            {
+                var allPointByPlan_idList = repo.GetAll(x => x.plan_id == planId).OrderBy(x => x.system_id).ToList();
+                allPointByPlan_idList.ForEach(x => x.loop_length = looplength);
+                repo.Update(allPointByPlan_idList);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void UpdateBackBoneLoopLength(List<BackbonePlanNetworkDetails> model)
+        {
+            try
+            {
+                repo.Update(model);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }
@@ -2903,7 +2947,7 @@ namespace DataAccess
 
             try
             {
-                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_get_backbone_planning_network", new
+                var res = repo.ExecuteProcedure<BackBonePlanning>("fn_backbone_plan_network", new
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();

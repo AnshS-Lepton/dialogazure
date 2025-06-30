@@ -1,0 +1,80 @@
+﻿@model List<Models.BackbonePlanNetworkDetails>
+    @using SmartInventory.Settings;
+    @{
+    int counter = 0;
+    }
+
+
+<!DOCTYPE html>
+    <div class="libDetail">
+        @using (Ajax.BeginForm("SaveLoop", "BackBonePlan", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "dvModalBody",
+            LoadingElementId = "dvProgress",
+            OnFailure = "si.handleError",
+            OnSuccess = "backbonedata.loopDetails()"
+        },
+        new { id = "frmLoopManage", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+        {
+
+
+        <div class="libTabContent" style="overflow:visible;">
+            <!-- Tab panes -->
+            <div class="form-group">
+                <div class="tab-content">
+                    @*Loop Managment*@
+                    <fieldset class="the-fieldset">
+                        <legend class="the-legend">@Resources.Resources.SI_OSP_CAB_NET_FRM_004</legend>
+                        <div id="Grid" style="border:none;">
+                            <div class="tab-pane active" id="divLoopDetail" style="max-height: 350px; overflow: auto;">
+
+                                @if (Model.Count > 0)
+                                {
+                                <div class="Boxes">
+                                    @for (int i = 0; i < Model.Count; i++)
+                                    {
+                                    counter = counter + 1;
+                                    <div class="displayRows">
+                                        @*@Html.TextBox("lstLoopMangment[" + i + "].loop_length", @Model[i].loop_length, new { id = "lstLoopMangment_" + i + "_start_reading", @class = "form-control  enableControl", @onblur = "si.calculateLoopLength(" + i + ", " + @Model[i].loop_length + ");", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })*@
+                                        @Html.TextBoxFor(x=>x[i].loop_length, new { @class = "form-control  enableControl", id = "lstLoopMangment_" + i, @onblur = "return backbonedata.CheckLoopLenght(this)", onkeydown = "return ValidateNumberDecimal(this,event,5,2);"})
+
+                                        @counter
+                                    </div>
+                                    <div>
+                                        @Html.HiddenFor(x => x[i].system_id)
+                                        @Html.HiddenFor(x => x[i].entity_type)
+                                        @*@Html.HiddenFor(x => x[i].fraction)
+                                        @Html.HiddenFor(x => x[i].is_middle_point)*@
+                                        @Html.HiddenFor(x => x[i].latitude)
+                                        @Html.HiddenFor(x => x[i].longitude)
+                                        @Html.HiddenFor(x => x[i].plan_id)
+                                        @Html.HiddenFor(x => x[i].is_loop_required)
+                                        @Html.HiddenFor(x => x[i].created_by)
+                                        @*@Html.HiddenFor(x => x[i].sp_geometry)*@
+                                    </div>
+                                    }
+
+                                </div>
+                                }
+                                else
+                                {
+                                <div>@Resources.Resources.SI_OSP_MPOD_NET_RPT_006 .</div>
+                                }
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group ModalFooter" id="dvBtnAction">
+            <div class="col-md-6 col-sm-6 ModalFooterControll">
+                <button type="submit" class="btn btn-primary" id="btnUpdatenetworkLoop">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_003</button>
+                <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal" id="btnCancel">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</a>
+            </div>
+        </div>
+        }
+    </div>
+
+

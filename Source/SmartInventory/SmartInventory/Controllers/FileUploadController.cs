@@ -294,6 +294,9 @@ namespace SmartInventory.Controllers
             var userdetails = (User)Session["userDetail"];
             fdtl.lstUserModule= new BLLayer().GetUserModuleAbbrList(userdetails.user_id, UserType.Web.ToString());
             fdtl.doctypeddllist = new BLLayer().GetDropDownList("ddldocumenttype");  //"LinkType" ddldocumenttype
+            var objDDL = new BLMisc().GetDropDownList(fdtl.eType);
+            fdtl.lstImageUpload = objDDL.Where(x => x.dropdown_type == DropDownType.ddl_entity_checklist.ToString()).ToList();
+
             return PartialView("_UploadFile", fdtl);
         }
 
