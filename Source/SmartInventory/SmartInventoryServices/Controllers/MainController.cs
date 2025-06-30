@@ -3553,6 +3553,7 @@ namespace SmartInventoryServices.Controllers
                         uploadedBy = item.uploaded_by,
                         ImgId = item.id,
                         created_on = MiscHelper.FormatDateTime(item.uploaded_on.ToString()),
+                        feature_ame=item.entity_feature_name,
                     });
 
                 }

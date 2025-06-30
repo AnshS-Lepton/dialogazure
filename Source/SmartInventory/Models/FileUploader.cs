@@ -88,6 +88,7 @@ namespace Models
         public string uploadedOn { get; set; }
         public string created_on { get; set; }
         public string file_ShortName { get; set; }
+        public string feature_ame { get; set; }
     }
 
     public class ImageDownload
