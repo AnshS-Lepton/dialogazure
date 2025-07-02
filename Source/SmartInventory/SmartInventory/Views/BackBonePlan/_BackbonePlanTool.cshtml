@@ -60,7 +60,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.start_point, new { @id="startpoint",@class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30, @readonly = "readonly" })
+                                        @Html.TextBoxFor(m => m.start_point, new { @id = "startpoint", @class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'start_point');", @maxlength = 30, @readonly = "readonly" })
                                         <i id="startpointmap" onclick="return backbonedata.NetworkPlanning(true, 'start');" title="Click on map to choose start point" class="icon-Find_Direction direction-icon custStyle"></i>
                                         <i id="startPointErrorMsg" style="color: red; font-size: 10px;"></i>
                                     </div>
@@ -71,6 +71,15 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                         @Html.TextBoxFor(m => m.end_point, new { @id = "endpoint", @class = "form-control", @onkeypress = "return allowNumberwithTwoDotWithComma(event,'end_point');", @maxlength = 30, @readonly = "readonly" })
                                         <i id="endpointmap" onclick="return backbonedata.NetworkPlanning(true, 'end');" class="icon-Find_Direction direction-icon custStyle" title="Click on map to choose end point"></i>
                                         <i id="endPointErrorMsg" style="color: red; font-size: 10px;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="suggestBox" style="display:none;">
+                                    <label class="control-label col-md-5 w-space">Suggested Routes:</label>
+                                    <div class="col-md-7">
+                                        <select id="routeSelector" class="form-control  dropdown-input" onchange="backbonedata.SuggestedRouteIndex(this.value)">
+                                            <!-- Options will be filled dynamically -->
+                                        </select>
                                     </div>
                                 </div>
 
@@ -87,7 +96,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
 
                                     </div>
                                 </div>
-                                <div class="form-group" id="siteLst">
+                                @*<div class="form-group" id="siteLst">
                                     <label class="control-label col-md-5">Nearest sites :</label>
                                     <div class="col-md-7" style="position: relative;">
                                         <input type="text" id="siteDropdownToggle" readonly placeholder="--Select Site--" class="form-control dropdown-input" />
@@ -104,6 +113,13 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                                 </tbody>
                                             </table>
                                         </div>
+                                    </div>
+                                </div>*@
+                                <div class="form-group" id="siteLst">
+                                    <label class="control-label col-md-5">Nearest sites :</label>
+                                    <div class="col-md-7">
+                                        <input type="text" id="siteDropdownToggle1" readonly placeholder="--Select Site--" class="form-control" onclick="backbonedata.onSiteInputClick()"  />
+                                        
                                     </div>
                                 </div>
 
@@ -155,7 +171,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">Route Length :</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.cable_length, new { @id="cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
+                                        @Html.TextBoxFor(m => m.cable_length, new { @id = "cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -170,6 +186,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                         </div>
                                     </div>
                                 </div>
+
                                 <div id="DvloopLength" class="form-group input-Bton" style="display:none">
                                     <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_162:</label>
                                     <div class="col-md-7">
@@ -177,7 +194,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-default" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
-                                <button type="submit" class="btn btn-default" id="btnApply"  onclick="return backbonedata.loopValidation()" >Apply</button>
+                                <button type="submit" class="btn btn-default" id="btnApply" onclick="return backbonedata.loopValidation()">Apply</button>
                                 <input type="button" class="btn btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
                                        value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
                                 <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>

@@ -21656,6 +21656,11 @@ var Main = function () {
             si.fadeMap.setMap(null);
         }
         app.autobackboneplanid = 0;
+        // Clear previous main polyline if exists
+        if (app.routePolyline) {
+            app.routePolyline.setMap(null);
+            app.routePolyline = null;
+        }
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();

@@ -1,0 +1,51 @@
+﻿@model Models.BackBoneSitePlanDetails
+
+@{
+    WebGrid grid = new WebGrid(rowsPerPage: Model.sites.Count, canSort: true, ajaxUpdateContainerId: "VwFiberLinkGrid", ajaxUpdateCallback: "onGridHeaderClick('tblFiberLinkGrid');fiberLink.GridColor();");
+    grid.Bind(Model.sites, autoSortAndPage: false, rowCount: Model.sites.Count);
+
+    Func<string, string> GenerateSproutFiberDropdown = (name) =>
+    {
+        var select = string.Format("<select name='{0}' class='form-control'>", name);
+        select += "<option value=''>-Select-</option>";
+
+        foreach (var fiber in Model.lstSproutFiber)
+        {
+            select += string.Format("<option value='{0}'>{1}</option>", fiber.dropdown_value, fiber.dropdown_type);
+        }
+
+        select += "</select>";
+        return select;
+    };
+
+    int rowIndex = 0;
+}
+
+<div class="form-group">
+    <label class="control-label">Nearest Sites:</label>
+
+    @if (Model.sites.Count > 0)
+    {
+        <div class="table-responsive tble_cls">
+            @grid.GetHtml(
+                tableStyle: "grid",
+                htmlAttributes: new { id = "gridTemplateMaster" },
+                mode: WebGridPagerModes.All,
+                columns: grid.Columns(
+                    grid.Column("site_name", "Site Name", format: @<text>@item.site_name</text>, canSort: true),
+grid.Column("network_id", "Network Id", format: @<text>@item.network_id</text>, canSort: true),
+grid.Column("sprout_fiber", "Sprout Fiber", format: @<text>
+    @Html.Raw(GenerateSproutFiberDropdown("sprout_fiber_" + rowIndex))
+    @{ rowIndex++; }
+</text>)
+)
+)
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; margin-top: 30px;">
+            No Record Found!
+        </div>
+    }
+</div>

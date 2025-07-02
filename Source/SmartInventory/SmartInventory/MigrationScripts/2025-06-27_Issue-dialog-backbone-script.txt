@@ -1,0 +1,345 @@
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_nearest_sites(line_geom character varying, buffer double precision)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE  
+  v_line geometry;
+  v_buffer geometry;
+  v_buffer_geojson json;
+  v_sites json;
+BEGIN  
+
+	IF line_geom IS NULL OR trim(line_geom) = '' THEN
+  RETURN;
+END IF;
+  -- Convert input line to geometry
+  SELECT ST_GeomFromText('LINESTRING(' || line_geom || ')', 4326)
+  INTO v_line;
+
+  -- Create buffer (in meters)
+  SELECT ST_Buffer(v_line::geography, buffer)::geometry
+  INTO v_buffer;
+
+  -- Convert buffer to GeoJSON
+  SELECT ST_AsGeoJSON(v_buffer)::json
+  INTO v_buffer_geojson;
+
+  -- Get all POD sites within buffer
+  SELECT json_agg(json_build_object('network_id', adp.network_id, 'site_name', adp.site_id , 'network_status' , adp.network_status))
+  INTO v_sites
+  FROM point_master pm  
+  join att_details_pod adp on pm.system_id = adp.system_id and UPPER(pm.entity_type) = 'POD' and adp.status ='A'  and pm.network_status in('P','A') 
+  WHERE ST_Within(pm.sp_geometry, v_buffer);
+
+  -- Return as single JSON object
+  RETURN NEXT json_build_object(
+    'buffer_geometry', v_buffer_geojson,
+    'sites', COALESCE(v_sites, '[]'::json)
+  );
+
+  RETURN;
+END
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_get_nearest_sites(varchar, float8) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_get_nearest_sites(varchar, float8) TO public;
+GRANT ALL ON FUNCTION public.fn_backbone_get_nearest_sites(varchar, float8) TO postgres;
+
+--------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_bom(p_plan_id integer, p_user_id integer, p_backbone_fiber_type character varying, p_sprout_fibertype character varying, p_backbone_line_geom character varying, p_iscreateduct boolean, p_iscreatetrench boolean)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+ v_line_geom geometry;
+ v_line_geom_length double precision;
+  v_skip_systemid integer;
+begin
+	
+select ST_GeomFromText(concat('LINESTRING(', p_backbone_line_geom, ')'), 4326) into v_line_geom;
+select st_length(v_line_geom,false) into v_line_geom_length;
+
+select system_id into v_skip_systemid from backbone_plan_network_details where entity_type in ('Pole','Manhole') and plan_id = p_plan_id order by system_id desc limit 1;
+
+return query
+ select row_to_json(row_result) from (
+ select t1.entity_type,t1.qty::text as cable_Length_qty,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Pole') and system_id not in (v_skip_systemid) group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where specification ='Generic'
+  
+  UNION all
+  
+ select t1.entity_type,t1.qty ::text ,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Manhole') and system_id not in (v_skip_systemid)  group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where specification ='Generic' 
+  
+  union all 
+  
+   select t1.entity_type,SUM(t1.qty)::text as cable_Length_qty,SUM(itm.cost_per_unit),SUM(itm.service_cost_per_unit) ,
+ SUM(((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit))) as total_cost  from (select 'SpliceClosure' as entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Pole','Manhole') and system_id not in (v_skip_systemid) group by entity_type) t1
+  join item_template_master itm on itm.category_reference = 'SpliceClosure' where specification ='generic'
+   group by t1.entity_type
+   
+   UNION all
+   
+select t1.entity_type,CONCAT(ROUND((t1.looplength)::NUMERIC, 3), '/', t1.qty) AS total_qty, itm.cost_per_unit , itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost
+from (
+ select 'Loop' as entity_type,SUM( bpnd.loop_length ) as looplength ,count(1) as qty 
+ from backbone_plan_network_details bpnd 
+ where created_by = p_user_id 
+   and plan_id = p_plan_id  
+   and entity_type in ('Manhole') 
+   and system_id not in (v_skip_systemid) and bpnd.is_loop_required = true
+ group by entity_type, fiber_type
+) t1
+join item_template_master itm 
+  on itm.category_reference = 'Cable' 
+ where '(' || itm.code::varchar || ')' || itm.other::varchar = p_backbone_fiber_type
+ 
+      UNION ALL
+
+select t1.entity_type,t1.qty ::text ,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (select 'Duct' as entity_type ,count(*) as qty from backbone_plan_network_details bpnd where created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Manhole') and p_iscreateduct = true and system_id not in (v_skip_systemid)  group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where specification ='Generic' 
+  
+  UNION all
+  
+ select t1.entity_type,t1.qty ::text ,itm.cost_per_unit ,itm.service_cost_per_unit ,
+ ((t1.qty * itm.cost_per_unit) + (t1.qty * itm.service_cost_per_unit)) as total_cost  from (
+ select 'Trench' as entity_type ,count(*) as qty from backbone_plan_network_details bpnd where 
+ created_by = p_user_id and plan_id = p_plan_id and entity_type in ('Manhole') and 
+ p_iscreatetrench = true and system_id not in (v_skip_systemid)  group by entity_type) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type 
+  where lower(specification) ='generic' 
+ 
+   UNION ALL
+  
+  select t.entity_type ,
+  CONCAT(ROUND(SUM(t.line_length)::NUMERIC, 3), '/', SUM(t.count_cable)) AS total_qty,
+  SUM(t.cost_per_unit) AS total_cost_per_unit,
+  SUM(t.service_cost_per_unit) AS total_service_cost_per_unit,
+  round(SUM(t.total_cost)::numeric,3) AS grand_total_cost
+  from (
+  select t1.entity_type, t1.line_length, t1.count_cable,itm.cost_per_unit, itm.service_cost_per_unit,
+  ((t1.line_length * itm.cost_per_unit) + (t1.line_length * itm.service_cost_per_unit)) as total_cost 
+  from (select 'Cable' as entity_type,round(sum(st_length(line_sp_geometry, false))::numeric, 3) as   	line_length, fiber_type, count(1) as count_cable from backbone_plan_network_details bpnd
+  where created_by = p_user_id and plan_id = p_plan_id 
+  group by fiber_type 
+ ) t1
+  join item_template_master itm on itm.category_reference = t1.entity_type where '(' || itm.code::varchar || ')' || itm.other::varchar = t1.fiber_type) t
+  group by entity_type   )row_result ;
+ 
+ 
+END;
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, bool, bool) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, bool, bool) TO public;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4, varchar, varchar, varchar, bool, bool) TO postgres;
+
+
+---------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_bom(p_plan_id integer, p_user_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+sql TEXT := '';
+v_loop_length double precision;
+v_calculated_loop_length double precision;
+v_loop_entity_count integer;
+k_specification character  varying;
+k_code character  varying;
+begin
+	
+select sum(loop_length) from att_details_loop where source_ref_id=''||p_plan_id||'' and source_ref_type='backbone planning' and loop_length >0 into v_loop_length;
+
+select count(1) into v_loop_entity_count from att_details_loop where  source_ref_id=''||p_plan_id||'' and source_ref_type='backbone planning' and loop_length >0;
+
+SELECT  substring(fiber_type FROM '\(([^)]+)\)'), split_part(fiber_type, ')', 2) into k_code, k_specification   
+FROM backbone_plan_network_details
+WHERE plan_id = p_plan_id
+  AND entity_type = 'Manhole'
+LIMIT 1;
+		
+if(v_loop_length>0)
+then 
+v_calculated_loop_length := v_loop_length;
+end if;
+
+    -- Cable
+    sql :=  'SELECT
+     entity_type,
+     geom_type,
+     SUM(cost_per_unit)         AS cost_per_unit,
+     SUM(service_cost_per_unit) AS service_cost_per_unit,
+     ROUND(SUM(measured_length)::numeric, 2) || ''(m)/'' || SUM(length_qty)::int AS length_qty,
+     SUM(amount)                AS amount
+ FROM (
+     SELECT
+         (SELECT layer_title
+            FROM layer_details
+           WHERE layer_name ILIKE ''cable'')            AS entity_type,
+         ''Line''                                        AS geom_type,
+         COALESCE(item.cost_per_unit,        0)          AS cost_per_unit,
+         COALESCE(item.service_cost_per_unit,0)          AS service_cost_per_unit,
+         COUNT(att.system_id)                            AS length_qty,
+         SUM(att.cable_measured_length)                  AS measured_length,
+         -- total for this cable slice
+         (SUM(att.cable_measured_length) * COALESCE(item.service_cost_per_unit,0) +
+          COALESCE(item.cost_per_unit,0)  * SUM(att.cable_measured_length)) AS amount
+       FROM att_details_cable  att
+       JOIN item_template_master item
+         ON item.audit_id = att.audit_item_master_id
+      WHERE att.source_ref_id      = ' || quote_literal(p_plan_id) || '
+        AND att.source_ref_type    = ''backbone planning''
+        AND item.category_reference = ''Cable''
+      GROUP BY item.cost_per_unit,
+               item.service_cost_per_unit,
+               att.specification,
+               att.item_code
+ ) sub
+ GROUP BY entity_type, geom_type';
+
+    -- Pole
+    IF EXISTS (SELECT 1 FROM att_details_pole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id ::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Pole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(1) AS length_qty
+            FROM att_details_pole att
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Pole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+
+    -- Manhole
+    IF EXISTS (SELECT 1 FROM att_details_manhole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Manhole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                item.cost_per_unit AS cost_per_unit,
+                item.service_cost_per_unit AS service_cost_per_unit,
+                COUNT(1) AS length_qty
+            FROM att_details_manhole att
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Manhole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+
+    -- SpliceClosure
+    IF EXISTS (SELECT 1 FROM att_details_spliceclosure WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''SpliceClosure'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(att.system_id) AS length_qty
+            FROM att_details_spliceclosure att
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''SpliceClosure'' and item.specification = ''generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+   
+if(v_loop_length>0)
+ then 
+sql:=sql ||' UNION SELECT 
+    entity_type, 
+    geom_type, 
+    SUM(cost_per_unit) AS cost_per_unit, 
+    SUM(service_cost_per_unit) AS service_cost_per_unit,
+    loop_length || ''(m)/'' || loop_count AS length_qty,
+    (loop_length * SUM(service_cost_per_unit) +
+     SUM(cost_per_unit) * loop_length) AS amount
+FROM (
+    SELECT 
+        (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''loop'') AS entity_type,
+        ''Line'' AS geom_type,
+        COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+        COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+        ' || v_calculated_loop_length || ' AS loop_length,
+        ' || v_loop_entity_count || ' AS loop_count
+    FROM item_template_master item 
+    WHERE item.code = ' || quote_literal(k_code) || ' AND item.other = ' || quote_literal(k_specification) || '
+    GROUP BY item.cost_per_unit, item.service_cost_per_unit
+) AS loop_data 
+GROUP BY entity_type, geom_type, loop_length, loop_count';
+
+ end if;
+
+if exists (SELECT 1 FROM att_details_trench WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) 
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty ,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount
+	 from (select (select layer_title from layer_details where layer_name ilike ''trench'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty,sum(trench_length) as measured_length from att_details_trench att LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+	LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where source_ref_type = ''backbone planning'' and source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME) e';
+end if;
+
+if exists (SELECT 1 FROM att_details_duct WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar)
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount
+	 from (select (select layer_title from layer_details where layer_name ilike ''duct'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty,sum(calculated_length) as measured_length from att_details_duct att LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+	LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where source_ref_type = ''backbone planning'' and source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME) e';
+end if;
+
+    -- Debug SQL
+    RAISE INFO 'Final SQL: %', sql;
+
+    -- Execute the full dynamic query and return as JSON
+    RETURN QUERY EXECUTE '
+        SELECT row_to_json(row) 
+        FROM (
+            SELECT * FROM (' || sql || ') t 
+            ORDER BY geom_type
+        ) row';
+
+END;
+$function$
+;
+
+-- Permissions
+
+ALTER FUNCTION public.fn_backbone_get_plan_bom(int4, int4) OWNER TO postgres;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4) TO public;
+GRANT ALL ON FUNCTION public.fn_backbone_get_plan_bom(int4, int4) TO postgres;

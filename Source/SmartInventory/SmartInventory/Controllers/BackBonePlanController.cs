@@ -138,17 +138,20 @@ namespace SmartInventory.Controllers
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetBackboneNearestSiteList(string geom, double buffer,string startPointNetworkId,string endPointNetworkId)
+        public ActionResult GetBackboneNearestSiteList(string geom, double buffer,string startPointNetworkId,string endPointNetworkId)
         {
-            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
-            var siteLst = new BLPlan().GetNearestSiteList(geom, buffer);
-            var filterSiteLst = siteLst.sites.Where(s =>
+            BackBoneSitePlanDetails backBoneSitePlanDetails = new BackBoneSitePlanDetails();
+             backBoneSitePlanDetails = new BLPlan().GetNearestSiteList(geom, buffer);
+            var filterSiteLst = backBoneSitePlanDetails.sites.Where(s =>
               (string.IsNullOrEmpty(startPointNetworkId) || s.network_id != startPointNetworkId) &&
               (string.IsNullOrEmpty(endPointNetworkId) || s.network_id != endPointNetworkId));
-            siteLst.sites = filterSiteLst.ToList();
-            objResp.result = siteLst;
-            objResp.status = ResponseStatus.OK.ToString();
-            return Json(objResp, JsonRequestBehavior.AllowGet);
+            backBoneSitePlanDetails.sites = filterSiteLst.ToList();
+            backBoneSitePlanDetails.lstSproutFiber = new BLPlan().GetBackboneFiberTypeDropDownList();
+            // objResp.result = siteLst;
+            //objResp.status = ResponseStatus.OK.ToString();
+            // return Json(objResp, JsonRequestBehavior.AllowGet);
+            return PartialView("_SiteList", backBoneSitePlanDetails);
+
         }
         public JsonResult GetBackbonePlanningEntityList(BackBonePlanning plan)
         {
