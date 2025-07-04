@@ -5769,12 +5769,16 @@ namespace Models
         public int? maximum_cost { get; set; } // Change to decimal? if you ensure it's numeric
         public string location_address { get; set; }
         public string ds_cmc_area { get; set; }
-        public string latitude { get; set; }
-        public string longitude { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
         public string project_category { get; set; }
         public int? priority { get; set; }
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_link_id_prefix { get; set; }
+        public string fiber_link_type { get; set; }
+        public string fiber_link_code { get; set; }
+        public double? total_fiber_distance { get; set; }
+        public int? plan_cost { get; set; }
         public string comment { get; set; }
         [NotMapped]
         public string destination_site_id { get; set; }
@@ -5801,6 +5805,28 @@ namespace Models
         public string dropdown_key { get; set; }
         public bool dropdown_status { get; set; }
         // Add more fields as per your table
+    }
+
+    public class SiteBOMBOQ
+    {
+        public int? id { get; set; }
+        [Required(ErrorMessage = "Manhole span is required")]
+        [Range(double.Epsilon, double.MaxValue)]
+        public double? manhole_distance { get; set; }
+
+        [Required(ErrorMessage = "Pole span is required")]
+        [Range(double.Epsilon, double.MaxValue)]
+        public double? pole_distance { get; set; }
+    }
+
+    public class SiteBOMOBOQResponse
+    {
+        public string entity_type { get; set; }
+        public string qty { get; set; }
+        public string cost_per_unit { get; set; }
+        public string service_cost_per_unit { get; set; }
+        public string total_cost { get; set; }
+      //  public List<siteBufferGeometry> backbonelinegeom { get; set; }
     }
 
 }

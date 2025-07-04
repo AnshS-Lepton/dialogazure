@@ -13519,7 +13519,7 @@ namespace SmartInventory.Controllers
             
             return PartialView("_UpdateProjectDetails", lstsite);
         }
-        [HttpPost]
+        //[HttpPost]
         public JsonResult UpdateSiteProject(siteprojectdetails siteprojectdetails)
         {
             try

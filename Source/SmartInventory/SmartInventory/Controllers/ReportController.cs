@@ -13726,6 +13726,43 @@ namespace SmartInventory.Controllers
         }
         #endregion
 
+        #region Site BOM BOQ report
+        public PartialViewResult SiteBOMBOQ(int site_id)
+        {
+           
+            SiteBOMBOQ lstsite = new SiteBOMBOQ();
+            lstsite.id = site_id;
+            return PartialView("_UpdateBOMBOQDetails", lstsite);
+        }
+       // public PartialViewResult GetSiteBomBOQData(int site_id, int polespan, int manholespan)
+        public PartialViewResult GetSiteBomBOQData(SiteBOMBOQ obj)
+        {
+            int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+          //  var projectList = new BLProject().getSiteBomBoq( Convert.ToInt32(model.id), userId);
+
+            List<SiteBOMOBOQResponse> SiteList = new List<SiteBOMOBOQResponse>();
+          //  SiteList = new BLProject().getSiteBomBoq(site_id, polespan, manholespan, userId);
+            SiteList = new BLProject().getSiteBomBoq(Convert.ToInt32( obj.id), Convert.ToDouble(obj.pole_distance), Convert.ToDouble(obj.manhole_distance), userId);
+            return PartialView("_SiteBomBoqList", SiteList);
+        }
+
+        public JsonResult updateBomBoqAmoutDetails(int site_id, int amount)
+        {
+            try
+            {
+                var siteproject = new BLProject().updateSiteBomBoqAmount(site_id, amount, Convert.ToInt32(Session["user_id"]));
+               
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+
+        }
+      
+        #endregion
+
         #region Site Topology process 
         public ActionResult SiteTopology(string systemid,PODMaster objToplogyPlan, int page = 0, string sort = "", string sortdir = "")
         {
@@ -13982,6 +14019,30 @@ namespace SmartInventory.Controllers
 
             return Json(objResp.result, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public ActionResult getNearestSiteDetail(int nearestsite_id, string geomType)
+        {
+            JsonResponse<GeometryDetail> objResp = new JsonResponse<GeometryDetail>();
+            var objGeometryDetail = new BLProject().getNearestSiteDetail(nearestsite_id, geomType);
+           
+            if (objGeometryDetail.geometry_extent != null)
+            {
+                var extent = objGeometryDetail.geometry_extent.TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+                string[] bounds = extent.Split(',');
+                string[] southWest = bounds[0].Split(' ');
+                string[] northEast = bounds[1].Split(' ');
+                objGeometryDetail.southWest = new latlong { Lat = southWest[1], Long = southWest[0] };
+                objGeometryDetail.northEast = new latlong { Lat = northEast[1], Long = northEast[0] };
+                objResp.result = objGeometryDetail;
+                objResp.status = ResponseStatus.OK.ToString();
+            }
+            else
+            {
+                objResp.status = ResponseStatus.ZERO_RESULTS.ToString();
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult getCableRouteDetails(string regionId, string agg1_site_id, string agg2_site_id)
         {
             TopologySegment topologySegment = new TopologySegment();
