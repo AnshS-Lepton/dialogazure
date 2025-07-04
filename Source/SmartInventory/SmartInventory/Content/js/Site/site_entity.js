@@ -119,8 +119,18 @@ $(document).ready(function () {
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataSync" title= "' + 'Export Site' + '"><span class="fa fa-refresh"></span></a>';
         if (nearestSite != null && nearestSite !== "")
             rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataNearestSite" title= "' + 'Nearest Site Route' + '"><span class="fa fa-location-arrow"></span></a>';
+        if (nearestSite != null && nearestSite !== "")
+            rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataBOMBOQReport" title= "' + 'BOM/BOQ Report' + '"><span class="icon-BOM-BOQ-Report"></span></a>';
 
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+    });
+
+
+    $('.rowDataBOMBOQReport').on("click", function () {
+
+        var systemId = $(this).attr('data-value');
+        debugger;
+        si.SiteReport.BOMBOQ(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
     });
 
     $('.rowDataNearestSite').on("click", function () {

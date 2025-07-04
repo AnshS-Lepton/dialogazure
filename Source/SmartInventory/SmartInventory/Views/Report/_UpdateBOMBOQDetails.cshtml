@@ -1,0 +1,125 @@
+﻿@model Models.SiteBOMBOQ
+<input type="hidden" id="txtid" value="@Model.id" />
+
+<div class="space-pad">
+
+    @using (Ajax.BeginForm("GetSiteBomBOQData", "Reports", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "BomBoqDetails", // This div will receive the result
+        LoadingElementId = "dvProgress"
+    },
+new { id = "frmSiteBOMBOQ", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.HiddenFor(m => m.id)
+
+        <form id="segmentForm">
+            <div class="form-group row">
+                <label class="control-label col-sm-2" for="searchby">Manhole Span(m) <i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.manhole_distance, new { @id = "txtmanhole_distance", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                    @Html.ValidationMessageFor(m => m.manhole_distance, "", new { @class = "text-danger" })
+                   
+                </div>
+                <label class="control-label col-sm-2" for="txtSearchtext">Pole Span(m) * <i class="clsMandatory">*</i>:</label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.pole_distance, new { @id = "txtpole_distance", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                    @Html.ValidationMessageFor(m => m.pole_distance, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group row  d-flex --gap05" >
+                <button type="submit" class="btn btn-default  ml-auto" id="btnProcessPlan">Process</button>
+
+            </div>
+            <div id="BomBoqDetails"></div>
+        </form>
+    }
+</div>
+<div class="ModalFooter d-flex --gap05">
+    <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnsiteCancel">
+        @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
+    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnbomboqSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+
+</div>
+
+<script>
+    $("#btnsiteCancel").click(function (event) {
+        event.preventDefault(); // Prevent form submission (if inside a form)
+        event.stopPropagation();
+        $("#closeChildPopup").trigger("click");
+    });
+    $("#btnProcessPlan").click(function (event) {
+
+        //event.preventDefault(); // Prevent form submission (if inside a form)
+        //event.stopPropagation();
+        debugger;
+        if (!$('#frmSiteBOMBOQ').valid()) {
+            event.preventDefault(); // Correct placement
+            return; // Stop if form is invalid
+        }
+
+        let siteId = $('#txtid').val();
+        let pole_distance = $('#txtpole_distance').val();
+        let manhole_distance = $('#txtmanhole_distance').val();
+
+        if (!manhole_distance) {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            alert("Manhole span required !");
+            return;
+        }
+
+        if (!pole_distance) {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            alert("Pole span required !");
+            return;
+        }
+
+        // Proceed with logic here...
+    });
+
+    $("#btnbomboqSave").click(function (event) {
+
+        let amount = $(".amount").text().trim();
+        
+        event.stopPropagation();
+        debugger;
+        if (!$('#frmSiteBOMBOQ').valid()) {
+            event.preventDefault(); // Correct placement
+            return; // Stop if form is invalid
+        }
+
+        let siteId = $('#txtid').val();
+        let pole_distance = $('#txtpole_distance').val();
+        let manhole_distance = $('#txtmanhole_distance').val();
+
+        if (!manhole_distance) {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            alert("Manhole span required !");
+            return;
+        }
+
+        if (!pole_distance) {
+            event.preventDefault(); // Prevent form submission (if inside a form)
+            alert("Pole span required !");
+            return;
+        }
+
+        ajaxReq('Report/updateBomBoqAmoutDetails', {
+            site_id: siteId,
+            amount: amount
+        }, true, function (response) {
+            debugger;
+            if (response.success) {
+                alert("Details updated successfully!");
+              
+                $("#closeChildPopup").trigger("click");
+               
+            } else {
+                alert(response.message || "Failed to update.");
+            }
+
+        }, false, false);
+    });
+
+</script>

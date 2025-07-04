@@ -26599,7 +26599,41 @@ var Main = function () {
 
                 true, true, true);
 
+        },
+        BOMBOQ: function (siteid, obj) {
+            debugger;
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+            }
+            if (siteid != '' && siteid != null) {
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+            }
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+            }
+        },
+        BOMBOQData: function (siteid, pole_span, manhole_span, obj) {
+            
+            if (obj) {
+                $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
+                $(obj).addClass('activeToolBar');
+            }
+            if (siteid != '' && siteid != null) {
+
+               
+
+                ajaxReq('Report/GetSiteBomBOQData', $('form').serialize(), true, function (resp) {
+                    $("#BomBoqDetails").html(resp);
+                    $('#btnProcessPlan').prop('disabled', false);
+                   
+                }, false, true, false);
+            }
+            else {
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+            }
         }
+
     }
     this.showhideChildMenu = function (element, otherElements) {
         ;

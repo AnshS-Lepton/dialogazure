@@ -1265,11 +1265,55 @@ namespace DataAccess.Admin
             }
             catch { throw; }
         }
+        public List<SiteBOMOBOQResponse> getSiteBomBoq(int site_id, double pole_span, double manhole_span, int userId)
+        {
+            try
+            {
+                var result = repo.ExecuteProcedure<SiteBOMOBOQResponse>("fn_site_get_bom_boq",
+                    new
+                    {
+                        p_site_id = site_id,
+                        p_pole_span= pole_span,
+                        p_manhole_span= manhole_span,
+                        p_user_id = userId
+                    }, true).ToList();
+                if (result == null || result.Count == 0)
+                {
+                    return null;
+                }
+                return result;
+            }
+            catch { throw; }
+        }
+
+        public DbMessage updateSiteBomBoqAmount(int site_id, double amount, int userId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_update_site_bomboq_amount", new
+                {
+                    p_id = site_id,
+                    p_userid = userId,
+                    p_amount = amount
+
+                }).FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("updateSiteBomBoqAmount()", "Report Controller", ex.Message.ToString(), ex);
+                throw;
+            }
+        }
+
         public DbMessage UpdateSiteProject(siteprojectdetails siteprojectdetails, int userId)
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("update_site_project_detail", new { p_id = siteprojectdetails.id, p_userId = userId,
+                return repo.ExecuteProcedure<DbMessage>("update_site_project_detail", new { 
+                    p_id = siteprojectdetails.id, 
+                    p_userId = userId,
                     p_site_name = siteprojectdetails.site_name,
                 p_project_category = siteprojectdetails.project_category,
                     p_cable_plan_cores = siteprojectdetails.cable_plan_cores,
@@ -1281,8 +1325,15 @@ namespace DataAccess.Admin
                     p_destination_site_id = siteprojectdetails.destination_site_id,
                     p_destination_port_type = siteprojectdetails.destination_port_type,
                     p_no_of_cores = siteprojectdetails.no_of_cores,
-                    p_project_id = siteprojectdetails.project_id,
-                    site_id = siteprojectdetails.site_id
+                    p_latitude = siteprojectdetails.latitude,
+                    p_longitude = siteprojectdetails.longitude,
+                    p_priority = siteprojectdetails.priority,
+                    p_fiber_link_type = siteprojectdetails.fiber_link_type,
+                    p_fiber_link_code = siteprojectdetails.fiber_link_code,
+                    p_total_fiber_distance = siteprojectdetails.total_fiber_distance,
+                    p_plan_cost = siteprojectdetails.plan_cost,
+                    p_site_id = siteprojectdetails.site_id,
+                    p_project_id = siteprojectdetails.project_id
 
                 }).FirstOrDefault();
 

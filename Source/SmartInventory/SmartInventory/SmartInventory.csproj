@@ -1650,6 +1650,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\04-07-2025.sql" />
     <Content Include="MigrationScripts\23-06-2025.sql" />
     <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
     <Content Include="MigrationScripts\17-06-2025.sql" />
@@ -2484,6 +2485,8 @@
     <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_LoopManage.cshtml" />
     <Content Include="Views\Shared\_TopologyAction.cshtml" />
+    <Content Include="Views\Report\_UpdateBOMBOQDetails.cshtml" />
+    <Content Include="Views\Report\_SiteBomBoqList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
