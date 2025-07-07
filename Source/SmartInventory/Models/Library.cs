@@ -5761,7 +5761,7 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        
+
         public string project_id { get; set; }
         public string site_id { get; set; }
         public string site_name { get; set; }
@@ -5769,15 +5769,21 @@ namespace Models
         public int? maximum_cost { get; set; } // Change to decimal? if you ensure it's numeric
         public string location_address { get; set; }
         public string ds_cmc_area { get; set; }
+        [NotMapped]
         public double latitude { get; set; }
+        [NotMapped]
         public double longitude { get; set; }
         public string project_category { get; set; }
         public int? priority { get; set; }
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_link_id_prefix { get; set; }
+        [NotMapped]
         public string fiber_link_type { get; set; }
+        [NotMapped]
         public string fiber_link_code { get; set; }
+        [NotMapped]
         public double? total_fiber_distance { get; set; }
+        [NotMapped]
         public int? plan_cost { get; set; }
         public string comment { get; set; }
         [NotMapped]
