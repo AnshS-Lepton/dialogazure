@@ -26607,10 +26607,10 @@ var Main = function () {
                 $(obj).addClass('activeToolBar');
             }
             if (siteid != '' && siteid != null) {
-                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, "Plan Cost Calculation", 'modal-xl');
             }
             else {
-                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, "Plan Cost Calculation", 'modal-xl');
             }
         },
         BOMBOQData: function (siteid, pole_span, manhole_span, obj) {
@@ -26630,7 +26630,7 @@ var Main = function () {
                 }, false, true, false);
             }
             else {
-                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, MultilingualKey.SI_OSP_GBL_JQ_RPT_004, 'modal-xl');
+                popup.LoadModalDialog('CHILD', 'Report/SiteBOMBOQ', { 'site_id': siteid }, "Plan Cost Calculation", 'modal-xl');
             }
         }
 

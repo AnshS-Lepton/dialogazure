@@ -13409,13 +13409,19 @@ namespace SmartInventory.Controllers
                     if (nearestSiteList != null && nearestSiteList.Count > 0)
                     {
                         var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
-
+                       
                         new BLSite().getUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance);
+                        int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                       List<SiteBOMOBOQResponse> bomboqlist = new List<SiteBOMOBOQResponse>();
+                        bomboqlist=new BLProject().getSiteBomBoq(systemId, Convert.ToDouble(ApplicationSettings.NearBySitePoleSpan), Convert.ToDouble(ApplicationSettings.NearBySiteManholeSpan), userId);
+                        
+                        new BLProject().updateSiteBomBoqAmount(systemId, Convert.ToDouble(bomboqlist[0].total_cost), Convert.ToInt32(Session["user_id"]));
+
                     }
                 }
 
 
-                return Json(new { success = true, message = "Updated successfully !" });
+                return Json(new { success = true, message = "Request has been submitted & It is running in background, please check after sometime!" });
             }
             catch (Exception ex)
             {
@@ -13732,16 +13738,16 @@ namespace SmartInventory.Controllers
            
             SiteBOMBOQ lstsite = new SiteBOMBOQ();
             lstsite.id = site_id;
+            lstsite.manhole_distance = ApplicationSettings.NearBySiteManholeSpan;
+            lstsite.pole_distance = ApplicationSettings.NearBySitePoleSpan;
+
             return PartialView("_UpdateBOMBOQDetails", lstsite);
         }
        // public PartialViewResult GetSiteBomBOQData(int site_id, int polespan, int manholespan)
         public PartialViewResult GetSiteBomBOQData(SiteBOMBOQ obj)
         {
             int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-          //  var projectList = new BLProject().getSiteBomBoq( Convert.ToInt32(model.id), userId);
-
             List<SiteBOMOBOQResponse> SiteList = new List<SiteBOMOBOQResponse>();
-          //  SiteList = new BLProject().getSiteBomBoq(site_id, polespan, manholespan, userId);
             SiteList = new BLProject().getSiteBomBoq(Convert.ToInt32( obj.id), Convert.ToDouble(obj.pole_distance), Convert.ToDouble(obj.manhole_distance), userId);
             return PartialView("_SiteBomBoqList", SiteList);
         }
