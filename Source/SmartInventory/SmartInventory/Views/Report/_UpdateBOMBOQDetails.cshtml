@@ -21,7 +21,7 @@ new { id = "frmSiteBOMBOQ", enctype = "multipart/form-data", autocomplete = "off
                     @Html.ValidationMessageFor(m => m.manhole_distance, "", new { @class = "text-danger" })
                    
                 </div>
-                <label class="control-label col-sm-2" for="txtSearchtext">Pole Span(m) * <i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="txtSearchtext">Pole Span(m) <i class="clsMandatory">*</i>:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.pole_distance, new { @id = "txtpole_distance", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                     @Html.ValidationMessageFor(m => m.pole_distance, "", new { @class = "text-danger" })
@@ -29,7 +29,7 @@ new { id = "frmSiteBOMBOQ", enctype = "multipart/form-data", autocomplete = "off
             </div>
 
             <div class="form-group row  d-flex --gap05" >
-                <button type="submit" class="btn btn-default  ml-auto" id="btnProcessPlan">Process</button>
+                <button type="submit" class="btn btn-default  ml-auto" id="btnProcessPlan">Generate Plan Cost</button>
 
             </div>
             <div id="BomBoqDetails"></div>
@@ -39,7 +39,8 @@ new { id = "frmSiteBOMBOQ", enctype = "multipart/form-data", autocomplete = "off
 <div class="ModalFooter d-flex --gap05">
     <a href="javascript:void(0);" class="btn btn-default ml-auto" data-dismiss="modal" id="btnsiteCancel">
         @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006
-    </a>           <input type="button" class="btn btn-primary" name="actionTab" id="btnbomboqSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
+    </a>           
+    <input type="button" class="btn btn-primary" name="actionTab" id="btnbomboqSave" value="@Resources.Resources.GBL_GBL_GBL_GBL_GBL_004" />
 
 </div>
 
