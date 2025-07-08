@@ -61,6 +61,14 @@ namespace Models.TempUpload
         public string aerial_location { get; set; }
         public string a_location_code { get; set; }
         public string b_location_code { get; set; }
+        public string cable_network_id { get; set; }
+        public double loop_start_reading { get; set; }
+        public double loop_end_reading { get; set; }
+        public double loop_latitude { get; set; }
+        public double loop_longitude { get; set; }
+        public string loop_parent_network_id { get; set; }
+        public string loop_parent_entity_type { get; set; }
+        public string loop_remarks { get; set; }
     }
 
 }
