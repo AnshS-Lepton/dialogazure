@@ -207,15 +207,11 @@ var BackbonePlanning = function () {
         }, false, false);
     }
 
-    this.onSiteInputClick = function () {
-        debugger;
+    this.onSiteInputClick = function () {     
         let buffer = parseFloat($('#planbuffer').val());
         let geom = $('#geometry').val();
         let startPointNetworkId = $('#startpoint_network_id').val();
-        let endPointNetworkId = $('#endpoint_network_id').val();
-        $('#siteDropdownToggle').val('--Select Site--');
-        $('#selectAll').prop('checked', false);
-        $('.rowCheckbox').prop('checked', false);
+        let endPointNetworkId = $('#endpoint_network_id').val();       
         if (!isNaN(buffer)) {
             popup.LoadModalDialog('CHILD', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId }, "Nearest Site", 'modal-xl');
         }
@@ -224,51 +220,15 @@ var BackbonePlanning = function () {
         let buffer = parseFloat($('#planbuffer').val());
         let geom = $('#geometry').val();
         let startPointNetworkId = $('#startpoint_network_id').val();
-        let endPointNetworkId = $('#endpoint_network_id').val();
-        $('#siteDropdownToggle').val('--Select Site--');
-        $('#selectAll').prop('checked', false);
-        $('.rowCheckbox').prop('checked', false);
-        //if (!isNaN(buffer)) {
-        //    ajaxReq('BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId }, true, function (resp) {
-        //        if (resp.status === "OK") {
+        let endPointNetworkId = $('#endpoint_network_id').val();        
+        if (!isNaN(buffer)) {
+            ajaxReq('BackBonePlan/GetBackboneNearestSiteBuffer', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId }, true, function (resp) {
+                if (resp.status === "OK") {
 
-        //            showPolygonBufferGeometryOnMap(resp.result.buffer_geometry);
-
-        //            const $tbody = $('#nearestSitesTable tbody');
-        //            const $thead = $('#nearestSitesTable thead');
-        //            $tbody.empty();
-
-        //            if (resp.result.sites.length > 0) {
-        //                $thead.show();  // show header when data exists
-        //                resp.result.sites.forEach(site => {
-        //                    const row = `
-        //                <tr>
-        //                    <td><input type="checkbox" class="rowCheckbox" data-id="${site.network_id}"></td>
-        //                    <td>${site.site_name}</td>
-        //                    <td>${site.network_id}</td>                           
-        //                </tr>`;
-        //                    $tbody.append(row);
-        //                });
-        //            } else {
-        //                $thead.hide();  // hide header when no data
-        //                $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
-        //            }
-        //        } else {
-        //            const $thead = $('#nearestSitesTable thead');
-        //            const $tbody = $('#nearestSitesTable tbody');
-        //            $thead.hide(); // hide header on error
-        //            $tbody.empty();
-        //            $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
-        //        }
-        //    }, false, false);
-        //}
-        //else {
-        //    const $thead = $('#nearestSitesTable thead');
-        //    const $tbody = $('#nearestSitesTable tbody');
-        //    $tbody.empty();
-        //    $thead.hide();  // hide header when no data
-        //    $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
-        //}
+                   showPolygonBufferGeometryOnMap(resp.result.buffer_geometry);
+                }
+            }, false, false);
+        }
     };
 
     // Handle Select All checkbox
@@ -677,7 +637,6 @@ var BackbonePlanning = function () {
     }
 
     this.P2PNetworkManual = function (end) {
-        debugger;
         if (si.gMapObj.RulerLine) {
             si.removeEventListnrs('click');
             si.gMapObj.RulerLine.setMap(null);
@@ -717,7 +676,6 @@ var BackbonePlanning = function () {
 
 
     this.createCableBetweenMakers = function () {
-        debugger;
         app.AllPlanningPaths = [];
         app.AllDistances = [];
         app.minDistance = 0;
@@ -977,7 +935,6 @@ var BackbonePlanning = function () {
 
 
     this.createDirectionMarker = function (NetworkStartPoint, NetworkEndPoint) {
-        debugger;
         app.MarkerList = [];
         // app.ResetOffSet();
 
@@ -1203,7 +1160,6 @@ var BackbonePlanning = function () {
                     si.removeNode(si.gMapObj.infoEntity, event.vertex);
                 }
             }
-            debugger;
 
             ShowAutoPlanLineLength();
             let isBuffer = $('#planbuffer').val();
@@ -1213,7 +1169,6 @@ var BackbonePlanning = function () {
         });
       
         google.maps.event.addListener(si.gMapObj.infoEntity.getPath(), 'set_at', function (indx) {
-            debugger;
             let newPath = si.gMapObj.infoEntity.getPath();
             let newLibPath = newPath.getArray();
 
@@ -1248,7 +1203,6 @@ var BackbonePlanning = function () {
         });
 
         google.maps.event.addListener(si.gMapObj.infoEntity.getPath(), 'insert_at', function (indx) {
-            debugger;
             let newPath = si.gMapObj.infoEntity.getPath();
             let newLibPath = newPath.getArray();
 
@@ -1269,7 +1223,6 @@ var BackbonePlanning = function () {
         });
 
         google.maps.event.addListener(si.gMapObj.infoEntity, 'click', function (evt) {
-            debugger;
             var selectPoint = '';
             selectPoint = si.roundNumber(evt.latLng.lng(), 6) + ' ' + si.roundNumber(evt.latLng.lat(), 6);
             var _zoom = si.map.getZoom();
@@ -1370,7 +1323,6 @@ var BackbonePlanning = function () {
     }
 
     this.drawGeoJsonLinesOnMap = function (planId) {
-        debugger;
         si.backboneself = this;
         si.gMapObj.infoEntity = null;
         //si.gMapObj.libPath = null;
@@ -1397,7 +1349,6 @@ var BackbonePlanning = function () {
                 const geo = JSON.parse(feature.geojson); // parse the GeoJSON string
 
                 if (geo.type === 'LineString') {
-                    debugger;
                     const path = geo.coordinates.map(coord => new google.maps.LatLng(coord[1], coord[0]));
                     si.backbonePolyline = si.backboneself.createAutoPlanLine(path, false, false, 3);
                     si.backbonePolyline.setMap(si.map);
@@ -1410,7 +1361,6 @@ var BackbonePlanning = function () {
     }
 
     this.SuggestedRoute = function () {
-        debugger;
         if (backbonedata.StartTmpLine != undefined && backbonedata.StartTmpLine != null) { backbonedata.StartTmpLine.setMap(null); backbonedata.StartTmpLine = null; }
         if (backbonedata.EndTmpLine != undefined && backbonedata.EndTmpLine != null) { backbonedata.EndTmpLine.setMap(null); backbonedata.EndTmpLine = null; }
 
@@ -1503,14 +1453,12 @@ var BackbonePlanning = function () {
  
 
     this.onChangeEditPath = function (input) {
-        debugger;
         app.Network_Path = input;
         app.createFullNetwork();
         //app.networkPlanningmode();
     }
 
     this.networkPlanningmode = function () {
-        debugger;
         //removeOldMarkers();
         // removeOldMarkersWithRemoveActive();
         if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }
@@ -1560,7 +1508,6 @@ var BackbonePlanning = function () {
         ajaxReq('BackBonePlan/getLoopLength', { plan_id: plan_id, sproutType: sproutDropdownType, backboneType: backboneDropdownType, geometry: geometry, isCreateDuct : isDuct,isCreateTrench :isTrench }, false, function (resp) {
 
             if (resp.status.toLowerCase() == "ok") {
-                debugger;
                 var length = resp.result.cable_Length_qty;
                 var cost_per_unit = resp.result.cost_per_unit;
                 var service_cost_per_unit = resp.result.service_cost_per_unit;
@@ -1653,12 +1600,35 @@ var BackbonePlanning = function () {
         }
 
     }
+    //this.updateSelectedSites = function () {
+    //    debugger;
+    //    let sites = $("#nearestSites").val();
+    //    $('#selectedSites').val(sites);
+
+    //}
+     this.bindNearestSites = function() {
+         let selected = [];         
+        $('.row-checkbox:checked').each(function () {
+            let networkId = $(this).val();
+
+            // Get corresponding dropdown using network ID
+            let dropdown = $("select.sprout-dropdown[data-network-id='" + networkId + "']");
+
+            if (dropdown.length > 0) {
+                let selectedType = dropdown.val();
+
+                if (selectedType && selectedType !== "") {
+                    selected.push(networkId + '&' + selectedType);
+                }
+            }
+        });
+
+         $("#selectedSites").val(selected.join(','));
+    }
 
 }
 
 function ShowAutoPlanLineLength(_path) {
-
-    debugger;
     backbonedata.ResetBomDetails();
     arrLinePath = _path || si.gMapObj.libPath.slice();
 

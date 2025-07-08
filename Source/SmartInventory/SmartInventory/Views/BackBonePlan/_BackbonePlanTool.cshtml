@@ -5,7 +5,11 @@
 <span class="glyphicon glyphicon-menu-right sidectrlright" id="closeBackBonePlanningData"></span>
 
 <!DOCTYPE html>
-
+<style>
+    .createPlan .form-control{
+        padding:2px 6px;
+    }
+</style>
 <div class="sidenetworkDatabar" id="divBackBonePlanningData">
     <header>
         <h3>BACKBONE PLANNING</h3>
@@ -95,38 +99,11 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                         @Html.DropDownListFor(m => m.backbone_fiber, new SelectList(Model.lstBackboneFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "backboneFiberDropdown" })
 
                                     </div>
-                                </div>
-                                @*<div class="form-group" id="siteLst">
-                                    <label class="control-label col-md-5">Nearest sites :</label>
-                                    <div class="col-md-7" style="position: relative;">
-                                        <input type="text" id="siteDropdownToggle" readonly placeholder="--Select Site--" class="form-control dropdown-input" />
-                                        <div id="siteDropdownPanel" style="display:none; position:absolute; z-index:1000; background:#fff; border:1px solid #ccc; width: 183px; max-height: 200px; overflow-y: auto;">
-                                            <table id="nearestSitesTable" class="grid" style="margin:0;">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="selectAll"></th>
-                                                        <th>Site ID</th>
-                                                        <th>Network ID</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>*@
+                                </div>                              
                                 <div class="form-group" id="siteLst">
                                     <label class="control-label col-md-5">Nearest sites :</label>
-                                    <div class="col-md-7">
-                                        <input type="text" id="siteDropdownToggle1" readonly placeholder="--Select Site--" class="form-control" onclick="backbonedata.onSiteInputClick()"  />
-                                        
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-md-5">Sprout Fiber <i class="clsMandatory">*</i>:</label>
-                                    <div class="col-md-7">
-                                        @Html.DropDownListFor(m => m.sprout_fiber, new SelectList(Model.lstSproutFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "sproutFiberDropdown" })
+                                    <div class="col-md-7 d-flex">
+                                        <a href="javascript:void(0)"  id="siteDropdownToggle1"  class="anchor-btn" onclick="backbonedata.onSiteInputClick()">Select Sites</a>
                                     </div>
                                 </div>
 
@@ -200,7 +177,6 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
 
                             </div>
-
                             <div id="BomBoqDetails"></div>
                         </div>
                     </div>
