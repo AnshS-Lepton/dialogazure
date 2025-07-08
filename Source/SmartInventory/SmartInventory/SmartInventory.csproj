@@ -1651,6 +1651,7 @@
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
     <Content Include="MigrationScripts\04-07-2025.sql" />
+    <Content Include="MigrationScripts\08-07-2025_loop_upload_by_cable.sql" />
     <Content Include="MigrationScripts\23-06-2025.sql" />
     <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
     <Content Include="MigrationScripts\17-06-2025.sql" />
