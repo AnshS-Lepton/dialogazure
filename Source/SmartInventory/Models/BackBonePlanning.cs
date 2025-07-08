@@ -93,11 +93,17 @@ namespace Models
     public class BackBoneSitePlanDetails
     {
         public siteBufferGeometry buffer_geometry { get; set; }
+        [NotMapped]
+        public List<DropDownMaster> lstSproutFiber { get; set; }
         public List<SitePlanList> sites { get; set; }
+        public int pageSize { get; set; }
+        public int totalRecord { get; set; }
+        public int currentPage { get; set; }
     }
     public class SitePlanList
     {
         public string site_name { get; set; }
+        public string site_id { get; set; }
         public string network_id { get; set; }
         public string geometry { get; set; }
         public string network_status { get; set; }

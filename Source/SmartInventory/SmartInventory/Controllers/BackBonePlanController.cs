@@ -12,10 +12,9 @@ using BusinessLogics.DaFiFeasibilityAPI;
 using iTextSharp.tool.xml.html;
 using Newtonsoft.Json;
 using System.Web.Helpers;
-using NPOI.SS.Formula.Functions;
-using static Mono.Security.X509.X520;
-using System.Windows.Media;
-using SharpKml.Dom;
+
+
+
 
 namespace SmartInventory.Controllers
 {
@@ -43,8 +42,8 @@ namespace SmartInventory.Controllers
                 {
 
                     objPlan.created_by = user_id;
-                    objPlan.backbone_fiber = objPlan.backbone_fiber.TrimStart('(');
-                    objPlan.sprout_fiber = objPlan.sprout_fiber.TrimStart('(');
+                    //objPlan.backbone_fiber = objPlan.backbone_fiber.TrimStart('(');
+                    //objPlan.sprout_fiber = objPlan.sprout_fiber.TrimStart('(');
                     var objResp = new BLPlan().saveBackbonePlanning(objPlan);
                     objPlan.objPM.message = objResp[0].message;
                     objPlan.objPM.status = objResp[0].status.ToString();
@@ -138,18 +137,52 @@ namespace SmartInventory.Controllers
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetBackboneNearestSiteList(string geom, double buffer,string startPointNetworkId,string endPointNetworkId)
+        public ActionResult GetBackboneNearestSiteList(string geom, double buffer ,string startPointNetworkId,string endPointNetworkId)
         {
-            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
-            var siteLst = new BLPlan().GetNearestSiteList(geom, buffer);
-            var filterSiteLst = siteLst.sites.Where(s =>
+            BackBoneSitePlanDetails backBoneSitePlanDetails = new BackBoneSitePlanDetails();
+
+            if (!string.IsNullOrWhiteSpace(geom))
+                Session["geom"] = geom;
+            else
+                geom = Session["geom"]?.ToString();
+
+            if (buffer != 0)
+                Session["NearestSite_Buffer"] = buffer;
+            else
+                buffer = Convert.ToDouble(Session["NearestSite_Buffer"]);
+
+            if (!string.IsNullOrWhiteSpace(startPointNetworkId))
+                Session["NearestSite_StartPoint"] = startPointNetworkId;
+            else
+                startPointNetworkId = Session["NearestSite_StartPoint"]?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(endPointNetworkId))
+                Session["NearestSite_EndPoint"] = endPointNetworkId;
+            else
+                endPointNetworkId = Session["NearestSite_EndPoint"]?.ToString();
+            Session["NearestSite_Geom"] = geom;
+            Session["NearestSite_Buffer"] = buffer;
+            Session["NearestSite_StartPoint"] = startPointNetworkId;
+            Session["NearestSite_EndPoint"] = endPointNetworkId;
+
+            backBoneSitePlanDetails = new BLPlan().GetNearestSiteList(geom, buffer);
+            var filterSiteLst = backBoneSitePlanDetails.sites.Where(s =>
               (string.IsNullOrEmpty(startPointNetworkId) || s.network_id != startPointNetworkId) &&
               (string.IsNullOrEmpty(endPointNetworkId) || s.network_id != endPointNetworkId));
-            siteLst.sites = filterSiteLst.ToList();
-            objResp.result = siteLst;
+            backBoneSitePlanDetails.sites = filterSiteLst.ToList();
+            backBoneSitePlanDetails.lstSproutFiber = new BLPlan().GetBackboneFiberTypeDropDownList();
+            return PartialView("_SiteList", backBoneSitePlanDetails);
+
+        }
+        public JsonResult GetBackboneNearestSiteBuffer(string geom, double buffer, string startPointNetworkId = null, string endPointNetworkId = null)
+        {
+            JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
+            BackBoneSitePlanDetails backBoneSitePlanDetails = new BLPlan().GetNearestSiteList(geom, buffer);          
+            objResp.result = backBoneSitePlanDetails;
             objResp.status = ResponseStatus.OK.ToString();
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+
         public JsonResult GetBackbonePlanningEntityList(BackBonePlanning plan)
         {
             JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
