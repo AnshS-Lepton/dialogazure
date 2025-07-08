@@ -246,6 +246,11 @@ namespace BusinessLogics.Admin
         {
             return new DASegment().getRouteConnectedElementDetail(route_id, user_id);
         }
+        public GeometryDetail getNearestSiteDetail(int nearestsite_id, string geomType)
+        {
+            return new DASegment().getNearestSiteDetail(nearestsite_id, geomType);
+        }
+
         public List<routeDetails> GetCableRoute(TopologySegment objTopologyPlan, int user_id)
         {
             return new DASegment().GetCableRoute(objTopologyPlan, user_id);
@@ -333,6 +338,16 @@ namespace BusinessLogics.Admin
         public List<siteprojectdetails> GetProjectsuteDetailsById(int id)
         {
             return new DAProjectDetails().GetProjectSiteDetailsById(id);
+        }
+        public List<SiteBOMOBOQResponse> getSiteBomBoq(int site_id, double pole_span, double manhole_span, int userId)
+        {
+            
+                return new DAProjectDetails().getSiteBomBoq(site_id, pole_span, manhole_span, userId);
+        }
+        public DbMessage updateSiteBomBoqAmount(int site_id, double amount, int userId)
+        {
+
+            return new DAProjectDetails().updateSiteBomBoqAmount(site_id, amount, userId);
         }
 
         public DbMessage UpdateSiteProject(siteprojectdetails siteprojectdetails, int userId)

@@ -110,14 +110,33 @@ $(document).ready(function () {
         var systemId = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').attr('data-value');
         var region_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(31)').attr('data-value');
         var province_id = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(32)').attr('data-value');
+        var nearestSite = $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(9)').attr('data-value');
         var rowAction = '<a href="#" data-value="' + systemId + '"  class="dropdown-toggle rowShowOnMap" title= "' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
         rowAction = rowAction + '<i class="fa fa-globe fa-fw m-r-xs"></i></a>';
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowSiteAwarding" title= "' + MultilingualKey.SI_OSP_GBL_GBL_RPT_002 + '"><i class="fa fa-user-plus"></i></a>';
         /* rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + ',' + region_id + ',' + province_id + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><i class="icon-topology"></i></a>';*/
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="dropdown-toggle rowShowTopology" title= "' + 'Topology Plan' + '"><span class="icon-topology"></span></a>';
-        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataSync" title= "' + 'Update Service' + '"><span class="fa fa-refresh"></span></a>';
+        rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataSync" title= "' + 'Export Site' + '"><span class="fa fa-refresh"></span></a>';
+        if (nearestSite != null && nearestSite !== "")
+            rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataNearestSite" title= "' + 'Nearest Site Route' + '"><span class="fa fa-location-arrow"></span></a>';
+        if (nearestSite != null && nearestSite !== "")
+            rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataBOMBOQReport" title= "' + 'Plan Cost Calculation' + '"><span class="icon-BOM-BOQ-Report"></span></a>';
 
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
+    });
+
+
+    $('.rowDataBOMBOQReport').on("click", function () {
+
+        var systemId = $(this).attr('data-value');
+        debugger;
+        si.SiteReport.BOMBOQ(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
+    });
+
+    $('.rowDataNearestSite').on("click", function () {
+
+        var systemId = $(this).attr('data-value');
+        si.ShowNearestSiteOnMap(systemId, 'Line'); $(popup.DE.MinimizeModel).trigger("click");
     });
 
     $('.rowShowSiteAwarding').on("click", function () {
@@ -144,6 +163,7 @@ $(document).ready(function () {
         ajaxReq('Report/updateSiteDataservice', { systemId: input }, true, function (data) {
 
             alert(data.message);
+            $('#btnShowReportData').trigger("click");
             
         }, false, false);
 

@@ -1,0 +1,279 @@
+
+DROP VIEW public.vw_att_details_pod_report;
+sele
+
+CREATE OR REPLACE VIEW public.vw_att_details_pod_report
+ AS
+ SELECT pod.system_id,
+    (pod.site_id::text || '-'::text) || pod.site_name::text AS site_id_site_name,
+    pod.network_id,
+    pod.pod_name,
+    round(pod.latitude::numeric, 6) AS latitude,
+    round(pod.longitude::numeric, 6) AS longitude,
+    pod.pincode,
+    pod.address,
+    pod.specification,
+    pod.category,
+    pod.subcategory1,
+    pod.subcategory2,
+    pod.subcategory3,
+    pod.item_code,
+        CASE
+            WHEN pod.network_status::text = 'P'::text THEN 'Planned'::text
+            WHEN pod.network_status::text = 'A'::text THEN 'As Built'::text
+            WHEN pod.network_status::text = 'D'::text THEN 'Dormant'::text
+            ELSE NULL::text
+        END AS network_status,
+    COALESCE(es.description, pod.status) AS status,
+    pod.parent_network_id AS parent_code,
+    pod.parent_entity_type AS parent_type,
+    prov.province_name,
+    reg.region_name,
+    vm.name AS vendor_name,
+    pm.project_code,
+    pm.project_name,
+    plningm.planning_code,
+    plningm.planning_name,
+    workorm.workorder_code,
+    workorm.workorder_name,
+    purposem.purpose_code,
+    purposem.purpose_name,
+    to_char(pod.created_on, 'DD-Mon-YY'::text) AS created_on,
+    um.user_name AS created_by,
+    to_char(pod.modified_on, 'DD-Mon-YY'::text) AS modified_on,
+    um2.user_name AS modified_by,
+    pod.region_id,
+    pod.province_id,
+    pm.system_id AS project_id,
+    plningm.system_id AS planning_id,
+    workorm.system_id AS workorder_id,
+    purposem.system_id AS purpose_id,
+    um.user_id AS created_by_id,
+    pod.acquire_from,
+    pod.pod_type,
+    pod.ownership_type,
+    vm2.name AS third_party_vendor_name,
+    vm2.id AS third_party_vendor_id,
+    pod.source_ref_type,
+    pod.source_ref_id,
+    pod.source_ref_description,
+    pod.status_remark,
+    pod.status_updated_by,
+    to_char(pod.status_updated_on, 'DD-Mon-YY'::text) AS status_updated_on,
+    entattr.erp_code,
+    entattr.erp_name,
+    entattr.ef_customers,
+    entattr.status AS locked,
+    entattr.zone,
+    to_char(entattr.rfs_date, 'DD-Mon-YY'::text) AS rfs_date,
+    entattr.hub_maintained,
+    entattr.hm_power_bb,
+    entattr.hm_earthing_rating,
+    entattr.hm_rack,
+    entattr.hm_olt_bb,
+    entattr.hm_fms,
+    entattr.splicing_machine,
+    entattr.optical_power_meter,
+    entattr.otdr,
+    entattr.laptop_with_giga_port,
+    entattr.l3_updation_on_inms,
+    pod.is_visible_on_map,
+    pod.remarks,
+    reg.country_name,
+    pod.origin_from,
+    pod.origin_ref_id,
+    pod.origin_ref_code,
+    pod.origin_ref_description,
+    pod.request_ref_id,
+    pod.requested_by,
+    pod.request_approved_by,
+    pod.subarea_id,
+    pod.area_id,
+    pod.dsa_id,
+    pod.csa_id,
+    pod.bom_sub_category,
+    pod.gis_design_id AS design_id,
+    pod.st_x,
+    pod.st_y,
+    pod.ne_id,
+    pod.prms_id,
+    pod.jc_id,
+    pod.mzone_id,
+    pod.served_by_ring,
+    pod.hierarchy_type,
+    vm3.name AS own_vendor_name,
+    pod.site_id,
+    pod.site_name,
+    um3.user_name AS contactor_name,
+    COALESCE(pod.vendorcost, 0.00::double precision) AS vendor_cost,
+    pod.on_air_date,
+    pod.removed_date,
+    pod.tx_type,
+    pod.tx_technology,
+    pod.tx_segment,
+    pod.tx_ring,
+    pod.region,
+    pod.province,
+    pod.district,
+    pod.region_address,
+    pod.depot,
+    pod.ds_division,
+    pod.local_authority,
+    pod.owner_name,
+    pod.access_24_7,
+    pod.tower_type,
+    pod.tower_height,
+    pod.cabinet_type,
+    pod.solution_type,
+    pod.site_rank,
+    pod.self_tx_traffic,
+    pod.agg_tx_traffic,
+    pod.metro_ring_utilization,
+    pod.csr_count,
+    pod.dti_circuit,
+    pod.agg_01,
+    pod.agg_02,
+    pod.bandwidth,
+    pod.ring_type,
+    pod.link_id,
+    pod.alias_name,
+    pod.tx_agg,
+    pod.bh_status,
+    pod.segment,
+    pod.ring,
+    pod.maximum_cost,
+    pod.project_category,
+    pod.priority,
+    pod.no_of_cores,
+    pod.fiber_link_type,
+    pod.comment,
+    pod.plan_cost,
+    pod.fiber_distance,
+    pod.fiber_link_code,
+    pod.port_type,
+    pod.destination_site_id,
+    pod.destination_port_type,
+    pod.destination_no_of_cores,
+    pod.project_id_dialog,
+    pod.vendorcost,
+    pod.contracktorid,
+    pod.fiber_oh_distance_to_network::text AS fiber_oh_distance_to_network,
+    pod.fiber_ug_distance_to_network::text AS fiber_ug_distance_to_network,
+    pod.total_fiber_distance::text AS total_fiber_distance,
+    pod.fiber_distance_to_nearest_site::text AS fiber_distance_to_nearest_site,
+    pod.nearest_site::text AS nearest_site,
+    ''::text AS cost_based_on_rate_card_lkr,
+    tr.ring_code,
+        CASE
+            WHEN pod.is_site_imported = true THEN 'Import'::text
+            ELSE 'Not Import'::text
+        END AS is_site_imported
+   FROM att_details_pod pod
+     JOIN province_boundary prov ON pod.province_id = prov.id
+     JOIN region_boundary reg ON pod.region_id = reg.id
+     JOIN user_master um ON pod.created_by = um.user_id
+     JOIN vendor_master vm ON pod.vendor_id = vm.id
+     LEFT JOIN entity_additional_attributes entattr ON entattr.system_id = pod.system_id AND upper(entattr.entity_type::text) = upper('POD'::text)
+     LEFT JOIN vendor_master vm2 ON pod.third_party_vendor_id = vm2.id
+     LEFT JOIN vendor_master vm3 ON pod.own_vendor_id::integer = vm3.id
+     LEFT JOIN att_details_project_master pm ON pod.project_id = pm.system_id
+     LEFT JOIN att_details_planning_master plningm ON pod.planning_id = plningm.system_id
+     LEFT JOIN att_details_workorder_master workorm ON pod.workorder_id = workorm.system_id
+     LEFT JOIN att_details_purpose_master purposem ON pod.purpose_id = purposem.system_id
+     LEFT JOIN user_master um2 ON pod.modified_by = um2.user_id
+     LEFT JOIN user_master um3 ON pod.contracktorid = um3.user_id
+     LEFT JOIN entity_status_master es ON es.status::text = pod.status::text
+     LEFT JOIN top_ring tr ON tr.id = pod.ring_id;
+
+ALTER TABLE public.vw_att_details_pod_report
+    OWNER TO postgres;
+
+    ---------------------------------------------------------------------------------------
+
+    DROP FUNCTION IF EXISTS public.get_site_project_details(text);
+
+CREATE OR REPLACE FUNCTION public.get_site_project_details(
+	p_site_id text)
+    RETURNS SETOF json 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    RETURN QUERY
+    SELECT row_to_json(t)
+    FROM (
+        SELECT 
+		sp.id,sp.project_id, sp.site_id,sp.site_name,sp.site_owner,sp.project_category, sp.cable_plan_cores,sp.maximum_cost,
+ sp.comment,sp.location_address,sp.ds_cmc_area,sp.priority,pod.destination_site_id,pod.destination_port_type,pod.no_of_cores
+        FROM site_project_details sp left join vw_att_details_pod pod on pod.site_id=sp.site_id
+        WHERE sp.site_id::TEXT = p_site_id
+    ) t;
+END;
+$BODY$;
+
+---------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS public.fn_get_library_attachments_details(integer, character, character, character varying);
+
+CREATE OR REPLACE FUNCTION public.fn_get_library_attachments_details(
+	p_entity_system_id integer,
+	p_entity_type character,
+	p_upload_type character,
+	p_feature_name character varying)
+    RETURNS TABLE(id integer, entity_system_id integer, entity_type character varying, org_file_name character varying, file_name character varying, file_extension character varying, file_location character varying, upload_type character varying, uploaded_by character varying, file_size integer, entity_feature_name character varying, uploaded_on timestamp without time zone, is_barcode_image boolean, is_meter_reading_image boolean, document_type character varying,ticket_id integer) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+
+declare v_sql character varying;
+BEGIN
+v_sql:='select la.id,la.entity_system_id, la.entity_type,la.org_file_name,la.file_name,
+la.file_extension,la.file_location,upload_type, um.user_name, la.file_size,la.entity_feature_name,
+la.uploaded_on, la.is_barcode_image,la.is_meter_reading_image, la.document_type, la.ticket_id from library_attachments la 
+inner join user_master um on la.uploaded_by = um.user_id
+where entity_system_id='||p_entity_system_id||' and entity_type='''||p_entity_type||'''';
+if(coalesce(p_feature_name,'')!='' and upper(p_entity_type)=upper('ROW'))
+then
+v_sql:=v_sql||' and upper(entity_feature_name)=upper('''||p_feature_name||''') ';
+elsif(coalesce(p_feature_name,'')!='')
+then
+v_sql:=v_sql||' and upload_type='''||p_upload_type||''' and upper(entity_feature_name)=upper('''||p_feature_name||''')';
+else
+v_sql:=v_sql||' and upload_type='''||p_upload_type||'''';
+end if;
+
+RAISE INFO 'QUERY %', v_sql;
+RETURN QUERY EXECUTE v_sql ;
+
+END; 
+$BODY$;
+
+--------------------------------------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS public.fn_get_fiber_link_columns_mappings();
+
+CREATE OR REPLACE FUNCTION public.fn_get_fiber_link_columns_mappings(
+	)
+    RETURNS SETOF json 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+ 
+BEGIN
+    -- EXECUTE AND RETURN QUERY RESULT..
+    RETURN QUERY EXECUTE 'SELECT ROW_TO_JSON(ROW) FROM(SELECT column_name,is_active,display_name FROM fiber_link_columns_settings where is_active=true
+    and id in (2,3,29,40) order by column_sequence) ROW';
+    --and column_name=''link_id'' and display_name=''Link/Route Id'' order by column_sequence) ROW';
+    
+
+END
+$BODY$;

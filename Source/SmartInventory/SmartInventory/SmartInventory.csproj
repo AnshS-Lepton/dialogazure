@@ -778,6 +778,8 @@
     <Content Include="Content\images\icons\lib\Legend\Dorment.png" />
     <Content Include="Content\images\icons\lib\Legend\DSA.svg" />
     <Content Include="Content\images\icons\lib\Legend\Duct.png" />
+    <Content Include="Content\images\icons\lib\Legend\Duct.svg" />
+    <Content Include="Content\images\icons\lib\Legend\Duct1.svg" />
     <Content Include="Content\images\icons\lib\Legend\D_3rdParty.png" />
     <Content Include="Content\images\icons\lib\Legend\D_OH.png" />
     <Content Include="Content\images\icons\lib\Legend\D_OH.svg" />
@@ -813,6 +815,7 @@
     <Content Include="Content\images\icons\lib\Legend\manhole.png" />
     <Content Include="Content\images\icons\lib\Legend\manhole.svg" />
     <Content Include="Content\images\icons\lib\Legend\Microduct.png" />
+    <Content Include="Content\images\icons\lib\Legend\Microduct.svg" />
     <Content Include="Content\images\icons\lib\Legend\MicroPOD.png" />
     <Content Include="Content\images\icons\lib\Legend\MPOD.png" />
     <Content Include="Content\images\icons\lib\Legend\N-RFECommercialHighRise.png" />
@@ -852,6 +855,12 @@
     <Content Include="Content\images\icons\lib\Legend\point.png" />
     <Content Include="Content\images\icons\lib\Legend\pole.png" />
     <Content Include="Content\images\icons\lib\Legend\pole.svg" />
+    <Content Include="Content\images\icons\lib\Legend\Pole5.6.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole6.7.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole8.png" />
+    <Content Include="Content\images\icons\lib\Legend\Pole9.png" />
+    <Content Include="Content\images\icons\lib\Legend\PoleFTTX.png" />
+    <Content Include="Content\images\icons\lib\Legend\PoleLECO.png" />
     <Content Include="Content\images\icons\lib\Legend\PolygonStructure.png" />
     <Content Include="Content\images\icons\lib\Legend\Primary.svg" />
     <Content Include="Content\images\icons\lib\Legend\PrimarySplitter.svg" />
@@ -1640,6 +1649,9 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\04-07-2025.sql" />
+    <Content Include="MigrationScripts\08-07-2025_loop_upload_by_cable.sql" />
+    <Content Include="MigrationScripts\23-06-2025.sql" />
     <Content Include="MigrationScripts\18-06-2025_UATVer43_MissingQuery.sql" />
     <Content Include="MigrationScripts\17-06-2025.sql" />
     <Content Include="MigrationScripts\05-06-2025_SIT Update.sql" />
@@ -2056,6 +2068,7 @@
     <Content Include="Areas\Admin\Views\Vendor\ViewItemVendorCost.cshtml" />
     <Content Include="Areas\Admin\Views\Vendor\AddItemVendorCost.cshtml" />
     <Content Include="Content\Templates\Site\ImportSite.xlsx" />
+    <Content Include="Content\Templates\Bulk\FiberData.xlsx" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -2473,6 +2486,8 @@
     <Content Include="Views\BackBonePlan\_BomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_LoopManage.cshtml" />
     <Content Include="Views\Shared\_TopologyAction.cshtml" />
+    <Content Include="Views\Report\_UpdateBOMBOQDetails.cshtml" />
+    <Content Include="Views\Report\_SiteBomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_SiteList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
