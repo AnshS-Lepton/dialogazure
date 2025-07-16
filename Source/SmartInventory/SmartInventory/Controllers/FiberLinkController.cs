@@ -1410,7 +1410,7 @@ namespace SmartInventory.Controllers
             Response.End();
         }
 
-        public ActionResult GetSchematicView(string key, string fiber_link_id)
+        public ActionResult GetSchematicView(string key, string fiber_link_id,string opAlias)
         {
             var value = MiscHelper.Decrypt(key);
             var data = value.Split('-');
@@ -1430,6 +1430,7 @@ namespace SmartInventory.Controllers
             // obj.title = pSLDType; primary done after discuss with Deepak yadav Sir
             obj.title = "Primary";
             obj.fiber_link_id = fiber_link_id;
+            obj.opAlias = opAlias;
             return PartialView("_SLDdiagramFiberLink", obj);
         }
         

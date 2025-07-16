@@ -1053,6 +1053,8 @@ namespace Models
         [NotMapped]
         public string fiber_link_id { get; set; }
         [NotMapped]
+        public string opAlias { get; set; }
+        [NotMapped]
         public int ring_id { get; set; }
         [NotMapped]
         public string ring_code { get; set; }
