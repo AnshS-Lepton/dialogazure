@@ -8,6 +8,15 @@ $("#btnExportReportIntoKML").on("click", function () {
     si.SiteReport.ExportSiteReport('KML', 'All');
     $('.FlowDiv').slideUp();
 });
+$("#btnExportReportIntoNearestKMZ").on("click", function () {
+    si.SiteReport.ExportSiteReport('KMZ', 'Nearest');
+    $('.FlowDiv').slideUp();
+});
+$("#btnExportReportIntoNearestKML").on("click", function () {
+    si.SiteReport.ExportSiteReport('KML', 'Nearest');
+    $('.FlowDiv').slideUp();
+});
+
 function onChangeCustomDate() {
 
     var value = $('#customedate option:selected').val();
