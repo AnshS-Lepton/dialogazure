@@ -83,25 +83,48 @@
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2">Upload Type:</label>*@
                             <div>
-                                @foreach (var item in Model.lstImageUpload)
+                                @if (Model.lstImageUpload != null && Model.lstImageUpload.Any())
                                 {
-                                    var key = item.dropdown_key;
+                                    foreach (var item in Model.lstImageUpload)
+                                    {
+                                        var key = item.dropdown_key;
+                                        <div class="form-group fileUploadList">
+
+                                            <label class="control-label" for="fileUpload_@key">
+                                                @item.dropdown_value
+                                            </label>
+                                            <input type="file"
+                                                   class="form-control"
+                                                   name="uploadedFiles[@key]"
+                                                   id="fileUpload_@key"
+                                                   accept="@ApplicationSettings.validImageTypes"
+                                                   multiple />
+                                            <button type="button" class="btn btn-small btn-primary" onclick="si.uploadSingleFile('@key')">
+                                                <i class="fa fa-upload"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    // fallback: default upload field if no dropdown items
                                     <div class="form-group fileUploadList">
 
-                                        <label class="control-label" for="fileUpload_@key">
-                                            @item.dropdown_value
+                                        <label class="control-label" for="fileUpload_default">
+                                            Upload Image
                                         </label>
                                         <input type="file"
                                                class="form-control"
-                                               name="uploadedFiles[@key]"
-                                               id="fileUpload_@key"
+                                               name="uploadedFiles[default]"
+                                               id="fileUpload_default"
                                                accept="@ApplicationSettings.validImageTypes"
                                                multiple />
-                                        <button type="button" class="btn btn-small btn-primary" onclick="si.uploadSingleFile('@key')">
+                                        <button type="button" class="btn btn-small btn-primary" onclick="si.uploadSingleFile('Image')">
                                             <i class="fa fa-upload"></i>
                                         </button>
                                     </div>
                                 }
+
                             </div>
 
 

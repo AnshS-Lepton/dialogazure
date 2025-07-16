@@ -71,6 +71,25 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public int GetImageCount(int system_id, string documentType)
+        {
+            try
+            {
+                var features = documentType.Replace("/", "");
+                return repo.GetAll(m =>
+            m.entity_system_id == system_id &&
+            m.entity_feature_name != null &&
+            m.entity_feature_name.ToLower().Contains(features.ToLower())
+        ).Count();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+
 
         public LibraryAttachment getEntityDocumentById(int system_id)
         {

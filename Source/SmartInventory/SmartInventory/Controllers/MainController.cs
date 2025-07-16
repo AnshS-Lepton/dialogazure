@@ -2506,6 +2506,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                             objAttachment.uploaded_on = DateTime.Now;
                             //Save Image on FTP and related detail in database..
                             var savefile = new BLAttachment().SaveLibraryAttachment(objAttachment);
+                            var lstImageDetail = new BLAttachment().getEntityImageById(Convert.ToInt32(systemId));
                         }
                         jResp.message = Resources.Resources.SI_OSP_GBL_NET_FRM_242;
                         jResp.status = StatusCodes.OK.ToString();
@@ -2528,6 +2529,15 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 return Json(jResp, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpPost]
+        public JsonResult GetImageCountByType(int systemId, string featurename)
+        {
+            int count = new BLAttachment().GetImageCount(systemId, featurename);
+           
+            return Json(new { count });
+        }
+
         public VailidateAttachment ValidateImageFileType(HttpFileCollectionBase files)
         {
             VailidateAttachment obj = new VailidateAttachment();
