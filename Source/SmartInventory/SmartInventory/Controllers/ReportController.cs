@@ -13904,11 +13904,11 @@ namespace SmartInventory.Controllers
             return PartialView("_SiteBomBoqList", SiteList);
         }
 
-        public JsonResult updateBomBoqAmoutDetails(int site_id, int amount)
+        public JsonResult updateBomBoqAmoutDetails(int site_id, int amount, int pole_distance, int manhole_distance)
         {
             try
             {
-                var siteproject = new BLProject().updateSiteBomBoqAmount(site_id, amount, Convert.ToInt32(Session["user_id"]));
+                var siteproject = new BLProject().updateSiteBomBoqAmount(site_id, amount, pole_distance, manhole_distance, Convert.ToInt32(Session["user_id"]));
                
                 return Json(new { success = true });
             }
