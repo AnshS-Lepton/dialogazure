@@ -13237,14 +13237,14 @@ namespace SmartInventory.Controllers
                     {
                         DownloadSiteReportIntoKML();
                     }
-                    //else if (reportType.ToUpper() == "Nearest" && fileType.ToUpper() == "KMZ")
-                    //{
-                    //    DownloadSiteReportIntoNearestKMZ();
-                    //}
-                    //else if (reportType.ToUpper() == "Nearest" && fileType.ToUpper() == "KML")
-                    //{
-                    //    DownloadSiteReportIntoNearestKML();
-                    //}
+                    else if (reportType.ToUpper() == "NEAREST" && fileType.ToUpper() == "KMZ")
+                    {
+                        DownloadSiteReportIntoNearestKML();
+                    }
+                    else if (reportType.ToUpper() == "NEAREST" && fileType.ToUpper() == "KML")
+                    {
+                        DownloadSiteReportIntoNearestKML();
+                    }
                 }
             }
             catch (Exception ex)
@@ -13354,7 +13354,65 @@ namespace SmartInventory.Controllers
                 }
             }
         }
+        public void DownloadSiteReportIntoNearestKML()
+        {
+            if (Session["ExportReportFilter"] != null)
+            {
+                StringBuilder sbLine = new StringBuilder();
+                StringBuilder sbPoint = new StringBuilder();
+                StringBuilder sbPolygon = new StringBuilder();
+                sbLine.Append("<Folder>");
+                sbPoint.Append("<Folder>");
+                sbPolygon.Append("<Folder>");
+                try
+                {
+                    BLLayer objBLLayer = new BLLayer();
+                    List<ExportReportKML> lstExportReportKML = new List<ExportReportKML>();
+                    ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
+                    lstExportReportKML = new BLSite().GetExportReportDataNearestKML(objReportFilter);
 
+                    foreach (var objEntity in lstExportReportKML)
+                    {
+                        if (objEntity.geom_type.ToUpper() == "POINT")
+                        {
+                            sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
+                            sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
+                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl><Point><coordinates>");
+                            if (!string.IsNullOrEmpty(objEntity.geom))
+                            {
+                                sbPoint.Append(objEntity.geom);
+                            }
+                            sbPoint.Append("</coordinates></Point></Placemark>");
+                        }
+                    }
+
+                    sbLine.Append("</Folder>");
+                    sbPoint.Append("</Folder>");
+                    sbPolygon.Append("</Folder>");
+
+                    string finalKMLString = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" +
+                                "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">" +
+                               "<Document>  <!-- Begin Style Definitions -->" +
+                                "<Style id =\"feasibility_id\"><LineStyle><color>" + "#FF0000FF" + "</color><width>4</width></LineStyle></Style>" +
+                                "<Style id=\"downArrowIcon\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href></Icon></IconStyle></Style>" +
+                                "<Style id=\"downArrowIcon\"><IconStyle><hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/></IconStyle></Style>" +
+                                sbPoint.ToString() + sbLine.ToString() + "</Document></kml>";
+
+                    string attachment = "attachment; filename=export_" + lstExportReportKML[0].entity_title + ".kml";
+                    Response.ClearContent();
+                    Response.ContentType = "application/xml";
+                    Response.AddHeader("content-disposition", attachment);
+                    Response.Write(finalKMLString);
+                    Response.End();
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReportIntoKML()", "Report", ex);
+                    throw ex;
+                }
+            }
+        }
+        
         public void DownloadSiteReportIntoKM1L()
         {
             if (Session["ExportReportFilter"] != null)

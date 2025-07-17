@@ -13,6 +13,7 @@ $("#btnExportReportIntoNearestKMZ").on("click", function () {
     $('.FlowDiv').slideUp();
 });
 $("#btnExportReportIntoNearestKML").on("click", function () {
+    debugger;
     si.SiteReport.ExportSiteReport('KML', 'Nearest');
     $('.FlowDiv').slideUp();
 });

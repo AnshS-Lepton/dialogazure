@@ -52,6 +52,11 @@ namespace BusinessLogics
         {
             return new DASite().GetExportReportDataKML(objReportFilter);
         }
+
+        public List<ExportReportKML> GetExportReportDataNearestKML(ExportReportFilter objReportFilter)
+        {
+            return new DASite().GetExportReportDataNearestKML(objReportFilter);
+        }
         public List<Dictionary<string, string>> GetSegmentReportData(ExportReportFilter objReportFilter)
         {
             return new DASite().GetSegmentReportData(objReportFilter);

@@ -245,6 +245,31 @@ namespace DataAccess
             catch (Exception ex) { throw ex; }
         }
 
+        public List<ExportReportKML> GetExportReportDataNearestKML(ExportReportFilter objReportFilter)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<ExportReportKML>("fn_site_get_export_report_nearest_data_kml",
+                    new
+                    {
+                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_layer_name = objReportFilter.layerName,
+                        P_searchby = objReportFilter.SearchbyColumnName,
+                        p_searchbytext = objReportFilter.SearchbyText,
+                        p_fromdate = objReportFilter.fromDate,
+                        p_todate = objReportFilter.toDate,
+                        p_geom = objReportFilter.geom,
+                        p_duration_based_column = objReportFilter.DurationBasedColumnName,
+                        p_radius = objReportFilter.radius,
+                        p_userid = objReportFilter.userId
+                    }, true);
+                return lst;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
         public List<Dictionary<string, string>> GetSegmentReportData(ExportReportFilter objReportFilter)
         {
             try
