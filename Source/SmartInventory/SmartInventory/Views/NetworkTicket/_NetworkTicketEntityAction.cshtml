@@ -66,15 +66,15 @@
         </li>
     </ul>
 
-        <div class="tab-content" id="networkTabsContent" style="margin-top: 15px;">
+        <div class="tab-content" id="networkTabsContent">
             <!-- Summary Tab -->
             <div class="tab-pane fade in active" id="summary" role="tabpanel">
-                <div class="libTabContent" style="overflow: visible;">
+                @*<div class="libTabContent" style="overflow: visible;">
                     <div id="dvViewNWEdetails" class="ViewReportProgress">
                         <div class="progressHeader"></div>
                         <div class="progressBody"></div>
                     </div>
-                </div>
+                </div>*@
 
                 @if (Model.lstentityInfo.Count > 0)
                 {
@@ -145,14 +145,14 @@
             </div>
           
 
-            <div class="tab-content" id="networkTabsContent" style="margin-top: 15px;">
+            <div class="tab-content" id="networkTabsContent">
                 <!-- Summary Tab -->
                 <div class="tab-pane fade show active" id="summary" role="tabpanel">
                     <!-- Your existing summary content -->
                 </div>
 
                 <!-- Images Tab -->
-                <div class="tab-pane fade" id="images" role="tabpanel">
+                <div class="tab-pane fade space-pad" id="images" role="tabpanel">
                     <!-- Only image content will load here on tab click -->
                 </div>
             </div>

@@ -47,7 +47,10 @@ namespace BusinessLogics
         {
             return new DAAttachment().getEntityImageById(system_id);
         }
-
+        public int  GetImageCount(int system_id, string featurename)
+        {
+            return new DAAttachment().GetImageCount(system_id, featurename);
+        }
         public LibraryAttachment getEntityDocumentById(int system_id)
         {
             return new DAAttachment().getEntityDocumentById(system_id);
