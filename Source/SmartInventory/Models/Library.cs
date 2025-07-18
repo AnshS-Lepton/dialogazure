@@ -3114,6 +3114,9 @@ namespace Models
         public string network_id { get; set; }
         public string entity_name { get; set; }
         public string geom_type { get; set; }
+        [NotMapped]
+        public string nearest_site_geometry { get; set; }
+        
     }
     #region Loop Mangment
 

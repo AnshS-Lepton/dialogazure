@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Runtime.Remoting;
@@ -13239,7 +13240,7 @@ namespace SmartInventory.Controllers
                     }
                     else if (reportType.ToUpper() == "NEAREST" && fileType.ToUpper() == "KMZ")
                     {
-                        DownloadSiteReportIntoNearestKML();
+                        DownloadSiteReportIntoNearestKMZ();
                     }
                     else if (reportType.ToUpper() == "NEAREST" && fileType.ToUpper() == "KML")
                     {
@@ -13371,20 +13372,41 @@ namespace SmartInventory.Controllers
                     ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
                     lstExportReportKML = new BLSite().GetExportReportDataNearestKML(objReportFilter);
 
-                    foreach (var objEntity in lstExportReportKML)
-                    {
-                        if (objEntity.geom_type.ToUpper() == "POINT")
-                        {
-                            sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
-                            sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
-                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl><Point><coordinates>");
-                            if (!string.IsNullOrEmpty(objEntity.geom))
-                            {
-                                sbPoint.Append(objEntity.geom);
-                            }
-                            sbPoint.Append("</coordinates></Point></Placemark>");
-                        }
-                    }
+foreach (var objEntity in lstExportReportKML)
+{
+    if (objEntity.geom_type.ToUpper() == "POINT" && !string.IsNullOrEmpty(objEntity.geom))
+    {
+        // Parse POINT geometry
+        string pointCoord = objEntity.geom.Replace("POINT(", "").Replace(")", "").Trim();
+
+        sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
+        sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
+        sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl>");
+        sbPoint.Append("<Point><coordinates>" + pointCoord + "</coordinates></Point></Placemark>");
+        
+        // If nearest line exists
+        if (!string.IsNullOrEmpty(objEntity.nearest_site_geometry))
+        {
+          //  string lineCoords = objEntity.nearest_site_geometry.Replace("LINESTRING(", "").Replace(")", "").Trim();
+            string[] lineCoords = objEntity.nearest_site_geometry.Replace("LINESTRING(", "").Replace(")", "").Trim().Split(',');
+            StringBuilder sbLineCoords = new StringBuilder();
+            foreach (string y in lineCoords)
+            {
+                string[] parts = y.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2)
+                {
+                sbLineCoords.Append(parts[0] + "," + parts[1] + ",0 ");
+                }
+            }
+
+            sbLine.Append("<Placemark><name>Nearest Path</name>");
+            sbLine.Append("<styleUrl>#feasibility_id</styleUrl>");
+            sbLine.Append("<LineString><tessellate>1</tessellate><coordinates>");
+            sbLine.Append(sbLineCoords.ToString().Trim());
+            sbLine.Append("</coordinates></LineString></Placemark>");
+        }
+    }
+}
 
                     sbLine.Append("</Folder>");
                     sbPoint.Append("</Folder>");
@@ -13412,7 +13434,106 @@ namespace SmartInventory.Controllers
                 }
             }
         }
-        
+
+        public void DownloadSiteReportIntoNearestKMZ()
+        {
+            if (Session["ExportReportFilter"] != null)
+            {
+                StringBuilder sbLine = new StringBuilder();
+                StringBuilder sbPoint = new StringBuilder();
+                StringBuilder sbPolygon = new StringBuilder();
+                sbLine.Append("<Folder>");
+                sbPoint.Append("<Folder>");
+                sbPolygon.Append("<Folder>");
+                try
+                {
+                    BLLayer objBLLayer = new BLLayer();
+                    List<ExportReportKML> lstExportReportKML = new List<ExportReportKML>();
+                    ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"];
+                    lstExportReportKML = new BLSite().GetExportReportDataNearestKML(objReportFilter);
+
+                    foreach (var objEntity in lstExportReportKML)
+                    {
+                        if (objEntity.geom_type.ToUpper() == "POINT" && !string.IsNullOrEmpty(objEntity.geom))
+                        {
+                            // Parse POINT geometry
+                            string pointCoord = objEntity.geom.Replace("POINT(", "").Replace(")", "").Trim();
+
+                            sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
+                            sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
+                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl>");
+                            sbPoint.Append("<Point><coordinates>" + pointCoord + "</coordinates></Point></Placemark>");
+
+                            // If nearest line exists
+                            if (!string.IsNullOrEmpty(objEntity.nearest_site_geometry))
+                            {
+                                string[] lineCoords = objEntity.nearest_site_geometry.Replace("LINESTRING(", "").Replace(")", "").Trim().Split(',');
+                                StringBuilder sbLineCoords = new StringBuilder();
+                                foreach (string y in lineCoords)
+                                {
+                                    string[] parts = y.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (parts.Length == 2)
+                                    {
+                                        sbLineCoords.Append(parts[0] + "," + parts[1] + ",0 ");
+                                    }
+                                }
+
+                                sbLine.Append("<Placemark><name>Nearest Path</name>");
+                                sbLine.Append("<styleUrl>#feasibility_id</styleUrl>");
+                                sbLine.Append("<LineString><tessellate>1</tessellate><coordinates>");
+                                sbLine.Append(sbLineCoords.ToString().Trim());
+                                sbLine.Append("</coordinates></LineString></Placemark>");
+                            }
+                        }
+                    }
+
+                    sbLine.Append("</Folder>");
+                    sbPoint.Append("</Folder>");
+                    sbPolygon.Append("</Folder>");
+
+                    string finalKMLString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                        "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">" +
+                        "<Document>" +
+                        "<Style id =\"feasibility_id\"><LineStyle><color>#FF0000FF</color><width>4</width></LineStyle></Style>" +
+                        "<Style id=\"downArrowIcon\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href></Icon></IconStyle></Style>" +
+                        "<Style id=\"downArrowIcon\"><IconStyle><hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/></IconStyle></Style>" +
+                        sbPoint.ToString() + sbLine.ToString() + "</Document></kml>";
+
+                    string kmlFileName = "export_" + lstExportReportKML[0].entity_title + ".kml";
+                    string kmzFileName = Path.GetFileNameWithoutExtension(kmlFileName) + ".kmz";
+
+                    // Write KML to memory and zip it
+                    using (MemoryStream kmzStream = new MemoryStream())
+                    {
+                        using (ZipArchive archive = new ZipArchive(kmzStream, ZipArchiveMode.Create, true))
+                        {
+                            ZipArchiveEntry kmlEntry = archive.CreateEntry(kmlFileName);
+
+                            using (Stream entryStream = kmlEntry.Open())
+                            using (StreamWriter writer = new StreamWriter(entryStream, Encoding.UTF8))
+                            {
+                                writer.Write(finalKMLString);
+                            }
+                        }
+
+                        // Prepare response
+                        Response.Clear();
+                        Response.ContentType = "application/vnd.google-earth.kmz";
+                        Response.AddHeader("Content-Disposition", "attachment; filename=" + kmzFileName);
+                        Response.OutputStream.Write(kmzStream.ToArray(), 0, (int)kmzStream.Length);
+                        Response.End();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper.WriteErrorLog("DownloadSiteReportIntoNearestKMZ()", "Report", ex);
+                    throw;
+                }
+            }
+        }
+
+
+
         public void DownloadSiteReportIntoKM1L()
         {
             if (Session["ExportReportFilter"] != null)
@@ -13478,8 +13599,7 @@ namespace SmartInventory.Controllers
         {
            
             try
-            {
-               
+            {               
                 string mapkey = ConfigurationManager.AppSettings["MapKeyBackend"];
                 List<NearestSiteDetails> siteList = new List<NearestSiteDetails>();
                 siteList = new BLSite().GetSitelistData(systemId);
@@ -13488,7 +13608,7 @@ namespace SmartInventory.Controllers
                 foreach (var site in siteList)
                 {
                     nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, ApplicationSettings.SiteBuffer);
-                    
+
                     if (nearestSiteList != null && nearestSiteList.Count > 0)
                     {
                         var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
@@ -13496,12 +13616,13 @@ namespace SmartInventory.Controllers
                         {
                             var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
                             string lineGeom = string.Empty;
-                            
+                            string[] siteGeomParts = site.sp_geometry.Split(' ');
+
+                            lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
                             foreach (var cordinates in newbuilt.coordinates)
                             {
                                 lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
                             }
-                            //lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
                             lineGeom = lineGeom.TrimEnd(',');
                             nearlinegeom = lineGeom;
                         }
@@ -13509,70 +13630,17 @@ namespace SmartInventory.Controllers
                         {
                             nearlinegeom = nearestSiteList[0].nearest_cable_end_geom;
                         }
-
-                        int index = 0;
-                        foreach (var nearestSite in nearestSiteList)
-                        {
-                            var lst = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSite.site_geometry, mapkey);
-                           
-                            try
-                            {
-                                if (lst.Result.LengthInMeters <= 1)
-                                {
-                                    string[] startGeomParts = site.sp_geometry.Split(' ');
-                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
-
-                                    string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
-                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
-                                    nearestSiteList[index].line_geometry = lineGeom;
-                                    nearestSiteList[index].nearest_cable_end_geom = nearestSite.nearest_cable_end_geom;
-                                    nearestSiteList[index].nearest_cable_system_id = nearestSite.nearest_cable_system_id;
-                                    nearestSiteList[index].nearest_cable_geom = nearlinegeom;
-                                }
-                                else
-                                {
-                                    var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(lst.Result.GeoJson);
-                                    string lineGeom = string.Empty;
-                                    string[] startGeomParts = site.sp_geometry.Split(' ');
-                                    string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
-                                    lineGeom = startGeomParts[1] + " " + startGeomParts[0] + ",";
-                                    foreach (var cordinates in newbuilt.coordinates)
-                                    {
-                                        lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
-                                    }
-                                    lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
-                                    lineGeom = lineGeom.TrimEnd(',');
-                                    nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
-                                    nearestSiteList[index].line_geometry = lineGeom;
-                                    nearestSiteList[index].nearest_cable_end_geom = nearestSite.nearest_cable_end_geom;
-                                    nearestSiteList[index].nearest_cable_system_id = nearestSite.nearest_cable_system_id;
-                                    nearestSiteList[index].nearest_cable_geom = nearlinegeom;
-                                }
-                                index++;
-                            }
-                            catch (Exception ex)
-                            {
-                                nearestSiteList[index].google_site_distance = 0;
-                                nearestSiteList[index].line_geometry = string.Empty;
-                            }
-                        }
                     }
-                    // Here you can save the updated nearestSiteList to the database or perform further processing
-                    if (nearestSiteList != null && nearestSiteList.Count > 0)
+                    if (nearestSiteList.Count >= 1)
                     {
-                        var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
-                       
-                        new BLSite().getUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance, nearestSite.nearest_cable_end_geom, nearlinegeom, nearestSite.nearest_cable_system_id);
-                        int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                       List<SiteBOMOBOQResponse> bomboqlist = new List<SiteBOMOBOQResponse>();
-                        bomboqlist=new BLProject().getSiteBomBoq(systemId, Convert.ToDouble(ApplicationSettings.NearBySitePoleSpan), Convert.ToDouble(ApplicationSettings.NearBySiteManholeSpan), userId);
-                        
-                        new BLProject().updateSiteBomBoqAmount(systemId, Convert.ToDouble(bomboqlist[0].total_cost), Convert.ToInt32(Session["user_id"]));
+                        new BLSite().getUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
+                     //   int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                       // List<SiteBOMOBOQResponse> bomboqlist = new List<SiteBOMOBOQResponse>();
+                     //   bomboqlist = new BLProject().getSiteBomBoq(systemId, Convert.ToDouble(ApplicationSettings.NearBySitePoleSpan), Convert.ToDouble(ApplicationSettings.NearBySiteManholeSpan), userId);
 
+                      //  new BLProject().updateSiteBomBoqAmount(systemId, Convert.ToDouble(bomboqlist[0].total_cost), ApplicationSettings.NearBySitePoleSpan, ApplicationSettings.NearBySiteManholeSpan, Convert.ToInt32(Session["user_id"]));
                     }
-                }
-
-
+                }          
                 return Json(new { success = true, message = "Request has been submitted & It is running in background, please check after sometime!" });
             }
             catch (Exception ex)
@@ -13582,9 +13650,7 @@ namespace SmartInventory.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
-
-   
+  
         #endregion
 
         #region Site Awarding process 
