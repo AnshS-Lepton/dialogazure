@@ -1286,7 +1286,7 @@ namespace DataAccess.Admin
             catch { throw; }
         }
 
-        public DbMessage updateSiteBomBoqAmount(int site_id, double amount, int userId)
+        public DbMessage updateSiteBomBoqAmount(int site_id, double amount,int pole_distance,int manhole_distance, int userId)
         {
             try
             {
@@ -1294,8 +1294,9 @@ namespace DataAccess.Admin
                 {
                     p_id = site_id,
                     p_userid = userId,
-                    p_amount = amount
-
+                    p_amount = amount,
+                    p_pole_distance = pole_distance,
+                    p_manhole_distance = manhole_distance
                 }).FirstOrDefault();
 
             }

@@ -44,13 +44,18 @@ namespace BusinessLogics
             return new DASite().getNearestSitelistData(system_id, network_id, buffer);
         }
 
-        public List<NearestSiteDetails> getUpdateSiteFiberDistance(string linestring, int nearestsite_system_id, int system_id, double nearestsiteDistance)
+        public List<NearestSiteDetails> getUpdateSiteFiberDistance(string linestring, int nearestsite_system_id, int system_id, double nearestsiteDistance, string nearest_cable_geom, string nearlinegeom, int? nearest_cable_system_id)
         {
-            return new DASite().getUpdateSiteFiberDistance(linestring, nearestsite_system_id, system_id, nearestsiteDistance);
+            return new DASite().getUpdateSiteFiberDistance(linestring, nearestsite_system_id, system_id, nearestsiteDistance, nearest_cable_geom, nearlinegeom, nearest_cable_system_id);
         }
         public List<ExportReportKML> GetExportReportDataKML(ExportReportFilter objReportFilter)
         {
             return new DASite().GetExportReportDataKML(objReportFilter);
+        }
+
+        public List<ExportReportKML> GetExportReportDataNearestKML(ExportReportFilter objReportFilter)
+        {
+            return new DASite().GetExportReportDataNearestKML(objReportFilter);
         }
         public List<Dictionary<string, string>> GetSegmentReportData(ExportReportFilter objReportFilter)
         {

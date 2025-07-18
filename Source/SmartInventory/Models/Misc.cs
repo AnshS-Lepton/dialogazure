@@ -3153,6 +3153,9 @@ namespace Models
         public double distance { get; set; }
         public double google_site_distance { get; set; }
         public string line_geometry { get; set; }
+        public int? nearest_cable_system_id { get; set; }
+        public string nearest_cable_end_geom { get; set; }
+        public string nearest_cable_geom { get; set; }
 
     }
 }

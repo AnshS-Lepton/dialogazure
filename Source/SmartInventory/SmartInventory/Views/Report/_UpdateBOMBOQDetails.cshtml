@@ -108,7 +108,9 @@ new { id = "frmSiteBOMBOQ", enctype = "multipart/form-data", autocomplete = "off
 
         ajaxReq('Report/updateBomBoqAmoutDetails', {
             site_id: siteId,
-            amount: amount
+            amount: amount,
+            pole_distance: pole_distance,
+            manhole_distance: manhole_distance
         }, true, function (response) {
             debugger;
             if (response.success) {
