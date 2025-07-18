@@ -129,8 +129,8 @@ $(document).ready(function () {
         rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataSync" title= "' + 'Export Site' + '"><span class="fa fa-refresh"></span></a>';
         if (nearestSite != null && nearestSite !== "")
             rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataNearestSite" title= "' + 'Nearest Site Route' + '"><span class="fa fa-location-arrow"></span></a>';
-        if (nearestSite != null && nearestSite !== "")
-            rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataBOMBOQReport" title= "' + 'Plan Cost Calculation' + '"><span class="icon-BOM-BOQ-Report"></span></a>';
+        //if (nearestSite != null && nearestSite !== "")
+        //    rowAction = rowAction + ' &nbsp;&nbsp;<a href="#" data-value="' + systemId + '" class="rowDataBOMBOQReport" title= "' + 'Plan Cost Calculation' + '"><span class="icon-BOM-BOQ-Report"></span></a>';
 
         $('#tblExportReport  tbody tr:eq(' + index + ') td:eq(0)').html(rowAction);
     });
