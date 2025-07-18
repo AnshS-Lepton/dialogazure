@@ -71,7 +71,8 @@ namespace Models
         public string endpoint_network_id { get; set; }
         [Required]
         public double? threshold { get; set; }
-
+        [NotMapped]
+        public bool isSelectedSite { get; set; } = false;
         [NotMapped]
         public List<DropDownMaster> lstBackboneFiber { get; set; }
 
@@ -102,11 +103,19 @@ namespace Models
     }
     public class SitePlanList
     {
+        [Key]
+        public int id { get; set; }
         public string site_name { get; set; }
         public string site_id { get; set; }
         public string network_id { get; set; }
         public string geometry { get; set; }
-        public string network_status { get; set; }
+        [NotMapped]
+        public string backbone_geom { get; set; }   
+        public bool is_selected { get; set; }
+        public int plan_id { get; set; }
+        public int user_id { get; set; }
+        public string fibertype { get; set; }
+        public string line_geom { get; set; }
     }
     public class BackBoneSproutFiberDetails
     {
@@ -116,6 +125,7 @@ namespace Models
         public string intersect_line_geom { get; set; }
         public string site_geom { get; set; }
         public int created_by { get; set; }
+        public string site_to_nearestcable_line_geom { get; set; }
 
     }
 

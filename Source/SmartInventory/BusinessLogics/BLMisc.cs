@@ -1235,17 +1235,17 @@ namespace BusinessLogics
         {
             return new DAPlan().GetLineLength(geom);
         }
-        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer)
+        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer,int planId)
         {
-            return new DAPlan().GetNearestSiteList(geom, buffer);
+            return new DAPlan().GetNearestSiteList(geom, buffer, planId);
         }
         public List<BackBoneSproutFiberDetails> GetBackbonePlanningList(BackBonePlanning plan, int userId)
         {
             return new DAPlan().GetBackbonePlanningList(plan, userId);
         }
-        public void updateSiteLineGeometry(string lineGeom, int systemId,double cableLength,double? threshold,int planId)
+        public void updateSiteLineGeometry(string lineGeom, int systemId,double cableLength)
         {
-             new DAPlan().updateSiteLineGeometry(lineGeom, systemId, cableLength, threshold, planId);
+             new DAPlan().updateSiteLineGeometry(lineGeom, systemId, cableLength);
         }
         public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int userId)
         {
@@ -1273,7 +1273,14 @@ namespace BusinessLogics
         {
             return new DABackBonePlan().GetBackBoneLoopList(plan_id, userId);
         }
-
+        public List<BackBoneSproutFiberDetails> SaveNearestSite(List<SitePlanList> model , int userId)
+        {
+            return new DABackBonePlanSite().SaveNearestSite(model, userId);
+        }
+        public List<SitePlanList> getSiteList(int planId, int userId)
+        {
+            return new DABackBonePlanSite().getSiteList(planId, userId);
+        }
     }
     public class BLSiteCircle
     {
