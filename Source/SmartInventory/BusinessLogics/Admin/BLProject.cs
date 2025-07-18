@@ -344,10 +344,10 @@ namespace BusinessLogics.Admin
             
                 return new DAProjectDetails().getSiteBomBoq(site_id, pole_span, manhole_span, userId);
         }
-        public DbMessage updateSiteBomBoqAmount(int site_id, double amount, int userId)
+        public DbMessage updateSiteBomBoqAmount(int site_id, double amount, int pole_distance, int manhole_distance, int userId)
         {
 
-            return new DAProjectDetails().updateSiteBomBoqAmount(site_id, amount, userId);
+            return new DAProjectDetails().updateSiteBomBoqAmount(site_id, amount, pole_distance, manhole_distance, userId);
         }
 
         public DbMessage UpdateSiteProject(siteprojectdetails siteprojectdetails, int userId)

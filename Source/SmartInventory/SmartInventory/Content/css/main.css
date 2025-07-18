@@ -7910,7 +7910,7 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
 /*model popup css start here*/
 
 .ui-dialog .ui-dialog-titlebar {
-    background: #428600 !important;
+    background:var(--primary-dark) !important;
 }
 
 .ui-dialog .ui-dialog-title {
@@ -7921,7 +7921,7 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
 }*/
 .ui-dialog {
     padding: 0 !important;
-    border: 1px solid #428600 !important;
+    border: none !important;
 }
 
 .ui-corner-all {

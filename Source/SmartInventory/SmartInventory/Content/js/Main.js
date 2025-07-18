@@ -7516,7 +7516,7 @@ var Main = function () {
         }
         $(document).on("change", ".WarningAcceptance input", function () {
             if ($('.WarningAcceptance').find('input[type=checkbox]').is(":checked")) {
-                $('.ui-dialog-buttonset button').attr('style', 'background: #428600!important');
+                $('.ui-dialog-buttonset button').attr('style', 'background: #9999FF!important');
                 $('.ui-dialog-buttonset button').prop("disabled", false);
                 $('.ui-dialog-buttonset button').removeClass('okBtn');
             }
@@ -23230,7 +23230,7 @@ var Main = function () {
     }
 
 
-    this.uploadSingleFile = function (key) {
+    this.uploadSingleFilebkp = function (key) {
         debugger;
         var fileInput = document.getElementById("fileUpload_" + key);
         if (!fileInput || fileInput.files.length === 0) {
@@ -23292,10 +23292,114 @@ var Main = function () {
         }, true);
 
         function uploadImage(data) {
+            debugger;
             ajaxReqforFileUpload('Main/UploadImage', data, true, function (resp) {
                 if (resp.status === "OK") {
-                    $('#closeModalPopup').trigger("click");
+                   /* $('#closeModalPopup').trigger("click");*/
                     app.getElementImages();
+                    fileInput.value = ""; 
+                    alert(resp.message);
+                } else {
+                    alert(resp.message);
+                }
+            }, true);
+        }
+    };
+   
+    this.uploadSingleFile = function (key) {
+        debugger;
+        var fileInput = document.getElementById("fileUpload_" + key);
+        if (!fileInput || fileInput.files.length === 0) {
+            alert("Please select at least one file to upload.");
+            return;
+        }
+
+        var systemId = $('#infoTB').attr('att_systemid');
+
+        // Call backend via AJAX to get the existing image count
+        $.ajax({
+            url: 'Main/GetImageCountByType',
+            type: 'POST',
+            data: { systemId: systemId, featurename: key },
+            success: function (response) {
+                debugger;
+                var existingCount = response.count || 0;
+                var newFilesCount = fileInput.files.length;
+
+                if ((existingCount + newFilesCount) > 10) {
+                    alert("You can only upload up to 10 images for this category. " +
+                        "Already uploaded: " + existingCount + ", Selected: " + newFilesCount);
+                    return;
+                }
+
+                // Proceed with upload
+                performUpload();
+            },
+            error: function () {
+                alert("Failed to retrieve image count.");
+            }
+        });
+
+        function performUpload() {
+            var filesizeKB = parseInt($('#hdnMaxFileUploadSizeLimit').val()); // in KB
+            var maxSizeInBytes = filesizeKB * 1024;
+            var allowedTypes = $('#allowedImageAttachmentType').val().toLowerCase().split(',');
+            var frmData = new FormData();
+            var totalSize = 0;
+            var invalidFiles = [];
+
+            for (let i = 0; i < fileInput.files.length; i++) {
+                let file = fileInput.files[i];
+                totalSize += file.size;
+
+                if (file.name.length > 100) {
+                    alert("File name must be less than 100 characters: " + file.name);
+                    return;
+                }
+
+                let ext = '.' + file.name.split('.').pop().toLowerCase();
+                if (!allowedTypes.includes(ext)) {
+                    invalidFiles.push(file.name);
+                    continue;
+                }
+
+                if (totalSize > maxSizeInBytes) {
+                    let allowedMB = (filesizeKB / 1024).toFixed(2);
+                    alert("Total size exceeds " + allowedMB + " MB.");
+                    return;
+                }
+
+                frmData.append('images[]', file);
+            }
+
+            if (invalidFiles.length > 0) {
+                alert("Invalid file types:\n" + invalidFiles.join("\n"));
+                return;
+            }
+
+            frmData.append('system_Id', systemId);
+            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            frmData.append('document_type', key);
+            frmData.append('feature_name', key);
+
+            ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
+                if (resp.status === "OK") {
+                    uploadImage(frmData);
+                } else if (resp.status === "DUPLICATE_EXIST") {
+                    confirm(resp.message, function () {
+                        uploadImage(frmData);
+                    });
+                } else {
+                    alert(resp.message);
+                }
+            }, true);
+        }
+
+        function uploadImage(data) {
+            ajaxReqforFileUpload('Main/UploadImage', data, true, function (resp) {
+                if (resp.status === "OK") {
+                    app.getElementImages();
+                    fileInput.value = "";
                     alert(resp.message);
                 } else {
                     alert(resp.message);

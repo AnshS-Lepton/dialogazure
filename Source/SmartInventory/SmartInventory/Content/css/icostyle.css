@@ -854,3 +854,23 @@
 .icon-reportSegmant:before {
     content: "\e9cd";
 }
+
+.icon-costCalculation:before {
+    content: "\e9ce";
+}
+
+.icon-exportSite:before {
+    content: "\e9d3";
+}
+
+.icon-nearestSiteRoute:before {
+    content: "\e9d4";
+}
+
+.icon-nearestRoutKMZ:before {
+    content: "\e9cf";
+}
+
+.icon-nearestRoutKML:before {
+    content: "\e9d0";
+}

@@ -239,6 +239,7 @@ namespace SmartInventory.Settings
         public static int IsSignalRIsEnable = 0;
 		public static bool IsTraceEnabled = false;
 		public static int ExcelReportLimitCount = 0;
+		public static int SiteBuffer = 0;
 
 
         public static string OwnLDAPEndPoint = ConfigurationManager.AppSettings["OwnLDAPEndPoint"].ToString().Trim();
@@ -879,6 +880,10 @@ namespace SmartInventory.Settings
 				{
 					ExcelReportLimitCount = Convert.ToInt32(objSetting.value);
 				}
+                if (objSetting.key == "SiteBuffer")
+                {
+                    SiteBuffer = Convert.ToInt32(objSetting.value);
+                }
                 if (objSetting.key == "MaxLineEntityLength")
                 {
                     MaxLineEntityLength = Convert.ToInt32(objSetting.value);
