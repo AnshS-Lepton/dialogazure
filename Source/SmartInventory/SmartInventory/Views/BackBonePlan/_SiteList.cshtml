@@ -4,11 +4,17 @@
     #tblNearestSiteGrid .form-control {
         padding: 2px 6px;
     }
+    .disabled-link {
+        pointer-events: none;
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
 </style>
 
 @{
     WebGrid grid = new WebGrid(
-        canPage: false, // Disable pagination
+        canPage: false,
         canSort: true,
         ajaxUpdateContainerId: "VwNearestSiteGrid",
         ajaxUpdateCallback: "onGridHeaderClick('tblNearestSiteGrid');"
@@ -18,17 +24,27 @@
 
     Func<string, string> GenerateSproutFiberDropdown = (networkId) =>
     {
+        var siteRow = Model.sites.FirstOrDefault(s => s.network_id.ToString() == networkId && s.is_selected == true);
+        string currentFiber = string.Empty;
+        if (siteRow != null)
+        {
+            currentFiber = siteRow.fibertype ?? string.Empty;
+        }
         var select = string.Format("<select class='form-control sprout-dropdown' data-network-id='{0}'>", networkId);
 
         foreach (var fiber in Model.lstSproutFiber)
         {
-            var isSelected = fiber.dropdown_value == "8F Cable" ? "selected" : "";
-            select += string.Format("<option value='{0}' {2}>{1}</option>", fiber.dropdown_value, fiber.dropdown_type, isSelected);
+            var isSelected = fiber.dropdown_value == currentFiber ? "selected" : "";
+            select += string.Format("<option value='{0}' {2}>{1}</option>",
+                fiber.dropdown_value,
+                fiber.dropdown_type,
+                isSelected);
         }
 
         select += "</select>";
         return select;
     };
+
 
     int rowIndex = 0;
 }
@@ -43,34 +59,51 @@
     {
         if (Model.sites.Count > 0)
         {
-           
-                <b class="mb-01 d-inline-block">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@grid.TotalRowCount</b>
-            
+            @Html.HiddenFor(m => m.buffer_geometry)          
 
-            <div class="overAuto print-maxH stickyTh" id="VwNearestSiteGrid">
-                @grid.GetHtml(
-                    tableStyle: "grid",
-                    htmlAttributes: new { id = "tblNearestSiteGrid" },
-                    columns: grid.Columns(
-                        grid.Column(
-                            header: "Select",
-                            format: @<text>
-                                    <input type="checkbox" name="select_site" value="@item.network_id" class="row-checkbox" onchange="backbonedata.bindNearestSites()" />
-                            </text>,
-                     canSort: false
-                 ),
-                 grid.Column("site_name", "Site Name", format: @<text>@item.site_name</text>),
-grid.Column("site_id", "Site Id", format: @<text>@item.site_id</text>),
+            <div class="d-flex mb-01 --gap05">
+                <b class="mb-01 d-inline-block">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@Model.sites.Count</b>
+                <button type="button" id="btnSaveSites" class="btn btn-primary ml-auto"> Update </button>
+                <input type="button" class="btn btn-sm btn-success" onclick="backbonedata.createBackbonePlanNetwork()" id="btnProcessPlan" maxlength="100"
+                       value="Create Plan" />
+            </div>
+            <div class="overAuto print-maxH">
+                <div id="VwNearestSiteGrid">
+                    @grid.GetHtml(
+                        tableStyle: "stickyTh",
+                        htmlAttributes: new { id = "tblNearestSiteGrid" },
+                        columns: grid.Columns(
+                            grid.Column(
+                                header: "Select",
+                                format: @<text>
+                                        <input type="checkbox" name="select_site" id="@item.id-line-geom" value="@item.network_id" class="row-checkbox" @(item.is_selected ? "checked" : "") onchange="backbonedata.bindNearestSites()" />
+                                </text>,
+canSort: false
+),
+grid.Column(
+"", "Action", format: (item) =>
+Html.Raw(
+  string.Format(
+      "<a href='#' class='{0}' title='Show Route' onclick=\"{1}\">" +
+      "<i class='fa fa-map-marker' aria-hidden='true' style='color:grey;font-size:21px;'></i>" +
+      "</a> <span class='line-geom' id='line-geom-{2}' style='display:none'>{3}</span>", (item.is_selected ? "auto" : "btnNAllowed"),
+       (item.is_selected ? string.Format("backbonedata.ShowRoutesBetweenMarkers('{0}','{1}','{2}')",
+       item.geometry, item.backbone_geom, item.network_id) : "return false;"), item.network_id, item.line_geom ?? "")
+)),
+
+grid.Column("site_name", "Site Name", format: @<text><span data-site-name="@item.site_name">@item.site_name</span></text>),
+grid.Column("site_id", "Site Id", format: @<text><span data-site-id="@item.site_id">@item.site_id</span></text>),
 grid.Column("network_id", "Network Id", format: @<text>@item.network_id</text>),
-grid.Column("sprout_fiber", "Sprout Fiber", format: @<text>
+grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
     @Html.Raw(GenerateSproutFiberDropdown(item.network_id.ToString()))
     @{ rowIndex++; }
 </text>)
 )
 )
 
-                @Html.Hidden("dir", grid.SortDirection)
-                @Html.Hidden("col", grid.SortColumn)
+                    @Html.Hidden("dir", grid.SortDirection)
+                    @Html.Hidden("col", grid.SortColumn)
+                </div>
             </div>
         }
         else
@@ -80,22 +113,85 @@ grid.Column("sprout_fiber", "Sprout Fiber", format: @<text>
             </div>
         }
     }
-    <input type="hidden" id="nearestSites" name="selectedSites" />
-</div>
+    <input type="hidden" id="nearestSites" name="nearestSites" />
+    </div>
 
 <script>
     $(document).ready(function () {
         $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' />");
-
         $(document).on('change', '#chkSelectAll', function () {
             $(".row-checkbox").prop("checked", this.checked);
             backbonedata.bindNearestSites();
         });
-
+        updateSelectAllCheckbox();
         $(document).on('change', '.row-checkbox, .sprout-dropdown', function () {
             backbonedata.bindNearestSites();
             const allChecked = $(".row-checkbox").length === $(".row-checkbox:checked").length;
             $("#chkSelectAll").prop("checked", allChecked);
         });
+
+        $(document).on('change', '.sprout-dropdown', function () {
+            const $row = $(this).closest('tr');
+            const isChecked = $row.find('.row-checkbox').is(':checked');
+
+            if (isChecked) {
+                backbonedata.bindNearestSites();
+            }
+        });
+
+        $("#btnSaveSites").on("click", function () {
+            debugger;
+            const payload = {
+            sites: JSON.parse($("#nearestSites").val() || "[]")
+            };
+
+        if (!payload.sites.length) {
+            alert("Please select at least one site.");
+            return;
+        }
+
+          $.ajax({
+            url: '@Url.Action("SaveNearestSites", "BackBonePlan")',
+            type: 'POST',
+            data: JSON.stringify(payload),
+            contentType: 'application/json; charset=utf-8',
+            success: res => {
+                alert(res.message);
+                let buffer = $('#planbuffer').val();
+                let geom = $('#geometry').val();
+                let planId = $('#plan_id').val();
+                $.ajax({
+                url: '@Url.Action("GetBackboneNearestSiteList", "BackBonePlan")',
+                type: 'POST',
+                    data: {
+                        geom: geom,
+                        buffer: buffer,
+                        planId: planId
+                    },
+                success: function (html) {
+                    const newGrid = $(html).find('#VwNearestSiteGrid').html();
+                    if (newGrid) {
+                        $('#VwNearestSiteGrid').html(newGrid);
+                    } else {
+                        // If only grid content is returned
+                        $('#VwNearestSiteGrid').html(html);
+                    }
+                    $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' />");
+                    updateSelectAllCheckbox();
+               }
+             });
+            },
+            error: xhr => {
+                alert(xhr.responseText || "Save failed.");
+            }
+          });
+
+      });
     });
+
+    function updateSelectAllCheckbox() {
+        const allChecked = $(".row-checkbox").length > 0 &&
+            $(".row-checkbox").length === $(".row-checkbox:checked").length;
+        $("#chkSelectAll").prop("checked", allChecked);
+    }
 </script>
