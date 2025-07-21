@@ -21703,30 +21703,32 @@ var Main = function () {
         }
         app.autobackboneplanid = 0;
         // Clear previous main polyline if exists
-        if (app.routePolyline) {
-            app.routePolyline.setMap(null);
-            app.routePolyline = null;
-        }
-        if (app.directionsSiteRenderer) {
-            app.directionsSiteRenderer.setMap(null);
-            app.directionsSiteRenderer = null;
-        }
-        if (app.directionsRenderer) {
-            app.directionsRenderer.setMap(null);
-            app.directionsRenderer = null;
-        }
-        if (app.StartSiteTmpLine) {
-            app.StartSiteTmpLine.setMap(null);
-            app.StartSiteTmpLine = null;
-        }
-        if (app.EndSiteTmpLine) {
-            app.EndSiteTmpLine.setMap(null);
-            app.EndSiteTmpLine = null;
-        }
-        if (app.sitePointMarker) {
-            app.sitePointMarker.setMap(null);
-            app.sitePointMarker = null;
-        }
+        if (typeof backbonedata !== 'undefined' && backbonedata != null) {
+            if (backbonedata.directionsSiteRenderer) {
+                backbonedata.directionsSiteRenderer.setMap(null);
+                backbonedata.directionsSiteRenderer = null;
+            }
+            if (backbonedata.directionsRenderer) {
+                backbonedata.directionsRenderer.setMap(null);
+                backbonedata.directionsRenderer = null;
+            }
+            if (backbonedata.StartSiteTmpLine) {
+                backbonedata.StartSiteTmpLine.setMap(null);
+                backbonedata.StartSiteTmpLine = null;
+            }
+            if (backbonedata.EndSiteTmpLine) {
+                backbonedata.EndSiteTmpLine.setMap(null);
+                backbonedata.EndSiteTmpLine = null;
+            }
+            if (backbonedata.sitePointMarker) {
+                backbonedata.sitePointMarker.setMap(null);
+                backbonedata.sitePointMarker = null;
+            }
+            if (backbonedata.sitePointMarker) {
+                backbonedata.sitePointMarker.setMap(null);
+                backbonedata.sitePointMarker = null;
+              }
+         }  
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();
@@ -21769,6 +21771,28 @@ var Main = function () {
         if ($("#dvAutoPlanData").is(":visible")) {
             $("#dvAutoPlanData").hide('slide', { direction: 'up' }, 500);
         }
+        if (typeof backbonedata !== 'undefined' && backbonedata != null) {
+            if (backbonedata.directionsSiteRenderer) {
+                backbonedata.directionsSiteRenderer.setMap(null);
+                backbonedata.directionsSiteRenderer = null;
+            }
+            if (backbonedata.directionsRenderer) {
+                backbonedata.directionsRenderer.setMap(null);
+                backbonedata.directionsRenderer = null;
+            }
+            if (backbonedata.StartSiteTmpLine) {
+                backbonedata.StartSiteTmpLine.setMap(null);
+                backbonedata.StartSiteTmpLine = null;
+            }
+            if (backbonedata.EndSiteTmpLine) {
+                backbonedata.EndSiteTmpLine.setMap(null);
+                backbonedata.EndSiteTmpLine = null;
+            }
+            if (backbonedata.sitePointMarker) {
+                backbonedata.sitePointMarker.setMap(null);
+                backbonedata.sitePointMarker = null;
+            }
+        }   
         app.autoplanid = 0;
         if (typeof networkdata !== 'undefined' && networkdata != null) {
             networkdata.hideAllNetworkFile();

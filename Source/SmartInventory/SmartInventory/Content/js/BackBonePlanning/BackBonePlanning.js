@@ -73,7 +73,7 @@ var BackbonePlanning = function () {
                 app.hideAllNetworkFile();
                 removeOldMarkers();
                 $('.BackBonePlan').removeClass('activeToolBar');
-               
+                $('#closeModalPopup').trigger("click");
                 if (app.routePolyline) {
                     app.routePolyline.setMap(null);
                     app.routePolyline = null;
@@ -187,6 +187,7 @@ var BackbonePlanning = function () {
             app.sitePointMarker.setMap(null);
             app.sitePointMarker = null;
         }
+        $('#closeModalPopup').trigger("click");
     }
 
 
@@ -235,7 +236,7 @@ var BackbonePlanning = function () {
         let endPointNetworkId = $('#endpoint_network_id').val();       
         let planId = $('#plan_id').val();       
         if (!isNaN(buffer)) {
-            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId,planId: planId }, "Nearest Site", 'modal-xl');
+            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId,planId: planId }, "Sprout Site", 'modal-xl');
         }
     }
     this.PlanningBufferPoint = function () {
@@ -1156,7 +1157,7 @@ var BackbonePlanning = function () {
                 fiberType: sproutFiber,
                 is_selected: true,
                 plan_id: $('#plan_id').val(),
-                line_geom: lineGeom          // 🔸 now populated
+                line_geom: lineGeom        
             });
         });
 
@@ -1253,13 +1254,13 @@ var BackbonePlanning = function () {
             });
 
             // Draw connector: from road end to actual end point
-            app.EndSiteTmpLine = new google.maps.Polyline({
-                path: [latLngArr[latLngArr.length - 1], endLL],
-                map: si.map,
-                strokeColor: '#000000',
-                strokeOpacity: 1,
-                strokeWeight: 3
-            });
+            //app.EndSiteTmpLine = new google.maps.Polyline({
+            //    path: [latLngArr[latLngArr.length - 1], endLL],
+            //    map: si.map,
+            //    strokeColor: '#000000',
+            //    strokeOpacity: 1,
+            //    strokeWeight: 3
+            //});
 
             app.sitePointMarker = new google.maps.Marker({
                 position: startLL,
@@ -1267,10 +1268,10 @@ var BackbonePlanning = function () {
                 title: "Site Marker",
                 draggable: false,
                 icon: {
-                    url: 'Content/images/Actual_Start.png',
+                    url: 'Content/images/icons/map/POD/A/pod.png',
                 }
             });
-
+           
             app.isUserChangingRoute = false;
             app.directionsSiteRenderer.setDirections(resp);         
             app.sitePointMarker.setMap(si.map);

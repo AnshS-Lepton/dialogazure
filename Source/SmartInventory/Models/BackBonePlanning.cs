@@ -190,6 +190,7 @@ namespace Models
         public double cost_per_unit { get; set; }
         public double service_cost_per_unit { get; set; }
         public double amount { get; set; }
+        public string sp_geometry { get; set; }
     }
 
     public class BackbonePlanNetworkDetails
