@@ -13668,8 +13668,17 @@ foreach (var objEntity in lstExportReportKML)
                         }
                         else
                         {
-                            nearlinegeom = nearestSiteList[0].nearest_cable_end_geom;
+
+                            string lineGeom = string.Empty;
+                            string[] siteGeomParts = site.sp_geometry.Split(' ');
+                            string [] CableEndGeom = nearestSiteList[0].nearest_cable_end_geom.Split(' ');
+                            //lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
+                            nearlinegeom = siteGeomParts[1] + " " + siteGeomParts[0] + "," + CableEndGeom[1] + " " + CableEndGeom[0];
                         }
+                    }
+                    else
+                    {
+                        return Json(new { success = true, message = "No live site is available at this location. Kindly check nearby locations." });
                     }
                     if (nearestSiteList.Count >= 1)
                     {
