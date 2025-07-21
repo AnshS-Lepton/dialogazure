@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using BusinessLogics.DaFiFeasibilityAPI;
 using System.ComponentModel;
 using System.IO;
+using BusinessLogics;
+using SmartInventory.Settings;
 
 namespace SiteExport
 {
@@ -24,11 +26,12 @@ namespace SiteExport
             program.WriteDebugLog("----end---------");
 
         }
+
         public void UpdateSiteFiberDistance()
         {
             WriteDebugLog("----start UpdateSiteFiberDistance---------");
 
-            string connectionString  = ConfigurationManager.AppSettings["constr"].ToString();
+            string connectionString = ConfigurationManager.AppSettings["constr"].ToString();
             string mapkey = ConfigurationManager.AppSettings["MapKey"];
             var siteList = new List<NearestSiteDetails>();
             var nearestSiteList = new List<NearestSiteDetails>();
@@ -90,6 +93,52 @@ namespace SiteExport
             WriteDebugLog("----end UpdateSiteFiberDistance---------");
 
         }
+
+        //public void UpdateSiteFiberDistance()
+        //{
+        //    WriteDebugLog("----start UpdateSiteFiberDistance---------");
+
+        //    string connectionString  = ConfigurationManager.AppSettings["constr"].ToString();
+        //    string mapkey = ConfigurationManager.AppSettings["MapKey"];
+        //    var siteList = new List<NearestSiteDetails>();
+        //    var nearestSiteList = new List<NearestSiteDetails>();
+        //    siteList = GetAllFilteredSite();
+        //    var nearlinegeom = "";
+        //    foreach (var site in siteList)
+        //    {
+        //        nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, ApplicationSettings.SiteBuffer);
+
+        //        if (nearestSiteList != null && nearestSiteList.Count > 0)
+        //        {
+        //            var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
+        //            if (route.Result.LengthInMeters > 1)
+        //            {
+        //                var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
+        //                string lineGeom = string.Empty;
+        //                string[] siteGeomParts = site.sp_geometry.Split(' ');
+
+        //                lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
+        //                foreach (var cordinates in newbuilt.coordinates)
+        //                {
+        //                    lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+        //                }
+        //                lineGeom = lineGeom.TrimEnd(',');
+        //                nearlinegeom = lineGeom;
+        //            }
+        //            else
+        //            {
+        //                nearlinegeom = nearestSiteList[0].nearest_cable_end_geom;
+        //            }
+        //        }
+
+        //        if (nearestSiteList.Count >= 1)
+        //        {
+        //            new BLSite().getUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
+        //        }
+        //    }
+        //    WriteDebugLog("----end UpdateSiteFiberDistance---------");
+
+        //}
         public List<NearestSiteDetails> GetAllFilteredSite()
         {
             var result = new List<NearestSiteDetails>();

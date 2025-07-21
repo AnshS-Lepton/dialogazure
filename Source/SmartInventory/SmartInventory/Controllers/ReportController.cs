@@ -13652,7 +13652,7 @@ foreach (var objEntity in lstExportReportKML)
                     if (nearestSiteList != null && nearestSiteList.Count > 0)
                     {
                         var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
-                        if (route.Result.LengthInMeters > 1)
+                        if (route.Result.LengthInMeters >= 1)
                         {
                             var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
                             string lineGeom = string.Empty;
