@@ -26,51 +26,119 @@ namespace SiteExport
             program.WriteDebugLog("----end---------");
 
         }
+
         public void UpdateSiteFiberDistance()
         {
             WriteDebugLog("----start UpdateSiteFiberDistance---------");
 
-            string connectionString  = ConfigurationManager.AppSettings["constr"].ToString();
+            string connectionString = ConfigurationManager.AppSettings["constr"].ToString();
             string mapkey = ConfigurationManager.AppSettings["MapKey"];
             var siteList = new List<NearestSiteDetails>();
             var nearestSiteList = new List<NearestSiteDetails>();
             siteList = GetAllFilteredSite();
-            var nearlinegeom = "";
             foreach (var site in siteList)
             {
-                nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, ApplicationSettings.SiteBuffer);
-
+                nearestSiteList = GetNearestSite(site.system_id, site.network_id);
                 if (nearestSiteList != null && nearestSiteList.Count > 0)
                 {
-                    var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
-                    if (route.Result.LengthInMeters > 1)
+                    int index = 0;
+                    foreach (var nearestSite in nearestSiteList)
                     {
-                        var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
-                        string lineGeom = string.Empty;
-                        string[] siteGeomParts = site.sp_geometry.Split(' ');
-
-                        lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
-                        foreach (var cordinates in newbuilt.coordinates)
+                        var lst = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSite.site_geometry, mapkey);
+                        try
                         {
-                            lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+                            if (lst.Result.LengthInMeters <= 1)
+                            {
+                                string[] startGeomParts = site.sp_geometry.Split(' ');
+                                string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+
+                                string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
+                                nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                nearestSiteList[index].line_geometry = lineGeom;
+                            }
+                            else
+                            {
+                                var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(lst.Result.GeoJson);
+                                string lineGeom = string.Empty;
+                                string[] startGeomParts = site.sp_geometry.Split(' ');
+                                string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+                                lineGeom = startGeomParts[1] + " " + startGeomParts[0] + ",";
+                                foreach (var cordinates in newbuilt.coordinates)
+                                {
+                                    lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+                                }
+                                lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
+                                lineGeom = lineGeom.TrimEnd(',');
+                                nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
+                                nearestSiteList[index].line_geometry = lineGeom;
+                            }
+                            index++;
                         }
-                        lineGeom = lineGeom.TrimEnd(',');
-                        nearlinegeom = lineGeom;
-                    }
-                    else
-                    {
-                        nearlinegeom = nearestSiteList[0].nearest_cable_end_geom;
+                        catch (Exception ex)
+                        {
+                            WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
+                            nearestSiteList[index].google_site_distance = 0;
+                            nearestSiteList[index].line_geometry = string.Empty;
+                        }
                     }
                 }
-
-                if (nearestSiteList.Count >= 1)
+                // Here you can save the updated nearestSiteList to the database or perform further processing
+                if (nearestSiteList != null && nearestSiteList.Count > 0)
                 {
-                    new BLSite().getUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
+                    var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
+
+                    GetUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance);
                 }
             }
             WriteDebugLog("----end UpdateSiteFiberDistance---------");
 
         }
+
+        //public void UpdateSiteFiberDistance()
+        //{
+        //    WriteDebugLog("----start UpdateSiteFiberDistance---------");
+
+        //    string connectionString  = ConfigurationManager.AppSettings["constr"].ToString();
+        //    string mapkey = ConfigurationManager.AppSettings["MapKey"];
+        //    var siteList = new List<NearestSiteDetails>();
+        //    var nearestSiteList = new List<NearestSiteDetails>();
+        //    siteList = GetAllFilteredSite();
+        //    var nearlinegeom = "";
+        //    foreach (var site in siteList)
+        //    {
+        //        nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, ApplicationSettings.SiteBuffer);
+
+        //        if (nearestSiteList != null && nearestSiteList.Count > 0)
+        //        {
+        //            var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
+        //            if (route.Result.LengthInMeters > 1)
+        //            {
+        //                var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
+        //                string lineGeom = string.Empty;
+        //                string[] siteGeomParts = site.sp_geometry.Split(' ');
+
+        //                lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
+        //                foreach (var cordinates in newbuilt.coordinates)
+        //                {
+        //                    lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
+        //                }
+        //                lineGeom = lineGeom.TrimEnd(',');
+        //                nearlinegeom = lineGeom;
+        //            }
+        //            else
+        //            {
+        //                nearlinegeom = nearestSiteList[0].nearest_cable_end_geom;
+        //            }
+        //        }
+
+        //        if (nearestSiteList.Count >= 1)
+        //        {
+        //            new BLSite().getUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
+        //        }
+        //    }
+        //    WriteDebugLog("----end UpdateSiteFiberDistance---------");
+
+        //}
         public List<NearestSiteDetails> GetAllFilteredSite()
         {
             var result = new List<NearestSiteDetails>();
