@@ -1,0 +1,894 @@
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_kml_bom(p_plan_id integer, p_user_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+sql TEXT := '';
+v_loop_length double precision;
+v_calculated_loop_length double precision;
+v_loop_entity_count integer;
+k_specification character  varying;
+k_code character  varying;
+begin
+	
+select sum(loop_length) from att_details_loop where source_ref_id=''||p_plan_id||'' and source_ref_type='backbone planning' and loop_length >0 into v_loop_length;
+
+select count(1) into v_loop_entity_count from att_details_loop where  source_ref_id=''||p_plan_id||'' and source_ref_type='backbone planning' and loop_length >0;
+
+SELECT  substring(fiber_type FROM '\(([^)]+)\)'), split_part(fiber_type, ')', 2) into k_code, k_specification   
+FROM backbone_plan_network_details
+WHERE plan_id = p_plan_id
+  AND entity_type = 'Manhole'
+LIMIT 1;
+		
+if(v_loop_length>0)
+then 
+v_calculated_loop_length := v_loop_length;
+end if;
+
+    -- Cable
+    sql :=  'SELECT
+     entity_type,
+     geom_type,
+     SUM(cost_per_unit)         AS cost_per_unit,
+     SUM(service_cost_per_unit) AS service_cost_per_unit,
+     ROUND(SUM(measured_length)::numeric, 2) || ''(m)/'' || SUM(length_qty)::int AS length_qty,
+     SUM(amount) AS amount,
+     geom as sp_geometry
+ FROM (
+     SELECT
+         (SELECT layer_title
+            FROM layer_details
+           WHERE layer_name ILIKE ''cable'')            AS entity_type,
+         ''Line''                                        AS geom_type,
+         COALESCE(item.cost_per_unit,        0)          AS cost_per_unit,
+         COALESCE(item.service_cost_per_unit,0)          AS service_cost_per_unit,
+         COUNT(att.system_id)                            AS length_qty,
+         SUM(att.cable_measured_length)                  AS measured_length,
+         -- total for this cable slice
+         (SUM(att.cable_measured_length) * COALESCE(item.service_cost_per_unit,0) +
+          COALESCE(item.cost_per_unit,0)  * SUM(att.cable_measured_length)) AS amount,
+          ST_AsText(lm.sp_geometry) as geom
+       FROM att_details_cable  att
+       join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Cable''
+       JOIN item_template_master item
+         ON item.audit_id = att.audit_item_master_id
+      WHERE att.source_ref_id      = ' || quote_literal(p_plan_id) || '
+        AND att.source_ref_type    = ''backbone planning''
+        AND item.category_reference = ''Cable''
+      GROUP BY item.cost_per_unit,
+               item.service_cost_per_unit,
+               att.specification,
+               att.item_code, lm.sp_geometry
+ ) sub
+ GROUP BY entity_type, geom_type,sub.geom';
+
+    -- Pole
+    IF EXISTS (SELECT 1 FROM att_details_pole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id ::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount , sp_geometry
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Pole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(1) AS length_qty,ST_AsText(pm.sp_geometry) as sp_geometry
+            FROM att_details_pole att
+            join point_master pm on pm.system_id = att.system_id
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Pole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name, pm.sp_geometry
+        ) e';
+    END IF;
+
+    -- Manhole
+    IF EXISTS (SELECT 1 FROM att_details_manhole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount ,sp_geometry
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Manhole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                item.cost_per_unit AS cost_per_unit,
+                item.service_cost_per_unit AS service_cost_per_unit,
+                COUNT(1) AS length_qty,ST_AsText(pm.sp_geometry) as sp_geometry
+            FROM att_details_manhole att
+            join point_master pm on pm.system_id = att.system_id
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Manhole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name,pm.sp_geometry
+        ) e';
+    END IF;
+
+    -- SpliceClosure
+    IF EXISTS (SELECT 1 FROM att_details_spliceclosure WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount , NULL AS sp_geometry
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''SpliceClosure'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(att.system_id) AS length_qty
+            FROM att_details_spliceclosure att
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''SpliceClosure'' and item.specification = ''generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+   
+if(v_loop_length>0)
+ then 
+sql:=sql ||' UNION SELECT 
+    entity_type, 
+    geom_type, 
+    SUM(cost_per_unit) AS cost_per_unit, 
+    SUM(service_cost_per_unit) AS service_cost_per_unit,
+    loop_length || ''(m)/'' || loop_count AS length_qty,
+    (loop_length * SUM(service_cost_per_unit) +
+     SUM(cost_per_unit) * loop_length) AS amount, NULL AS sp_geometry
+FROM (
+    SELECT 
+        (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''loop'') AS entity_type,
+        ''Line'' AS geom_type,
+        COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+        COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+        ' || v_calculated_loop_length || ' AS loop_length,
+        ' || v_loop_entity_count || ' AS loop_count
+    FROM item_template_master item 
+    WHERE item.code = ' || quote_literal(k_code) || ' AND item.other = ' || quote_literal(k_specification) || '
+    GROUP BY item.cost_per_unit, item.service_cost_per_unit
+) AS loop_data 
+GROUP BY entity_type, geom_type, loop_length, loop_count';
+
+ end if;
+
+if exists (SELECT 1 FROM att_details_trench WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) 
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty ,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount, sp_geometry
+	 from (
+	select (select layer_title from layer_details where layer_name ilike ''trench'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty,sum(trench_length) as measured_length , ST_AsText(lm.sp_geometry) as sp_geometry
+from att_details_trench att 
+join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Trench''
+LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where source_ref_type = ''backbone planning'' and source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME,lm.sp_geometry) e';
+end if;
+
+if exists (SELECT 1 FROM att_details_duct WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar)
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount, sp_geometry
+	 from 
+(select (select layer_title from layer_details where layer_name ilike ''duct'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty,sum(calculated_length) as measured_length,ST_AsText(lm.sp_geometry) as sp_geometry
+from att_details_duct att 
+join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Duct''
+LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where source_ref_type = ''backbone planning'' and source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME,lm.sp_geometry) e';
+end if;
+
+    -- Debug SQL
+    RAISE INFO 'Final SQL: %', sql;
+
+    -- Execute the full dynamic query and return as JSON
+    RETURN QUERY EXECUTE '
+        SELECT row_to_json(row) 
+        FROM (
+            SELECT * FROM (' || sql || ') t 
+            ORDER BY geom_type
+        ) row';
+
+END;
+$function$
+;
+
+---------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_save_plan(is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_cable_length double precision, p_user_id integer, p_plan_name character varying, p_startpoint character varying, p_endpoint character varying, plan_id integer, startpoint_networkid character varying, endpoint_network_id character varying)
+ RETURNS TABLE(status boolean, message character varying, v_plan_id integer)
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+vsystem_id integer;
+v_network_id character varying;
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_arow record;
+v_system_id integer;
+v_entity_type character varying;
+v_arow_network_id record;
+v_arow_parent_details record;
+v_arow_cable record;
+v_arow_box record;
+v_layer_table character varying;
+v_arow_splitter record;
+sql text;
+v_arow_wcr record;
+v_arow_layer_details record;
+v_layer_wcr_mapping character varying;
+v_new_wcr_mapping record;
+v_current_system_id integer;
+v_line_geom geometry;
+v_region_province record;
+v_arow_closure record;
+v_counter integer;
+v_arow_prev_closure record;
+v_arow_prev_cable record;
+-- v_other_end_geom geometry;
+v_prev_qty_length double precision;
+V_TOTAL_CALC_LENGTH DOUBLE PRECISION;
+v_line_total_length DOUBLE PRECISION;
+v_total_line integer;
+p_rfs_type character varying;
+v_manhole_item_id integer;
+v_arow_manhole record;
+v_sub_line_geom geometry;
+v_sub_line_start_point geometry;
+v_sub_line_end_point geometry;
+v_sub_line character varying;
+v_arow_prev_manhole record;
+v_arow_trench record;
+v_arow_duct record;
+v_arow_fms record;
+v_arow_pod record;
+v_arow_first_closure record;
+v_point_entity character varying;
+v_is_osp_tp BOOLEAN;
+p_plan_id integer;
+v_audit_item_master_id_sc integer;
+v_audit_item_master_id_point_entity integer;
+v_audit_item_master_id_cable integer;
+v_audit_item_master_id_duct integer;
+v_audit_item_master_id_trench integer;
+v_layer_ids character varying;
+--v_arow_first_manhole record;
+v_temp_point_entity record;
+--------
+v_current_point_geom geometry;
+v_start_point character varying;
+v_end_point character varying;
+v_loop_length double precision;
+v_point_entity_type character varying;
+v_a_display_value CHARACTER VARYING;
+v_inner_query text;
+v_arow_end_manhole record;
+v_arow_middle_manhole record;
+v_arow_middle_manhole1 record;
+v_total_record_temp integer;
+v_counter_2 integer;
+v_geom_str character varying;
+p_cable_type character varying;
+p_skip_point_id integer;
+BEGIN
+v_counter_2=0;
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+v_counter:=0;
+sql:='';
+v_prev_qty_length:=0;
+p_rfs_type:='A-RFS';
+p_plan_id=plan_id;
+
+CREATE temp TABLE temp_connection
+(
+source_system_id integer,
+source_network_id character varying(100),
+source_entity_type character varying(100),
+source_port_no integer,
+destination_system_id integer,
+destination_network_id character varying(100),
+destination_entity_type character varying(100),
+destination_port_no integer,
+is_source_cable_a_end boolean NOT NULL DEFAULT false,
+is_destination_cable_a_end boolean NOT NULL DEFAULT false,
+equipment_system_id integer,
+equipment_network_id character varying(100),
+equipment_entity_type character varying(100),
+created_by integer,
+splicing_source character varying(100)
+) on commit drop;
+
+
+IF(V_IS_VALID)
+THEN
+
+select ST_GeomFromText('LINESTRING('||p_line_geom||')',4326) into v_line_geom;
+select st_length(v_line_geom,false)::double precision into v_line_total_length;
+
+IF(V_IS_VALID)
+THEN
+
+select system_id into p_skip_point_id  from backbone_plan_network_details tp where tp.plan_id = p_plan_id and entity_type in ('Manhole','SpliceClosure') order by system_id desc limit 1;
+
+select ''::character varying as network_id,''::character varying as entity_type ,0::integer as system_id  into v_arow_prev_closure; 
+--select common_name as network_id,entity_type ,system_id  into v_arow_prev_closure from point_master pm where entity_type = 'POD' and common_name = startpoint_networkId ; 
+
+v_arow_manhole = null;
+
+--------------   start backbone data query  -----------------------------------------
+FOR v_temp_point_entity IN select * from backbone_plan_network_details tp where tp.plan_id=p_plan_id and entity_type in ('Pole','Manhole') order by system_id
+LOOP	
+------------ Get all entity audit_item_master_id =================================================
+
+select (select (select * from fn_get_template_detail(p_user_id,'SpliceClosure',''))->>'audit_item_master_id')::integer into 
+v_audit_item_master_id_sc;
+select (select (select * from fn_get_template_detail(p_user_id,v_temp_point_entity.entity_type,''))->>'audit_item_master_id')::integer into v_audit_item_master_id_point_entity ;
+select (select (select * from fn_get_template_detail(p_user_id,'duct',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_duct ;
+select (select (select * from fn_get_template_detail(p_user_id,'trench',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_trench;
+
+select * into v_region_province from fn_getregionprovince(substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7),'Point');
+RAISE INFO 'v_region_province 1 : %', v_region_province;
+
+update backbone_plan_network_details set province_id =v_region_province.province_id,region_id=v_region_province.region_id where system_id=v_temp_point_entity.system_id;
+
+RAISE INFO 'v_region_province 1: %', v_region_province;
+
+if v_temp_point_entity.system_id != p_skip_point_id 
+then
+if (upper(v_temp_point_entity.entity_type)=upper('Manhole'))
+then
+
+SELECT * into v_arow_network_id FROM fn_get_clone_network_code( v_temp_point_entity.entity_type, 'Point', substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7),0,'');
+
+INSERT INTO att_details_manhole(is_visible_on_map,audit_item_master_id,ownership_type,network_id, manhole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+,project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',v_arow_network_id.message,v_arow_network_id.message,
+v_temp_point_entity.longitude,v_temp_point_entity.latitude,
+v_region_province.province_id,v_region_province.region_id, specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',v_arow_network_id.o_p_system_id,
+v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id, 0, 0, 0, 0,'backbone planning',p_plan_id
+FROM item_template_manhole where created_by=p_user_id limit 1 
+ RETURNING *,'Manhole' as entity_type into v_arow_middle_manhole;
+-------------
+  RAISE INFO 'v_arow_middle_manhole ID1: %', v_arow_middle_manhole.system_id ;
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+values(v_arow_middle_manhole.system_id, v_temp_point_entity.entity_type,v_temp_point_entity.latitude,v_temp_point_entity.longitude,
+'A',v_temp_point_entity.sp_geometry,now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',
+fn_get_display_name(v_arow_middle_manhole.system_id::integer, v_temp_point_entity.entity_type::character varying),p_plan_id,'backbone planning');
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id,'Manhole'::character varying ,v_region_province.province_id,0,false));
+
+ update backbone_plan_network_details set 
+entity_network_id = v_arow_middle_manhole.network_id, entity_system_id = v_arow_middle_manhole.system_id
+where system_id = v_temp_point_entity.system_id;
+
+-------------------------------------------
+select substring(left(St_astext(v_temp_point_entity.line_sp_geometry),-1),12) ::character varying INTO v_geom_str;
+
+  RAISE INFO 'v_arow_manhole before ID1: %', v_arow_manhole;
+
+if v_arow_manhole is null then 
+select ''::character varying as network_id,''::character varying as entity_type ,0::integer as system_id  into v_arow_manhole;
+v_arow_prev_manhole = null;
+v_arow_prev_manhole = v_arow_middle_manhole;
+
+else
+v_arow_manhole = v_arow_middle_manhole;
+end if;
+
+  RAISE INFO 'v_arow_manhole ID1: %', v_arow_manhole;
+  RAISE INFO 'v_arow_prev_manhole ID1: %', v_arow_prev_manhole;
+  RAISE INFO 'v_arow_middle_manhole ID2: %', v_arow_middle_manhole;
+
+if(is_create_trench)
+then
+select * into v_arow_trench from fn_backbone_plan_auto_create_trench(v_arow_prev_manhole.system_id::integer,
+'Manhole'::character varying,v_arow_prev_manhole.network_id::character varying,
+v_arow_manhole.system_id ::integer,'Manhole'::character varying,v_arow_manhole.network_id::character varying,v_geom_str,
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,p_plan_id,v_audit_item_master_id_trench)
+as x(system_id integer,network_id character varying);
+
+perform (fn_geojson_update_entity_attribute(v_arow_trench.system_id,'Trench'::character varying ,v_region_province.province_id,0,false));
+
+--- update trench id in temp table related to point_entity
+ update backbone_plan_network_details set 
+duct_network_id = v_arow_trench.network_id, trench_id = v_arow_trench.system_id
+where system_id = v_temp_point_entity.system_id;
+
+end if;
+
+if(is_create_duct)then
+
+select * into v_arow_duct from fn_backbone_plan_auto_create_duct(v_arow_prev_manhole.system_id::integer,
+'Manhole'::character varying,v_arow_prev_manhole.network_id::character varying,
+v_arow_manhole.system_id::integer,'Manhole'::character varying,v_arow_manhole.network_id::character varying,v_geom_str,
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,p_plan_id,
+v_audit_item_master_id_duct,0,'')
+as x(system_id integer,network_id character varying);
+
+perform (fn_geojson_update_entity_attribute(v_arow_duct.system_id,'Duct'::character varying ,v_region_province.province_id,0,false));
+
+update backbone_plan_network_details set 
+duct_network_id = v_arow_duct.network_id, duct_id = v_arow_duct.system_id::integer 
+where system_id = v_temp_point_entity.system_id;
+
+end if;
+
+--v_arow_prev_manhole = v_arow_middle_manhole;
+v_arow_prev_manhole.system_id := v_arow_middle_manhole.system_id::integer;
+v_arow_prev_manhole.entity_type := v_arow_middle_manhole.entity_type::varchar;
+v_arow_prev_manhole.network_id := v_arow_middle_manhole.network_id::varchar;
+else
+
+v_arow_network_id = null;
+
+select * into v_arow_network_id from fn_get_network_code('Pole','Point',0,'Province',substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7));
+RAISE INFO 'v_arow_network_id p: %', v_arow_network_id;
+
+INSERT INTO att_details_pole(is_visible_on_map,audit_item_master_id,ownership_type,pole_type,network_id, pole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,item_code,
+vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+, project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',pole_type,v_arow_network_id.network_code,v_arow_network_id.network_code,
+v_temp_point_entity.longitude,v_temp_point_entity.latitude,
+v_region_province.province_id,v_region_province.region_id, specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',
+v_arow_network_id.parent_system_id,v_arow_network_id.parent_network_id,v_arow_network_id.parent_entity_type,v_arow_network_id.sequence_id,
+0, 0, 0, 0 ,'backbone planning',p_plan_id
+FROM item_template_pole where created_by=p_user_id limit 1 RETURNING system_id,network_id,latitude,longitude,'Pole' as entity_type into v_arow_middle_manhole;
+
+RAISE INFO 'v_arow_middle_manhole p: %', v_arow_middle_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_middle_manhole.system_id, v_temp_point_entity.entity_type,v_temp_point_entity.longitude,v_temp_point_entity.latitude,
+'A',v_temp_point_entity.sp_geometry,now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',
+fn_get_display_name(v_arow_middle_manhole.system_id::integer, 'Pole'::character varying),'backbone planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id,'Pole'::character varying ,v_region_province.province_id,0,false));
+
+ update backbone_plan_network_details set 
+entity_network_id = v_arow_middle_manhole.network_id, entity_system_id = v_arow_middle_manhole.system_id
+where system_id = v_temp_point_entity.system_id;
+
+v_arow_prev_manhole = null;
+select ''::character varying as network_id,''::character varying as entity_type ,0::integer as system_id  into v_arow_prev_manhole; 
+
+end if;
+
+-------------------------insert spliceclosure---------------------------------------------
+v_arow_network_id = null;
+
+select * into v_arow_network_id from fn_get_network_code('SpliceClosure','Point',0,'Province',substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7));
+RAISE INFO 'v_arow_network_id p: %', v_arow_network_id;
+
+insert into att_details_spliceclosure(is_visible_on_map,audit_item_master_id,ownership_type,network_id,spliceclosure_name,latitude,
+longitude,province_id,region_id,
+specification,category,subcategory1,subcategory2,subcategory3,item_code,vendor_id,
+type,brand,model,construction,activation,accessibility,status,created_by,created_on,network_status,parent_system_id,
+parent_network_id,parent_entity_type,sequence_id,no_of_ports,project_id,planning_id,purpose_id,workorder_id,structure_id,
+no_of_input_port,no_of_output_port,is_used,is_virtual,source_ref_type,source_ref_id)
+
+select true,v_audit_item_master_id_sc,'OWN',v_arow_network_id.network_code,v_arow_network_id.network_code,v_temp_point_entity.latitude,v_temp_point_entity.longitude,v_region_province.province_id,v_region_province.region_id,
+specification, category, subcategory1, subcategory2, subcategory3,item_code, vendor_id, 0,0,0,0,0,0,'A',p_user_id,now(),
+'P',v_arow_network_id.parent_system_id,v_arow_network_id.parent_network_id,v_arow_network_id.parent_entity_type,
+v_arow_network_id.sequence_id,no_of_ports,0,0,0,0,0,no_of_input_port,no_of_output_port,true,false,
+'backbone planning',p_plan_id
+from item_template_spliceClosure where created_by=p_user_id limit 1
+RETURNING system_id,network_id,latitude,longitude,no_of_ports,no_of_input_port,no_of_output_port,'Splice Closure' as entity_type into v_arow_closure;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,creator_remark,approver_remark,
+created_by,common_name, network_status,no_of_ports,display_name,source_ref_type,source_ref_id)
+values(v_arow_closure.system_id, 'SpliceClosure',v_temp_point_entity.latitude,v_temp_point_entity.longitude,'A',
+v_temp_point_entity.sp_geometry,now(),'Created', ''
+,p_user_id,v_arow_network_id.network_code, 'P',v_arow_closure.no_of_ports::character varying,
+fn_get_display_name(v_arow_closure.system_id::integer, 'SpliceClosure'::character varying),'backbone planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_closure.system_id,'SpliceClosure'::character varying ,v_region_province.province_id,0,false));
+
+perform(fn_bulk_insert_port_info(v_arow_closure.no_of_ports::integer,v_arow_closure.no_of_ports::integer,'SpliceClosure',
+v_arow_closure.system_id,v_arow_closure.network_id,p_user_id));
+
+insert into associate_entity_info(associated_entity_type,associated_system_id,associated_network_id,entity_network_id,entity_system_id,
+entity_type,created_on,created_by,associated_display_name,entity_display_name)
+values('SpliceClosure',v_arow_closure.system_id::integer,v_arow_closure.network_id::character varying,v_arow_middle_manhole.network_id::character varying,v_arow_middle_manhole.system_id::integer,v_temp_point_entity.entity_type,now(),p_user_id,
+fn_get_display_name(v_arow_closure.system_id ::integer,'SpliceClosure' ::character varying),fn_get_display_name(v_arow_middle_manhole.system_id::integer,v_temp_point_entity.entity_type ::character varying));
+
+end if;
+--------------------- insert cable --------------------------
+if(p_skip_point_id = v_temp_point_entity.system_id:: integer) then
+v_arow_prev_closure = null;
+select ''::character varying as network_id,''::character varying as entity_type ,0::integer as system_id  into v_arow_prev_closure; 
+RAISE INFO 'p_skip_point_id p: %', p_skip_point_id;
+
+end if;
+v_geom_str = null;
+select substring(left(St_astext(v_temp_point_entity.line_sp_geometry),-1),12) ::character varying INTO v_geom_str;
+RAISE INFO 'v_arow_prev_closure p: %', v_arow_prev_closure;
+RAISE INFO 'v_arow_closure p: %', v_arow_closure;
+
+RAISE INFO 'v_geom_str p: %', v_geom_str;
+RAISE INFO 'v_temp_point_entity.fiber_type p: %', v_temp_point_entity.fiber_type;
+
+select * into v_arow_cable from fn_backbone_auto_create_cable(v_arow_prev_closure.system_id,
+v_arow_prev_closure.entity_type,v_arow_prev_closure.network_id,
+v_arow_closure.system_id::integer,v_arow_closure.entity_type::character varying,v_arow_closure.network_id::character varying, 
+v_geom_str::character varying,
+0,v_region_province.region_id::integer ,v_region_province.province_id::integer,p_user_id,p_rfs_type ::character varying,500,v_temp_point_entity.fiber_type::character varying,p_plan_id,
+'Overhead'::character varying,0,''::character varying)
+as x(system_id integer,network_id character varying,no_of_tube integer,total_core integer);
+RAISE INFO 'v_arow_closure p: %', v_arow_cable;
+
+perform (fn_geojson_update_entity_attribute(v_arow_cable.system_id::integer,'Cable'::character varying ,v_region_province.province_id,0,false));
+
+ update backbone_plan_network_details set 
+cable_network_id = v_arow_cable.network_id, cable_id = v_arow_cable.system_id
+where system_id = v_temp_point_entity.system_id;
+
+if v_arow_prev_cable is not null
+then
+insert into temp_connection(source_system_id,source_network_id,source_entity_type,source_port_no,destination_system_id,destination_network_id,
+destination_entity_type,destination_port_no,is_source_cable_a_end,is_destination_cable_a_end,created_by,splicing_source,
+equipment_system_id,equipment_network_id,equipment_entity_type)
+values(v_arow_prev_cable.system_id,v_arow_prev_cable.network_id,'Cable',1,v_arow_cable.system_id,v_arow_cable.network_id,'Cable',1,false,true,
+p_user_id,'PROVISIONNING',
+v_arow_prev_closure.system_id, v_arow_prev_closure.network_id,v_arow_prev_closure.entity_type);
+end if;
+v_arow_prev_closure.system_id := v_arow_closure.system_id;
+v_arow_prev_closure.entity_type := v_arow_closure.entity_type::varchar;
+v_arow_prev_closure.network_id := v_arow_closure.network_id::varchar;
+v_arow_prev_cable := v_arow_cable;
+
+
+end loop;
+--------------   end backbone data query  -----------------------------------------
+
+--------------   start sproutplan data query  -----------------------------------------
+
+FOR v_temp_point_entity IN (select * from backbone_plan_network_details tp where tp.plan_id=p_plan_id and 	entity_type = 'Site' order by system_id)
+loop 
+
+select common_name as network_id,entity_type ,system_id  into v_arow_closure 
+	from point_master pm where entity_type = 'POD' and common_name = v_temp_point_entity.entity_network_id;
+
+select substring(left(St_astext(v_temp_point_entity.line_sp_geometry),-1),12) ::character varying INTO v_geom_str;
+
+    IF EXISTS (SELECT 1 FROM polygon_master 
+      WHERE ST_Intersects(
+        sp_geometry,
+        ST_GeomFromText('LINESTRING(' || v_geom_str || ')', 4326))
+        AND entity_type = 'RestrictedArea')
+      then 
+        p_cable_type = 'Overhead';
+        else 
+        p_cable_type = 'Underground';
+     end if;
+       
+
+if (v_temp_point_entity.sp_geometry is not null)
+then 
+   select * into v_region_province from fn_getregionprovince(substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7),'Point');
+	
+	update backbone_plan_network_details set province_id =v_region_province.province_id,region_id=v_region_province.region_id where system_id=v_temp_point_entity.system_id;
+
+ if(p_cable_type = 'Underground') 
+ then	
+	v_arow_network_id =null;
+
+	SELECT * into v_arow_network_id FROM fn_get_clone_network_code( 'Manhole', 'Point', substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7),0,'');
+
+INSERT INTO att_details_manhole(is_visible_on_map,audit_item_master_id,ownership_type,network_id, manhole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+,project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',v_arow_network_id.message,v_arow_network_id.message,
+ST_Y(v_temp_point_entity.sp_geometry),ST_X(v_temp_point_entity.sp_geometry),
+v_region_province.province_id,v_region_province.region_id, specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',v_arow_network_id.o_p_system_id,
+v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id, 0, 0, 0, 0,'backbone planning',p_plan_id
+FROM item_template_manhole where created_by=p_user_id limit 1 
+ RETURNING system_id::integer,network_id :: character varying,'Manhole'::character varying as entity_type into v_arow_middle_manhole;
+-------------
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_middle_manhole.system_id, 'Manhole',ST_Y(v_temp_point_entity.sp_geometry),ST_X(v_temp_point_entity.sp_geometry),
+'A',v_temp_point_entity.sp_geometry,now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',
+fn_get_display_name(v_arow_middle_manhole.system_id::integer, 'Manhole'::character varying),'backbone planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id::integer,'Manhole'::character varying ,v_region_province.province_id,0,false)) ;
+
+else 
+	v_arow_network_id =null;
+
+	SELECT * into v_arow_network_id FROM fn_get_clone_network_code( 'Pole', 'Point', substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7),0,'');
+
+INSERT INTO att_details_pole(is_visible_on_map,audit_item_master_id,ownership_type,pole_type,network_id, pole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,item_code,
+vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+, project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',pole_type,v_arow_network_id.message::character varying,v_arow_network_id.message::character varying,
+ST_Y(v_temp_point_entity.sp_geometry),ST_X(v_temp_point_entity.sp_geometry),
+v_region_province.province_id,v_region_province.region_id, specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',
+v_arow_network_id.o_p_system_id ::integer,v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id,
+0, 0, 0, 0 ,'backbone planning',p_plan_id
+FROM item_template_pole where created_by=p_user_id limit 1 RETURNING system_id::integer,network_id::character varying,'Pole'::character varying as entity_type into v_arow_middle_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_middle_manhole.system_id, 'Pole',ST_Y(v_temp_point_entity.sp_geometry),ST_X(v_temp_point_entity.sp_geometry),
+'A',v_temp_point_entity.sp_geometry,now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',
+fn_get_display_name(v_arow_middle_manhole.system_id::integer, 'Pole'::character varying),'backbone planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id,'Pole'::character varying ,v_region_province.province_id,0,false));
+
+end if;
+
+select * into v_arow_network_id from fn_get_network_code('SpliceClosure','Point',0,'Province',substring(left(St_astext(v_temp_point_entity.sp_geometry),-1),7));
+
+insert into att_details_spliceclosure(is_visible_on_map,audit_item_master_id,ownership_type,network_id,spliceclosure_name,latitude,
+longitude,province_id,region_id,
+specification,category,subcategory1,subcategory2,subcategory3,item_code,vendor_id,
+type,brand,model,construction,activation,accessibility,status,created_by,created_on,network_status,parent_system_id,
+parent_network_id,parent_entity_type,sequence_id,no_of_ports,project_id,planning_id,purpose_id,workorder_id,structure_id,
+no_of_input_port,no_of_output_port,is_used,is_virtual,source_ref_type,source_ref_id)
+
+select true,v_audit_item_master_id_sc,'OWN',v_arow_network_id.network_code::character varying,v_arow_network_id.network_code::character varying,v_temp_point_entity.latitude,v_temp_point_entity.longitude,v_region_province.province_id,v_region_province.region_id,
+specification, category, subcategory1, subcategory2, subcategory3,item_code, vendor_id, 0,0,0,0,0,0,'A',p_user_id,now(),
+'P',v_arow_network_id.parent_system_id,v_arow_network_id.parent_network_id,v_arow_network_id.parent_entity_type,
+v_arow_network_id.sequence_id,no_of_ports,0,0,0,0,0,no_of_input_port,no_of_output_port,true,false,
+'backbone planning',p_plan_id
+from item_template_spliceClosure where created_by=p_user_id limit 1
+RETURNING system_id,network_id,latitude,longitude,no_of_ports,no_of_input_port,no_of_output_port,'Splice Closure'::character varying as entity_type into v_arow_closure;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,creator_remark,approver_remark,
+created_by,common_name, network_status,no_of_ports,display_name,source_ref_type,source_ref_id)
+values(v_arow_closure.system_id, 'SpliceClosure',v_temp_point_entity.latitude,v_temp_point_entity.longitude,'A',
+v_temp_point_entity.sp_geometry,now(),'Created', ''
+,p_user_id,v_arow_network_id.network_code, 'P',v_arow_closure.no_of_ports::character varying,
+fn_get_display_name(v_arow_closure.system_id::integer, 'SpliceClosure'::character varying),'backbone planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_closure.system_id,'SpliceClosure'::character varying ,v_region_province.province_id,0,false));
+
+perform(fn_bulk_insert_port_info(v_arow_closure.no_of_ports,v_arow_closure.no_of_ports,'SpliceClosure',
+v_arow_closure.system_id::integer,v_arow_closure.network_id::character varying,p_user_id));
+
+insert into associate_entity_info(associated_entity_type,associated_system_id,associated_network_id,entity_network_id,entity_system_id,
+entity_type,created_on,created_by,associated_display_name,entity_display_name)
+values('SpliceClosure',v_arow_closure.system_id::integer,v_arow_closure.network_id::character varying,v_arow_middle_manhole.network_id::character varying,v_arow_middle_manhole.system_id::integer,v_temp_point_entity.entity_type,now(),p_user_id,
+fn_get_display_name(v_arow_closure.system_id::integer,'SpliceClosure'::character varying),fn_get_display_name(v_arow_middle_manhole.system_id::integer,v_temp_point_entity.entity_type::character varying));
+
+else
+
+SELECT distinct pm.common_name as network_id,pm.entity_type ,pm.system_id  into v_arow_middle_manhole 
+FROM point_master pm
+JOIN att_details_manhole mh 
+    ON mh.source_ref_type = pm.source_ref_type 
+   AND mh.source_ref_id = pm.source_ref_id 
+WHERE pm.entity_type = 'Manhole'
+  AND lower(pm.source_ref_type) = 'backbone planning'
+  AND pm.source_ref_id = p_plan_id::varchar
+  AND ST_DWithin(pm.sp_geometry, ST_GeomFromText(
+            'POINT(' || 
+            split_part(v_temp_point_entity.intersect_line_geom, ',', 2)::double precision || ' ' || 
+            split_part(v_temp_point_entity.intersect_line_geom, ',', 1)::double precision || 
+            ')', 
+            4326),1.0)
+ORDER BY pm.system_id desc limit 1;
+           
+end if;
+
+select * into v_arow_cable from fn_backbone_auto_create_cable(v_arow_middle_manhole.system_id::integer,
+v_arow_middle_manhole.entity_type::character varying,v_arow_middle_manhole.network_id::character varying,
+v_arow_closure.system_id::integer,v_arow_closure.entity_type::character varying,v_arow_closure.network_id::character varying, 
+v_geom_str,
+0,v_region_province.region_id::integer,v_region_province.province_id,p_user_id,p_rfs_type ::character varying,500,v_temp_point_entity.fiber_type,p_plan_id,
+p_cable_type,0,''::character varying)
+as x(system_id integer,network_id character varying,no_of_tube integer,total_core integer);
+
+
+perform (fn_geojson_update_entity_attribute(v_arow_cable.system_id::integer,'Cable'::character varying ,v_region_province.province_id,0,false));	
+
+update backbone_plan_network_details set 
+cable_network_id = v_arow_cable.network_id, cable_id = v_arow_cable.system_id
+where system_id = v_temp_point_entity.system_id;
+end loop;
+--------------   end sproutplan data query  -----------------------------------------
+
+if ((SELECT COUNT(1) FROM temp_connection)>0)
+then
+ 
+perform(fn_auto_provisioning_save_connections());
+
+END IF;
+
+PERFORM(fn_backbone_get_loop_entity(p_plan_id));
+
+
+END IF;
+
+IF(V_IS_VALID)
+THEN
+V_MESSAGE:='Network plan processed successfully!';
+update backbone_plan_details t set status = 'Success' where t.plan_id = p_plan_id and created_by = p_user_id;
+END IF;
+end if;
+RETURN QUERY SELECT V_IS_VALID::boolean AS STATUS, V_MESSAGE::CHARACTER VARYING AS MESSAGE,plan_id :: integer as v_plan_id ;
+
+end;
+$function$
+;
+
+
+--------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_nearest_sites(line_geom character varying, buffer double precision, planid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_line  geometry;
+    v_buffer  geometry;
+    v_buffer_geojson json;
+    v_sites json;
+BEGIN
+    IF line_geom IS NULL OR trim(line_geom) = '' THEN
+        RETURN;
+    END IF;
+
+    SELECT ST_GeomFromText('LINESTRING(' || line_geom || ')', 4326)
+    INTO   v_line;
+
+    SELECT ST_Buffer(v_line::geography, buffer)::geometry
+    INTO   v_buffer;
+
+    SELECT ST_AsGeoJSON(v_buffer)::json
+    INTO   v_buffer_geojson;
+
+    IF EXISTS (SELECT 1
+               FROM backbone_plan_nearest_site
+               WHERE plan_id = planid)
+    THEN
+        SELECT json_agg(
+         json_build_object(
+           'network_id',    s.network_id,
+           'site_id',       s.site_id,
+           'site_name',     s.site_name,
+           'is_selected',   s.is_selected,
+           'fibertype',     s.fibertype,
+           'backbone_geom', s.cable_geom,
+           'geometry',      s.site_geom,
+           'line_geom',     s.line_geom
+         )
+       )
+INTO   v_sites
+FROM (
+    SELECT *
+    FROM (
+        SELECT DISTINCT ON (bpns.network_id)
+               bpns.network_id,
+               bpns.site_id,
+               bpns.site_name,
+               bpns.is_selected,
+               bpns.fibertype,
+               bpnd.intersect_line_geom AS cable_geom,
+               bpnd.site_geom,
+               bpns.line_geom
+        FROM backbone_plan_nearest_site    bpns
+        JOIN backbone_plan_network_details bpnd
+          ON  bpnd.plan_id           = bpns.plan_id
+          AND bpnd.entity_network_id = bpns.network_id
+          AND bpnd.entity_type       = 'Site'
+        WHERE bpns.plan_id = planid
+
+        UNION
+
+        SELECT adp.network_id,
+               adp.site_id,
+               adp.site_name,
+               FALSE AS is_selected,
+               ''    AS fibertype,
+               ''    AS backbone_geom,
+               ''    AS geometry,
+               ''    AS line_geom
+        FROM point_master     pm
+        JOIN att_details_pod adp
+          ON pm.system_id = adp.system_id
+        WHERE UPPER(pm.entity_type) = 'POD'
+          AND adp.status            = 'A'
+          AND pm.network_status     IN ('P', 'A')
+          AND ST_Within(pm.sp_geometry, v_buffer)
+          AND adp.network_id NOT IN (
+              SELECT network_id
+              FROM   backbone_plan_nearest_site
+              WHERE  plan_id = planid
+          )
+    ) s_all
+    ORDER BY s_all.network_id
+) s; 
+    ELSE
+        SELECT json_agg(
+                 json_build_object(
+                   'network_id',    adp.network_id,
+                   'site_id',       adp.site_id,
+                   'site_name',     adp.site_name,
+                   'is_selected',   FALSE,
+                   'fibertype',     '',
+                   'backbone_geom', '',
+                   'geometry',      '',
+                   'line_geom',     ''
+                 )
+               )
+        INTO   v_sites
+       FROM (SELECT adp.network_id,
+        adp.site_id,
+        adp.site_name,
+        FALSE        AS is_selected,
+        ''           AS fibertype,
+        ''           AS backbone_geom,
+        ''           AS geometry,
+        ''           AS line_geom
+    FROM point_master     pm
+    JOIN att_details_pod adp
+      ON pm.system_id = adp.system_id
+    WHERE UPPER(pm.entity_type) = 'POD'
+      AND adp.status = 'A'
+      AND pm.network_status IN ('P', 'A')
+      AND ST_Within(pm.sp_geometry, v_buffer)
+    ORDER BY adp.network_id ) adp;
+    END IF;
+
+    RETURN NEXT json_build_object(
+        'buffer_geometry', v_buffer_geojson,
+        'sites',           COALESCE(v_sites, '[]'::json)
+    );
+END;
+$function$
+;
+
+------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_update_sprout_network(p_linegeom character varying, p_systemid integer, p_cablelength double precision)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+   
+begin
+	
+update backbone_plan_network_details set line_sp_geometry = ST_GeomFromText(concat('LINESTRING(', p_linegeom, ')'), 4326), cable_length = p_cablelength where system_id =  p_systemId;
+
+UPDATE backbone_plan_nearest_site AS s1
+SET 
+    line_geom = p_linegeom
+FROM backbone_plan_network_details AS s2
+WHERE s1.network_id = s2.entity_network_id and s2.system_id = p_systemId;
+ 
+  return ;
+END;
+$function$
+;
+

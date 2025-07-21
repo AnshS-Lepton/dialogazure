@@ -88,7 +88,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 </div>
 
                                 <div class="form-group" id="buffer">
-                                    <label class="control-label col-md-5">Buffer(meter)<i class="clsMandatory">*</i>:</label>
+                                    <label class="control-label col-md-5">Buffer(m)<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.buffer, new { @id = "planbuffer", Value = "", @onblur = "return backbonedata.PlanningBufferPoint();", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                                     </div>
@@ -140,13 +140,13 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Threshold <i class="clsMandatory">*</i>:</label>
+                                    <label class="control-label col-md-5">Sprout Threshold <i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.threshold, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Route Length :</label>
+                                    <label class="control-label col-md-5">Backbone Route Length :</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.cable_length, new { @id = "cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
@@ -173,7 +173,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="d-flex --gap05">
                                     <button type="button" class="btn btn-sm btn-danger ml-auto" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
                                     <button type="submit" class="btn btn-sm btn-default" id="btnApply" onclick="return backbonedata.loopValidation()">Apply</button>
-                                    <button type="button" class="btn btn-sm btn-success" id="btnNearestSite" onclick="backbonedata.getNearestSite()" disabled>Select Nearest Site</button>
+                                    <button type="button" class="btn btn-sm btn-success" id="btnNearestSite" onclick="backbonedata.getNearestSite()" disabled>Select Sprout Site</button>
                                     @*<input type="button" class="btn btn-sm btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
                                            value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />*@
                                     <button type="button" id="ManageLoop" class="btn btn-sm btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
