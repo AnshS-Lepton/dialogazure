@@ -21727,6 +21727,7 @@ var Main = function () {
             if (backbonedata.sitePointMarker) {
                 backbonedata.sitePointMarker.setMap(null);
                 backbonedata.sitePointMarker = null;
+              }
          }  
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
