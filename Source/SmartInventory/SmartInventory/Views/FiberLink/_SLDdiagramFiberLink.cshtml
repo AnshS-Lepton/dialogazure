@@ -83,6 +83,9 @@
             <div class="pagetitle" style="width:50%;"><h2>Schematic View</h2></div>
             <div class="midContent" style="width:40%;">
                 <span style="font-weight:600"> Link Id:</span>  <span> @Model.fiber_link_id</span>
+                <!-- Hidden field to store fiberlink ID -->
+                <input type="hidden" id="fiberlink_id" value="@Model.fiber_link_id" />
+                <input type="hidden" id="opAlias" value="@Model.opAlias" />
             </div>
             
 
@@ -688,11 +691,12 @@
 
             myPromise.then(
                 function (value) {
-
+                    var fiberlinkId = $('#fiberlink_id').val();
+                    var opAlias = $('#opAlias').val();
                     var direction = $('#ddldirection').val();
                     //draw(direction)
                     var filename = "";
-                    var filename = filename.concat(pageTitle.replace(/ /g, "_"), "_", fncCurrentDate(new Date()), ".pdf");
+                    var filename = filename.concat(fiberlinkId.replace(/ /g, "_"), "_", opAlias, ".pdf");
 
                     var canvas = document.querySelector('#myCanavas');
                     //var newCanvas = document.getElementById('newCanvas');

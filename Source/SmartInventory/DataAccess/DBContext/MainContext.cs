@@ -676,6 +676,7 @@ namespace DataAccess.DBContext
 
             modelBuilder.Entity<siteprojectdetails>().ToTable("site_project_details", dbschema);
             modelBuilder.Entity<BackbonePlanNetworkDetails>().ToTable("backbone_plan_network_details", dbschema);
+            modelBuilder.Entity<SitePlanList>().ToTable("backbone_plan_nearest_site", dbschema);
 
             
         }

@@ -2663,11 +2663,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer)
+        public BackBoneSitePlanDetails GetNearestSiteList(string geom, double buffer,int planId)
         {
             try
             {
-                var jsonResult = repo.ExecuteProcedure<string>("fn_backbone_get_nearest_sites", new { line_geom = geom, buffer = buffer }, false).FirstOrDefault();
+                var jsonResult = repo.ExecuteProcedure<string>("fn_backbone_get_nearest_sites", new { line_geom = geom, buffer = buffer, planid = planId }, false).FirstOrDefault();
                 if (jsonResult != null)
                 {
                     return JsonConvert.DeserializeObject<BackBoneSitePlanDetails>(jsonResult);
@@ -2692,12 +2692,10 @@ namespace DataAccess
                         p_endpoint = plan.end_point,
                         p_sprout_fiber_type = plan.sprout_fiber,
                         p_backbone_fiber_type = plan.backbone_fiber,
-                        p_nearest_sites = plan.selectedSites,
+                       // p_selected_site = plan.isSelectedSite,
                         p_pole_span = Convert.ToDouble(plan.pole_distance),
                         p_manhole_span = Convert.ToDouble(plan.manhole_distance),
                         v_buffer = plan.buffer,
-                        START_SITE_NETWORK_ID = plan.startpoint_network_id,
-                        END_SITE_NETWORK_ID = plan.endpoint_network_id,
                         p_threshold = plan.threshold,
                         p_looplength = plan.loop_length,
                         p_is_looprequired = plan.is_loop_required
@@ -2707,7 +2705,7 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public void updateSiteLineGeometry(string lineGeom, int systemId, double cableLength,double? threshold,int planId )
+        public void updateSiteLineGeometry(string lineGeom, int systemId, double cableLength )
         {
             try
             {
@@ -2814,7 +2812,52 @@ namespace DataAccess
         }
 
     }
-    public class DAtemp_auto_network_plan : Repository<temp_auto_network_plan>
+    public class DABackBonePlanSite : Repository<SitePlanList>
+    {
+        public List<BackBoneSproutFiberDetails> SaveNearestSite(List<SitePlanList> model,int userId)
+        {
+            try
+            {
+                if (model.Count > 0)
+                {
+                    int planId = Convert.ToInt32(model[0].plan_id);
+                    List<SitePlanList> List = repo.GetAll(m => m.plan_id == planId).ToList();
+                    if (List.Count > 0)
+                    {
+                        repo.DeleteRange(List);
+                    }
+                    repo.Insert(model);
+                    var lst = repo.ExecuteProcedure<BackBoneSproutFiberDetails>("fn_backbone_draft_network",
+                           new
+                           {
+                               p_planid = planId,
+                               p_user_id = userId
+                           }, true).ToList();
+                    return lst;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public List<SitePlanList> getSiteList(int planId, int userId)
+        {
+            try
+            {
+                return repo.GetAll(m => m.plan_id == planId && m.user_id == userId).ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+        public class DAtemp_auto_network_plan : Repository<temp_auto_network_plan>
     {
         public double GetTotalLoopLength(int plan_id)
         {

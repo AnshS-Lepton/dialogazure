@@ -7029,7 +7029,7 @@ var Main = function () {
                     //networkdata.ResetBomDetails();
                     networkdata.deleteAllMiddleMarker();
                     ShowAutoPlanLineLength(path);
-                }
+                    }
                 else {
                     var path = google.maps.geometry.encoding.decodePath(directionsDisplay.directions.routes[0].overview_polyline);
                     app.ShowAutoPlanLineLength(path);
@@ -9434,15 +9434,6 @@ var Main = function () {
         //blank layer object..
         app.layerManager = [];
 
-        // Clear previously drawn polylines from the map
-        //if (app.backboneself && Array.isArray(si.backboneself.polylines) && app.backboneself.polylines.length > 0) {
-        //    app.backboneself.polylines.forEach(line => {
-        //        if (line && line.setMap) {
-        //            line.setMap(null);
-        //        }
-        //    });
-        //    app.backboneself.polylines = [];
-        //}
         //load covid-19 layer..  
         if ($("#chk_covid_lyr").is(':checked')) {
             var layerParam = { Name: "Covid", DisplayName: "Covid-19", Filters: null, MapFilePath: "D:/CovidMapFiles/Covid.map" };
@@ -21706,15 +21697,7 @@ var Main = function () {
         $("#divPlanTool").hide();
         if ($("#dvAutoBackBonePlanData").is(":visible")) {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
-        } 
-        if (si.backboneself && Array.isArray(si.backboneself.polylines) && si.backboneself.polylines.length > 0) {
-            si.backboneself.polylines.forEach(line => {
-                if (line && line.setMap) {
-                    line.setMap(null);
-                }
-            });
-            si.backboneself.polylines = [];
-        }
+        }        
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
         }
@@ -21723,6 +21706,26 @@ var Main = function () {
         if (app.routePolyline) {
             app.routePolyline.setMap(null);
             app.routePolyline = null;
+        }
+        if (app.directionsSiteRenderer) {
+            app.directionsSiteRenderer.setMap(null);
+            app.directionsSiteRenderer = null;
+        }
+        if (app.directionsRenderer) {
+            app.directionsRenderer.setMap(null);
+            app.directionsRenderer = null;
+        }
+        if (app.StartSiteTmpLine) {
+            app.StartSiteTmpLine.setMap(null);
+            app.StartSiteTmpLine = null;
+        }
+        if (app.EndSiteTmpLine) {
+            app.EndSiteTmpLine.setMap(null);
+            app.EndSiteTmpLine = null;
+        }
+        if (app.sitePointMarker) {
+            app.sitePointMarker.setMap(null);
+            app.sitePointMarker = null;
         }
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {

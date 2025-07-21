@@ -28,6 +28,8 @@ namespace IntegrationServices.Controllers
             {
                 int bufferInMtrs;
                 var apiKey = ApplicationSettings.Map_Key_Backend;
+                string lastCoord = string.Empty;
+                double strLlongitude = 0, strLatitude = 0, endLongitude = 0, endLatitude = 0;
                 if (!isLatLngValid(latitude.ToString(), longitude.ToString()))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid latitude or longitude!" });
@@ -58,7 +60,7 @@ namespace IntegrationServices.Controllers
                 #region nearest_structure
                 #region get latitude and longitude from db
 
-                double strLlongitude = 0, strLatitude = 0, endLongitude = 0, endLatitude = 0;
+                
                // Extract coordinates using regex
                 string pattern = @"POINT\s*\((.*?)\)";
                 Match match = Regex.Match(lstentities[0].geom, pattern);
@@ -79,13 +81,20 @@ namespace IntegrationServices.Controllers
                     GeoData data = JsonConvert.DeserializeObject<GeoData>(roadPathRouteApiData[0].geojson_new_built);
                     double StrRoadpathLatitude = 0, StrRoadpathLongitude = 0;
                     string nearestlatlngdata = string.Empty;
+                    double lon = data.Coordinates[0][0];
+                    double lat = data.Coordinates[0][1];
+                     StrRoadpathLongitude = data.Coordinates[0][0];
+                     StrRoadpathLatitude = data.Coordinates[0][1];
+                    string geom = $"{StrRoadpathLongitude} {StrRoadpathLatitude}, {longitude} {latitude}";
                     foreach (var coord in data.Coordinates)
                     {
                         StrRoadpathLongitude = coord[0]; StrRoadpathLatitude = coord[1];
                         nearestlatlngdata += StrRoadpathLongitude + " " + StrRoadpathLatitude + ",";
                     }
-                   
                     nearestlatlngdata = nearestlatlngdata.TrimEnd(',');
+                    string[] coordsArray = nearestlatlngdata.Split(',');
+                     lastCoord = coordsArray.Last().Trim();
+
 
                     if (!nearestlatlngdata.Contains(","))
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Road path not found!" });
@@ -93,13 +102,17 @@ namespace IntegrationServices.Controllers
                     List<Points> points = new BLMisc().getStartEndPointsFeasibility(inputcoordinates);
                     string geo_end_point = getLatLongDetails(string.IsNullOrEmpty(points[0].end_point) ? " " : points[0].end_point);
                     string[] end_point = geo_end_point.Split(' ');
-
+                    var totaldistance = new BLPlan().GetLineLength(geom);
                     var customer_to_road_routeData = GetRouteList(latitude, longitude, StrRoadpathLatitude, StrRoadpathLongitude);
                     var structureToRoadRouteData = GetRouteList(Convert.ToDouble(end_point[1]), Convert.ToDouble(end_point[0]), endLongitude, endLatitude);
-                    var nearestlocation = CreateLocation(latitude, longitude);
-                    var customerToRoadRouteSegment = bindRouteData(customer_to_road_routeData[0].geojson_new_built, customer_to_road_routeData[0].total_new_length);
+                    var nearestlocation = CreateLocation(latitude, longitude); 
+                    var customerToRoadRouteSegment = bindRouteData(customer_to_road_routeData[0].geojson_new_built, totaldistance);
                     var roadPathRouteSegment = bindRouteData(roadPathRouteApiData[0].geojson_new_built, roadPathRouteApiData[0].total_new_length);
-                    var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, structureToRoadRouteData[0].total_new_length);
+                    string geomDistS2R = $"{geo_end_point}, {StrRoadpathLongitude} {latitude}";
+
+                    var totalDistS2R = new BLPlan().GetLineLength(geomDistS2R);
+
+                    var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, totalDistS2R);
                     var route = getRoutesDetails(customerToRoadRouteSegment, roadPathRouteSegment, structureToRoadRouteSegment);
                     nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, inputcoordinates, route_buffer);
 
@@ -124,7 +137,7 @@ namespace IntegrationServices.Controllers
                     strProLongitude = double.Parse(proLines[1]);
                 }
 
-
+              
                 #endregion
                 if (lstentities[i].entity_type == Models.EntityType.Cable.ToString())
                 {
@@ -151,13 +164,15 @@ namespace IntegrationServices.Controllers
                     string[] proend_point = geo_proend_point.Split(' ');
                     endProLatitude = double.Parse(proend_point[1]);
                     endProLongitude = double.Parse(proend_point[0]);
+                    string proposedCustomerToRoadRoutegeom = $"{lastCoord},{strLatitude} {strLlongitude}";
 
+                    var totalcustRoadRoutedistance = new BLPlan().GetLineLength(proposedCustomerToRoadRoutegeom);
                     var proposedCustomerToRoadRouteData = GetRouteList(latitude, longitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
                     var proposedStructureToRoad = GetRouteList(endProLatitude, endProLongitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
                     var proposedNearestlocation = CreateLocation(latitude, longitude);
                     var proposedCustomerToRoadRouteSegment = bindRouteData(proposedCustomerToRoadRouteData[0].geojson_new_built, proposedCustomerToRoadRouteData[0].total_new_length);
                     var proposedRoadPathRouteSegment = bindRouteData(proposedRoadpathRouteApiData[0].geojson_new_built, proposedRoadpathRouteApiData[0].total_new_length);
-                    var proposedStructureToRoadRouteSegment = bindRouteData(proposedStructureToRoad[0].geojson_new_built, proposedStructureToRoad[0].total_new_length);
+                    var proposedStructureToRoadRouteSegment = bindRouteData(proposedStructureToRoad[0].geojson_new_built, totalcustRoadRoutedistance);
                     var proposedroute = getRoutesDetails(proposedCustomerToRoadRouteSegment, proposedRoadPathRouteSegment, proposedStructureToRoadRouteSegment);
 
                      proposedStructure = bindProposedStructureData(lstentities[i].entity_title/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, inputprocoordinates, route_buffer);

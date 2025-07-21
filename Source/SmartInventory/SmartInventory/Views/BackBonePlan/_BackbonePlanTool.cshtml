@@ -100,12 +100,12 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
 
                                     </div>
                                 </div>                              
-                                <div class="form-group" id="siteLst">
+                                @*<div class="form-group" id="siteLst">
                                     <label class="control-label col-md-5">Nearest sites :</label>
                                     <div class="col-md-7 d-flex">
                                         <a href="javascript:void(0)"  id="siteDropdownToggle1"  class="anchor-btn" onclick="backbonedata.onSiteInputClick()">Select Sites</a>
                                     </div>
-                                </div>
+                                </div>*@
 
                                 <div id="trenchduct">
                                     <div class="form-group mb-15">
@@ -170,12 +170,14 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                         @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return backbonedata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-default" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
-                                <button type="submit" class="btn btn-default" id="btnApply" onclick="return backbonedata.loopValidation()">Apply</button>
-                                <input type="button" class="btn btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
-                                       value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />
-                                <button type="button" id="ManageLoop" class="btn btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
-
+                                <div class="d-flex --gap05">
+                                    <button type="button" class="btn btn-sm btn-danger ml-auto" id="btnReset">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
+                                    <button type="submit" class="btn btn-sm btn-default" id="btnApply" onclick="return backbonedata.loopValidation()">Apply</button>
+                                    <button type="button" class="btn btn-sm btn-success" id="btnNearestSite" onclick="backbonedata.getNearestSite()" disabled>Select Nearest Site</button>
+                                    @*<input type="button" class="btn btn-sm btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
+                                           value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />*@
+                                    <button type="button" id="ManageLoop" class="btn btn-sm btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
+                                </div>
                             </div>
                             <div id="BomBoqDetails"></div>
                         </div>

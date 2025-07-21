@@ -7170,6 +7170,11 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
     opacity: 0.3;
     pointer-events: none;
 }
+.btnNAllowed {
+    cursor: not-allowed;
+    opacity: 0.5;
+    display:inline-block;
+}
 
 .reportAdvanceFilters div[id*="searchBy_chosen"] {
     width: 33% !important;
@@ -10402,4 +10407,7 @@ tfoot tr td a:hover {
 }
 .layerCable-fieldset .l-title{
     margin-top:0;
+}
+.tool_bar .FiberAllocationReport {
+    background-position: -195px -500.1px;
 }

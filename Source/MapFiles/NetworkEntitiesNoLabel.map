@@ -241,7 +241,6 @@ MAP
 			'ows_title' 'PEP'
 		END
 		STATUS OFF
-		LABELITEM 'label_column'
 		GROUP 'Network'		
 		CLASS
 			NAME 'PEP'
