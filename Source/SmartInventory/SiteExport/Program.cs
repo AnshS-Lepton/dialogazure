@@ -28,63 +28,53 @@ namespace SiteExport
         {
             WriteDebugLog("----start UpdateSiteFiberDistance---------");
 
-            string connectionString  = ConfigurationManager.AppSettings["constr"].ToString();
+            string connectionString = ConfigurationManager.AppSettings["constr"].ToString();
+            int buffer = Convert.ToInt32(ConfigurationManager.AppSettings["bufferRadius"]);
             string mapkey = ConfigurationManager.AppSettings["MapKey"];
             var siteList = new List<NearestSiteDetails>();
             var nearestSiteList = new List<NearestSiteDetails>();
+            var nearlinegeom = "";
             siteList = GetAllFilteredSite();
             foreach (var site in siteList)
             {
-                nearestSiteList = GetNearestSite(site.system_id, site.network_id);
+                nearestSiteList = GetNearestSite(site.system_id, site.network_id, buffer, 1);
                 if (nearestSiteList != null && nearestSiteList.Count > 0)
                 {
-                    int index = 0;
-                    foreach (var nearestSite in nearestSiteList)
+                    try
                     {
-                        var lst = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSite.site_geometry, mapkey);
-                        try
+                        var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
+                        if (route.Result.LengthInMeters >= 1)
                         {
-                            if (lst.Result.LengthInMeters <= 1)
-                            {
-                                string[] startGeomParts = site.sp_geometry.Split(' ');
-                                string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
+                            var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
+                            string lineGeom = string.Empty;
+                            string[] siteGeomParts = site.sp_geometry.Split(' ');
 
-                                string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
-                                nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
-                                nearestSiteList[index].line_geometry = lineGeom;
-                            }
-                            else
+                            lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
+                            foreach (var cordinates in newbuilt.coordinates)
                             {
-                                var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(lst.Result.GeoJson);
-                                string lineGeom = string.Empty;
-                                string[] startGeomParts = site.sp_geometry.Split(' ');
-                                string[] siteGeomParts = nearestSite.site_geometry.Split(' ');
-                                lineGeom = startGeomParts[1] + " " + startGeomParts[0] + ",";
-                                foreach (var cordinates in newbuilt.coordinates)
-                                {
-                                    lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
-                                }
-                                lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
-                                lineGeom = lineGeom.TrimEnd(',');
-                                nearestSiteList[index].google_site_distance = lst.Result.LengthInMeters;
-                                nearestSiteList[index].line_geometry = lineGeom;
+                                lineGeom += cordinates[0].ToString() + " " + cordinates[1].ToString() + ",";
                             }
-                            index++;
+                            lineGeom = lineGeom.TrimEnd(',');
+                            nearlinegeom = lineGeom;
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
-                            nearestSiteList[index].google_site_distance = 0;
-                            nearestSiteList[index].line_geometry = string.Empty;
+                            string lineGeom = string.Empty;
+                            string[] siteGeomParts = site.sp_geometry.Split(' ');
+                            string[] CableEndGeom = nearestSiteList[0].nearest_cable_end_geom.Split(' ');
+                            nearlinegeom = siteGeomParts[1] + " " + siteGeomParts[0] + "," + CableEndGeom[1] + " " + CableEndGeom[0];
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
                     }
                 }
                 // Here you can save the updated nearestSiteList to the database or perform further processing
                 if (nearestSiteList != null && nearestSiteList.Count > 0)
                 {
-                    var nearestSite = nearestSiteList.OrderBy(x => x.google_site_distance).FirstOrDefault();
+                    GetUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
 
-                    GetUpdateSiteFiberDistance(nearestSite.line_geometry, nearestSite.system_id, site.system_id, nearestSite.google_site_distance);
                 }
             }
             WriteDebugLog("----end UpdateSiteFiberDistance---------");
@@ -121,7 +111,7 @@ namespace SiteExport
             }
             return result;
         }
-        public List<NearestSiteDetails> GetNearestSite(int system_id, string network_id)
+        public List<NearestSiteDetails> GetNearestSite(int system_id, string network_id, int buffer, int pageNo)
         {
             var result = new List<NearestSiteDetails>();
             string connectionString = ConfigurationManager.AppSettings["constr"].ToString();
@@ -131,11 +121,12 @@ namespace SiteExport
                 {
                     connection.Open();
 
-                    using (var command = new NpgsqlCommand("SELECT * FROM fn_get_nearest_site_records(@p_system_id, @p_network_id,@buffer)", connection))
+                    using (var command = new NpgsqlCommand("SELECT * FROM fn_get_nearest_site_records(@p_system_id, @p_network_id,@v_buffer,@p_page_number)", connection))
                     {
                         command.Parameters.AddWithValue("@p_system_id", system_id);
                         command.Parameters.AddWithValue("@p_network_id", network_id);
-                        command.Parameters.AddWithValue("@buffer", 100);
+                        command.Parameters.AddWithValue("@v_buffer", buffer);
+                        command.Parameters.AddWithValue("@p_page_number", pageNo);
 
                         using (var reader = command.ExecuteReader())
                         {
@@ -155,7 +146,7 @@ namespace SiteExport
             }
             return result;
         }
-        public void GetUpdateSiteFiberDistance(string lineString, int nearestSiteSystemId, int SiteSystemId,double nearestSiteDistance)
+        public void GetUpdateSiteFiberDistance(string linestring, int nearestsite_system_id, int system_id, double nearestsiteDistance, string nearest_cable_geom, string nearlinegeom, int? nearest_cable_system_id)
         {
             string connectionString = ConfigurationManager.AppSettings["constr"].ToString();
             try
@@ -164,22 +155,26 @@ namespace SiteExport
                 {
                     connection.Open();
 
-                    using (var command = new NpgsqlCommand("SELECT fn_get_update_site_fiber_details(@line, @nearest_id, @site_id, @nearestsite_distance)", connection))
+                    using (var command = new NpgsqlCommand("SELECT fn_get_update_site_fiber_details(@line, @nearest_id, @site_id, @nearestsite_distance, @nearest_cable_geom, @nearest_cable_system_id, @nearlinegeom)", connection))
                     {
-                        command.Parameters.AddWithValue("@line", lineString);
-                        command.Parameters.AddWithValue("@nearest_id", nearestSiteSystemId);
-                        command.Parameters.AddWithValue("@site_id", SiteSystemId);
-                        command.Parameters.AddWithValue("@nearestsite_distance", nearestSiteDistance);
+                        command.Parameters.AddWithValue("@line", linestring);
+                        command.Parameters.AddWithValue("@nearest_id", nearestsite_system_id);
+                        command.Parameters.AddWithValue("@site_id", system_id);
+                        command.Parameters.AddWithValue("@nearestsite_distance", nearestsiteDistance);
+                        command.Parameters.AddWithValue("@nearest_cable_geom", nearest_cable_geom);
+                        command.Parameters.AddWithValue("@nearest_cable_system_id", (object)nearest_cable_system_id ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@nearlinegeom", nearlinegeom);
 
                         command.ExecuteNonQuery();
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
             }
         }
+
         public void WriteDebugLog(string LogMessage)
         {
             try

@@ -39,9 +39,9 @@ namespace BusinessLogics
         {
             return new DASite().GetSitelistData(systemId);
         }
-        public List<NearestSiteDetails> getNearrestSitelistData(int system_id, string network_id, int buffer)
+        public List<NearestSiteDetails> getNearrestSitelistData(int system_id, string network_id, int buffer, int PageNo)
         {
-            return new DASite().getNearestSitelistData(system_id, network_id, buffer);
+            return new DASite().getNearestSitelistData(system_id, network_id, buffer, PageNo);
         }
 
         public List<NearestSiteDetails> getUpdateSiteFiberDistance(string linestring, int nearestsite_system_id, int system_id, double nearestsiteDistance, string nearest_cable_geom, string nearlinegeom, int? nearest_cable_system_id)

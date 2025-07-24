@@ -13605,9 +13605,10 @@ foreach (var objEntity in lstExportReportKML)
                 siteList = new BLSite().GetSitelistData(systemId);
                 var nearestSiteList = new List<NearestSiteDetails>();
                 var nearlinegeom = "";
+                int buffer = ApplicationSettings.SiteBuffer;
                 foreach (var site in siteList)
                 {
-                    nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, ApplicationSettings.SiteBuffer);
+                    nearestSiteList = new BLSite().getNearrestSitelistData(site.system_id, site.network_id, buffer, 1);
 
                     if (nearestSiteList != null && nearestSiteList.Count > 0)
                     {
@@ -13644,10 +13645,9 @@ foreach (var objEntity in lstExportReportKML)
                     {
                         new BLSite().getUpdateSiteFiberDistance(nearestSiteList[0].line_geometry, nearestSiteList[0].system_id, site.system_id, nearestSiteList[0].distance, nearestSiteList[0].nearest_cable_end_geom, nearlinegeom, nearestSiteList[0].nearest_cable_system_id);
                      //   int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                       // List<SiteBOMOBOQResponse> bomboqlist = new List<SiteBOMOBOQResponse>();
+                     // List<SiteBOMOBOQResponse> bomboqlist = new List<SiteBOMOBOQResponse>();
                      //   bomboqlist = new BLProject().getSiteBomBoq(systemId, Convert.ToDouble(ApplicationSettings.NearBySitePoleSpan), Convert.ToDouble(ApplicationSettings.NearBySiteManholeSpan), userId);
-
-                      //  new BLProject().updateSiteBomBoqAmount(systemId, Convert.ToDouble(bomboqlist[0].total_cost), ApplicationSettings.NearBySitePoleSpan, ApplicationSettings.NearBySiteManholeSpan, Convert.ToInt32(Session["user_id"]));
+                     //  new BLProject().updateSiteBomBoqAmount(systemId, Convert.ToDouble(bomboqlist[0].total_cost), ApplicationSettings.NearBySitePoleSpan, ApplicationSettings.NearBySiteManholeSpan, Convert.ToInt32(Session["user_id"]));
                     }
                 }          
                 return Json(new { success = true, message = "Request has been submitted & It is running in background, please check after sometime!" });
