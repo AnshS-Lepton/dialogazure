@@ -64,6 +64,7 @@ namespace SmartInventory.Helper
             finalkml = finalkml.Replace("<>", "");
             finalkml = finalkml.Replace("</>", "");
 
+            finalkml = RemoveInvalidXmlChars(finalkml);
             string kmlDesFullPath = desTempFolderPath + "\\" + TempkmlFileName;
             System.IO.File.WriteAllText(kmlDesFullPath, finalkml.ToString());
             string zipfilePath = desTempFolderPath + ".zip";
@@ -1217,6 +1218,22 @@ namespace SmartInventory.Helper
             }
         }
 
+        private static string RemoveInvalidXmlChars(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            StringBuilder output = new StringBuilder();
+            foreach (char ch in input)
+            {
+                // Valid XML 1.0 characters
+                if (ch == '\t' || ch == '\n' || ch == '\r' || (ch >= ' ' && ch <= '\uD7FF') || (ch >= '\uE000' && ch <= '\uFFFD'))
+                {
+                    output.Append(ch);
+                }
+            }
+            return output.ToString();
+        }
 
         /*-LANDBASE-*/
         public static void LandBaseDatasetToKML(DataSet ds, List<LandBaseMaster> lstLayers, string tempFolderPath, string TempkmlFileName, string layerName = "", DataTable dtFilter = null)
