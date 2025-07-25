@@ -2551,6 +2551,15 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<BackBonePlanBom> GetBackBonePlanBomKMLByPlanId(int plan_id, int user_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<BackBonePlanBom>("fn_backbone_get_plan_kml_bom", new { p_plan_id = plan_id, p_user_id = user_id }, true);
+                return res;
+            }
+            catch { throw; }
+        }
         public List<PlanBom> PlanBom(NetworkPlanning model, int user_id)
         {
             try

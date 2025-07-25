@@ -12101,50 +12101,90 @@ namespace SmartInventory.Controllers
         }
         public void ExportKMLBackbonePlanBOMBOQReport(int plan_id)
         {
-
             if (plan_id > 0)
             {
                 string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
-                string fileName = plan_name + "_BackBone_Planing_BomBOQ_KMLReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".kml";
+                string fileName = $"{plan_name}_BackBone_Planing_BomBOQ_KMLReport_{DateTimeHelper.Now:ddMMyyyy-HHmmss}.kml";
                 int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+
                 var sbKml = new StringBuilder();
-                // ── Standard KML header + a single folder ──────────────────────────────
                 sbKml.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                 sbKml.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
                 sbKml.AppendLine("<Document>");
+                sbKml.AppendLine("<name>Backbone Plan BOM / BOQ</name>");
+
+                // Define red line style
+                sbKml.AppendLine("<Style id=\"redLine\">");
+                sbKml.AppendLine("  <LineStyle>");
+                sbKml.AppendLine("    <color>ff0000ff</color>"); // Red: AABBGGRR
+                sbKml.AppendLine("    <width>3</width>");
+                sbKml.AppendLine("  </LineStyle>");
+                sbKml.AppendLine("</Style>");
+
                 sbKml.AppendLine("<Folder><name>BOM / BOQ</name>");
 
-                // ── Fetch the data (no geom required) ──────────────────────────────────
-                var filter = (ExportReportFilter)Session["ExportReportFilter"];
-                //List<BackBonePlanBom> rows = new BLSite().GetExportReportDataKML(filter);
-                List<BackBonePlanBom> rows = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+                List<BackBonePlanBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
                 foreach (var row in rows)
                 {
-                    // Escape XML‑sensitive chars once
                     string name = SecurityElement.Escape(row.entity_type);
                     string qty = SecurityElement.Escape(row.length_qty.ToString());
                     string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
                     string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
                     string total = SecurityElement.Escape(row.amount.ToString());
 
-                    sbKml.AppendLine($"  <Placemark>");
+                    sbKml.AppendLine("  <Placemark>");
                     sbKml.AppendLine($"    <name>{name}</name>");
-                    sbKml.AppendLine($"    <ExtendedData>");
+                    sbKml.AppendLine("    <ExtendedData>");
                     sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
                     sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
                     sbKml.AppendLine($"      <Data name=\"Service Cost Per Unit\"><value>{scpu}</value></Data>");
                     sbKml.AppendLine($"      <Data name=\"Total Cost\"><value>{total}</value></Data>");
-                    sbKml.AppendLine($"    </ExtendedData>");
-                    sbKml.AppendLine($"  </Placemark>");
+                    sbKml.AppendLine("    </ExtendedData>");
+
+                    if (!string.IsNullOrEmpty(row.sp_geometry))
+                    {
+                        string trimmedGeom = row.sp_geometry.Trim();
+
+                        if (trimmedGeom.StartsWith("POINT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Extract coordinates: POINT(lon lat)
+                            string coords = trimmedGeom.Replace("POINT", "").Replace("(", "").Replace(")", "").Trim();
+                            sbKml.AppendLine("    <Point>");
+                            sbKml.AppendLine($"      <coordinates>{coords},0</coordinates>");
+                            sbKml.AppendLine("    </Point>");
+                        }
+                        else if (trimmedGeom.StartsWith("LINESTRING", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Extract coordinates from LINESTRING(lon lat, lon lat...)
+                            string coordStr = trimmedGeom.Replace("LINESTRING(", "").Replace(")", "");
+                            string[] coordPairs = coordStr.Split(',');
+
+                            sbKml.AppendLine("    <styleUrl>#redLine</styleUrl>");
+                            sbKml.AppendLine("    <LineString>");
+                            sbKml.AppendLine("      <altitudeMode>clampToGround</altitudeMode>");
+                            sbKml.AppendLine("      <coordinates>");
+
+                            foreach (var pair in coordPairs)
+                            {
+                                string[] parts = pair.Trim().Split(' ');
+                                if (parts.Length >= 2)
+                                {
+                                    sbKml.AppendLine($"        {parts[0]},{parts[1]},0");
+                                }
+                            }
+
+                            sbKml.AppendLine("      </coordinates>");
+                            sbKml.AppendLine("    </LineString>");
+                        }
+                    }
+
+                    sbKml.AppendLine("  </Placemark>");
                 }
 
-                // ── Close folder & document ────────────────────────────────────────────
                 sbKml.AppendLine("</Folder>");
                 sbKml.AppendLine("</Document>");
                 sbKml.AppendLine("</kml>");
 
-                // ── Push to browser ────────────────────────────────────────────────────
-                //string fileName = $"BOM_BOQ_{DateTime.Now:yyyyMMdd_HHmmss}.kml";
                 Response.Clear();
                 Response.ContentType = "application/vnd.google-earth.kml+xml";
                 Response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\"");

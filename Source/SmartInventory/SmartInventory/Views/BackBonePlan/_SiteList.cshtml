@@ -83,23 +83,22 @@ canSort: false
 grid.Column(
 "", "Action", format: (item) =>
 Html.Raw(
-  string.Format(
-      "<a href='#' class='{0}' title='Show Route' onclick=\"{1}\">" +
-      "<i class='fa fa-map-marker' aria-hidden='true' style='color:grey;font-size:21px;'></i>" +
-      "</a> <span class='line-geom' id='line-geom-{2}' style='display:none'>{3}</span>", (item.is_selected ? "auto" : "btnNAllowed"),
-       (item.is_selected ? string.Format("backbonedata.ShowRoutesBetweenMarkers('{0}','{1}','{2}')",
-       item.geometry, item.backbone_geom, item.network_id) : "return false;"), item.network_id, item.line_geom ?? "")
+string.Format(
+"<a href='#' class='{0}' title='Show Route' onclick=\"{1}\">" +
+"<i class='fa fa-map-marker' aria-hidden='true' style='color:grey;font-size:21px;'></i>" +
+"</a> <span class='line-geom' id='line-geom-{2}' style='display:none'>{3}</span>", (item.is_selected ? "auto" : "btnNAllowed"),
+(item.is_selected ? string.Format("backbonedata.ShowRoutesBetweenMarkers('{0}','{1}','{2}')",
+item.geometry, item.backbone_geom, item.network_id) : "return false;"), item.network_id, item.line_geom ?? "")
 )),
-
-grid.Column("site_name", "Site Name", format: @<text><span data-site-name="@item.site_name">@item.site_name</span></text>),
 grid.Column("site_id", "Site Id", format: @<text><span data-site-id="@item.site_id">@item.site_id</span></text>),
+grid.Column("site_name", "Site Name", format: @<text><span data-site-name="@item.site_name">@item.site_name</span></text>),
 grid.Column("network_id", "Network Id", format: @<text>@item.network_id</text>),
 grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
-    @Html.Raw(GenerateSproutFiberDropdown(item.network_id.ToString()))
-    @{ rowIndex++; }
-</text>)
-)
-)
+                    @Html.Raw(GenerateSproutFiberDropdown(item.network_id.ToString()))
+                    @{ rowIndex++; }
+                </text>         )
+         )
+         )
 
                     @Html.Hidden("dir", grid.SortDirection)
                     @Html.Hidden("col", grid.SortColumn)
@@ -149,7 +148,7 @@ grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
             alert("Please select at least one site.");
             return;
         }
-
+          showProgress();
           $.ajax({
             url: '@Url.Action("SaveNearestSites", "BackBonePlan")',
             type: 'POST',
@@ -178,11 +177,13 @@ grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
                     }
                     $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' />");
                     updateSelectAllCheckbox();
+                    hideProgress();
                }
              });
             },
             error: xhr => {
                 alert(xhr.responseText || "Save failed.");
+                hideProgress();
             }
           });
 

@@ -342,7 +342,7 @@ namespace SmartInventory.Controllers
             {
                 ErrorLogHelper.WriteErrorLog("SaveNearestSites", "BackBone", ex);
             }
-            return Json(new { message = "Sites Updated successfully." }, JsonRequestBehavior.AllowGet);
+            return Json(new { message = "Sprout Route Saved successfully!" }, JsonRequestBehavior.AllowGet);
         }
     }
 }
