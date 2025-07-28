@@ -172,7 +172,7 @@ namespace DataAccess
         }
 
         
-             public List<NearestSiteDetails> getUpdateSiteFiberDistance( string linestring, int nearestsite_system_id,int system_id, double nearestsiteDistance, string nearest_cable_geom, string nearlinegeom, int? nearest_cable_system_id)
+        public List<NearestSiteDetails> getUpdateSiteFiberDistance( string linestring, int nearestsite_system_id,int system_id, double nearestsiteDistance, string nearest_cable_geom, string nearlinegeom, int? nearest_cable_system_id)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace DataAccess
             }
             catch (Exception ex) { throw ex; }
         }
-        public List<NearestSiteDetails> getNearestSitelistData(int system_id, string network_id, int buffer)
+        public List<NearestSiteDetails> getNearestSitelistData(int system_id, string network_id, int buffer, int PageNo)
         {
             try
             {
@@ -201,6 +201,7 @@ namespace DataAccess
                         p_system_id = system_id,
                         p_network_id = network_id,
                         v_buffer = buffer,
+                        p_page_number = PageNo
                     }, true);
                 return lst;
             }
