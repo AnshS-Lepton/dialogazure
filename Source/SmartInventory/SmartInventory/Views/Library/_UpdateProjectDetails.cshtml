@@ -4,25 +4,25 @@
 <div class="space-pad">
     <form id="segmentForm">
         <div class="form-group row">
-            <label class="control-label col-sm-2" for="searchby">Site Id<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Site Id:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.site_id, new { @id = "txtsiteid", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", Readonly = true, @maxlength = 100 })
 
                 @*@Html.TextBoxFor(m => m.site_id, new { @id = "txtSiteId", @title = "Search text", @tabindex = "4", @class = "form-control", @placeholder = "Search text", @maxlength = 100 })*@
             </div>
-            <label class="control-label col-sm-2" for="txtSearchtext">Site Name<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="txtSearchtext">Site Name:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.site_name, new { @id = "txtsitename", @title = "Enter text", @tabindex = "4", @class = "form-control", @placeholder = "Enter text", Readonly = true, @maxlength = 100 })
             </div>
         </div>
         <div class="form-group row">
 
-            <label class="control-label col-sm-2" for="searchby">Site Owner<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Site Owner:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.site_owner, new { @id = "txtsiteowner", @title = "Site Owne", @tabindex = "4", @class = "form-control", @placeholder = "Site Owne", @maxlength = 100 })
 
             </div>
-            <label class="control-label col-sm-2" for="searchby">Maximum Cost<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Maximum Cost:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.maximum_cost, new { @id = "txtmaximumcost", @title = "Maximum Cost", @tabindex = "4", @onkeypress = "return allowNumberwithOneDot(event,'txtmaximumcost');", @class = "form-control", @placeholder = "Maximum Cost", @maxlength = 15 })
 
@@ -32,12 +32,12 @@
 
         </div>
         <div class="form-group row">
-            <label class="control-label col-sm-2" for="searchby">Project Category<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Project Category:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.project_category, new { @id = "txtprojectcategory", @title = "Project Category", @tabindex = "4", @class = "form-control", @placeholder = "Project Category", @maxlength = 100 })
 
             </div>
-            <label class="control-label col-sm-2" for="searchby">Priority<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Priority:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.priority, new { @id = "txtPriority", @title = "Priority", @tabindex = "4", @onkeypress = "return allowNumberwithOneDot(event,'txtmaximumcost');", @class = "form-control", @placeholder = "Priority", @maxlength = 2 })
 
@@ -45,11 +45,11 @@
         </div>
         <div class="form-group row">
 
-            <label class="control-label col-sm-2" for="txtSearchtext">No of Cores<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="txtSearchtext">No of Cores:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.cable_plan_cores, new { @id = "txtcableplancores", @title = "Cable Plan Cores", @tabindex = "4", @onkeypress = "return allowNumberwithOneDot(event,'txtmaximumcost');", @class = "form-control", @placeholder = "Cable Plan Cores", @maxlength = 3 })
             </div>
-            <label class="control-label col-sm-2" for="searchby">Fiber Link Type<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Fiber Link Type:</label>
             <div class="col-sm-4">
                 @*@Html.TextBoxFor(m => m.fiber_link_type, new { @id = "txtfiber_link_type", @title = "Fiber Link Type", @tabindex = "4", @class = "form-control", @placeholder = "Fiber Link Type", @maxlength = 100 })*@
                 
@@ -73,12 +73,12 @@ new SelectListItem { Text = "RS", Value = "RS"},
 
         <div class="form-group row">
 
-            <label class="control-label col-sm-2" for="searchby">Comment<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Comment:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.comment, new { @id = "txtcomment", @title = "Comment", @tabindex = "4", @class = "form-control", @placeholder = "Comment", @maxlength = 200 })
 
             </div>
-            <label class="control-label col-sm-2" for="searchby">Plan Cost<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Plan Cost:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.plan_cost, new { @id = "txtplan_cost", @title = "Plan Cost", Readonly = true, @tabindex = "4", @class = "form-control", @placeholder = "Plan Cost", @maxlength = 100 })
 
@@ -88,13 +88,13 @@ new SelectListItem { Text = "RS", Value = "RS"},
         </div>
         <div class="form-group row">
 
-            <label class="control-label col-sm-2" for="searchby">Total Fiber Distance<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Total Fiber Distance:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.total_fiber_distance, new { @id = "txttotal_fiber_distance", Readonly = true, @title = "Total Fiber Distance", @tabindex = "4", @class = "form-control", @placeholder = "Total Fiber Distance", @maxlength = 100 })
 
             </div>
 
-            <label class="control-label col-sm-2" for="searchby">Fiber Link Code<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">Fiber Link Code:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.fiber_link_code, new { @id = "txtfiber_link_code", @title = "Fiber Link Code", @tabindex = "4", @class = "form-control", @placeholder = "Fiber Link Code", @maxlength = 100 })
 
@@ -104,7 +104,7 @@ new SelectListItem { Text = "RS", Value = "RS"},
         </div>
 
         <div class="form-group row">
-            <label class="control-label col-sm-2" for="searchby">PORT TYPE<i class="clsMandatory">*</i>:</label>
+            <label class="control-label col-sm-2" for="searchby">PORT TYPE:</label>
             <div class="col-sm-4">
                 @Html.TextBoxFor(m => m.destination_port_type, new { @id = "txtDestinationPortType", @title = "PORT TYPE", @tabindex = "4", @class = "form-control", @placeholder = "PORT TYPE", @maxlength = 10 })
 
@@ -112,12 +112,12 @@ new SelectListItem { Text = "RS", Value = "RS"},
 
         </div>
             <div class="form-group row">
-                <label class="control-label col-sm-2" for="searchby">Latitude<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Latitude:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.latitude, new { @id = "txtlatitude", @title = "Latitude", @tabindex = "4", Readonly = true, @class = "form-control", @placeholder = "Latitude", @maxlength = 100 })
 
                 </div>
-                <label class="control-label col-sm-2" for="searchby">Longitude<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Longitude:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.longitude, new { @id = "txtlongitude", @title = "Longitude", @tabindex = "4", Readonly = true, @class = "form-control", @placeholder = "Longitude", @maxlength = 100 })
 
@@ -130,13 +130,13 @@ new SelectListItem { Text = "RS", Value = "RS"},
 
             <div class="form-group row">
 
-                <label class="control-label col-sm-2" for="searchby">Ds CMC Area<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Ds CMC Area:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.ds_cmc_area, new { @id = "txtdscmcarea", @title = "Ds CMC Area", @tabindex = "4", @class = "form-control", @placeholder = "Ds CMC Area", @maxlength = 100 })
 
                 </div>
 
-                <label class="control-label col-sm-2" for="searchby">Address<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Address:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.location_address, new { @id = "txtlocationaddress", @title = "Address", @tabindex = "4", @class = "form-control", @placeholder = "Address", @maxlength = 250 })
 
@@ -145,12 +145,12 @@ new SelectListItem { Text = "RS", Value = "RS"},
             </div>
 
             <div class="form-group row">
-                <label class="control-label col-sm-2" for="searchby">Destination Site Id<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Destination Site Id:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.destination_site_id, new { @id = "txtDestinationSiteId", Readonly = true, @title = "Destination Site Id", @tabindex = "4", @class = "form-control", @placeholder = "Destination Site Id", @maxlength = 10 })
 
                 </div>
-                <label class="control-label col-sm-2" for="searchby">Destination Port Type<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Destination Port Type:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.destination_port_type, new { @id = "txtDestinationPortType", Readonly = true, @title = "Destination Port Type", @tabindex = "4", @class = "form-control", @placeholder = "Destination Port Type", @maxlength = 10 })
 
@@ -158,13 +158,13 @@ new SelectListItem { Text = "RS", Value = "RS"},
 
             </div>
             <div class="form-group row">
-                <label class="control-label col-sm-2" for="searchby">Destination No. of Cores<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="searchby">Destination No. of Cores:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.no_of_cores, new { @id = "txtNumberOfCores", Readonly = true, @title = "Number Of Cores", @onkeypress = "return allowNumberwithOneDot(event,'txtmaximumcost');", @tabindex = "4", @class = "form-control", @placeholder = "Number Of Cores", @maxlength = 2 })
 
                 </div>
 
-                <label class="control-label col-sm-2" for="txtSearchtext">Project Id<i class="clsMandatory">*</i>:</label>
+                <label class="control-label col-sm-2" for="txtSearchtext">Project Id:</label>
                 <div class="col-sm-4">
                     @Html.TextBoxFor(m => m.project_id, new { @id = "txtProjectId", @title = "Project Id", @tabindex = "4", Readonly = true, @class = "form-control", @placeholder = "Enter text", @maxlength = 100 })
                 </div>
