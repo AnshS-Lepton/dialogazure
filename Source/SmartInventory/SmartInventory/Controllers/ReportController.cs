@@ -14283,11 +14283,11 @@ foreach (var objEntity in lstExportReportKML)
         {
             List<routeDetails> routeList = new List<routeDetails>();
             var isValid = new BLProject().getValidRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
-            if (!isValid[0])
-            {
-                return Json(new { status = "VALIDATION_FAILED", message = "The route must include all aggregate sites located between the source (starting point) and the destination (end point)!", result = routeList });
-            }
-            else
+            //if (!isValid[0])
+            //{
+            //    return Json(new { status = "VALIDATION_FAILED", message = "The route must include all aggregate sites located between the source (starting point) and the destination (end point)!", result = routeList });
+            //}
+            //else
                  routeList = new BLProject().GetSelectedRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
 
             return Json(new { status = "OK", message = "Route attached successfully!", result= routeList });

@@ -17907,6 +17907,71 @@ var Main = function () {
         $(popup.DE.MinimizeModel).trigger("click");
     }
 
+    this.SegmentNetworkPlanning = function (ismappicker, destination_point,obj) {
+        debugger;
+        $('#endPointErrorMsg').text('');
+        $('#startPointErrorMsg').text('');
+        if (si.fadeMap) {
+            si.fadeMap.setMap(null);
+        }
+        $('#siteDropdownPanel').hide();
+
+        const $thead = $('#nearestSitesTable thead');
+        const $tbody = $('#nearestSitesTable tbody');
+        $thead.hide();
+        $tbody.empty();
+        $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
+
+        if (ismappicker) {
+            if (destination_point === 'start') {
+                $(popup.DE.MinimizeModel).trigger("click");
+                $("#startpointmap").addClass('activemarker activeicon');
+                debugger;
+                google.maps.event.addListener(si.map, 'click', function (e) {
+                    debugger;
+                    app.startLatLng = e.latLng;
+                    var startLatLog = e.latLng.lat().toFixed(6) + "," + e.latLng.lng().toFixed(6);
+                    app.NetworkStartPoint = e.latLng.lat() + "," + e.latLng.lng();
+                    app.SegmentNetworkManual(destination_point);
+                   
+
+                    $('#startpoint').val(startLatLog);
+                    $('#start_point').val(startLatLog);
+
+                   // app.ResetBomDetails();
+                    //  si.clearInfoRelatedObjects();
+                     si.GetNearByTopologyEntityByLatLong(e.latLng, obj.id);
+
+                });
+            }
+
+            if (destination_point === 'end') {
+                debugger;
+                $("#endpointmap").addClass('activemarker activeicon');
+                $(popup.DE.MinimizeModel).trigger("click");
+                google.maps.event.addListener(si.map, 'click', function (f) {
+                    debugger;
+                    app.endLatLng = f.latLng;
+                    var endLatLog = f.latLng.lat().toFixed(6) + "," + f.latLng.lng().toFixed(6);
+                    app.NetworkEndPoint = f.latLng.lat() + "," + f.latLng.lng();
+                  
+                    $('#endpoint').val(endLatLog);
+                    $('#end_point').val(endLatLog);
+
+                   
+                    app.SegmentNetworkManual(destination_point);
+                   // app.ResetBomDetails();
+
+                    //  si.clearInfoRelatedObjects();
+                      si.GetNearByTopologyEntityByLatLong(f.latLng, obj.id);
+                   
+                });
+            }
+        }
+
+        return true;
+    };
+
     this.GetNearByTopologyEntityByLatLong = function (latLng, objId, req_type) {
 
         app.collapseRemove();
@@ -18102,6 +18167,7 @@ var Main = function () {
 
                         // Append new options from response
                         $.each(data.result, function (index, item) {
+                            $("#hdnrouteid").val(item.route_id);
 
                             ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
 
@@ -32579,6 +32645,206 @@ var Main = function () {
 
         return true;
     }
+
+    this.SegmentNetworkManual = function (end) {
+
+        
+        ClearRuler();
+        if (directionsDisplay) {
+            directionsDisplay.setMap(null);
+        }
+
+        if (si.startMarker == undefined && si.endMarker == undefined) {
+            si.clearMarkers();
+            removeOldMarkersWithRemoveActive();
+        }
+
+        if (end == app.NP.end_type.START && app.NetworkStartPoint != null) {
+            app.createSegmentStartMarker();
+            app.entityAlongDirection('end');
+        }
+
+        if (end == app.NP.end_type.END && app.NetworkEndPoint != null) {
+
+            app.createSegmentEndMarker();
+        }
+        if (app.NetworkStartPoint != null && app.NetworkEndPoint != null) {
+            app.createSegmentCableBetweenMakers();
+        }
+    }
+    this.createSegmentStartMarker = function () {
+        ;
+        if (app.NetworkStartPoint != null) {
+
+            var startlat = parseFloat(app.NetworkStartPoint.split(',')[0]);
+            var startlong = parseFloat(app.NetworkStartPoint.split(',')[1]);
+            startLatlng = { lat: startlat, lng: startlong };
+
+            if (si.startMarker)
+                si.startMarker.setMap(null);
+            si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
+            si.startMarker.addListener('drag', function (startLatlng) {
+
+                app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();
+                app.fillnetworkPlanningMarker(startLatlng, 'start');
+                // 
+                app.ResetOffSet();
+                //app.ResetBomDetails();
+
+            });
+            si.startMarker.addListener('click', function () {
+
+                si.bindManualRoutes($('#directionGeometry').val());
+              //  popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+
+            });
+
+            
+            si.startMarker.setMap(si.map);
+            app.MarkerList.push(si.startMarker);
+        }
+    }
+    this.createSegmentEndMarker = function () {
+        ;
+
+        if (app.NetworkEndPoint != null) {
+            var endlat = parseFloat(app.NetworkEndPoint.split(',')[0]);
+            var endlong = parseFloat(app.NetworkEndPoint.split(',')[1]);
+            endLatlng = { lat: endlat, lng: endlong };
+
+            if (si.endMarker)
+                si.endMarker.setMap(null);
+            si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
+            si.endMarker.addListener('drag', function (endLatlng) {
+                //
+                app.ResetOffSet();
+                app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
+                app.fillnetworkPlanningMarker(endLatlng, 'end');
+                // app.ResetBomDetails();
+            });
+
+            si.endMarker.addListener('click', function () {
+
+                si.bindManualRoutes($('#directionGeometry').val());
+               // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+            });
+
+            si.endMarker.setMap(si.map);
+
+            app.MarkerList.push(si.endMarker);
+        }
+    }
+
+    this.createSegmentCableBetweenMakers = function () {
+        if (app.NetworkStartPoint != null && app.NetworkEndPoint != null) {
+            app.ResetOffSet();
+            app.startLatLng = { lat: parseFloat(app.NetworkStartPoint.split(',')[0]), lng: parseFloat(app.NetworkStartPoint.split(',')[1]) };
+            app.endLatLng = { lat: parseFloat(app.NetworkEndPoint.split(',')[0]), lng: parseFloat(app.NetworkEndPoint.split(',')[1]) };
+            if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
+            if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
+            //if ($("input[name='is_offset_required']:checked").val() == "True") { ; app.ResetOffSet(); }
+
+            var request = {
+                origin: app.startLatLng,
+                travelMode: google.maps.DirectionsTravelMode.DRIVING,
+                provideRouteAlternatives: true
+            };
+
+            request.destination = app.endLatLng;
+            app.CheckCableCreated();
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+
+                    var latLngArr = google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
+                    
+                    directionsDisplay.setOptions({ suppressMarkers: true });
+                    directionsDisplay.setDirections(response);
+                    directionsDisplay.setMap(si.map);
+
+                    var endIndex = latLngArr.length - 1;
+
+                    const startPoint = new google.maps.LatLng(app.startLatLng.lat, app.startLatLng.lng);
+                    const startPointLineArr = [];
+                    startPointLineArr.push(latLngArr[0]);
+                    startPointLineArr.push(startPoint);
+                    app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, true);
+                    app.StartTmpLine.setMap(si.map);
+
+                    debugger;
+                    const EndPoint = new google.maps.LatLng(app.endLatLng.lat, app.endLatLng.lng);
+                    const EndPointLineArr = [];
+                    EndPointLineArr.push(latLngArr[endIndex]);
+                    EndPointLineArr.push(EndPoint);
+                    app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, true);
+                    app.EndTmpLine.setMap(si.map);
+
+                    app.createSegmentDirectionMarker(startPoint, EndPoint);
+                    latLngArr.splice(0, 0, startPoint);
+                    latLngArr.push(EndPoint);
+                    console.log('createSegmentCableBetweenMakers');
+                  //  app.ShowAutoPlanLineLength(latLngArr);
+                    //}
+
+
+                }
+                else {
+                    alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_016);//Directions not found between source and destination.
+                }
+            });
+        }
+    }
+    this.createSegmentDirectionMarker = function (NetworkStartPoint, NetworkEndPoint) {
+
+        app.MarkerList = [];
+        //app.ResetOffSet();
+        var startlat = parseFloat(NetworkStartPoint.lat());
+        var startlong = parseFloat(NetworkStartPoint.lng());
+        startLatlng = { lat: startlat, lng: startlong };
+
+        if (si.startMarker)
+            si.startMarker.setMap(null);
+        si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
+        si.startMarker.addListener('dragend', function (startLatlng) {
+            app.ResetOffSet();
+            app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();
+           
+            app.P2PNetworkManual('');
+           
+        });
+
+        si.startMarker.addListener('click', function () {
+      
+            si.bindManualRoutes($('#directionGeometry').val());
+           // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+        });
+
+        si.startMarker.setMap(si.map);
+        app.MarkerList.push(si.startMarker);
+
+        //end point
+
+        var endlat = parseFloat(NetworkEndPoint.lat());
+        var endlong = parseFloat(NetworkEndPoint.lng());
+        endLatlng = { lat: endlat, lng: endlong };
+
+        if (si.endMarker)
+            si.endMarker.setMap(null);
+        si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
+        si.endMarker.addListener('dragend', function (endLatlng) {
+            app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
+            app.P2PNetworkManual('');
+            //app.ResetBomDetails();
+        });
+        si.endMarker.addListener('click', function () {
+       
+            si.bindManualRoutes($('#directionGeometry').val());
+            //popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+        });
+        si.endMarker.setMap(si.map);
+
+        app.MarkerList.push(si.endMarker);
+    }
+
     this.P2PNetworkManual = function (end) {
 
         //if (si.gMapObj.RulerLine) {

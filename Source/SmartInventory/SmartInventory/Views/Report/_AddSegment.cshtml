@@ -1,6 +1,10 @@
 ﻿
 @using SmartInventory.Settings;
 @model Models.PODMaster
+@Scripts.Render("~/bundles/BackBonePlanning/Scripts")
+@Styles.Render("~/bundles/BackBonePlanning/css")
+
+
 
 <style>
 
@@ -88,9 +92,11 @@
     {
         <input type="hidden" id="networkIdField" name="network_id" />
         @Html.HiddenFor(m => m.system_id, new { id = "hdnSystemId" })
+        @Html.HiddenFor(m => m.geometry)
 
         <input type="hidden" id="hdnSequenceId" name="hdnSequenceId" />
         <input type="hidden" id="hdnsegmentid" name="hdnsegmentid" />
+        <input type="hidden" id="hdnrouteid" name="hdnrouteid" />
 
 
         @Html.HiddenFor(m => m.agg1SystemId, new { id = "hdnAgg1SystemId" })
@@ -117,7 +123,10 @@
                             <div class="col-sm-4 d-flex">
                                 @Html.TextBoxFor(m => m.agg_01, new { @id = "txtagg1", @title = "Search text", @tabindex = "4", @class = "form-control formContrl-Icon", @placeholder = "Enter text", @maxlength = 100 })
                                 <div class="map-con">
-                                    <i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="sEntity" data-Entity="0" onclick="si.Site_info_tool(this)"></i>
+                                    @*<i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="sEntity" data-Entity="0" onclick="si.Site_info_tool(this)"></i>*@
+
+                                    <i id="startpointmap" onclick="return si.SegmentNetworkPlanning(true, 'start',this);" id="sEntity" data-Entity="0" title="Click on map to choose start point" class="cptr icon-map-view"></i>
+                                    <i id="startPointErrorMsg" style="color: red; font-size: 10px;"></i>
 
                                 </div>
                                 @*<div class="pose-plus">
@@ -133,7 +142,9 @@
                                 @Html.TextBoxFor(m => m.agg_02, new { @id = "txtagg2", @title = "Search text", @tabindex = "4", @class = "form-control formContrl-Icon", @placeholder = "Enter text", @maxlength = 100 })
 
                                 <div class="map-con">
-                                    <i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="segEntity" data-Entity="1" onclick="si.Site_info_tool(this)"></i>
+                                    @*<i class="cptr icon-map-view" title="@Resources.Resources.GBL_GBL_GBL_JQ_GBL_001" id="segEntity" data-Entity="1" onclick="si.Site_info_tool(this)"></i>*@
+                                    <i id="endpointmap" onclick="return si.SegmentNetworkPlanning(true, 'end',this);" data-Entity="1" class="cptr icon-map-view" title="Click on map to choose end point"></i>
+                                    <i id="endPointErrorMsg" style="color: red; font-size: 10px;"></i>
                                 </div>
 
                                 @*<div class="pose-plus">
@@ -167,9 +178,9 @@
                                 </div>
                             </div>
 
-                            <label class="control-label col-sm-2" for="txtSearchtext">Route :</label>
+                            <label class="control-label col-sm-2" for="txtSearchtext" style="display:none;">Route :</label>
 
-                            <div class="col-sm-4 d-flex">
+                            <div class="col-sm-4 d-flex" style="display:none;">
                                 @Html.DropDownListFor(m => m.category, new SelectList(Model.lstTopologySegmentMaster, "Value", "Text"), new { @class = "chosen-select form-control formContrl-Icon", id = "ddlmanualroute" })
                                 <div class="map-con d-flex --gap10">
                                     <i id="manualRouteShowOnMap" title="Show on Map">
@@ -213,7 +224,39 @@
     </div>
 </div>
 
+
+
 <script src="~/Content/js/Main.js"></script>
+
+
+
+<script type="text/javascript">
+
+    var backbonedata = new BackbonePlanning();
+    var inputs = [];
+    $(document).ready(function () {
+        $('#suggestBox').hide();
+        backbonedata.initApp();
+
+        callFormValidator("frmBackbonePlanning");
+        $('.chosen-select').chosen({ width: '100%' });
+        $('form').on('keyup change paste', 'input, select, checkbox', function () {
+            if ($('#BomBoqDetails').html() != "") {
+                $("#BomBoqDetails").html("");
+                $("#btnProcessPlan").attr("disabled", true);
+                $("#ManageLoop").attr("disabled", true);
+                backbonedata.CheckLoopRequired();
+            }
+        });
+    });
+    $('#btnReset').on("click", function () {
+        $('#plan_name').val('');
+        backbonedata.ResetPlanForm();
+    });
+
+</script>
+
+
 
 <script>
 
@@ -224,7 +267,7 @@
 
     $("#txtagg1").autocomplete({
         source: function (request, response) {
-     
+
     $.ajax({
         url: '@Url.Action("GetAGG1", "Report")',
         type: "GET",
@@ -276,7 +319,7 @@ source: function (request, response) {
             response([{ label: "No results found", value: "", Name: "", systemId: "" }]);
             $(".txtagg2ShowOnMap").hide();  // hide if no data found
         } else {
-            
+
         response($.map(data, function (item) {
         return {
             value: item.value, // Set site_name
@@ -290,7 +333,7 @@ source: function (request, response) {
         minLength: 3,
         select: function (event, ui) {
         if (ui.item.value !== "") {
-          
+
             $("#txtagg2").val(ui.item.value); // Set corresponding site_name
             $("#hdnAgg2SystemId").val(ui.item.systemId); // Set system_id in hidden field
             $(".txtagg2ShowOnMap").show();  // Show if selected
@@ -327,7 +370,7 @@ source: function (request, response) {
     });
 
     function toggleMapLink() {
-      
+
         if ($("#txtagg1").val()) {
             $(".txtagg1ShowOnMap").show();  // Show if selected
         } else {
@@ -400,7 +443,7 @@ source: function (request, response) {
 
     $('#ddlregionid').change(function () {
 
- 
+
         getSegmentDetails();
     });
 
@@ -489,7 +532,8 @@ source: function (request, response) {
 
            var Agg2SystemId = $("#hdnAgg2SystemId").val();
 
-           var route_id = $("#ddlmanualroute option:selected").val();
+            var route_id = $("#hdnrouteid").val();
+         //  var route_id = $("#ddlmanualroute option:selected").val();
            if (Agg1SystemId === "" || Agg1SystemId === "0") {
                alert("Please select Aggregate Site 1!");
                return false;
@@ -508,19 +552,19 @@ source: function (request, response) {
            }
 
 
-    if (route_id === "") {
-        route_id = $("#ddlroute option:selected").val();
-    }
-           if (route_id === "") {
-               alert("Please select a route!");
-               return false;
-           }
+    //if (route_id === "") {
+    //    route_id = $("#ddlroute option:selected").val();
+    //}
+    //       if (route_id === "") {
+    //           alert("Please select a route!");
+    //           return false;
+    //       }
 
            confirm("Are you sure you want to save this with selected aggregate sites ?", function () {
-          
+
                    $("#dvProgress").show();
     $('#dvProgress').css('display', 'block');
-           
+
 $.ajax({
 url: '@Url.Action("SaveSegment", "Report")',
 type: "POST",
@@ -536,7 +580,7 @@ Agg2SystemId: Agg2SystemId,
     SequenceId: SequenceId
 },
     success: function (response) {
-   
+
     if (response.success) {
         $("#dvProgress").hide();
         $('#dvProgress').css('display', 'none');

@@ -555,7 +555,8 @@ namespace Models
         public bool? is_agg_site { get; set; }
         [NotMapped]
         public int sequence { get; set; }
-       
+        [NotMapped]
+        public string geometry { get; set; }
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_linkid_prefix { get; set; }
         public bool is_site_imported { get; set; }
