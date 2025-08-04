@@ -50,6 +50,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                     @Html.HiddenFor(m => m.cable_length)
                     @Html.HiddenFor(m => m.start_point)
                     @Html.HiddenFor(m => m.end_point)
+                    @Html.HiddenFor(m => m.sprout_route_length)
                   
                     <div class="prowindowNetworkData">
                         <div class="createPlan">
@@ -78,19 +79,10 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
 
-                                <div class="form-group" id="suggestBox" style="display:none;">
-                                    <label class="control-label col-md-5 w-space">Suggested Routes:</label>
-                                    <div class="col-md-7">
-                                        <select id="routeSelector" class="form-control  dropdown-input" onchange="backbonedata.SuggestedRouteIndex(this.value)">
-                                            <!-- Options will be filled dynamically -->
-                                        </select>
-                                    </div>
-                                </div>
-
                                 <div class="form-group" id="buffer">
                                     <label class="control-label col-md-5">Buffer(m)<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.buffer, new { @id = "planbuffer", Value = "", @onblur = "return backbonedata.PlanningBufferPoint();", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                        @Html.TextBoxFor(m => m.buffer, new { @id = "planbuffer", Value = "", @onblur = "return backbonedata.PlanningBufferPoint();", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -99,14 +91,8 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                         @Html.DropDownListFor(m => m.backbone_fiber, new SelectList(Model.lstBackboneFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "backboneFiberDropdown" })
 
                                     </div>
-                                </div>                              
-                                @*<div class="form-group" id="siteLst">
-                                    <label class="control-label col-md-5">Nearest sites :</label>
-                                    <div class="col-md-7 d-flex">
-                                        <a href="javascript:void(0)"  id="siteDropdownToggle1"  class="anchor-btn" onclick="backbonedata.onSiteInputClick()">Select Sites</a>
-                                    </div>
-                                </div>*@
-
+                                </div>
+                      
                                 <div id="trenchduct">
                                     <div class="form-group mb-15">
                                         <div class="col-md-5">
@@ -146,7 +132,13 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Backbone Route Length :</label>
+                                    <label class="control-label col-md-5">Sprout Route Length(m) :</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.sprout_route_length, new { @id = "sproutlength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">Backbone Route Length(m) :</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.cable_length, new { @id = "cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
@@ -175,7 +167,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     <button type="submit" class="btn btn-sm btn-default" id="btnApply" onclick="return backbonedata.loopValidation()">Apply</button>
                                     <button type="button" class="btn btn-sm btn-success" id="btnNearestSite" onclick="backbonedata.getNearestSite()" disabled>Select Sprout Site</button>
                                     @*<input type="button" class="btn btn-sm btn-success" onclick="backbonedata.createBackbonePlanNetwork()" disabled id="btnProcessPlan" maxlength="100"
-                                           value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />*@
+            value="@Resources.Resources.SI_OSP_GBL_NET_FRM_147" />*@
                                     <button type="button" id="ManageLoop" class="btn btn-sm btn-success input-Bton" disabled style="display:none" onclick="backbonedata.Manage_Loop()"> @Resources.Resources.SI_OSP_GBL_GBL_FRM_163</button>
                                 </div>
                             </div>
@@ -185,10 +177,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
 
                 }
             </div>
-            <div class="tab-pane" id="planHistotry"></div>
-            @*<div id="selectedSites" style="display:none"></div>
-            <div id="startPointNetworkId" style="display:none"></div>
-            <div id="endPointNetworkId" style="display:none"></div>*@
+            <div class="tab-pane" id="planHistotry"></div>          
         </div>
     </div>
 
@@ -209,7 +198,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
             if ($('#BomBoqDetails').html() != "")
             {
                 $("#BomBoqDetails").html("");
-                $("#btnProcessPlan").attr("disabled", true);   
+                $("#btnNearestSite").attr("disabled", true);   
                 $("#ManageLoop").attr("disabled", true);
                 backbonedata.CheckLoopRequired();
             }

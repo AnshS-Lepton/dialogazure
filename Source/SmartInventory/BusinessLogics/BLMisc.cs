@@ -1243,9 +1243,9 @@ namespace BusinessLogics
         {
             return new DAPlan().GetBackbonePlanningList(plan, userId);
         }
-        public void updateSiteLineGeometry(string lineGeom, int systemId,double cableLength)
+        public void updateSiteLineGeometry(string lineGeom, int systemId, int planId, int userId)
         {
-             new DAPlan().updateSiteLineGeometry(lineGeom, systemId, cableLength);
+             new DAPlan().updateSiteLineGeometry(lineGeom, systemId, planId, userId);
         }
         public List<BackBoneBOMOBOQResponse> BackBonePlanBom(BackBonePlanning model, int userId)
         {
@@ -1284,6 +1284,10 @@ namespace BusinessLogics
         public List<SitePlanList> getSiteList(int planId, int userId)
         {
             return new DABackBonePlanSite().getSiteList(planId, userId);
+        }
+        public SitePlanList updateSiteRoute(string geom, int planId, int p_systemId, int userId)
+        {
+             return new DABackBonePlanSite().updateSiteRoute(geom, planId, p_systemId, userId);
         }
     }
     public class BLSiteCircle

@@ -4,18 +4,18 @@
     #tblNearestSiteGrid .form-control {
         padding: 2px 6px;
     }
+
     .disabled-link {
         pointer-events: none;
         opacity: 0.4;
         cursor: not-allowed;
     }
-
 </style>
 
 @{
     WebGrid grid = new WebGrid(
         canPage: false,
-        canSort: true,
+        canSort: false,
         ajaxUpdateContainerId: "VwNearestSiteGrid",
         ajaxUpdateCallback: "onGridHeaderClick('tblNearestSiteGrid');"
     );
@@ -57,9 +57,11 @@
         LoadingElementId = "dvProgress"
     }, new { id = "frmNearestSite", @class = "form-horizontal" }))
     {
+        @Html.HiddenFor(m => m.total_sprout_length) 
+        
         if (Model.sites.Count > 0)
         {
-            @Html.HiddenFor(m => m.buffer_geometry)          
+            @Html.HiddenFor(m => m.buffer_geometry)
 
             <div class="d-flex mb-01 --gap05">
                 <b class="mb-01 d-inline-block">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;@Model.sites.Count</b>
@@ -85,20 +87,21 @@ grid.Column(
 Html.Raw(
 string.Format(
 "<a href='#' class='{0}' title='Show Route' onclick=\"{1}\">" +
-"<i class='fa fa-map-marker' aria-hidden='true' style='color:grey;font-size:21px;'></i>" +
+"<i class='fa fa-globe' aria-hidden='true' style='color:grey;font-size:16px;'></i>" +
 "</a> <span class='line-geom' id='line-geom-{2}' style='display:none'>{3}</span>", (item.is_selected ? "auto" : "btnNAllowed"),
-(item.is_selected ? string.Format("backbonedata.ShowRoutesBetweenMarkers('{0}','{1}','{2}')",
-item.geometry, item.backbone_geom, item.network_id) : "return false;"), item.network_id, item.line_geom ?? "")
+(item.is_selected ? string.Format("backbonedata.ShowRoutesBetweenMarkers('{0}','{1}','{2}',{3})",
+item.geometry, item.backbone_geom, item.network_id, item.id) : "return false;"), item.network_id, item.line_geom ?? "")
 )),
 grid.Column("site_id", "Site Id", format: @<text><span data-site-id="@item.site_id">@item.site_id</span></text>),
 grid.Column("site_name", "Site Name", format: @<text><span data-site-name="@item.site_name">@item.site_name</span></text>),
 grid.Column("network_id", "Network Id", format: @<text>@item.network_id</text>),
 grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
-                    @Html.Raw(GenerateSproutFiberDropdown(item.network_id.ToString()))
-                    @{ rowIndex++; }
-                </text>         )
-         )
-         )
+    @Html.Raw(GenerateSproutFiberDropdown(item.network_id.ToString()))
+    @{ rowIndex++; }
+</text> ),
+grid.Column("sprout_route_length", "Route Length", format: @<text> <span id="route-length-@item.network_id"  data-route-length="@item.sprout_route_length">@item.sprout_route_length</span></text>)
+)
+)
 
                     @Html.Hidden("dir", grid.SortDirection)
                     @Html.Hidden("col", grid.SortColumn)
@@ -113,22 +116,42 @@ grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
         }
     }
     <input type="hidden" id="nearestSites" name="nearestSites" />
-    </div>
+    <input type="hidden" id="total_sprout_length" name="totalSproutLen" />
+</div>
 
 <script>
     $(document).ready(function () {
+        //const MAX_SELECTION = 50;
         $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' />");
         $(document).on('change', '#chkSelectAll', function () {
-            $(".row-checkbox").prop("checked", this.checked);
+            debugger;
+            if (this.checked) {
+                $(".row-checkbox").prop("checked", false);
+                $(".row-checkbox").slice(0, 50).prop("checked", true);
+            }
+            else {
+                // Uncheck all if "Select All" is unchecked
+                $(".row-checkbox").prop("checked", false);
+            }
             backbonedata.bindNearestSites();
-        });
-        updateSelectAllCheckbox();
-        $(document).on('change', '.row-checkbox, .sprout-dropdown', function () {
-            backbonedata.bindNearestSites();
-            const allChecked = $(".row-checkbox").length === $(".row-checkbox:checked").length;
-            $("#chkSelectAll").prop("checked", allChecked);
         });
 
+        updateSelectAllCheckbox();
+        $(document).on('change', '.row-checkbox, .sprout-dropdown', function () {
+            const totalCheckboxes = $(".row-checkbox").length;
+            const maxSelectable = Math.min(totalCheckboxes, 50);
+            const checkedCount = $(".row-checkbox:checked").length;
+
+            if (checkedCount > 50) {
+                $(this).prop("checked", false);
+                alert(`Only 50 records can be selected at a time. Maximum limit reached — please uncheck a site to select a different one.`);
+                return;
+            }
+            backbonedata.bindNearestSites();
+
+            const allChecked = checkedCount === maxSelectable;
+            $("#chkSelectAll").prop("checked", allChecked);
+        });
         $(document).on('change', '.sprout-dropdown', function () {
             const $row = $(this).closest('tr');
             const isChecked = $row.find('.row-checkbox').is(':checked');
@@ -138,61 +161,85 @@ grid.Column("sprout_fiber", "Sprout Fiber Type", format: @<text>
             }
         });
 
-        $("#btnSaveSites").on("click", function () {
-            debugger;
-            const payload = {
-            sites: JSON.parse($("#nearestSites").val() || "[]")
-            };
+     $("#btnSaveSites").on("click", function () {
+    
 
-        if (!payload.sites.length) {
-            alert("Please select at least one site.");
-            return;
-        }
-          showProgress();
-          $.ajax({
-            url: '@Url.Action("SaveNearestSites", "BackBonePlan")',
-            type: 'POST',
-            data: JSON.stringify(payload),
-            contentType: 'application/json; charset=utf-8',
-            success: res => {
-                alert(res.message);
-                let buffer = $('#planbuffer').val();
-                let geom = $('#geometry').val();
-                let planId = $('#plan_id').val();
-                $.ajax({
+    const payload = {
+        sites: JSON.parse($("#nearestSites").val() || "[]")
+    };
+
+    if (!payload.sites.length) {
+        alert("Please select at least one site.");
+        return;
+    }
+
+    showProgress();
+
+    $.ajax({
+        url: '@Url.Action("SaveNearestSites", "BackBonePlan")',
+        type: 'POST',
+        data: JSON.stringify(payload),
+        contentType: 'application/json; charset=utf-8',
+        success: function (res) {
+            alert(res.message);
+
+            let buffer = $('#planbuffer').val();
+            let geom = $('#geometry').val();
+            let planId = $('#plan_id').val();
+
+            $.ajax({
                 url: '@Url.Action("GetBackboneNearestSiteList", "BackBonePlan")',
                 type: 'POST',
-                    data: {
-                        geom: geom,
-                        buffer: buffer,
-                        planId: planId
-                    },
+                data: {
+                    geom: geom,
+                    buffer: buffer,
+                    planId: planId
+                },
                 success: function (html) {
+                
                     const newGrid = $(html).find('#VwNearestSiteGrid').html();
+
                     if (newGrid) {
                         $('#VwNearestSiteGrid').html(newGrid);
                     } else {
                         // If only grid content is returned
                         $('#VwNearestSiteGrid').html(html);
                     }
+
                     $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' />");
                     updateSelectAllCheckbox();
+                    let resp = {
+                        result: {
+                            plan_id: planId
+                        }
+                    }
+                    
+                    let totalSproutLength = $(html).find('#total_sprout_length').val();
+                    backbonedata.planBomAndBOQ(resp, totalSproutLength);
                     hideProgress();
-               }
-             });
-            },
-            error: xhr => {
-                alert(xhr.responseText || "Save failed.");
-                hideProgress();
-            }
-          });
+                },
+                error: function () {
+                    alert("Failed to reload nearest site list.");
+                    hideProgress();
+                }
+            });
+        },
+        error: function () {
+            alert("Failed to save sites.");
+            hideProgress();
+        }
+        });
+   });
 
-      });
-    });
-
+  });
     function updateSelectAllCheckbox() {
-        const allChecked = $(".row-checkbox").length > 0 &&
-            $(".row-checkbox").length === $(".row-checkbox:checked").length;
+        const totalSelectable = $(".row-checkbox").length;
+        const maxCheckable = Math.min(totalSelectable, 50);
+
+        const checkedCount = $(".row-checkbox:checked").length;
+
+        const allChecked = checkedCount === maxCheckable;
         $("#chkSelectAll").prop("checked", allChecked);
     }
+
 </script>
