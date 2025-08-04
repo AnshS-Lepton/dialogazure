@@ -2817,32 +2817,32 @@ namespace DataAccess
                 throw;
             }
         }
-        public List<BackbonePlanNetworkDetails> getBackboneRecordByPlanId(int userId)
-        {
-            try
-            {
-                List<BackbonePlanNetworkDetails> backbonePlanNetworkDetails = new List<BackbonePlanNetworkDetails>();
-                backbonePlanNetworkDetails = repo.GetAll(m => m.isNotify == false && m.created_by == userId && m.status == true).ToList();                              
-                return backbonePlanNetworkDetails;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public void UpdateIsNotifyStatus(int planId, int userId)
-        {
-            try
-            {
-                var planDetails = repo.GetAll(m => m.plan_id == planId && m.created_by == userId ).SingleOrDefault();
-                planDetails.isNotify = true;
-                repo.Update(planDetails);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        //public List<BackbonePlanNetworkDetails> getBackboneRecordByPlanId(int userId)
+        //{
+        //    try
+        //    {
+        //        List<BackbonePlanNetworkDetails> backbonePlanNetworkDetails = new List<BackbonePlanNetworkDetails>();
+        //        backbonePlanNetworkDetails = repo.GetAll(m => m.isNotify == false && m.created_by == userId && m.status == true).ToList();                              
+        //        return backbonePlanNetworkDetails;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+        //public void UpdateIsNotifyStatus(int planId, int userId)
+        //{
+        //    try
+        //    {
+        //        var planDetails = repo.GetAll(m => m.plan_id == planId && m.created_by == userId ).SingleOrDefault();
+        //        planDetails.isNotify = true;
+        //        repo.Update(planDetails);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
     public class DABackBonePlanSite : Repository<SitePlanList>
     {
