@@ -13,11 +13,13 @@
                 <div class="plan--name_content">
                     <span class="plan_name-text" id=@item.plan_name>@item.plan_name</span>
                     <span class="fontIDExtnlData importantcolor">@MiscHelper.FormatDateTime(item.created_on.ToString())</span>
+                    <span class="status-text" id=@item.status>
+                        @(item.status == "Completed" ? "Completed" : "In-Progress") </span>
                 </div>
             </div>
 
             <div class="ml-auto pose-relate d-flex">
-                <i class="glyphicon glyphicon-eye-open mr-05" id="dvHighlight_@item.plan_id" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_112" onclick="backbonedata.ShowBackbonePlanEntityOnMap('@item.plan_id')"></i>
+                <i class="glyphicon glyphicon-eye-open mr-05" id="dvHighlight_@item.plan_id" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_112" onclick="backbonedata.ShowBackbonePlanEntityOnMap('@item.plan_id','@item.status')"></i>
                 <i class="glyphicon glyphicon-option-horizontal clsexrnlpopup" id="ExternalPopup"></i>
                 <div class="drop_window">
                     <ul>

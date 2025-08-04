@@ -188,6 +188,8 @@ var BackbonePlanning = function () {
             app.sitePointMarker = null;
         }
         $('#closeModalPopup').trigger("click");
+        $('#total_sprout_length').val('');
+        $('#sproutlength').val('');
     }
 
 
@@ -231,23 +233,19 @@ var BackbonePlanning = function () {
 
     this.getNearestSite = function () {     
         let buffer = parseFloat($('#planbuffer').val());
-        let geom = $('#geometry').val();
-        let startPointNetworkId = $('#startpoint_network_id').val();
-        let endPointNetworkId = $('#endpoint_network_id').val();       
-        let planId = $('#plan_id').val();       
+        let geom = $('#geometry').val();            
+        let planId = $('#plan_id').val();            
         if (!isNaN(buffer)) {
-            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId,planId: planId }, "Sprout Site", 'modal-xl');
+            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, planId: planId }, "Sprout Site", 'modal-xl');
         }
     }
     this.PlanningBufferPoint = function () {
         let buffer = parseFloat($('#planbuffer').val());
-        let geom = $('#geometry').val();
-        let startPointNetworkId = $('#startpoint_network_id').val();
-        let endPointNetworkId = $('#endpoint_network_id').val();        
+        let geom = $('#geometry').val();              
         if (!isNaN(buffer)) {
-            ajaxReq('BackBonePlan/GetBackboneNearestSiteBuffer', { geom: geom, buffer: buffer, startPointNetworkId: startPointNetworkId, endPointNetworkId: endPointNetworkId }, true, function (resp) {
+            ajaxReq('BackBonePlan/GetBackboneNearestSiteBuffer', { geom: geom, buffer: buffer }, true, function (resp) {
                 if (resp.status === "OK") {
-
+                   
                    showPolygonBufferGeometryOnMap(resp.result.buffer_geometry);
                 }
             }, false, false);
@@ -255,8 +253,18 @@ var BackbonePlanning = function () {
     };
 
     this.createBackbonePlanNetwork = function () {
+       
+        let cableLength = $('#cablelength').val();
+        let sproutlength = $('#sproutlength').val();
+        let formData = $('form').serialize();
 
-        ajaxReq('BackBonePlan/SaveBackboneProcess', $('form').serialize(), true, function (resp) {
+        // Remove any existing cable_length from the serialized string
+        formData = formData.replace(/&?(cable_length|sprout_route_length)=[^&]*/g, '');
+
+        // Append the updated cable_length
+        formData += '&cable_length=' + encodeURIComponent(cableLength);
+        formData += '&sprout_route_length=' + encodeURIComponent(sproutlength);
+        ajaxReq('BackBonePlan/SaveBackboneProcess', formData, true, function (resp) {
             $('#closeModalPopup').trigger("click");
             app.autoPlanningShowNetworkLayer(resp);
             app.ResetPlanForm();          
@@ -278,14 +286,17 @@ var BackbonePlanning = function () {
             alert(resp.objPM.message);
         }
     }
-    this.ShowBackbonePlanEntityOnMap = function (planId) {
+    this.ShowBackbonePlanEntityOnMap = function (planId,status = "Completed") {
         $('.pull-right').find('.activemarker').removeClass('activemarker')
         $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
         $('i[id^="dvHighlight_"]').removeClass('activemarker'); // Remove from all
-
+        if (status != "Completed") {
+            alert('Backbone planning is in progress.');
+            return false;
+        }
         ajaxReq('BackBonePlan/GetBackboneForMap', { plan_id: planId }, true, function (resp) {
             if (resp.status.toLowerCase() == "ok") {
-
+               
                 $('#dvHighlight' + '_' + planId).addClass('activemarker');
                 app.autobackboneplanid = planId;
                 si.autobackboneplanid = planId;
@@ -379,9 +390,7 @@ var BackbonePlanning = function () {
         var gmarkernew = new google.maps.Marker({
             position: mrkrLatlng,
             icon: imageUrl,
-            // draggable:true,
             draggable: ((label == 'start') ? true : (app.plan_mode == 'auto' || draggable == false) ? false : true)
-            //title: ((label == 'start') ? 'Start Point' : 'End Point')
         });
 
         return gmarkernew;
@@ -395,19 +404,9 @@ var BackbonePlanning = function () {
     }
 
     this.NetworkPlanning = function (ismappicker, destination_point) {
-        $('#endPointErrorMsg').text('');
-        $('#startPointErrorMsg').text('');
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
         }
-        $('#siteDropdownPanel').hide();
-
-        const $thead = $('#nearestSitesTable thead');
-        const $tbody = $('#nearestSitesTable tbody');
-        $thead.hide();
-        $tbody.empty();
-        $tbody.append('<tr><td colspan="4" style="text-align:center;">-- No Entity Found --</td></tr>');
-
         if (ismappicker) {
             if (destination_point === 'start') {
                 $("#startpointmap").addClass('activemarker activeicon');
@@ -419,16 +418,9 @@ var BackbonePlanning = function () {
                     $('#startpoint').val(startLatLog);
                     $('#start_point').val(startLatLog);
 
-                   // app.GetNearByEntitiesBySiteLatLong(app.NetworkStartPoint, 'start_point')
-                     //   .then(function (isSite) {
-                      //      if (isSite) {
                     app.P2PNetworkManual(destination_point);
                     app.ResetBomDetails();
-                     //       }
-                     //   })
-                      //  .catch(function (err) {
-                      //      console.error("Error during GetNearByEntitiesBySiteLatLong:", err);
-                     //   });
+
                 });
             }
 
@@ -442,17 +434,8 @@ var BackbonePlanning = function () {
                     $('#endpoint').val(endLatLog);
                     $('#end_point').val(endLatLog);
 
-                  //  app.GetNearByEntitiesBySiteLatLong(app.NetworkEndPoint, 'end_point')
-                      //  .then(function (isSite) {
-                      //      if (isSite) {
-                                app.P2PNetworkManual(destination_point);
-                                app.ResetBomDetails();
-
-                        //    }
-                      //  })
-                       // .catch(function (err) {
-                       //     console.error("Error during GetNearByEntitiesBySiteLatLong:", err);
-                      //  });
+                    app.P2PNetworkManual(destination_point);
+                    app.ResetBomDetails();
                 });
             }
         }
@@ -478,15 +461,9 @@ var BackbonePlanning = function () {
 
                 app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();              
                 app.fillnetworkPlanningMarker(startLatlng, 'start');
-
-                //app.ResetOffSet();
                 app.ResetBomDetails();
             });
-            //  si.startMarker.addListener('dragend', function (startLatlng) {
-            //if (app.plan_mode == 'auto') {
-            //  app.autoPlanningEndPoint();
-            // }
-            // });
+
             si.startMarker.setMap(si.map);
             app.MarkerList.push(si.startMarker);
         }
@@ -505,8 +482,6 @@ var BackbonePlanning = function () {
             si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
             $('#endpoint').val(endlat.toFixed(6) + ',' + endlong.toFixed(6));
             si.endMarker.addListener('drag', function (endLatlng) {
-
-                //app.ResetOffSet();
                 app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
                 app.fillnetworkPlanningMarker(endLatlng, 'end');             
                 app.ResetBomDetails();
@@ -517,7 +492,7 @@ var BackbonePlanning = function () {
         }
     }
 
-    this.P2PNetworkManual = function (end) {
+    this.P2PNetworkManual = function (end) {       
         if (si.gMapObj.RulerLine) {
             si.removeEventListnrs('click');
             si.gMapObj.RulerLine.setMap(null);
@@ -566,7 +541,8 @@ var BackbonePlanning = function () {
                 polylineOptions: {
                     strokeColor: '#db5333',
                     strokeOpacity: 1,
-                    strokeWeight: 4
+                    strokeWeight: 4,
+                    zIndex: 10
                 }
             });
 
@@ -576,6 +552,9 @@ var BackbonePlanning = function () {
 
                 const path = google.maps.geometry.encoding.decodePath(dir.routes[0].overview_polyline);
                 app.ShowAutoPlanLineLength(path);
+                const buf = $('#planbuffer').val();
+                if (buf && +buf > 0) app.PlanningBufferPoint();
+                $('#closeModalPopup').trigger("click");
             });
         }
 
@@ -642,6 +621,9 @@ var BackbonePlanning = function () {
                 latLngArr.push(EndPoint);
                 console.log('createCableBetweenMakers');
                 app.ShowAutoPlanLineLength(latLngArr);
+                const buf = $('#planbuffer').val();
+                if (buf && +buf > 0) app.PlanningBufferPoint();
+                $('#closeModalPopup').trigger("click");
             } else {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_016);
             }
@@ -907,7 +889,7 @@ var BackbonePlanning = function () {
                     app.routePolyline.setMap(null);
                     app.routePolyline = null;
                 }
-                debugger;
+              
 
                 app.fetchRoutesFromPolyline?.(path, app.directionsRenderer, false);
             }, 300);
@@ -937,9 +919,11 @@ var BackbonePlanning = function () {
         }
     }
 
-    this.planBomAndBOQ = function (resp) {
+    this.planBomAndBOQ = function (resp, totalSproutLength = 0) {
         $('#plan_id').val(resp.result.plan_id);
         let planId = $('#plan_id').val();
+        $('#sproutlength').val(totalSproutLength);
+        
         ajaxReq('BackBonePlan/GetBomBOQData', $('form').serialize(), true, function (resp) {
             $("#BomBoqDetails").html(resp);
             $('#btnNearestSite').prop('disabled', false);
@@ -1163,7 +1147,7 @@ var BackbonePlanning = function () {
 
         $('#nearestSites').val(JSON.stringify(selected));
     };
-    this.ShowRoutesBetweenMarkers = function (sitegeom, cablegeom, networkId) {
+    this.ShowRoutesBetweenMarkers = function (sitegeom, cablegeom, networkId,systemId) {
         const startLL = {
             lat: parseFloat(sitegeom.split(',')[0]),
             lng: parseFloat(sitegeom.split(',')[1])
@@ -1217,10 +1201,10 @@ var BackbonePlanning = function () {
                     const lng = (typeof pt.lng === 'function') ? pt.lng() : pt.lng;
                     return `${lng} ${lat}`;
                 }).join(', ');
-                $('#line-geom-' + networkId).text(Linegeom); 
+                $('#line-geom-' + networkId).text(Linegeom);                  
                 setTimeout(() => {
                     backbonedata.bindNearestSites();
-                    backbonedata.SaveNearestSites();
+                    backbonedata.UpdateNearestSitesRoute(systemId, Linegeom, networkId);
                 }, 100); 
                 let isBuffer = $('#planbuffer').val();
                 if (isBuffer.trim() !== '' && isBuffer > 0) {
@@ -1278,56 +1262,22 @@ var BackbonePlanning = function () {
         });
     };
 
-    this.SaveNearestSites = function () {
-
-        const payload = {
-            sites: JSON.parse($("#nearestSites").val() || "[]")
-        };
-        const selectedCheckboxes = $(".row-checkbox:checked");
-        if (selectedCheckboxes.length < 1) {
-            alert("Please select at least one site.");
-            return;
-        }
-        if (!payload.sites.length) {
-            alert("Please select at least one site.");
-            return;
-        }
-        if (payload.sites.length > 0) {
-            $.ajax({
-                url: 'BackBonePlan/SaveNearestSites',
-                type: 'POST',
-                data: JSON.stringify(payload),
-                contentType: 'application/json; charset=utf-8',
-                success: res => {
-                    let buffer = $('#planbuffer').val();
-                    let geom = $('#geometry').val();
-                    let planId = $('#plan_id').val();
-
-                    $.ajax({
-                        url: 'BackBonePlan/GetBackboneNearestSiteList',
-                        type: 'POST',
-                        data: {
-                            geom: geom,
-                            buffer: buffer,
-                            planId: planId
-                        },
-                        success: function (html) {
-                            debugger;
-                            const newGrid = $(html).find('#VwNearestSiteGrid').html();
-                            if (newGrid) {
-                                $('#VwNearestSiteGrid').html(newGrid);
-                            } else {
-                                // If only grid content is returned
-                                $('#VwNearestSiteGrid').html(html);
-                            }
-                        },
-                        error: function (xhr) {
-                            console.error("Error loading nearest site list:", xhr);
+    this.UpdateNearestSitesRoute = function (systemId, lineGeom, networkId) {
+       
+        let p_geom = lineGeom;
+        let planId = $('#plan_id').val();
+        let p_systemId = systemId;
+        if (p_systemId > 0) {
+            ajaxReq('BackBonePlan/UpdateSiteRoute', { geom: p_geom, planId: planId, p_systemId: p_systemId }, true, function (result) {
+                if (result.status) {
+                    let resp = {
+                        result: {
+                            plan_id: planId
                         }
-                    });
-                },
-                error: function (xhr) {
-                    console.error("Error saving nearest sites:", xhr);
+                    }
+                    debugger;
+                    $('#route-length-' + networkId).text(result.SpLength);                                           
+                    backbonedata.planBomAndBOQ(resp, result.spTotalLength);
                 }
             });
         }

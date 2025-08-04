@@ -265,6 +265,7 @@ namespace SmartInventory.Settings
         public static int MaxSitePeerDisatence = 0;
         public static int NearBySiteManholeSpan = 0;
         public static int NearBySitePoleSpan = 0;
+        public static int BackboneRouteThreshold = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -930,6 +931,9 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "NearBySitePoleSpan")
                 {
                     NearBySitePoleSpan = Convert.ToInt32(objSetting.value);
+                } if (objSetting.key == "BackboneRouteThreshold")
+                {
+                    BackboneRouteThreshold = Convert.ToInt32(objSetting.value);
                 }
             }
             IsLicenseExpAlrtAllowed = globalSettings

@@ -77,7 +77,9 @@ namespace Models
         public List<DropDownMaster> lstBackboneFiber { get; set; }
 
         [NotMapped]
-        public List<DropDownMaster> lstSproutFiber { get; set; }
+        public List<DropDownMaster> lstSproutFiber { get; set; }        
+        public double? sprout_route_length { get; set; }
+        public string status { get; set; }
 
         public BackBonePlanning()
         {
@@ -100,6 +102,7 @@ namespace Models
         public int pageSize { get; set; }
         public int totalRecord { get; set; }
         public int currentPage { get; set; }
+        public double total_sprout_length { get; set; }
     }
     public class SitePlanList
     {
@@ -116,11 +119,17 @@ namespace Models
         public int user_id { get; set; }
         public string fibertype { get; set; }
         public string line_geom { get; set; }
+        public bool is_update { get; set; }
+        [NotMapped]
+        public double sprout_route_length { get; set; }
+        [NotMapped]
+        public double total_sp_route_length { get; set; }
     }
     public class BackBoneSproutFiberDetails
     {
         public int plan_id { get; set; }
         public int system_id { get; set; }
+        public int id { get; set; }
         public string fiber_type { get; set; }
         public string intersect_line_geom { get; set; }
         public string site_geom { get; set; }
@@ -214,6 +223,8 @@ namespace Models
         public string fiber_type { get; set; }
         public double loop_length { get; set; }
         public bool is_loop_required { get; set; }
+        public bool status { get; set; }
+       
     }
 
 

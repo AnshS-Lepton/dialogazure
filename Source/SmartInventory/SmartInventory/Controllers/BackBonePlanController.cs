@@ -9,7 +9,7 @@ using SmartInventory.Settings;
 using System.Configuration;
 using BusinessLogics.DaFiFeasibilityAPI;
 using Newtonsoft.Json;
-
+using System.Threading.Tasks;
 
 namespace SmartInventory.Controllers
 {
@@ -35,27 +35,53 @@ namespace SmartInventory.Controllers
             }
             return PartialView("_BackbonePlanTool", planobj);
         }
-        public ActionResult SaveBackboneProcess(BackBonePlanning objPlan)
+        public async Task<ActionResult> SaveBackboneProcess(BackBonePlanning objPlan)
         {
             try
             {
                 int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                int routeThreshold = ApplicationSettings.BackboneRouteThreshold;
+                double? totalLength = objPlan.cable_length + objPlan.sprout_route_length;
+
                 if (user_id != 0)
                 {
-
                     objPlan.created_by = user_id;
-                    var objResp = new BLPlan().saveBackbonePlanning(objPlan);
-                    objPlan.objPM.message = objResp[0].message;
-                    objPlan.objPM.status = objResp[0].status.ToString();
-                    objPlan.plan_id = objResp[0].v_plan_id;
+
+                    if (totalLength > routeThreshold)
+                    {
+                        // Set early response message
+                        objPlan.objPM.message = "The backbone planning process has started. You will be notified once it is completed and logged in the history.";
+                        objPlan.objPM.status = "Success";
+
+                        // Run planning in background (fire-and-forget)
+                        _ = Task.Run(() => new BLPlan().saveBackbonePlanning(objPlan));
+
+                        // Return early response
+                        return Json(objPlan, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        // Run immediately for short routes
+                        var objResp = new BLPlan().saveBackbonePlanning(objPlan);
+
+                        objPlan.objPM.message = objResp[0].message;
+                        objPlan.objPM.status = objResp[0].status.ToString();
+                        objPlan.plan_id = objResp[0].v_plan_id;
+
+                        return Json(objPlan, JsonRequestBehavior.AllowGet);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 ErrorLogHelper.WriteErrorLog("SaveBackboneProcess", "BackBone", ex);
+                objPlan.objPM.message = "An error occurred while saving the plan.";
+                objPlan.objPM.status = "Error";
             }
+
             return Json(objPlan, JsonRequestBehavior.AllowGet);
         }
+
 
         public ActionResult DeleteBackbonePlanByPlanId(int plan_id)
         {
@@ -155,11 +181,11 @@ namespace SmartInventory.Controllers
             BackBoneSitePlanDetails backBoneSitePlanDetails = new BackBoneSitePlanDetails();
             try { 
                 
-            int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);          
+             int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);          
              backBoneSitePlanDetails = new BLPlan().GetNearestSiteList(geom, buffer, planId);           
              backBoneSitePlanDetails.sites = backBoneSitePlanDetails.sites.ToList();
              backBoneSitePlanDetails.lstSproutFiber = new BLPlan().GetBackboneFiberTypeDropDownList();
-        }
+            }
             catch (Exception ex)
             {
                 ErrorLogHelper.WriteErrorLog("GetBackboneNearestSiteList", "BackBone", ex);
@@ -167,7 +193,7 @@ namespace SmartInventory.Controllers
             return PartialView("_SiteList", backBoneSitePlanDetails);
         }
 
-        public JsonResult GetBackboneNearestSiteBuffer(string geom, double buffer, string startPointNetworkId = null, string endPointNetworkId = null, int planId =0)
+        public JsonResult GetBackboneNearestSiteBuffer(string geom, double buffer, int planId = 0)
         {
             JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
             try { 
@@ -318,7 +344,7 @@ namespace SmartInventory.Controllers
 
                             string lineGeom = startGeomParts[1] + " " + startGeomParts[0] + "," + siteGeomParts[1] + " " + siteGeomParts[0];
 
-                            new BLPlan().updateSiteLineGeometry(lineGeom, sp_geom.system_id, lst.Result.LengthInMeters);
+                            new BLPlan().updateSiteLineGeometry(lineGeom, sp_geom.id, sp_geom.plan_id, userId);
                         }
                         else
                         {
@@ -333,7 +359,7 @@ namespace SmartInventory.Controllers
                             }
                             lineGeom += siteGeomParts[1] + " " + siteGeomParts[0];
                             lineGeom = lineGeom.TrimEnd(',');
-                            new BLPlan().updateSiteLineGeometry(lineGeom, sp_geom.system_id, lst.Result.LengthInMeters);
+                            new BLPlan().updateSiteLineGeometry(lineGeom, sp_geom.id, sp_geom.plan_id, userId);
                         }
                     }
                 }
@@ -344,5 +370,47 @@ namespace SmartInventory.Controllers
             }
             return Json(new { message = "Sprout Route Saved successfully!" }, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult UpdateSiteRoute(string geom, int planId, int p_systemId)
+        {
+            var SitePlanList = new SitePlanList();
+            try
+            {
+                int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                 SitePlanList = new BLPlan().updateSiteRoute(geom, planId, p_systemId, userId);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("UpdateSiteRoute", "BackBone", ex);
+            }
+            return Json(new { status = true, SpLength = SitePlanList.sprout_route_length, spTotalLength = SitePlanList.total_sp_route_length }, JsonRequestBehavior.AllowGet);
+        }
+        //public JsonResult CheckPlanStatus()
+        //{
+        //    bool IsProcessStatus = false;
+        //    bool recordExist = false;
+        //    try
+        //    {
+        //        int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+        //        var planDetails = new BLPlan().getBackboneRecordByPlanId(userId);
+        //        if (planDetails != null)
+        //        {
+        //            foreach(var itm in planDetails)
+        //            {
+        //                if (itm.status && !itm.isNotify)
+        //                {
+        //                    recordExist = true;
+        //                   new BLPlan().UpdateIsNotifyStatus(itm.plan_id, userId);
+        //                }
+        //                IsProcessStatus = itm.status;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ErrorLogHelper.WriteErrorLog("CheckPlanStatus", "BackBone", ex);
+        //    }
+        //    return Json(new { status = IsProcessStatus, recordExists = recordExist }, JsonRequestBehavior.AllowGet);
+        //}
+
     }
 }

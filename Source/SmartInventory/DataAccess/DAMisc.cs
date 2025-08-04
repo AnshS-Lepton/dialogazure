@@ -14,6 +14,7 @@ using System.Web.UI;
 using GeometryType = Models.GeometryType;
 using NPOI.SS.Formula.Functions;
 using Models.DaFiFeasibilityAPI;
+using Models.WFM;
 //using System.Data.Entity.Core.Metadata.Edm;
 //using EntityType = Models.EntityType;
 
@@ -2593,14 +2594,11 @@ namespace DataAccess
                     is_create_trench = objPlan.is_create_trench,
                     is_create_duct = objPlan.is_create_duct, 
                     p_line_geom = objPlan.geometry, 
-                    p_cable_length = objPlan.cable_length, 
                     p_user_id = objPlan.created_by, 
                     p_plan_name = objPlan.plan_name, 
-                    p_startpoint = objPlan.start_point,    
-                    p_endpoint = objPlan.end_point, 
-                    plan_id = objPlan.plan_id,
-                    startpoint_networkid = objPlan.startpoint_network_id,
-                    endpoint_network_id = objPlan.endpoint_network_id
+                   // p_startpoint = objPlan.start_point,    
+                   // p_endpoint = objPlan.end_point, 
+                    plan_id = objPlan.plan_id,                   
                 });
                 return res;
             }
@@ -2714,12 +2712,12 @@ namespace DataAccess
             catch { throw; }
         }
 
-        public void updateSiteLineGeometry(string lineGeom, int systemId, double cableLength )
+        public void updateSiteLineGeometry(string lineGeom, int systemId, int planId, int userId)
         {
             try
             {
-                repo.ExecuteProcedure<string>("fn_backbone_update_sprout_network",
-                    new { p_lineGeom = lineGeom ,p_systemId = systemId, p_cableLength = cableLength}, true);                
+                repo.ExecuteProcedure<SitePlanList>("fn_backbone_update_sprout_network",
+                    new { p_lineGeom = lineGeom ,p_systemId = systemId,p_plan_id = planId, p_user_id = userId }, true);                
             }
             catch { throw; }
         }
@@ -2819,7 +2817,32 @@ namespace DataAccess
                 throw;
             }
         }
-
+        //public List<BackbonePlanNetworkDetails> getBackboneRecordByPlanId(int userId)
+        //{
+        //    try
+        //    {
+        //        List<BackbonePlanNetworkDetails> backbonePlanNetworkDetails = new List<BackbonePlanNetworkDetails>();
+        //        backbonePlanNetworkDetails = repo.GetAll(m => m.isNotify == false && m.created_by == userId && m.status == true).ToList();                              
+        //        return backbonePlanNetworkDetails;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+        //public void UpdateIsNotifyStatus(int planId, int userId)
+        //{
+        //    try
+        //    {
+        //        var planDetails = repo.GetAll(m => m.plan_id == planId && m.created_by == userId ).SingleOrDefault();
+        //        planDetails.isNotify = true;
+        //        repo.Update(planDetails);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
     public class DABackBonePlanSite : Repository<SitePlanList>
     {
@@ -2865,6 +2888,31 @@ namespace DataAccess
                 throw;
             }
         }
+        public SitePlanList updateSiteRoute(string geom, int planId, int p_systemId,int userId)
+        {
+            try
+            {
+                SitePlanList sitePlanList = new SitePlanList();
+                var objSystmId = repo.Get(x => x.id == p_systemId);
+                 objSystmId.is_update = true;
+                if (objSystmId != null)
+                {
+                    repo.Update(objSystmId);
+                }
+                var planDetail = repo.ExecuteProcedure<SitePlanList>("fn_backbone_update_sprout_network",
+                new { p_lineGeom = geom, p_systemid = p_systemId, p_plan_id = planId, p_user_id = userId}, true);
+                if (planDetail.Count > 0)
+                {
+                    sitePlanList.total_sp_route_length = planDetail[0].total_sp_route_length;
+                    sitePlanList.sprout_route_length = planDetail[0].sprout_route_length;
+                }
+                return sitePlanList;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }        
     }
         public class DAtemp_auto_network_plan : Repository<temp_auto_network_plan>
     {
