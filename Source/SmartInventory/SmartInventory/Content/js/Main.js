@@ -32827,17 +32827,18 @@ var Main = function () {
 
         if (si.startMarker)
             si.startMarker.setMap(null);
-        si.startMarker = app.createAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
+        si.startMarker = app.createSegmentAutoMarker(startLatlng, 'Content/images/Actual_Start.png', app.NP.end_type.START);
         si.startMarker.addListener('dragend', function (startLatlng) {
             app.ResetOffSet();
             app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();
-           
-            app.P2PNetworkManual('');
+         
+            si.bindManualRoutes($('#directionGeometry').val());
+           // app.P2PNetworkManual('');
            
         });
 
         si.startMarker.addListener('click', function () {
-      
+            debugger;
             si.bindManualRoutes($('#directionGeometry').val());
            // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
         });
@@ -32853,14 +32854,16 @@ var Main = function () {
 
         if (si.endMarker)
             si.endMarker.setMap(null);
-        si.endMarker = app.createAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
+        si.endMarker = app.createSegmentAutoMarker(endLatlng, 'content/images/End.png', app.NP.end_type.END);
         si.endMarker.addListener('dragend', function (endLatlng) {
+            debugger;
+            si.bindManualRoutes($('#directionGeometry').val());
             app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
-            app.P2PNetworkManual('');
+          //  app.P2PNetworkManual('');
             //app.ResetBomDetails();
         });
         si.endMarker.addListener('click', function () {
-       
+       debugger;
             si.bindManualRoutes($('#directionGeometry').val());
             //popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
         });
@@ -32868,6 +32871,21 @@ var Main = function () {
 
         app.MarkerList.push(si.endMarker);
     }
+    this.createSegmentAutoMarker = function (mrkrLatlng, imageUrl, label) {
+
+        debugger;
+        si.bindManualRoutes($('#directionGeometry').val());
+        var gmarkernew = new google.maps.Marker({
+            position: mrkrLatlng,
+            icon: imageUrl,
+            draggable: true,
+            // draggable: ((label == 'start') ? true : (app.plan_mode == 'auto') ? false : true),
+            title: ((label == 'start') ? 'Start Point' : 'End Point')
+        });
+
+        return gmarkernew;
+    }
+
 
     this.P2PNetworkManual = function (end) {
 
