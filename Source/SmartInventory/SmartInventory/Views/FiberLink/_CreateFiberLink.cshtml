@@ -412,26 +412,6 @@
                 }
 
             </fieldset>
-            @*@if (Model.system_id > 0)
-            {
-                <fieldset class="the-fieldset">
-                    <legend class="the-legend">@Resources.Resources.SI_GBL_GBL_NET_FRM_152</legend>
-                    <div class="col-md-12 col-sm-12 UploadAction">
-                        <div class="col-md-6 col-sm-6 d-flex" id="divDocumentUpload">
-                            <input type="file" class="file" name="FiberLinkDocUpload" id="FiberLinkDocUpload">
-                            <a href="#" class="fiberLInk" onclick="fiberLink.attachment.upload(@Model.system_id,'','');" value="Upload" id="btnUploadDocument">@Resources.Resources.SI_OSP_STR_NET_FRM_037</a>
-                            <a href="#" class="fiberLInk" onclick="fiberLink.attachment.clear();" value="Clear" id="btnClearDocument">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_009</a>
-                        </div>
-                        <div class="col-md-6 col-sm-6" id="divDocumentUpload"></div>
-                    </div>
-
-                    <div id="divFiberLinkAttachment" class="tab-pane y-scroll">
-
-                        @Html.Partial("~/Views/Library/_ViewFiberLinkAttachment.cshtml", Model.lstFiberLinkAttachments)
-                    </div>
-                </fieldset>
-            }*@
-
         </div>
         <div class="ModalFooter d-flex">
             <button type="button" id="btnclear" class="btn btn-default ml-auto" onclick="fiberLink.resetCreateLink();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_005</button>
@@ -444,7 +424,6 @@
         var fiberLink = new FiberLink();
     }
     $(document).ready(function () {
-        debugger;
        // fiberLink.InitApp();
         callFormValidator("frmAddFiberLink");
         if ($('#txtLinkId').val() !== undefined && $('#ddlLinkPrifixType').val() !== undefined) {
@@ -452,12 +431,8 @@
             $('#link_id').val($('txtLinkId').val())
             $('#link_prefix').val($('ddlLinkPrifixType').val())
         }
-       // else { $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated"); $('#txtLinkId').prop("disabled", true); }
-
-
     });
     $("#liAddFiberLink a").on("click", function () {
-        debugger;
         if ($("#liAddFiberLink a").html() === 'Create Link') {
             $('#ddlLinkPrifixType').prop("disabled", false).trigger("chosen:updated");
             $('#txtNetworkId').val(''); $('#ddlLinkPrifixType').val('0'); $('#txtGISLength').val('0');
