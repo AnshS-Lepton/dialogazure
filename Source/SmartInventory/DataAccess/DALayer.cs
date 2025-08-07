@@ -1615,7 +1615,7 @@ namespace DataAccess
             {
                 var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_utilization_report_view",
                     new
-                    {
+                    { 
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
                         p_networkstatues = objReportFilter.SelectedNetworkStatues,
@@ -1629,7 +1629,7 @@ namespace DataAccess
                         p_pagerecord = objReportFilter.pageSize,
                         p_sortcolname = objReportFilter.sort,
                         p_sorttype = objReportFilter.sortdir,
-                        p_advancefilter = objReportFilter.advancefilter,
+                        p_advancefilter = (objReportFilter.advancefilter ?? "").Replace("'", "@"),
                         p_userid = objReportFilter.userId,
                         p_roleid = objReportFilter.roleId
 
