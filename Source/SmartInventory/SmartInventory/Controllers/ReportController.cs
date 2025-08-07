@@ -2182,6 +2182,12 @@ namespace SmartInventory.Controllers
 
                             currRow = sheet.CreateRow(incrforOther * 2 + 5);
                             prvRow = sheet.CreateRow(incrforOther * 2 + 4);
+                            int startCol = Convert.ToInt32(from);
+                            if (startCol + headerCount > 16383)
+                            {
+                                Console.WriteLine("Warning: Attempt to write beyond Excel's column limit. Truncating.");
+                                headerCount = 16384 - startCol;
+                            }
 
                             NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from, 0, 0, distinctPathCount);
                             workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from, currRow, prvRow, distinctPathCount, IsFMS);

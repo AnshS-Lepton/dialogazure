@@ -171,7 +171,7 @@
         si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
 
         $("#btnShowReportData").on("click", function () {
-            debugger;
+       
             $('#hdnfileType').val('Excel');
             if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() == "") {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
