@@ -550,7 +550,11 @@ source: function (request, response) {
                alert("Please enter a valid segment code in the format of three letters followed by three digits (e.g., 'ACC001')!");
                return false;
            }
-
+           
+                  if (route_id === "") {
+                      alert("Failed to get cable route details.!");
+                      return false;
+                  }
 
     //if (route_id === "") {
     //    route_id = $("#ddlroute option:selected").val();

@@ -129,7 +129,8 @@
 
             app.closeModalPopup();
             app.resetToolBar();
-
+            clearLineAnimation();
+            si.hideAllNetworkFile();
 
         });
 
@@ -166,8 +167,8 @@
         $(app.DE.ParentMinMaxContainer).hide();
         if (splicing != null) { splicing.clearCPFMarker(); }
         //if (LandBase != null) { LandBase.clearTempNewEntity(); }
-
         clearLineAnimation();
+        si.hideAllNetworkFile();
         //$('#ModalPopUp div').removeClass('modal-xxl');
         $('.modal-backdrop').remove();
         $('#ModalPopUp div').removeClass('modal-sm').removeClass('modal-xl').removeClass('modal-lg').removeClass('modal-md').removeClass('modal-xxl').removeClass('modal-md-new');
@@ -213,6 +214,8 @@
     this.LoadModalDialog = function (popUpType, url, params, titleText, modalDialogClass, callback, isasync) {
         if (popUpType.toUpperCase() == 'PARENT') {
             $("#closeModalPopup").trigger("click");
+            clearLineAnimation();
+            si.hideAllNetworkFile();
         }
         $(app.DE.ModalPopUp).removeClass('ModalPopUpPosition');
         $(app.DE.modalContent).removeClass('minimize');

@@ -18156,9 +18156,10 @@ var Main = function () {
             ajaxReq('Report/getManualRouteDetails', { geom: _geom, agg1: agg1, agg2: agg2 }, true, function (data) {
 
                
-                debugger;
+       debugger;
                 if (data.status =="VALIDATION_FAILED")
                     alert(data.message);
+                $("#hdnrouteid").val("");
                 if (data.status == "OK")
                     {
                         var ddlroute = $('#ddlmanualroute');
@@ -18172,12 +18173,14 @@ var Main = function () {
                             ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
 
                         });
-
-
+                    
+                    var hdnrouteid = $('#hdnrouteid');
+                    If(hdnrouteid =="")
+                    alert("Failed to get cable route details.")
                         // **Update Chosen Dropdown**
                         ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
                     }
-               
+                    
             }, false, false);
 
 

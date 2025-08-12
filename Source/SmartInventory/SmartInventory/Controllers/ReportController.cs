@@ -2182,12 +2182,7 @@ namespace SmartInventory.Controllers
 
                             currRow = sheet.CreateRow(incrforOther * 2 + 5);
                             prvRow = sheet.CreateRow(incrforOther * 2 + 4);
-                            int startCol = Convert.ToInt32(from);
-                            if (startCol + headerCount > 16383)
-                            {
-                                Console.WriteLine("Warning: Attempt to write beyond Excel's column limit. Truncating.");
-                                headerCount = 16384 - startCol;
-                            }
+                       
 
                             NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from, 0, 0, distinctPathCount);
                             workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from, currRow, prvRow, distinctPathCount, IsFMS);
@@ -9310,6 +9305,9 @@ namespace SmartInventory.Controllers
             }
             if (lstSubQuery.Count > 0)
             {
+                if(statusList.Count>1)
+                    result = " and (" + string.Join(" or ", lstSubQuery.ToArray())+")";
+                else
                 result = " and " + string.Join(" or ", lstSubQuery.ToArray());
             }
             return result;
@@ -14344,10 +14342,12 @@ foreach (var objEntity in lstExportReportKML)
             //}
             //else
                  routeList = new BLProject().GetSelectedRoute(geom, agg1, agg2, Convert.ToInt32(Session["user_id"]));
+            if(routeList.Count==0)
+            return Json(new { status = "VALIDATION_FAILED", message = "There is no route in selected path!", result= routeList });
+            else
+                return Json(new { status = "OK", message = "Route attached successfully!", result = routeList });
 
-            return Json(new { status = "OK", message = "Route attached successfully!", result= routeList });
-           
-            }
+        }
         #endregion
 
 
