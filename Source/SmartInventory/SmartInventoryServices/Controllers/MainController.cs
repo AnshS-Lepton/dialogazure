@@ -3284,7 +3284,7 @@ namespace SmartInventoryServices.Controllers
                         //    response.status = StatusCodes.INVALID_FILE.ToString();
                         //    return response;
                         //}
-                        var lstDocument = new BLAttachment().getAttachmentDetailsbyId(Convert.ToInt32(systemId), entityType, attachmentType, FileName, Convert.ToInt32(UserId), "");
+                        //var lstDocument = new BLAttachment().getAttachmentDetailsbyId(Convert.ToInt32(systemId), entityType, attachmentType, FileName, Convert.ToInt32(UserId), "");
                         //if (lstDocument.Count > 0)
                         //{
                         //    response.error_message = Resources.Resources.SI_OSP_GBL_JQ_FRM_055;
@@ -3519,38 +3519,52 @@ namespace SmartInventoryServices.Controllers
         [System.Web.Http.HttpPost]
         public ApiResponse<List<ImageResult>> GetEntityImages(ReqInput data)
         {
-
             var response = new ApiResponse<List<ImageResult>>();
-
+            ErrorLogHelper errorLogHelper = new ErrorLogHelper();
             try
             {
-                GetEntityImagesIn objGetEntityImagesIn = ReqHelper.GetRequestData<GetEntityImagesIn>(data);
-                string FtpUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"]);
-                string UserName = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
-                string PassWord = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
+                var objGetEntityImagesIn = ReqHelper.GetRequestData<GetEntityImagesIn>(data);
 
-                var lstImages = new BLAttachment().getEntityImages(objGetEntityImagesIn.entitySystemId, objGetEntityImagesIn.entityType, "Image");
+                string ftpUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"]);
+                string userName = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
+                string password = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
+
+                if (string.IsNullOrWhiteSpace(ftpUrl))
+                    throw new InvalidOperationException("FTPAttachment URL is not configured.");
+
+                var lstImages = new BLAttachment().getEntityImages(
+                    objGetEntityImagesIn.entitySystemId,
+                    objGetEntityImagesIn.entityType,
+                    "Image"
+                );
+
                 List<ImageResult> lstImageResult = new List<ImageResult>();
 
                 foreach (var item in lstImages)
                 {
-                    var _imgSrc = "";
-                    string imageUrl = string.Empty;
+                    string _imgSrc = string.Empty;
+                    string imageUrl;
 
-                    imageUrl = string.Concat(FtpUrl, item.file_location, "Thumb_" + item.file_name);
-                    if (!isFileExistOnFTP(imageUrl))
+                    // Build thumb image path safely
+                    string thumbUrl = $"{ftpUrl.TrimEnd('/')}/{item.file_location.TrimStart('/')}/Thumb_{item.file_name}";
+                    string fullUrl = $"{ftpUrl.TrimEnd('/')}/{item.file_location.TrimStart('/')}/{item.file_name}";
+
+                    // Check if thumb exists, otherwise use full image
+                    imageUrl = isFileExistOnFTP(thumbUrl) ? thumbUrl : fullUrl;
+
+                    // Log the exact URL being used
+                    errorLogHelper.ApiLogWriter("Case 1", "", imageUrl,null);
+
+                    using (WebClient request = new WebClient())
                     {
-                        imageUrl = string.Concat(FtpUrl, item.file_location, item.file_name);
-                    }
-                    //string imageUrl = string.Concat(FtpUrl, item.file_location,item.file_name);
-                    WebClient request = new WebClient();
-                    if (!string.IsNullOrEmpty(UserName)) //Authentication require..
-                        request.Credentials = new NetworkCredential(UserName, PassWord);
+                        if (!string.IsNullOrEmpty(userName))
+                            request.Credentials = new NetworkCredential(userName, password);
 
-                    byte[] objdata = null;
-                    objdata = request.DownloadData(imageUrl);
-                    if (objdata != null && objdata.Length > 0)
-                        _imgSrc = string.Concat("data:image//png;base64,", Convert.ToBase64String(objdata));
+                        byte[] objdata = request.DownloadData(imageUrl);
+
+                        if (objdata != null && objdata.Length > 0)
+                            _imgSrc = "data:image/png;base64," + Convert.ToBase64String(objdata);
+                    }
 
                     lstImageResult.Add(new ImageResult()
                     {
@@ -3559,25 +3573,23 @@ namespace SmartInventoryServices.Controllers
                         uploadedBy = item.uploaded_by,
                         ImgId = item.id,
                         created_on = MiscHelper.FormatDateTime(item.uploaded_on.ToString()),
-                        feature_name=item.entity_feature_name,
+                        feature_name = item.entity_feature_name
                     });
-
                 }
+
                 response.status = StatusCodes.OK.ToString();
                 response.results = lstImageResult;
-
             }
             catch (Exception ex)
             {
-                ErrorLogHelper.WriteErrorLog("getEntityImages()", "Main", ex);
+                ErrorLogHelper.WriteErrorLog("GetEntityImages()", "Main", ex);
                 response.status = StatusCodes.UNKNOWN_ERROR.ToString();
                 response.error_message = Resources.Resources.SI_OSP_GBL_NET_FRM_237;
             }
 
-            //var jsonResult = Json(objResp, JsonRequestBehavior.AllowGet);
-            //jsonResult.MaxJsonLength = int.MaxValue;
             return response;
         }
+
         public bool isFileExistOnFTP(string filepath)
         {
             var request = (FtpWebRequest)WebRequest.Create(filepath);
@@ -3609,38 +3621,50 @@ namespace SmartInventoryServices.Controllers
         [System.Web.Http.HttpPost]
         public ApiResponse<LibraryAttachment> DownloadAttachment(ReqInput data)
         {
-
             var response = new ApiResponse<LibraryAttachment>();
-
+            ErrorLogHelper errorLogHelper = new ErrorLogHelper();
             try
             {
-                LibraryAttachment objLibraryAttachment = new LibraryAttachment();
+                var objDownloadAttachmentIn = ReqHelper.GetRequestData<DownloadAttachmentIn>(data);
 
-                DownloadAttachmentIn objDownloadAttachmentIn = ReqHelper.GetRequestData<DownloadAttachmentIn>(data);
-                string FtpUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"]);
-                string UserName = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
-                string PassWord = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
-                objLibraryAttachment = new BLAttachment().getEntityAttachmentDetails(objDownloadAttachmentIn.attachmentId);
+                if (objDownloadAttachmentIn == null)
+                    throw new ArgumentNullException(nameof(objDownloadAttachmentIn), "Request data could not be parsed.");
 
-                if (objLibraryAttachment != null)
-                {
-                    string attachmentUrl = string.Concat(FtpUrl, objLibraryAttachment.file_location, objLibraryAttachment.file_name);
+                string ftpUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"]);
+                string userName = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"]);
+                string password = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"]);
 
-                    WebClient request = new WebClient();
-                    if (!string.IsNullOrEmpty(UserName)) //Authentication require..
-                        request.Credentials = new NetworkCredential(UserName, PassWord);
+                if (string.IsNullOrWhiteSpace(ftpUrl))
+                    throw new InvalidOperationException("FTPAttachment URL is not configured.");
 
-                    objLibraryAttachment.attachmentSource = request.DownloadData(attachmentUrl);
-                    objLibraryAttachment.file_size_converted = ReqHelper.BytesToString(objLibraryAttachment.file_size);
-                    response.status = StatusCodes.OK.ToString();
-                    response.results = objLibraryAttachment;
-                }
-                else
+                var objLibraryAttachment = new BLAttachment().getEntityAttachmentDetails(objDownloadAttachmentIn.attachmentId);
+
+                if (objLibraryAttachment == null)
                 {
                     response.status = StatusCodes.INVALID_INPUTS.ToString();
                     response.error_message = Resources.Resources.SI_OSP_GBL_NET_FRM_237;
-                    response.results = objLibraryAttachment;
+                    return response;
                 }
+
+                if (string.IsNullOrWhiteSpace(objLibraryAttachment.file_location) || string.IsNullOrWhiteSpace(objLibraryAttachment.file_name))
+                    throw new InvalidOperationException("Attachment file location or name is missing.");
+
+                string attachmentUrl = $"{ftpUrl.TrimEnd('/')}/{objLibraryAttachment.file_location.TrimStart('/')}/{objLibraryAttachment.file_name}";
+
+                errorLogHelper.ApiLogWriter("DownloadAttachment Case 1", "" , attachmentUrl,null);
+
+                using (WebClient request = new WebClient())
+                {
+                    if (!string.IsNullOrEmpty(userName))
+                        request.Credentials = new NetworkCredential(userName, password);
+
+                    objLibraryAttachment.attachmentSource = request.DownloadData(attachmentUrl);
+                }
+
+                objLibraryAttachment.file_size_converted = ReqHelper.BytesToString(objLibraryAttachment.file_size);
+
+                response.status = StatusCodes.OK.ToString();
+                response.results = objLibraryAttachment;
             }
             catch (Exception ex)
             {
@@ -3650,6 +3674,7 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
+
 
         #endregion;
         [System.Web.Http.HttpPost]

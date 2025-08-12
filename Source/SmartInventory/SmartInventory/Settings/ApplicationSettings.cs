@@ -266,6 +266,8 @@ namespace SmartInventory.Settings
         public static int NearBySiteManholeSpan = 0;
         public static int NearBySitePoleSpan = 0;
         public static int BackboneRouteThreshold = 0;
+        public static string SmartOpsURL = "";
+        public static int isSmartOpsEnabled = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -934,6 +936,14 @@ namespace SmartInventory.Settings
                 } if (objSetting.key == "BackboneRouteThreshold")
                 {
                     BackboneRouteThreshold = Convert.ToInt32(objSetting.value);
+                } 
+                if (objSetting.key == "SmartOpsURL")
+                {
+                    SmartOpsURL = objSetting.value;
+                } 
+                if (objSetting.key == "isSmartOpsEnabled")
+                {
+                    isSmartOpsEnabled = Convert.ToInt32(objSetting.value);
                 }
             }
             IsLicenseExpAlrtAllowed = globalSettings
