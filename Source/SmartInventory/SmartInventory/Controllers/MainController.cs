@@ -5627,5 +5627,18 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             }
         }
 
+        public ActionResult SmartOpsLogin()
+        {
+            try
+            {
+                string FeasibilityLoginURL = ApplicationSettings.SmartOpsURL + "/Login";
+                return Redirect(FeasibilityLoginURL);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("feasibility()", "Main", ex);
+                return RedirectToAction("Index", "Home");
+            }
+        }
     }
 }

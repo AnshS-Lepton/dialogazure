@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Web;
+using Utility;
 
 namespace SmartInventoryServices.Helper
 {
@@ -165,81 +166,169 @@ namespace SmartInventoryServices.Helper
 
         public static string UploadfileOnFTP(string sEntityType, string sEntityId, HttpPostedFile postedFile, string sUploadType, string newfilename, string featureType = null, string uploaddocType = null)
         {
+            ErrorLogHelper errorLog = new ErrorLogHelper();
+            string strFTPPath = ConfigurationManager.AppSettings["FTPAttachment"];
+            string strFTPUserName = ConfigurationManager.AppSettings["FTPUserNameAttachment"];
+            string strFTPPassWord = ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+            string strFTPFilePath = "";
+
             try
             {
-                string strFTPFilePath = "";
-                string strFTPPath = ConfigurationManager.AppSettings["FTPAttachment"];
-                string strFTPUserName = ConfigurationManager.AppSettings["FTPUserNameAttachment"];
-                string strFTPPassWord = ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+                errorLog.ApiLogWriter("FTP Config", "",
+                    $"Path={strFTPPath}, User={strFTPUserName}, UploadType={sUploadType}", null);
 
-                if (isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
+                if (!isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
+                    throw new Exception("Invalid FTP connection. Please check credentials or server path.");
+
+                // Create directory structure on FTP (safe version)
+                strFTPFilePath = CreateNestedDirectoryOnFTP(
+                    strFTPPath, strFTPUserName, strFTPPassWord,
+                    featureType, sEntityType, sEntityId, sUploadType, uploaddocType);
+
+                errorLog.ApiLogWriter("Directory Created", "", $"FTP Path={strFTPFilePath}", null);
+
+                string saveLocalPath = HttpContext.Current.Server.MapPath(
+                    ConfigurationManager.AppSettings["AttachmentLocalPath"]);
+
+                // ------------------ THUMBNAIL UPLOAD ------------------
+                if (sUploadType.ToUpper() == "IMAGE")
                 {
-                    // Create Directory if not exists and get Final FTP path to save file..
-                    strFTPFilePath = CreateNestedDirectoryOnFTP(strFTPPath, strFTPUserName, strFTPPassWord, featureType, sEntityType, sEntityId, sUploadType, uploaddocType);
+                    string thumnailImageName = "Thumb_" + newfilename;
+                    string ftpThumbUrl = $"{strFTPFilePath.TrimEnd('/')}/{Uri.EscapeDataString(thumnailImageName)}";
 
-                    //Prepare FTP Request..
-                    if (sUploadType.ToUpper() == "IMAGE")
+                    errorLog.ApiLogWriter("Uploading Thumbnail", "", ftpThumbUrl, null);
+
+                    // Create thumbnail
+                    using (var bmThumb = new System.Drawing.Bitmap(postedFile.InputStream))
+                    using (var bmp2 = bmThumb.GetThumbnailImage(100, 100, null, IntPtr.Zero))
                     {
-                        string thumnailImageName = "Thumb_" + newfilename;
-                        FtpWebRequest ftpThumbnailImage = (FtpWebRequest)WebRequest.Create(strFTPFilePath + thumnailImageName);
-                        ftpThumbnailImage.Credentials = new NetworkCredential(strFTPUserName.Normalize(), strFTPPassWord.Normalize());
-                        ftpThumbnailImage.Method = WebRequestMethods.Ftp.UploadFile;
-                        ftpThumbnailImage.UseBinary = true;
-                        // var image = System.Drawing.Image.FromStream(postedFile.InputStream);
-                        System.Drawing.Bitmap bmThumb = new System.Drawing.Bitmap(postedFile.InputStream);
-                        System.Drawing.Image bmp2 = bmThumb.GetThumbnailImage(100, 100, null, IntPtr.Zero);
-                        string saveThumnailPath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
-                        bmp2.Save(saveThumnailPath + @"\" + thumnailImageName);
-                        byte[] c = System.IO.File.ReadAllBytes(@"" + saveThumnailPath + "/" + thumnailImageName);
-                        ftpThumbnailImage.ContentLength = c.Length;
-                        using (Stream s = ftpThumbnailImage.GetRequestStream())
-                        {
-                            s.Write(c, 0, c.Length);
-                        }
+                        string localThumbPath = Path.Combine(saveLocalPath, thumnailImageName);
+                        bmp2.Save(localThumbPath);
+                        byte[] thumbBytes = File.ReadAllBytes(localThumbPath);
+
+                        // FTP upload request for thumbnail
+                        var ftpThumbReq = (FtpWebRequest)WebRequest.Create(ftpThumbUrl);
+                        ftpThumbReq.Credentials = new NetworkCredential(strFTPUserName, strFTPPassWord);
+                        ftpThumbReq.Method = WebRequestMethods.Ftp.UploadFile;
+                        ftpThumbReq.UseBinary = true;
+                        ftpThumbReq.UsePassive = true;
+                        ftpThumbReq.ContentLength = thumbBytes.Length;
 
                         try
                         {
-                            ftpThumbnailImage.GetResponse();
+                            using (Stream s = ftpThumbReq.GetRequestStream())
+                            {
+                                s.Write(thumbBytes, 0, thumbBytes.Length);
+                            }
+                            using (var resp = (FtpWebResponse)ftpThumbReq.GetResponse())
+                            {
+                                errorLog.ApiLogWriter("Thumbnail Uploaded", "", $"Status={resp.StatusDescription}", null);
+                            }
                         }
-                        catch { throw; }
+                        catch (WebException wex)
+                        {
+                            errorLog.ApiLogWriter("Thumbnail Upload Failed", "", wex.ToString(), null);
+                            throw;
+                        }
                         finally
                         {
-                            //Delete from local path.. 
-                            // System.IO.File.Delete(@"" + saveThumnailPath + "/" + newfilename);
+                            File.Delete(localThumbPath);
                         }
-                        //Image image = Image.FromFile(fileName);
-                        //Image thumb = image.GetThumbnailImage(120, 120, () => false, IntPtr.Zero);
-                        //thumb.Save(Path.ChangeExtension(fileName, "thumb"));
-                    }
-                    FtpWebRequest ftpReq = (FtpWebRequest)WebRequest.Create(strFTPFilePath + newfilename);
-                    ftpReq.Credentials = new NetworkCredential(strFTPUserName.Normalize(), strFTPPassWord.Normalize());
-                    ftpReq.Method = WebRequestMethods.Ftp.UploadFile;
-                    ftpReq.UseBinary = true;
-
-                    //Save file temporarily on local path..
-                    string savepath = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["AttachmentLocalPath"]);
-                    postedFile.SaveAs(savepath + @"\" + newfilename);
-                    byte[] b = System.IO.File.ReadAllBytes(@"" + savepath + "/" + newfilename);
-                    ftpReq.ContentLength = b.Length;
-                    using (Stream s = ftpReq.GetRequestStream())
-                    {
-                        s.Write(b, 0, b.Length);
-                    }
-
-                    try
-                    {
-                        ftpReq.GetResponse();
-                    }
-                    catch { throw; }
-                    finally
-                    {
-                        //Delete from local path.. 
-                        System.IO.File.Delete(@"" + savepath + "/" + newfilename);
                     }
                 }
-                return strFTPFilePath.Replace(strFTPPath, ""); // return file path
+
+                // ------------------ MAIN FILE UPLOAD ------------------
+                string ftpFileUrl = $"{strFTPFilePath.TrimEnd('/')}/{Uri.EscapeDataString(newfilename)}";
+                errorLog.ApiLogWriter("Uploading Main File", "", ftpFileUrl, null);
+
+                string localFilePath = Path.Combine(saveLocalPath, newfilename);
+                postedFile.SaveAs(localFilePath);
+                byte[] fileBytes = File.ReadAllBytes(localFilePath);
+
+                var ftpReq = (FtpWebRequest)WebRequest.Create(ftpFileUrl);
+                ftpReq.Credentials = new NetworkCredential(strFTPUserName, strFTPPassWord);
+                ftpReq.Method = WebRequestMethods.Ftp.UploadFile;
+                ftpReq.UseBinary = true;
+                ftpReq.UsePassive = true;
+                ftpReq.ContentLength = fileBytes.Length;
+
+                try
+                {
+                    using (Stream s = ftpReq.GetRequestStream())
+                    {
+                        s.Write(fileBytes, 0, fileBytes.Length);
+                    }
+                    using (var resp = (FtpWebResponse)ftpReq.GetResponse())
+                    {
+                        errorLog.ApiLogWriter("Main File Uploaded", "", $"Status={resp.StatusDescription}", null);
+                    }
+                }
+                catch (WebException wex)
+                {
+                    errorLog.ApiLogWriter("Main File Upload Failed", "", wex.ToString(), null);
+                    throw;
+                }
+                finally
+                {
+                    File.Delete(localFilePath);
+                }
+
+                return strFTPFilePath.Replace(strFTPPath, "");
             }
-            catch { throw; }
+            catch (Exception ex)
+            {
+                errorLog.ApiLogWriter("UploadfileOnFTP Error", "", ex.ToString(), null);
+                throw;
+            }
+        }
+
+        // ------------------ SAFE DIRECTORY CREATION ------------------
+        public static string CreateNestedDirectoryOnFTP(string baseFtpPath, string ftpUserName, string ftpPassword, string featureType, string sEntityType, string sEntityId, string sUploadType, string uploaddocType)
+        {
+            List<string> pathParts = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(sEntityType)) pathParts.Add(sEntityType.Trim());
+            if (!string.IsNullOrWhiteSpace(sEntityId)) pathParts.Add(sEntityId.Trim());
+            if (!string.IsNullOrWhiteSpace(sUploadType)) pathParts.Add(sUploadType.Trim());
+            if (!string.IsNullOrWhiteSpace(featureType)) pathParts.Add(featureType.Trim());
+            //if (uploaddocType != null) { pathParts.Add(uploaddocType.Trim()); }
+
+            string currentPath = baseFtpPath.TrimEnd('/');
+
+            foreach (string part in pathParts)
+            {
+                string encodedPart = Uri.EscapeDataString(part);
+                currentPath += "/" + encodedPart;
+
+                try
+                {
+                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(currentPath);
+                    request.Method = WebRequestMethods.Ftp.MakeDirectory;
+                    request.Credentials = new NetworkCredential(ftpUserName, ftpPassword);
+                    request.UsePassive = true;
+                    request.UseBinary = true;
+                    request.KeepAlive = false;
+
+                    using (var resp = (FtpWebResponse)request.GetResponse())
+                    {
+                        // Directory created successfully
+                    }
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Response is FtpWebResponse ftpResp &&
+                        ftpResp.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                    {
+                        // Directory already exists — ignore
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return currentPath;
         }
 
         #region GeoTaggedImages BY ANTRA
