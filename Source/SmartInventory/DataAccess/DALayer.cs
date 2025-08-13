@@ -1596,7 +1596,7 @@ namespace DataAccess
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
                         p_layerids = objReportFilter.SelectedLayerIds,
-                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_networkstatues = (objReportFilter.SelectedNetworkStatues ?? "").Replace("'", "@"),
                         p_projectcodes = objReportFilter.SelectedProjectIds,
                         p_planningcodes = objReportFilter.SelectedPlanningIds,
                         p_workordercodes = objReportFilter.SelectedWorkOrderIds,

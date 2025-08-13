@@ -4508,8 +4508,9 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
             }
             catch (Exception ex)
             {
-                //context.Response.ContentType = "text/plain";
+                // context.Response.ContentType = "text/plain";
                 //context.Response.Write(ex.Message);
+                //  ErrorLogHelper.WriteErrorLog("DownloadFiles()", "Main", ex);
             }
             finally
             {
@@ -4518,6 +4519,7 @@ objEntityLstCount.objFilterAttributes.selection_type, objEntityLstCount.objFilte
                 foreach (FileInfo file in di.GetFiles())
                 {
                     file.Delete();
+                    //  ErrorLogHelper.WriteErrorLog("DownloadFiles()", "Main", new Exception("File Deleted"));
                 }
             }
             return null;
