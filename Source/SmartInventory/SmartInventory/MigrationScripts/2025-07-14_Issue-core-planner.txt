@@ -1,0 +1,16 @@
+CREATE OR REPLACE FUNCTION public.fn_core_planner_invalid_cable(p_user_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE 
+    rec RECORD;
+BEGIN   
+    -- Return the cable routes log records as JSON for the specified user_id
+    RETURN QUERY 
+    SELECT row_to_json(core_planner_logs.*) 
+    FROM core_planner_logs 
+    WHERE user_id = p_user_id and is_valid =false;
+
+END;
+$function$
+;
