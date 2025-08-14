@@ -1552,3 +1552,144 @@ alter table ATT_DETAILS_CABLE add column backbone_system_id integer ;
 alter table ATT_DETAILS_trench add column backbone_system_id integer ;
 
 alter table ATT_DETAILS_duct add column backbone_system_id integer ;
+
+
+-----------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_nearest_sites(line_geom character varying, buffer double precision, planid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_line geometry;
+    v_buffer geometry;
+    v_buffer_geojson json;
+    v_sites json;
+    v_total_length double precision := 0;
+BEGIN
+    IF line_geom IS NULL OR trim(line_geom) = '' THEN
+        RETURN;
+    END IF;
+
+    -- Convert input text line into geometry
+    SELECT ST_GeomFromText('LINESTRING(' || line_geom || ')', 4326)
+    INTO v_line;
+
+    -- Create a buffer around the line
+    SELECT ST_Buffer(v_line::geography, buffer)::geometry
+    INTO v_buffer;
+
+    -- Convert buffer to GeoJSON
+    SELECT ST_AsGeoJSON(v_buffer)::json
+    INTO v_buffer_geojson;
+
+    IF planid > 0 THEN
+        IF EXISTS (
+            SELECT 1
+            FROM backbone_plan_nearest_site
+            WHERE plan_id = planid
+        ) THEN
+            WITH s_all AS (
+                SELECT DISTINCT ON (bpns.network_id)
+                    bpns.network_id,
+                    bpns.site_id,
+                    bpns.site_name,
+                    bpns.is_selected,
+                    bpns.fibertype,
+                    bpns.intersect_line_geom AS cable_geom,
+                    bpns.site_geom,
+                    bpns.line_geom,
+                     COALESCE(ROUND(ST_Length(ST_GeomFromText('LINESTRING(' || bpns.line_geom || ')', 4326)::geography)::numeric, 3), 0) AS sprout_route_length,
+                  bpns.id  
+                FROM backbone_plan_nearest_site bpns
+                WHERE bpns.plan_id = planid
+
+                UNION
+
+                SELECT
+                    adp.network_id,
+                    adp.site_id,
+                    adp.site_name,
+                    FALSE AS is_selected,
+                    '' AS fibertype,
+                    '' AS cable_geom,
+                    '' AS site_geom,
+                    '' AS line_geom,
+                    0 AS sprout_route_length,
+                    0 as id
+                FROM point_master pm
+                JOIN att_details_pod adp
+                  ON pm.system_id = adp.system_id
+                WHERE UPPER(pm.entity_type) = 'POD'
+                  AND adp.status = 'A'
+                  AND pm.network_status IN ('A')
+                  AND ST_Within(pm.sp_geometry, v_buffer)
+                  AND adp.network_id NOT IN (
+                      SELECT network_id
+                      FROM backbone_plan_nearest_site
+                      WHERE plan_id = planid
+                  )
+                  --order by adp.network_id
+            )
+            SELECT 
+                json_agg(
+                    json_build_object(
+                        'network_id', s_all.network_id,
+                        'site_id', s_all.site_id,
+                        'site_name', s_all.site_name,
+                        'is_selected', s_all.is_selected,
+                        'fibertype', s_all.fibertype,
+                        'backbone_geom', s_all.cable_geom,
+                        'geometry', s_all.site_geom,
+                        'line_geom', s_all.line_geom,
+                        'sprout_route_length', COALESCE(s_all.sprout_route_length, 0),
+                        'id',s_all.id
+                    )
+                ),
+                SUM(s_all.sprout_route_length)
+            INTO v_sites, v_total_length
+            FROM (select * from s_all order by s_all.network_id) s_all;
+
+        ELSE
+            SELECT json_agg(
+                json_build_object(
+                    'network_id', adp.network_id,
+                    'site_id', adp.site_id,
+                    'site_name', adp.site_name,
+                    'is_selected', FALSE,
+                    'fibertype', '',
+                    'backbone_geom', '',
+                    'geometry', '',
+                    'line_geom', '',
+                    'sprout_route_length', 0,
+                    'id',0
+                )
+            )
+            INTO v_sites
+            FROM (
+                SELECT
+                    adp.network_id,
+                    adp.site_id,
+                    adp.site_name
+                FROM point_master pm
+                JOIN att_details_pod adp
+                  ON pm.system_id = adp.system_id
+                WHERE UPPER(pm.entity_type) = 'POD'
+                  AND adp.status = 'A'
+                  AND pm.network_status IN ('A')
+                  AND ST_Within(pm.sp_geometry, v_buffer)
+                ORDER BY adp.network_id
+            ) adp;
+
+          --  v_total_length := 0;
+        END IF;
+    END IF;
+
+    RETURN NEXT json_build_object(
+        'buffer_geometry', v_buffer_geojson,
+        'sites', COALESCE(v_sites, '[]'::json),
+        'total_sprout_length', ROUND(CAST(COALESCE(v_total_length, 0) AS numeric), 3)
+    );
+END;
+$function$
+;
