@@ -1255,7 +1255,7 @@ namespace BusinessLogics
         {
             return new DAPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
         }
-        public List<BackBonePlanBom> GetBackBonePlanBomKMLByPlanId(int plan_id, int user_id)
+        public List<BackBonePlanKMLBom> GetBackBonePlanBomKMLByPlanId(int plan_id, int user_id)
         {
             return new DAPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
         }
