@@ -2552,11 +2552,11 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public List<BackBonePlanBom> GetBackBonePlanBomKMLByPlanId(int plan_id, int user_id)
+        public List<BackBonePlanKMLBom> GetBackBonePlanBomKMLByPlanId(int plan_id, int user_id)
         {
             try
             {
-                var res = repo.ExecuteProcedure<BackBonePlanBom>("fn_backbone_get_plan_kml_bom", new { p_plan_id = plan_id, p_user_id = user_id }, true);
+                var res = repo.ExecuteProcedure<BackBonePlanKMLBom>("fn_backbone_get_plan_kml_bom", new { p_plan_id = plan_id, p_user_id = user_id }, true);
                 return res;
             }
             catch { throw; }
@@ -2595,7 +2595,7 @@ namespace DataAccess
                     is_create_duct = objPlan.is_create_duct, 
                     p_line_geom = objPlan.geometry, 
                     p_user_id = objPlan.created_by, 
-                    p_plan_name = objPlan.plan_name, 
+                    //p_plan_name = objPlan.plan_name, 
                    // p_startpoint = objPlan.start_point,    
                    // p_endpoint = objPlan.end_point, 
                     plan_id = objPlan.plan_id,                   

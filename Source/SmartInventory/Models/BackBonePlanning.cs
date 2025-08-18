@@ -199,9 +199,16 @@ namespace Models
         public double cost_per_unit { get; set; }
         public double service_cost_per_unit { get; set; }
         public double amount { get; set; }
+    }
+    public class BackBonePlanKMLBom
+    {
+        public string entity_type { get; set; }
+        public string length_qty { get; set; }
+        public double cost_per_unit { get; set; }
+        public double service_cost_per_unit { get; set; }
+        public double amount { get; set; }
         public string sp_geometry { get; set; }
     }
-
     public class BackbonePlanNetworkDetails
     {
         [Key]
@@ -222,9 +229,7 @@ namespace Models
         public string duct_network_id { get; set; }
         public string fiber_type { get; set; }
         public double loop_length { get; set; }
-        public bool is_loop_required { get; set; }
-        public bool status { get; set; }
-       
+        public bool is_loop_required { get; set; }       
     }
 
 

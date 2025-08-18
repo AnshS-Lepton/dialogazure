@@ -12127,7 +12127,7 @@ namespace SmartInventory.Controllers
 
                 sbKml.AppendLine("<Folder><name>BOM / BOQ</name>");
 
-                List<BackBonePlanBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
+                List<BackBonePlanKMLBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
                 foreach (var row in rows)
                 {
                     string name = SecurityElement.Escape(row.entity_type);
