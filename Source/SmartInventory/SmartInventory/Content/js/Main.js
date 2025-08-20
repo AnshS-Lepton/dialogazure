@@ -33585,6 +33585,34 @@ var Main = function () {
         }
         return true;
     }
+    this.hideAllSegmentNetworkFile = function () {
+        if (si.startMarker)
+            si.startMarker.setMap(null);
+        if (si.endMarker)
+            si.endMarker.setMap(null);
+        if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }
+        si.clearMarkers();
+        removeSegmentOldMarkersWithRemoveActive();
+        if (si.gMapObj.entitySrchObj)
+            si.gMapObj.entitySrchObj.setMap(null);
+        si.autoplanid = 0;
+        si.autobackboneplanid = 0;
+        app.autoplanningPlanId = 0;
+        if (si.distanceWidget) {
+            si.distanceWidget.set("map", null);
+            si.distanceWidget = null;
+        }
+        
+        if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
+        if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
+
+        app.NetworkStartPoint = null;
+        app.startLatLng = null;
+        app.endLatLng = null;
+        app.NetworkEndPoint = null;
+
+    }
+
     this.hideAllNetworkFile = function () {
         // app.deleteAllMiddleMarker();
         if (si.startMarker)
