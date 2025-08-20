@@ -3048,11 +3048,7 @@
     <ProjectReference Include="..\CodeIN\CodeIN.csproj">
       <Project>{3DE45837-4700-45AC-93F1-E2B952DF39B0}</Project>
       <Name>CodeIN</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
-      <Project>{90B844A2-B75F-484B-A688-8977BF04A7EA}</Project>
-      <Name>DataAccess</Name>
-    </ProjectReference>
+    </ProjectReference>   
     <ProjectReference Include="..\DataUploader\DataUploader.csproj">
       <Project>{8b62f19b-181c-4489-803a-2bf07c14e545}</Project>
       <Name>DataUploader</Name>
