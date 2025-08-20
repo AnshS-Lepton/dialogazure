@@ -1190,7 +1190,7 @@ namespace BusinessLogics
         {
             return new DAPlan().PlanBom(model, user_id);
         }
-        public List<DbMessageForPlan> savePoint2Point(NetworkPlanning objPlan)
+        public DbMessageForPlan savePoint2Point(NetworkPlanning objPlan)
         {
             return new DAPlan().savePoint2Point(objPlan);
         }

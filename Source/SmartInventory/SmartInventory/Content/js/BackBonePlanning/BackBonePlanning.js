@@ -237,6 +237,13 @@ var BackbonePlanning = function () {
         let planId = $('#plan_id').val();            
         if (!isNaN(buffer)) {
             popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, planId: planId }, "Sprout Site", 'modal-xl');
+            if (!si.startMarker.getMap()) {
+                si.startMarker.setMap(si.map);
+            }
+
+            if (!si.endMarker.getMap()) {
+                si.endMarker.setMap(si.map);
+            }
         }
     }
     this.PlanningBufferPoint = function () {
@@ -555,6 +562,13 @@ var BackbonePlanning = function () {
                 const buf = $('#planbuffer').val();
                 if (buf && +buf > 0) app.PlanningBufferPoint();
                 $('#closeModalPopup').trigger("click");
+                if (!si.startMarker.getMap()) {
+                    si.startMarker.setMap(si.map);
+                }
+
+                if (!si.endMarker.getMap()) {
+                    si.endMarker.setMap(si.map);
+                }
             });
         }
 
@@ -624,6 +638,13 @@ var BackbonePlanning = function () {
                 const buf = $('#planbuffer').val();
                 if (buf && +buf > 0) app.PlanningBufferPoint();
                 $('#closeModalPopup').trigger("click");
+                if (!si.startMarker.getMap()) {
+                    si.startMarker.setMap(si.map);
+                }
+
+                if (!si.endMarker.getMap()) {
+                    si.endMarker.setMap(si.map);
+                }
             } else {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_016);
             }
