@@ -255,7 +255,7 @@
                     <li class="techSep"></li>
                 }
                 @*@if (Model.lstUserModule.Contains("CPL"))
-        {*@
+                    {*@
                 <li>
                     <a href="#" class="iconBaricomoon maintoolbar" id="dvCorePlanLogic" onclick="si.corePlanLogic('corePlanLogic', this)" title="Core Planner">
                         <span class="icon-patchpanel"></span>
@@ -339,15 +339,15 @@
                     int count = 0;
 
                     @*
-                        <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
-                <span class="icon-plus-Icon"></span>
-            </div>*@
+                                    <div class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="Miscellaneous Tools">
+                            <span class="icon-plus-Icon"></span>
+                        </div>*@
                     <li>
                         <a href="#" class="iconBaricomoon maintoolbar " onclick="si.MiscellaneousTools.showMenu(this);" id="MiscellaneousTools" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_165">
                             <span class="icon-miscellaneousTools"></span>
                         </a>
                         @*@if (Model.lstUserModule.Contains("MSC_Tools"))
-                {*@
+                            {*@
                         @if (Model.lstUserModule.Contains("MRG-CABLE") == true || Model.lstUserModule.Contains("MAP-LAYOUT") == true || Model.lstUserModule.Contains("EAD") == true)
                         {
                             count++;
@@ -529,16 +529,16 @@
 
 
                                 @*
+                                                <li>
+                                        <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
+                                            <span class="icon-Navigator"></span>
+                                        </a>
+                                    </li>
                                     <li>
-                            <a href="#" class="iconBaricomoon Plantool" id="Plantool" onclick="si.ViewPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_284">
-                                <span class="icon-Navigator"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
-                                <span class="icon-draw_survey_area"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon" id="BulkPlantool" onclick="si.showBulkPlanTool()" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_170">
+                                            <span class="icon-draw_survey_area"></span>
+                                        </a>
+                                    </li>*@
                                 @if (Model.lstUserModule.Contains("WFM-AJO") || Model.lstUserModule.Contains("WFM-TTAJO"))
                                 {
                                     <li class="techSep"></li>
@@ -719,25 +719,25 @@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     @*<li>
-                <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
-                    <span class="fa fa-clock-o"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>*@
+                            <a href="#" class="fa fa-clock-o" onclick="si.SaveRoster()" title="SaveRoster">
+                                <span class="fa fa-clock-o"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>*@
 
                     @*<li id="liUserTimeSheet">
-                <a id="lnkUserTimeSheet" title="Roster Management"
-                   data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
-                <i class="fa fa-clock-o" aria-hidden="true"></i></a>
-            </li>*@
+                            <a id="lnkUserTimeSheet" title="Roster Management"
+                               data-title="Roster Management" data-href="FiberLink/ViewUserTimeSheetDetails">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i></a>
+                        </li>*@
 
 
                     <!--<li>
-        <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
+                    <a href="#" class="fa fa-list" onclick="si.ViewRoster()" title="ViewRoster">-->
                     @*<span class="fa fa-clock-o"></span>*@
                     <!--</a>
-        </li>
-        <li class="techSep"></li>-->
+                    </li>
+                    <li class="techSep"></li>-->
 
 
 
@@ -929,20 +929,20 @@
                     <a href="@Url.Action("SmartOpsLogin", "Main")" target="_blank" class="iconBaricomoon" id="CpSmartOps" title="Smart Ops">
 
 
-                    <span class="icon-Connection-Path-finder"></span>
+                        <span class="icon-Connection-Path-finder"></span>
                     </a>
                 }
 
                 @*@if (Model.lstUserModule.Contains("SPI") && ApplicationSettings.isSmartPlannerEnabled)
-        {
+                    {
 
-            <li>
-                <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
-                    <span class="icon-Shift"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
+                        <li>
+                            <a href="#" class="iconBaricomoon" onclick="si.showPlannerIntegration()" title="@Resources.Resources.SI_GBL_GBL_NET_FRM_039">
+                                <span class="icon-Shift"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>
+                    }*@
 
                 @if (Model.lstUserModule.Contains("TKM") && ApplicationSettings.isTicketManagerEnabled)
                 {
@@ -1025,14 +1025,14 @@
                 }
 
                 @*@if (Model.lstUserModule.Contains("RNG"))
-        {
-            <li>
-                <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
-                    <span class="icon-topology"></span>
-                </a>
-            </li>
-            <li class="techSep"></li>
-        }*@
+                    {
+                        <li>
+                            <a href="#" class="iconBaricomoon" onclick="si.showRingDetails()" title="Ring Detials">
+                                <span class="icon-topology"></span>
+                            </a>
+                        </li>
+                        <li class="techSep"></li>
+                    }*@
 
                 @if (Model.lstUserModule.Contains("ROW"))
                 {
@@ -1132,15 +1132,15 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
-                                <span class="icon-BOM-BOQ-Report New"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'create');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="iconBaricomoon " title="icon-BOM-BOQ-Report-New" onclick="si.BOMBOQReport.BOMBOQShowModelNew(this,212,'review');">
+                                            <span class="icon-BOM-BOQ-Report New"></span>
+                                        </a>
+                                    </li>*@
                                 <li class="techSep"></li>
                                 @if (Model.lstUserModule.Contains("BMQ-POLY"))
                                 {
@@ -1529,10 +1529,10 @@
                                 }
 
                                 @*<li>
-                            <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
-                                <span class="icon-DrawRectangle"></span>
-                            </a>
-                        </li>*@
+                                        <a href="#" class="iconBaricomoon " title="@Resources.Resources.SI_OSP_GBL_NET_GBL_041" onclick="si.Entityreport.initiateDrawingsExportReport(this, 'Rectangle')">
+                                            <span class="icon-DrawRectangle"></span>
+                                        </a>
+                                    </li>*@
 
                                 @if (Model.lstUserModule.Contains("EXRPT-RECT"))
                                 {
@@ -1735,12 +1735,12 @@
                 }
 
                 @*<li>
-            <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
-                <span class="icon-search"></span>
-            </a>
+                        <a href="#" class="iconBaricomoon" id="dvSrch" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_046">
+                            <span class="icon-search"></span>
+                        </a>
 
 
-        </li>*@
+                    </li>*@
                 @if (Model.lstUserModule.Contains("WFM"))
                 {
                     <li id="liViewNotification">
@@ -2148,6 +2148,67 @@
                 </div>
             }
 
+            #<!-- #region name segment details -->
+
+            @if (Model.lstUserModule.Contains("TPCS"))
+            {
+                int SegChkid = 0;
+                int Segid = 0;
+                <div class="layers" data-group="NetworkLayers">
+                    <h2> Segment Layer<i class="fa fa-minus lyracrdn" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_050" data-group="NetworkLayers"></i></h2>
+
+                    <div id="SegmentArea">
+
+                        <ul class="mainlyr grpNetwork treeview" style="display:block;">
+
+                            @foreach (var objSegmentRegionLayer in Model.listsegmentRegion.ToList())
+                            {
+
+
+                                SegChkid++;
+                                bool isSegChecked = false;
+
+                                <li data-mapabbr="@objSegmentRegionLayer.dropdown_type" class="liStyle collapsable">
+
+
+                                    <input id="chk_nLyrseg_@objSegmentRegionLayer.dropdown_value" checked="@isSegChecked" class="mainLyr checkbox-custom treeview" type="checkbox" data-layergroup="schkid_@SegChkid" data-segRegionid="@objSegmentRegionLayer.dropdown_type" data-mapabbr="@objSegmentRegionLayer.dropdown_type" />
+                                    <b><label for="chk_nLyrseg_@objSegmentRegionLayer.dropdown_value" class="checkbox-custom-label"><span>@objSegmentRegionLayer.dropdown_value</span></label></b>
+
+                                    <ul class="mainlyr network" style="display:block;" id="@SegChkid">
+                                        @foreach (var objsegmentLayer in (Model.listsegment.Where(c => c.dropdown_type.StartsWith(@objSegmentRegionLayer.dropdown_type))).ToList())
+                                        {
+                                            Segid++;
+
+                                            <li class="last" data-mapabbr="@objSegmentRegionLayer.dropdown_type">
+                                                <img src="Content/css/images/t.gif" alt="">
+
+                                                @{var whiteSpaceRemove = objSegmentRegionLayer.dropdown_type.Replace(" ", "");
+                                                    var ids = whiteSpaceRemove + @objSegmentRegionLayer.dropdown_type;}
+
+                                                <input id="chk_nLyrseg_@objsegmentLayer.dropdown_value" class="mainLyr checkbox-custom treeview" type="checkbox" data-parent-group="@objSegmentRegionLayer.dropdown_type" data-mapabbr="@objSegmentRegionLayer.dropdown_type" data-layerid="@objSegmentRegionLayer.dropdown_type" data-layergroup="schkid_@SegChkid"
+                                                       data-segmentId="@objsegmentLayer.dropdown_key" data-maplayerseq="@objSegmentRegionLayer.dropdown_type" style="width: 0px;" />
+                                                <b><label for="chk_nLyrseg_@objsegmentLayer.dropdown_value" class="checkbox-custom-label"><span>@objsegmentLayer.dropdown_value</span></label></b>&nbsp;
+
+
+                                            </li>
+
+                                        }
+
+
+                                    </ul>
+
+                                </li>
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+
+
+            }
+            <!-- #endregion -->
+
+
         </div>
     </div>
 
@@ -2382,6 +2443,6 @@
         var hdn_IsBroadcastMessageEnabled = document.getElementById('hdn_IsBroadcastMessageEnabled').value;
         if (hdn_IsBroadcastMessageEnabled == 'True') {
             showMessageBox(MultilingualKey.SI_OSP_GBL_GBL_GBL_321, '', "Information");
-        } 
+        }
     });
 </script>

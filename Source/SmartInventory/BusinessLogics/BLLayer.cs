@@ -62,6 +62,15 @@ namespace BusinessLogics
         {
             return objDALayer.GetCablecategoryList();
         }
+        public List<DropDownMaster> GetSegmentList()
+        {
+            return objDALayer.GetSegmentList();
+        }
+
+        public List<DropDownMaster> GetSegmentListRegion()
+        {
+            return objDALayer.GetSegmentListRegion();
+        }
         public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId = 0)
         {
             return objDALayer.GetLandBaseLayres(userId, roleId);
@@ -266,9 +275,9 @@ namespace BusinessLogics
         }
 
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
-		{
-			return new DALayer().GetExportReportSummaryViewNew(objReportFilter, layerName);
-		}
+        {
+            return new DALayer().GetExportReportSummaryViewNew(objReportFilter, layerName);
+        }
         public List<Dictionary<string, string>> GetAuditLogReportSummaryView(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             return new DALayer().GetAuditLogReportSummaryView(objReportFilter, layerName);
@@ -283,9 +292,9 @@ namespace BusinessLogics
             return new DALayer().GetExportReportSummaryViewNewAdditional(objReportFilter, layerName);
         }
         public List<Dictionary<string, string>> GetExportReportSummaryViewCSV(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
-		{
-			return new DALayer().GetExportReportSummaryViewCSV(objReportFilter, layerName);
-		}
+        {
+            return new DALayer().GetExportReportSummaryViewCSV(objReportFilter, layerName);
+        }
         public List<Dictionary<string, string>> GetSplitReportSummaryViewAllExcel(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             return new DALayer().GetSplitReportSummaryViewAllExcel(objReportFilter, layerName);
@@ -335,11 +344,11 @@ namespace BusinessLogics
         {
             return new DALayer().GetExportSummaryViewKML(objReportFilter);
         }
-		public List<Dictionary<string, string>> GetExportSummaryViewKMLNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
-		{
-			return new DALayer().GetExportSummaryViewKMLNew(objReportFilter, layerName);
-		}
-		public List<Dictionary<string, string>> GetBuildingStatusHistory(ExportEntitiesSummaryViewFilter objReportFilter)
+        public List<Dictionary<string, string>> GetExportSummaryViewKMLNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
+        {
+            return new DALayer().GetExportSummaryViewKMLNew(objReportFilter, layerName);
+        }
+        public List<Dictionary<string, string>> GetBuildingStatusHistory(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             return new DALayer().GetBuildingStatusHistory(objReportFilter);
         }

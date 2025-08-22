@@ -62,7 +62,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        
+
         /// <summary>
         /// In this function we get All OSP Layers 
         /// created by sapna
@@ -113,6 +113,40 @@ namespace DataAccess
             return lst;
             // return  repo.ExecuteSQLCommand(string.Format("select dropdown_value from dropdown_master where dropdown_type='Cable_Category' and is_active=true"));
         }
+
+        public List<DropDownMaster> GetSegmentList()
+        {
+            DataTable dt = new DataTable();
+            List<DropDownMaster> lst = new List<DropDownMaster>();
+            dt = repo.GetDataTable("select segment_code,region_id,ts.id as segment_id from top_segment ts where agg1_site_id is not null and agg2_site_id  is not null and route_id is not null");
+            foreach (DataRow row in dt.Rows)
+            {
+                DropDownMaster obj = new DropDownMaster();
+                obj.dropdown_value = row["segment_code"].ToString();
+                obj.dropdown_type = row["region_id"].ToString();
+                obj.dropdown_key = row["segment_id"].ToString();
+                // obj.file_type = row["filetype"].ToString();
+                lst.Add(obj);
+            }
+            return lst;
+            
+        }
+
+        public List<DropDownMaster> GetSegmentListRegion()
+        {
+            DataTable dt = new DataTable();
+            List<DropDownMaster> lst = new List<DropDownMaster>();
+            dt = repo.GetDataTable("select id as region_code, region_name from top_region tr order by region_name asc");
+            foreach (DataRow row in dt.Rows)
+            {
+                DropDownMaster obj = new DropDownMaster();
+                obj.dropdown_value = row["region_name"].ToString();
+                obj.dropdown_type = row["region_code"].ToString();
+                lst.Add(obj);
+            }
+            return lst;
+        }
+
         public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId)
         {
             try
@@ -685,7 +719,7 @@ namespace DataAccess
 
             }
             catch { throw; }
-        }               
+        }
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
@@ -766,13 +800,13 @@ namespace DataAccess
                     }, true); ; ;
                 return lst;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 throw;
             }
         }
-        
+
         public List<Dictionary<string, string>> GetExportReportSummaryViewNewAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
@@ -1384,7 +1418,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-    
+
         public List<WebGridColumns> GetLandBaseLayerWiseColumns(int entity_id, string layer_name, string setting_type, int user_id, int role_id)
         {
             try
@@ -1402,7 +1436,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        
+
         public List<Dictionary<string, string>> GetBuildingStatusHistory(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             try
@@ -1615,7 +1649,7 @@ namespace DataAccess
             {
                 var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_utilization_report_view",
                     new
-                    { 
+                    {
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
                         p_networkstatues = objReportFilter.SelectedNetworkStatues,
@@ -1936,7 +1970,7 @@ namespace DataAccess
                         p_culturename = Convert.ToString(currentLang),
                         p_radious = objReportFilter.radius,
                         p_route = objReportFilter.selected_route_ids
-                    }, true); 
+                    }, true);
                 return lst;
             }
             catch { throw; }
@@ -2051,5 +2085,5 @@ namespace DataAccess
         }
 
     }
-   
+
 }

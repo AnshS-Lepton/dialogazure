@@ -21,6 +21,8 @@ namespace Models
         public RoleViewModel roleViewModel { get; set; }
         public List<RoleViewModel> lstTemplateTicketTypePermission { get; set; }
         public List<DropDownMaster> listcableCategory { get; set; }
+        public List<DropDownMaster> listsegmentRegion { get; set; }
+        public List<DropDownMaster> listsegment { get; set; }
 
         public RoleMaster objRoleMaster { get; set; }
         public MainViewModel()
