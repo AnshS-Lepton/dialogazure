@@ -213,6 +213,9 @@
         cursor: not-allowed;
         opacity: 0.5;
     }
+    .nestedTW-ml {
+        margin-left: 1.2rem !important;
+    }
 </style>
 
 <div class="module-inner">
@@ -1983,30 +1986,34 @@
                                             isChecked = true;
                                         }
 
-                                        <li data-mapabbr="@objLayer.mapAbbr" data-geomtype="@(objLayer.layerName=="Building"?"Polygon": objLayer.geomType)">
-                                            <img src="Content/css/images/t.gif" alt="">
-                                            <input id="chk_nLyr_@objLayer.layerId" checked="@isChecked" class="mainLyr checkbox-custom" type="checkbox" data-parent-group="@grpLayer" data-mapabbr="@objLayer.mapAbbr" data-layerid="@objLayer.layerId" data-layergroup="chkid_@Chkid"
-                                                   data-minzoomlvl="@objLayer.minZoomLevel" data-maxzoomlvl="@objLayer.maxZoomLevel" data-layername="@objLayer.layerName" data-isnetworktyperequired="@objLayer.isNetworkTypeRequired" data-maplayerseq="@objLayer.maplayerseq" style="width: 0px;" data-is-networktype-required="@objLayer.isNetworkTypeRequired" data-is-network-entity="@objLayer.isNetworkEntity" data-entity-geom-type="@objLayer.geomType" />
-                                            <b><label for="chk_nLyr_@objLayer.layerId" class="checkbox-custom-label"><span>@objLayer.layerTitle</span></label></b>&nbsp;
-                                            <span class="floatVisibility">
 
-                                                <input id="chk_netP_@objLayer.layerId" type="checkbox" class="chknetwork-P checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                                <b><label for="chk_netP_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.planned_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
+                                       <li data-mapabbr="@objLayer.mapAbbr" data-geomtype="@(objLayer.layerName=="Building"?"Polygon": objLayer.geomType)">
+                                           <img src="Content/css/images/t.gif" alt="">
+                                           <input id="chk_nLyr_@objLayer.layerId" class="mainLyr checkbox-custom" type="checkbox"
+                                                  data-parent-group="@grpLayer" data-mapabbr="@objLayer.mapAbbr"
+                                                  data-group-cable-name="CableGRP" data-cable-mapabbr="@objLayer.mapAbbr"
+                                                  data-group-splitter-name="SplitterGRP" data-splitter-mapabbr="@objLayer.mapAbbr"
+                                                  data-layerid="@objLayer.layerId" data-layergroup="chkid_@Chkid" name="@objLayer.layerName" data-minzoomlvl="@objLayer.minZoomLevel" data-maxzoomlvl="@objLayer.maxZoomLevel" data-layername="@objLayer.layerName" data-isnetworktyperequired="@objLayer.isNetworkTypeRequired" data-maplayerseq="@objLayer.maplayerseq" style="width: 0px;" data-is-networktype-required="@objLayer.isNetworkTypeRequired" data-is-network-entity="@objLayer.isNetworkEntity" data-entity-geom-type="@objLayer.geomType" />
+                                           <b><label for="chk_nLyr_@objLayer.layerId" class="checkbox-custom-label"><span>@objLayer.layerTitle</span></label></b>&nbsp;
+                                           <span class="floatVisibility">
 
-                                                <input id="chk_netA_@objLayer.layerId" type="checkbox" class="chknetwork-A checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="A" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                                <b><label for="chk_netA_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.asbuild_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
-                                                @if (ApplicationSettings.IsDormantEnabled)
-                                                {
-                                                    <input id="chk_netD_@objLayer.layerId" type="checkbox" class="chknetwork-D checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="D" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
-                                                    <b><label for="chk_netD_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
-                                                }
-                                                <input id="chk_netL_@objLayer.layerId" type="checkbox" class="chknetwork-L checkbox-custom2" data-mapabbr="@objLayer.mapAbbr" data-layerid="Chd_@objLayer.layerId" data-networktype="L" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired">
-                                                <b><label for="chk_netL_@objLayer.layerId" class="checkbox-custom2-label "></label></b>
-                                                <span class="zoomLevelCount">@objLayer.minZoomLevel</span>
-                                            </span>
+                                               <input id="chk_netP_@objLayer.layerId" type="checkbox" name="@objLayer.layerName" class="chknetwork-P checkbox-custom2" data-layerid="Chd_@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.planned_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                               <b><label for="chk_netP_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.planned_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
 
-                                            <span class="z_frm" id="MinMaxZoom" style="display:none;" data-min-zoom="@objLayer.minZoomLevel" data-max-zoom="@objLayer.maxZoomLevel">Z:(@objLayer.minZoomLevel-@objLayer.maxZoomLevel)</span>
-                                        </li>
+                                               <input id="chk_netA_@objLayer.layerId" type="checkbox" class="chknetwork-A checkbox-custom2" data-layerid="Chd_@objLayer.layerId" name="@objLayer.layerName" data-networktype="A" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.asbuild_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                               <b><label for="chk_netA_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired==true && objLayer.asbuild_view==false?"viewDisabledCheckbox":"") @(objLayer.isNetworkTypeRequired==false?"disabledCheckbox":"")"></label></b>
+                                               @if (ApplicationSettings.IsDormantEnabled)
+                                               {
+                                                   <input id="chk_netD_@objLayer.layerId" type="checkbox" class="chknetwork-D checkbox-custom2" data-layerid="Chd_@objLayer.layerId" name="@objLayer.layerName" data-networktype="D" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired" @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "disabled" : "") @(objLayer.isNetworkTypeRequired == false ? "disabled" : "")>
+                                                   <b><label for="chk_netD_@objLayer.layerId" class="checkbox-custom2-label @(objLayer.isNetworkTypeRequired == true && objLayer.dormant_view == false ? "viewDisabledCheckbox" : "") @(objLayer.isNetworkTypeRequired == false ? "disabledCheckbox" : "")"></label></b>
+                                               }
+                                               <input id="chk_netL_@objLayer.layerId" type="checkbox" class="chknetwork-L checkbox-custom2" data-mapabbr="@objLayer.mapAbbr" data-layerid="Chd_@objLayer.layerId" data-networktype="L" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid" data-ntp="@objLayer.isNetworkTypeRequired">
+                                               <b><label for="chk_netL_@objLayer.layerId" class="checkbox-custom2-label "></label></b>
+                                               <span class="zoomLevelCount">@objLayer.minZoomLevel</span>
+                                           </span>
+
+                                           <span class="z_frm" id="MinMaxZoom" style="display:none;" data-min-zoom="@objLayer.minZoomLevel" data-max-zoom="@objLayer.maxZoomLevel">Z:(@objLayer.minZoomLevel-@objLayer.maxZoomLevel)</span>
+                                       </li>
                                         if (@objLayer.layerTitle == "Cable")
                                         {
                                             var item = Model.listcableCategory.Any(f => f.dropdown_type.StartsWith(objLayer.layerTitle));
@@ -2022,14 +2029,9 @@
 
                                                     <input id="chk_nLyr_@ids" data-layerid="@objLayer.layerId"
                                                            data-cable-parent-group="@ids" subchild-layerid="@objLayer.layerId" data-mapabbr="@objLayer.mapAbbr"
-                                                           class="mainLyr checkbox-custom-SubChild SubChild treeview" type="checkbox"
-                                                           data-SubChild-layerid="@ids" data-SubChild-layergroup="chkid_@id" data-layergroup="chkid_@Chkid"
-                                                           data-layername="@objcableLayer.dropdown_value" style="width: 0px;"
-                                                           name="chkcategory-@objLayer.layerTitle" />
-                                                    <b>
-                                                        <label for="chk_nLyr_@ids" class="checkbox-custom-label">
-                                        <span>@objcableLayer.dropdown_value</span></label></b>&nbsp;
-
+                                                           class="mainLyr checkbox-custom-SubChild SubChild" type="checkbox" data-SubChild-layerid="@ids" data-SubChild-layergroup="chkid_@id" data-layergroup="chkid_@Chkid"
+                                                           data-layername="@objcableLayer.dropdown_value" style="width: 0px;" name="chkcategory-@objLayer.layerTitle" />
+                                                    <b><label for="chk_nLyr_@ids" class="checkbox-custom-label"><span>@objcableLayer.dropdown_value</span></label></b>&nbsp;
                                                     <span class="floatVisibility">
 
                                                         <input id="chkSubChild_netP_@ids" type="checkbox" data-layerid="@objLayer.layerId" class="chknetwork-P checkbox-custom2 SubChild" data-SubChild-layerid="Chd_@objcableLayer.dropdown_value@objLayer.layerId" data-networktype="P" onclick="si.handleChClick(this);" style="position:relative" data-layergroup="chkid_@Chkid"

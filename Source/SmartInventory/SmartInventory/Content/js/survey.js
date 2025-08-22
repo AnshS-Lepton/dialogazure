@@ -579,6 +579,37 @@ function removeOldMarkers(menuName) {
     si.RemoveOldInfoWindow();
 }
 
+function removeSegmentOldMarkersWithRemoveActive(menuName) {
+    var menu = menuName == undefined ? '' : menuName;
+    for (var i = 0; i < DirRendere.length; i++) {
+        if (DirRendere[i]) {
+            DirRendere[i].setMap(null);
+        }
+    }
+    if (combinedResultsLists.length > 0) {
+        combinedResultsLists = [];
+    }
+    for (var i = 0; i < allRouteMarkers.length; i++) {
+        allRouteMarkers[i].setMap(null);
+    }
+    if (surveyLine != undefined) {
+        surveyLine.setMap(null);
+    }
+    if (si.imgLocationMarker != null) { si.imgLocationMarker.setMap(null); }
+    si.clearMarkers();
+    si.resetRulerDirection();
+    si.RemoveOldFeature();
+    $('#gMapLineTool').toggle(false);
+    if (menuName != 'ProjectSpecification' || menuName == 'All') {
+        $('#gMapProjSpecification').toggle(false);
+    }
+    if (menuName != 'BOMBOQReport' || menuName == 'All') {
+        $('#gAreaPotential').toggle(false);
+    }
+    $('#gExportPotential').toggle(false);
+    $('#lengthAreaDiv').empty();
+    si.RemoveOldInfoWindow();
+}
 function removeOldMarkersWithRemoveActive(menuName) {
     var menu = menuName == undefined ? '' : menuName;
     //si.activeInactiveMenu($('.iconBaricomoonfooter'));
