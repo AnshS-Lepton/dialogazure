@@ -236,8 +236,9 @@ hr {
 
     .col-md-5 {
         padding: 0px 5px;
-        line-height: 2.2;
+      /*  line-height: 2.2;*/
     }
+
 
 
     .direction-icon {
@@ -408,3 +409,29 @@ hr {
     cursor: pointer;
 }
 
+.planTool-fieldset fieldset {
+    border: 1px solid #ccc;
+    padding: 5px 10px 10px;
+    border-radius: 4px;
+}
+.planTool-fieldset fieldset legend{
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding:0 5px;
+    width: auto;
+    margin-bottom:0;
+    border:none;
+}
+.planTool-list{
+    display:grid;
+    grid-template-columns:1fr 2fr;
+    gap:10px;
+    text-align:left;
+}
+.planTool-list:not(:last-child){
+    margin-bottom:6px;
+}
+.planTool-value{
+    font-weight:600;
+}

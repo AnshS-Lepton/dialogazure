@@ -2565,7 +2565,7 @@ namespace DataAccess
         {
             try
             {
-                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length }, true);
+                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length , p_polespecvendor = model.poleSpecVendor , p_manholespecvendor  = model.manholeSpecVendor , p_scspecvendor  = model.spliceclosureSpecVendor }, true);
                 return res;
             }
             catch (Exception ex)
@@ -2574,12 +2574,12 @@ namespace DataAccess
             }
         }
 
-        public List<DbMessageForPlan> savePoint2Point(NetworkPlanning objPlan)
+        public DbMessageForPlan savePoint2Point(NetworkPlanning objPlan)
         {
             try
             {
-                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_network_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length });
-                return res;
+                var resp = repo.ExecuteProcedure<DbMessageForPlan>("fn_network_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length, p_polespecvendor = objPlan.poleSpecVendor, p_manholespecvendor = objPlan.manholeSpecVendor, p_scspecvendor = objPlan.spliceclosureSpecVendor }).FirstOrDefault();
+                return resp;
             }
             catch (Exception ex)
             {

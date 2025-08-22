@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iTextSharp.text.pdf.parser;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -86,8 +87,22 @@ namespace Models
         public double MaxAutoOffsetValue { get; set; }
         [NotMapped]
         public bool is_bomboq_reqested { get; set; }
-    
-
+        [NotMapped]
+        public string specification { get; set; }
+        [NotMapped]
+        public string vendor_id { get; set; }
+        [NotMapped]
+        public string item_code { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> lstSpecification { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> lstVendor { get; set; }
+        [NotMapped]
+        public string poleSpecVendor { get; set; }
+        [NotMapped]
+        public string manholeSpecVendor { get; set; }
+        [NotMapped]
+        public string spliceclosureSpecVendor { get; set; }
         public NetworkPlanning()
         {
             objPM = new PageMessage();
@@ -98,7 +113,12 @@ namespace Models
           
         }
     }
-
+    public class LayerInputModel
+    {
+        public string LayerName { get; set; }
+        public string Specification { get; set; }
+        public string VendorId { get; set; }
+    }
     public class EntityDirection
     {
         public string layer_type { get; set; }
@@ -176,4 +196,6 @@ namespace Models
             objPlanDataFilter = new NetworkPlanningDataFilter();
         }
     }
+   
+
 }
