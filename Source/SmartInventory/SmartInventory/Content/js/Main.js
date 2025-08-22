@@ -9411,13 +9411,13 @@ var Main = function () {
             segmentLayer = [0];
         }
         app.filterSegmentRegion = " [segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ")";
-        if (app.ActiveSegments.length > 0) {
+        if (app.ActiveSegmenRegion.length > 0 && app.ActiveSegments.length > 0) {
             app.filterSegment = "([segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ") AND [segment_id] in (" + segmentLayer.join(",") + "))";
         }
-        else {
+        else if (app.ActiveSegmenRegion.length >0) {
             app.filterSegment = " [segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ")";
         }
-
+        else{}
     }
 
     this.clearDraggableLibrary = function () { //remove draggable library element
