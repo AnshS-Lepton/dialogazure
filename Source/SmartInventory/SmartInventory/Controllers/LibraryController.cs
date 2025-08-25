@@ -12218,9 +12218,9 @@ namespace SmartInventory.Controllers
 
         //tower shazia
 
-        public PartialViewResult GetPodDetailsInBulk(PODAssociation obj, string entity_sub_type)
+        public PartialViewResult GetPodDetailsInBulk(PODAssociation obj, string entity_sub_type, string selectionType)
         {
-            obj.lstPODAssociation = new BLPOD().GetPodDetailsInBulk(obj.geom);
+            obj.lstPODAssociation = new BLPOD().GetPodDetailsInBulk(obj.geom, selectionType);
             obj.entity_sub_type = entity_sub_type;
             return PartialView("_BulkPODAssociation", obj);
 
