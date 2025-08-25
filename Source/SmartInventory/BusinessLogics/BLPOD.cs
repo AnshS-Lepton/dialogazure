@@ -26,9 +26,9 @@ namespace BusinessLogics
             return new DAPOD().GetPODDetailForFilter();
 
         }
-        public List<PODDetail> GetPodDetailsInBulk(string geom)
+        public List<PODDetail> GetPodDetailsInBulk(string geom, string selectionType)
         {
-            return new DAPOD().GetPodDetailsInBulk(geom);
+            return new DAPOD().GetPodDetailsInBulk(geom, selectionType);
         }
         #region Additional-Attributes
         public string GetOtherInfoPOD(int systemId)

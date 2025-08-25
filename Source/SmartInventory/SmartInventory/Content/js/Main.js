@@ -20279,7 +20279,7 @@ var Main = function () {
 
 
     }
-    this.BulkasPopAssociation = function (type, _entitySubtype) {
+    this.BulkasPopAssociation = function (type, _entitySubtype, selectionType) {
         //;
         if (type == 'All')
 
@@ -20294,7 +20294,7 @@ var Main = function () {
         pageTitleText = layerTitle + ' Association';
 
         modalClass = 'modal-lg';
-        popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
+        popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype, selectionType: selectionType }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
         let selectedUsers = $("#ddlUsers").val().join(',');

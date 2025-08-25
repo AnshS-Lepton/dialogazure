@@ -228,11 +228,11 @@ namespace DataAccess
                 throw ex;
             }
         }
-        public List<PODDetail> GetPodDetailsInBulk(string geom)
+        public List<PODDetail> GetPodDetailsInBulk(string geom, string selectionType)
         {
             try
             {
-                return repo.ExecuteProcedure<PODDetail>("fn_bulk_get_pod_details", new { p_geom = geom }, true);
+                return repo.ExecuteProcedure<PODDetail>("fn_bulk_get_pod_details", new { p_geom = geom, p_selectionType = selectionType }, true);
             }
             catch { throw; }
         }
