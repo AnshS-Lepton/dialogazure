@@ -1688,7 +1688,7 @@ namespace DataAccess
                         p_pagerecord = objReportFilter.pageSize,
                         p_sortcolname = objReportFilter.sort,
                         p_sorttype = objReportFilter.sortdir,
-                        p_advancefilter = objReportFilter.advancefilter,
+                        p_advancefilter = (objReportFilter.advancefilter ?? "").Replace("'", "@"),
                         p_utilizationtype = objReportFilter.utilizationType,
                         p_ductutilization = objReportFilter.ductutilization,
                     }).FirstOrDefault();
