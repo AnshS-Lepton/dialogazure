@@ -77,4 +77,24 @@ namespace Models
         public bool is_updated { get; set; }
         public string DRAFT_MESSAGE { get; set; }
     }
+
+    public class nearestFiberPoint
+    {
+        public string nearest_fiber_point { get; set; }
+        public double longitude { get; set; }
+        public double latitude { get; set; }
+        public double distance_meters { get; set; }
+    }
+
+    public class nearestStructure
+    {
+        public string cable_network_id { get; set; }
+        public string cable_geom { get; set; }
+        public string structure_id { get; set; }
+        public string structure_type { get; set; }
+        public string structure_geom { get; set; }
+        public double longitude { get; set; }
+        public double latitude { get; set; }
+        public double distance_meters { get; set; }
+    }
 }
