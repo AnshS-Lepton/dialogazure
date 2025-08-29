@@ -88,6 +88,18 @@ namespace BusinessLogics
             return objDAMisc.getNearByFeasibility(latitude, longitude, bufferInMtr);
 
         }
+        public List<nearestFiberPoint> getNearestFiberPoint(double latitude, double longitude, int bufferInMtr)
+        {
+            return objDAMisc.getNearestFiberPoint(latitude, longitude, bufferInMtr);
+
+        }
+
+        public List<nearestStructure> getNearestNetworkStructure(double latitude, double longitude, string network_id)
+        {
+            return objDAMisc.getNearestNetworkStructure(latitude, longitude, network_id);
+
+        }
+
         public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
         {
             return objDAMisc.getRouteBufferFeasibility(coordinates,route_buffer);

@@ -199,6 +199,211 @@ namespace IntegrationServices.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("api/v1/enterpriseFeasibility_new")]
+        public HttpResponseMessage enterpriseFeasibility_new(string request_id, double latitude, double longitude, double radius = 15.00, int route_buffer = 0)
+        {
+
+            try
+            {
+                int bufferInMtrs;
+                var apiKey = ApplicationSettings.Map_Key_Backend;
+                string lastCoord = string.Empty;
+                double strLlongitude = 0, strLatitude = 0, endLongitude = 0, endLatitude = 0;
+                if (!isLatLngValid(latitude.ToString(), longitude.ToString()))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid latitude or longitude!" });
+                }
+
+                if (!isbufferValid(radius, out bufferInMtrs))
+                {
+                    var buffervalue = ApplicationSettings.feasibility_buffer_limit;
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = $"Invalid buffer Value. The value must be non-negative and less than {buffervalue}." });
+                }
+
+
+                if (string.IsNullOrEmpty(request_id))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "request_id cannot be blank!" });
+                }
+
+                var lstFiberPoint = new BLMisc().getNearestFiberPoint(latitude, longitude, bufferInMtrs);
+
+                if (lstFiberPoint.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No structure found within the buffer range!" });
+                }
+
+                var proposedStructure = new ProStructure();
+                var nearestStructure = new Structure();
+
+                var roadPathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (latitude + "," + longitude).ToString(), (lstFiberPoint[0].latitude + "," + lstFiberPoint[0].longitude).ToString(), apiKey, radius);
+                GeoData data = JsonConvert.DeserializeObject<GeoData>(roadPathRouteApiData[0].geojson_new_built);
+                var roadDistance = roadPathRouteApiData[0].total_new_length;
+
+                var lstNearestNetworkStructure = new BLMisc().getNearestNetworkStructure(lstFiberPoint[0].latitude , lstFiberPoint[0].longitude, lstFiberPoint[0].nearest_fiber_point);
+
+
+
+
+                   //var customer_to_road_routeData = GetRouteList(latitude, longitude, StrRoadpathLatitude, StrRoadpathLongitude);
+                   //var structureToRoadRouteData = GetRouteList(Convert.ToDouble(end_point[1]), Convert.ToDouble(end_point[0]), endLongitude, endLatitude);
+                   // var nearestlocation = CreateLocation(latitude, longitude);
+                   // var customerToRoadRouteSegment = bindRouteData(customer_to_road_routeData[0].geojson_new_built, totaldistance);
+                   // var roadPathRouteSegment = bindRouteData(roadPathRouteApiData[0].geojson_new_built, roadPathRouteApiData[0].total_new_length);
+                   // string geomDistS2R = $"{geo_end_point}, {StrRoadpathLongitude} {latitude}";
+
+                   // var totalDistS2R = new BLPlan().GetLineLength(geomDistS2R);
+
+                   //var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, totalDistS2R);
+                   //var route = getRoutesDetails(customerToRoadRouteSegment, roadPathRouteSegment, structureToRoadRouteSegment);
+                   // nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, inputcoordinates, route_buffer);
+
+                //  #region nearest_structure
+                //  #region get latitude and longitude from db
+
+
+                //// Extract coordinates using regex
+                //string pattern = @"POINT\s*\((.*?)\)";
+                //Match match = Regex.Match(lstentities[0].geom, pattern);
+                //if (match.Success)
+                //{
+                //    string coordinates = match.Groups[1].Value;
+                //    string[] points = coordinates.Split(' ');
+                //    int pointsCount = points.Length;
+                //    strLatitude = double.Parse(points[0]);
+                //    strLlongitude = double.Parse(points[1]);
+                //    endLongitude = double.Parse(points[pointsCount - 1]);
+                //    endLatitude = double.Parse(points[pointsCount - 2]);
+                //}
+                //#endregion
+                //if (lstentities[0].entity_type == Models.EntityType.Pole.ToString() || lstFiberPoint[0].entity_type == Models.EntityType.Manhole.ToString())
+                //{
+                //    var roadPathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (latitude + "," + longitude).ToString(), (strLlongitude + "," + strLatitude).ToString(), apiKey, radius);
+                //    GeoData data = JsonConvert.DeserializeObject<GeoData>(roadPathRouteApiData[0].geojson_new_built);
+                //    double StrRoadpathLatitude = 0, StrRoadpathLongitude = 0;
+                //    string nearestlatlngdata = string.Empty;
+                //    double lon = data.Coordinates[0][0];
+                //    double lat = data.Coordinates[0][1];
+                //    StrRoadpathLongitude = data.Coordinates[0][0];
+                //    StrRoadpathLatitude = data.Coordinates[0][1];
+                //    string geom = $"{StrRoadpathLongitude} {StrRoadpathLatitude}, {longitude} {latitude}";
+                //    foreach (var coord in data.Coordinates)
+                //    {
+                //        StrRoadpathLongitude = coord[0]; StrRoadpathLatitude = coord[1];
+                //        nearestlatlngdata += StrRoadpathLongitude + " " + StrRoadpathLatitude + ",";
+                //    }
+                //    nearestlatlngdata = nearestlatlngdata.TrimEnd(',');
+                //    string[] coordsArray = nearestlatlngdata.Split(',');
+                //    lastCoord = coordsArray.Last().Trim();
+
+
+                //    if (!nearestlatlngdata.Contains(","))
+                //        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Road path not found!" });
+                //    string inputcoordinates = "LINESTRING(" + nearestlatlngdata + ")";
+                //    List<Points> points = new BLMisc().getStartEndPointsFeasibility(inputcoordinates);
+                //    string geo_end_point = getLatLongDetails(string.IsNullOrEmpty(points[0].end_point) ? " " : points[0].end_point);
+                //    string[] end_point = geo_end_point.Split(' ');
+                //    var totaldistance = new BLPlan().GetLineLength(geom);
+
+                //    var customer_to_road_routeData = GetRouteList(latitude, longitude, StrRoadpathLatitude, StrRoadpathLongitude);
+                //    var structureToRoadRouteData = GetRouteList(Convert.ToDouble(end_point[1]), Convert.ToDouble(end_point[0]), endLongitude, endLatitude);
+                //    var nearestlocation = CreateLocation(latitude, longitude);
+                //    var customerToRoadRouteSegment = bindRouteData(customer_to_road_routeData[0].geojson_new_built, totaldistance);
+                //    var roadPathRouteSegment = bindRouteData(roadPathRouteApiData[0].geojson_new_built, roadPathRouteApiData[0].total_new_length);
+                //    string geomDistS2R = $"{geo_end_point}, {StrRoadpathLongitude} {latitude}";
+
+                //    var totalDistS2R = new BLPlan().GetLineLength(geomDistS2R);
+
+                //    var structureToRoadRouteSegment = bindRouteData(structureToRoadRouteData[0].geojson_new_built, totalDistS2R);
+                //    var route = getRoutesDetails(customerToRoadRouteSegment, roadPathRouteSegment, structureToRoadRouteSegment);
+                //    nearestStructure = bindStructureData(lstentities[0].entity_title/*structure_type*/, lstentities[0].display_name/*structure_id*/, nearestlocation, route, inputcoordinates, route_buffer);
+
+                //}
+
+                //#endregion
+                //#region proposed_structure
+
+                //#region get latitude and longitude from db
+                //double strProLongitude = 0, strProLatitude = 0, endProLongitude = 0, endProLatitude = 0;
+                //int i = 0;
+                //if (lstentities.Count > 1)
+                //    i = 1;
+                //string proPattern = @"POINT\s*\((.*?)\)";
+                //Match matchPro = Regex.Match(lstentities[i].geom, proPattern);
+                //if (matchPro.Success)
+                //{
+                //    string proCoordinates = matchPro.Groups[1].Value;
+                //    string[] proLines = proCoordinates.Split(' ');
+                //    int proLineCount = proLines.Length;
+                //    strProLatitude = double.Parse(proLines[0]);
+                //    strProLongitude = double.Parse(proLines[1]);
+                //}
+
+
+                //#endregion
+                //if (lstentities[i].entity_type == Models.EntityType.Cable.ToString())
+                //{
+                //    var proposedRoadpathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (latitude + "," + longitude).ToString(), (strProLongitude + "," + strProLatitude).ToString(), apiKey, radius);
+                //    GeoData proposedData = JsonConvert.DeserializeObject<GeoData>(proposedRoadpathRouteApiData[0].geojson_new_built);
+                //    double proposedstrRoadpathLatitude = 0, proposedStrRoadpathLongitude = 0;
+
+                //    List<List<double>> proposedcoordinates = proposedData.Coordinates;
+                //    string latlngdata = string.Empty;
+
+                //    foreach (var proposedcoord in proposedData.Coordinates)
+                //    {
+                //        proposedStrRoadpathLongitude = proposedcoord[0]; proposedstrRoadpathLatitude = proposedcoord[1];
+                //        latlngdata += proposedStrRoadpathLongitude + " " + proposedstrRoadpathLatitude + ",";
+                //    }
+                //    latlngdata = latlngdata.TrimEnd(',');
+
+                //    if (!latlngdata.Contains(","))
+                //        return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Proposed structure road path not found!" });
+
+                //    string inputprocoordinates = "LINESTRING(" + latlngdata + ")";
+                //    List<Points> propoints = new BLMisc().getStartEndPointsFeasibility(inputprocoordinates);
+                //    string geo_proend_point = getLatLongDetails(propoints[0].end_point);
+                //    string[] proend_point = geo_proend_point.Split(' ');
+                //    endProLatitude = double.Parse(proend_point[1]);
+                //    endProLongitude = double.Parse(proend_point[0]);
+                //    string proposedCustomerToRoadRoutegeom = $"{lastCoord},{strLatitude} {strLlongitude}";
+
+                //    var totalcustRoadRoutedistance = new BLPlan().GetLineLength(proposedCustomerToRoadRoutegeom);
+                //    var proposedCustomerToRoadRouteData = GetRouteList(latitude, longitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
+                //    var proposedStructureToRoad = GetRouteList(endProLatitude, endProLongitude, proposedstrRoadpathLatitude, proposedStrRoadpathLongitude);
+                //    var proposedNearestlocation = CreateLocation(latitude, longitude);
+                //    var proposedCustomerToRoadRouteSegment = bindRouteData(proposedCustomerToRoadRouteData[0].geojson_new_built, proposedCustomerToRoadRouteData[0].total_new_length);
+                //    var proposedRoadPathRouteSegment = bindRouteData(proposedRoadpathRouteApiData[0].geojson_new_built, proposedRoadpathRouteApiData[0].total_new_length);
+                //    var proposedStructureToRoadRouteSegment = bindRouteData(proposedStructureToRoad[0].geojson_new_built, totalcustRoadRoutedistance);
+                //    var proposedroute = getRoutesDetails(proposedCustomerToRoadRouteSegment, proposedRoadPathRouteSegment, proposedStructureToRoadRouteSegment);
+
+                //    proposedStructure = bindProposedStructureData(lstentities[i].entity_title/*structure_type*/, lstentities[i].display_name/*structure_id*/, proposedNearestlocation, proposedroute, inputprocoordinates, route_buffer);
+                //}
+
+                // #endregion
+
+                var responseData = new ResponseData
+                {
+                    request_id = request_id,
+                    customer_latitude = latitude,
+                    customer_longitude = longitude,
+                    nearest_structure = nearestStructure,
+                    proposed_structure = proposedStructure,
+
+                };
+                return this.Request.CreateResponse(HttpStatusCode.OK, responseData);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("getDarkFiberFeasibility()", "DaFiFeasibilityController", "", ex);
+                return this.Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = "UNKNOWN_ERROR", message = "Error while processing the request." });
+            }
+        }
+
+
         [HttpGet]
         [Route("feasibilityKML")]
         public HttpResponseMessage getfeasibilityKML(string feasibility_request_id = "", string route_id = "")

@@ -215,6 +215,36 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<nearestFiberPoint> getNearestFiberPoint(double latitude, double longitude, int bufferInMtr)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<nearestFiberPoint>("fn_get_nearestfiberpoint", new
+                {
+                    lat = latitude,
+                    lng = longitude,
+                    mtrBuffer = bufferInMtr
+
+                });
+            }
+            catch { throw; }
+        }
+        
+        public List<nearestStructure> getNearestNetworkStructure(double latitude, double longitude, string network_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<nearestStructure>("fn_get_connected_structure", new
+                {
+                    lat = latitude,
+                    lng = longitude,
+                    p_network_id = network_id
+
+                });
+            }
+            catch { throw; }
+        }
+
         public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
         {
             try
@@ -229,7 +259,6 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
         public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
         {
             try
