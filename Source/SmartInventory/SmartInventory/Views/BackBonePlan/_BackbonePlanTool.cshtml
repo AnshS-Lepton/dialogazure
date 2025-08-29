@@ -38,30 +38,29 @@
                     LoadingElementId = "dvProgress",
                     OnSuccess = "backbonedata.planBomAndBOQ(data)"
                 },
-new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete = "off" }))
+             new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete = "off" }))
                 {
                     @Html.HiddenFor(m => m.geometry)
                     @Html.HiddenFor(m => m.is_bomboq_reqested)
                     @Html.HiddenFor(m => m.plan_id)
                     @Html.HiddenFor(m => m.is_loop_update)
                     @Html.HiddenFor(m => m.selectedSites)
-                    @Html.HiddenFor(m => m.startpoint_network_id)
-                    @Html.HiddenFor(m => m.endpoint_network_id)
-                    @Html.HiddenFor(m => m.cable_length)
                     @Html.HiddenFor(m => m.start_point)
                     @Html.HiddenFor(m => m.end_point)
                     @Html.HiddenFor(m => m.sprout_route_length)
+                    @Html.HiddenFor(m => m.loop_span)
+                    @Html.HiddenFor(m => m.loop_length)
                   
                     <div class="prowindowNetworkData">
                         <div class="createPlan">
-                            <div class="form-group">
-                                <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_001<i class="clsMandatory">*</i>:</label>
-                                <div class="col-md-7">
-                                    @Html.TextBoxFor(m => m.plan_name, new { @class = "form-control", @maxlength = 35 })
-                                </div>
-                            </div>
-
+                            
                             <div class="mainPart">
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_NET_GBL_001<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.plan_name, new { @class = "form-control", @maxlength = 35 })
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-5">@Resources.Resources.SI_OSP_GBL_GBL_GBL_072<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
@@ -80,7 +79,7 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 </div>
 
                                 <div class="form-group" id="buffer">
-                                    <label class="control-label col-md-5">Buffer(m)<i class="clsMandatory">*</i>:</label>
+                                    <label class="control-label col-md-5">Buffer (m)<i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.buffer, new { @id = "planbuffer", Value = "", @onblur = "return backbonedata.PlanningBufferPoint();", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                     </div>
@@ -88,11 +87,11 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 <div class="form-group">
                                     <label class="control-label col-md-5">Backbone Fiber <i class="clsMandatory">*</i>:</label>
                                     <div class="col-md-7">
-                                        @Html.DropDownListFor(m => m.backbone_fiber, new SelectList(Model.lstBackboneFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "backboneFiberDropdown" })
+                                        @Html.DropDownListFor(m => m.backbone_fiber_type, new SelectList(Model.lstBackboneFiber.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "backboneFiberDropdown" })
 
                                     </div>
                                 </div>
-                      
+
                                 <div id="trenchduct">
                                     <div class="form-group mb-15">
                                         <div class="col-md-5">
@@ -111,36 +110,44 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
-                                        Manhole Span(m)  <i class="clsMandatory">*</i>:
+                                        Manhole Span (m)  <i class="clsMandatory">*</i>:
                                     </label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.manhole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                        @Html.TextBoxFor(m => m.manhole_distance, new { @id = "manholeSpan", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
-                                        Pole Span(m) <i class="clsMandatory">*</i>:
+                                        Cable Drum <br /> Length (m) <i class="clsMandatory">*</i>:
                                     </label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.pole_distance, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                        @Html.TextBoxFor(m => m.cable_length, new { @id = "cabledrumLength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Sprout Threshold <i class="clsMandatory">*</i>:</label>
+                                    <label class="control-label col-md-5" for="txtdistance" id="txtdistance">
+                                        Pole Span (m) <i class="clsMandatory">*</i>:
+                                    </label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.threshold, new { @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                        @Html.TextBoxFor(m => m.pole_distance, new { @id = "poleSpan", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Sprout Route Length(m) :</label>
+                                    <label class="control-label col-md-5">Sprout Threshold(m)<i class="clsMandatory">*</i>:</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.threshold, new { @id = "sproutThreshold", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,4,2);" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">Sprout Route <br /> Length (m) :</label>
                                     <div class="col-md-7">
                                         @Html.TextBoxFor(m => m.sprout_route_length, new { @id = "sproutlength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-5">Backbone Route Length(m) :</label>
+                                    <label class="control-label col-md-5">Backbone Route Length (m) :</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(m => m.cable_length, new { @id = "cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
+                                        @Html.TextBoxFor(m => m.total_cable_length, new { @id = "cablelength", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);", disabled = "disabled" })
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -156,10 +163,16 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
                                     </div>
                                 </div>
 
-                                <div id="DvloopLength" class="form-group input-Bton" style="display:none">
+                                <div id="DvloopLength" class="form-group" style="display:none">
                                     <label class="control-label col-md-5 w-space">@Resources.Resources.SI_OSP_GBL_GBL_FRM_162:</label>
                                     <div class="col-md-7">
-                                        @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return backbonedata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+                                        @Html.TextBoxFor(x => x.loop_length, new { @id = "loopLength", Value = "", @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+                                    </div>
+                                </div>
+                                <div id="dvLoopSpan" class="form-group" style="display:none;">
+                                    <label class="control-label col-md-5">Loop Span (m) :</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.loop_span, new { @id = "loopSpan", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
                                     </div>
                                 </div>
                                 <div class="d-flex --gap05">
@@ -191,6 +204,10 @@ new { id = "frmBackbonePlanning", enctype = "multipart/form-data", autocomplete 
     $(document).ready(function () {
         $('#suggestBox').hide();
         backbonedata.initApp();
+        $('#frmBackbonePlanning').on('submit', function () {
+            $('#loop_span').val($('#loopSpan').val());       
+            $('#loop_length').val($('#loopLength').val());  
+        });
 
         callFormValidator("frmBackbonePlanning");
         $('.chosen-select').chosen({ width: '100%' });

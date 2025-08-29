@@ -1271,11 +1271,11 @@ namespace BusinessLogics
 
         public void UpdateBackBoneLoopLength(List<BackbonePlanNetworkDetails> model)
         {
-            new DABackBonePlan().UpdateBackBoneLoopLength(model);
+            new DABackBoneNetworkPlan().UpdateBackBoneLoopLength(model);
         }
-        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, int userId)
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, int userId, bool is_looprequired, string linegeom, double loopSpan, double loopLength)
         {
-            return new DABackBonePlan().GetBackBoneLoopList(plan_id, userId);
+            return new DABackBoneNetworkPlan().GetBackBoneLoopList(plan_id, userId, is_looprequired, linegeom, loopSpan, loopLength);
         }
         public List<BackBoneSproutFiberDetails> SaveNearestSite(List<SitePlanList> model , int userId)
         {
@@ -1288,6 +1288,14 @@ namespace BusinessLogics
         public SitePlanList updateSiteRoute(string geom, int planId, int p_systemId, int userId)
         {
              return new DABackBonePlanSite().updateSiteRoute(geom, planId, p_systemId, userId);
+        } 
+        public List<SitePlanList> getNearestSiteHistoryList( int planId)
+        {
+             return new DABackBonePlanSite().getNearestSiteHistoryList( planId);
+        }
+        public void getUpdateBackbonePlan(bool createPlan ,int planId)
+        {
+             new DABackBonePlan().getUpdateBackbonePlan(createPlan,planId);
         }
     }
     public class BLSiteCircle

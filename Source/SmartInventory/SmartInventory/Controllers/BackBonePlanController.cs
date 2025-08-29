@@ -42,6 +42,7 @@ namespace SmartInventory.Controllers
                 int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
                 int routeThreshold = ApplicationSettings.BackboneRouteThreshold;
                 double? totalLength = objPlan.cable_length + objPlan.sprout_route_length;
+                  new BLPlan().getUpdateBackbonePlan(objPlan.create_plan,objPlan.plan_id);
 
                 if (user_id != 0)
                 {
@@ -192,6 +193,28 @@ namespace SmartInventory.Controllers
             }
             return PartialView("_SiteList", backBoneSitePlanDetails);
         }
+        public ActionResult GetBackboneSiteHistory(int planId)
+        {
+            BackBoneSitePlanDetails backBoneSitePlanDetails = new BackBoneSitePlanDetails();
+            try { 
+                backBoneSitePlanDetails.sites = new BLPlan().getNearestSiteHistoryList(planId);
+                backBoneSitePlanDetails.plan_id = planId;
+                backBoneSitePlanDetails.lstSproutFiber = new BLPlan().GetBackboneFiberTypeDropDownList();
+                foreach (var item in backBoneSitePlanDetails.sites)
+                {
+                    var matchedFiberType = backBoneSitePlanDetails.lstSproutFiber.DefaultIfEmpty().FirstOrDefault(x => x.dropdown_value == item.fibertype);
+                    if (matchedFiberType != null)
+                    {
+                        item.fibertype = matchedFiberType.dropdown_type.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogHelper.WriteErrorLog("GetBackboneSiteHistory", "BackBone", ex);
+            }
+            return PartialView("_SiteHistory", backBoneSitePlanDetails);
+        }
 
         public JsonResult GetBackboneNearestSiteBuffer(string geom, double buffer, int planId = 0)
         {
@@ -213,9 +236,7 @@ namespace SmartInventory.Controllers
             JsonResponse<dynamic> objResp = new JsonResponse<dynamic>();
             try
             {
-                var geoJsonFeatures = new List<string>();
                 int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                string mapKey = ConfigurationManager.AppSettings["MapKeyBackend"].Trim();
                 List<BackBoneSproutFiberDetails> nearestSiteLst = new BLPlan().GetBackbonePlanningList(plan, userId);              
                 objResp.status = ResponseStatus.OK.ToString();
                 plan.plan_id = nearestSiteLst[0].plan_id;
@@ -267,13 +288,13 @@ namespace SmartInventory.Controllers
             new BLPlan().UpdateBackBoneLoopLength(model);
             return PartialView("_LoopManage", model);
         }
-        public PartialViewResult GetLoopManage(int planid, double looplength, bool is_loop_updated)
+        public PartialViewResult GetLoopManage(int planid, double looplength, bool is_loop_updated,string line_geom, double loopSpan)
         {
             List < BackbonePlanNetworkDetails > list = new List<BackbonePlanNetworkDetails>();
             try
             {
                 var usrDetail = (User)Session["userDetail"];
-                list = new BLPlan().GetBackBoneLoopList(planid, usrDetail.user_id);
+                list = new BLPlan().GetBackBoneLoopList(planid, usrDetail.user_id, is_loop_updated, line_geom, loopSpan, looplength);
 
                 if (!is_loop_updated)
                 {
@@ -291,8 +312,8 @@ namespace SmartInventory.Controllers
             BackBonePlanning model = new BackBonePlanning
             {
                 plan_id = plan_id,
-                sprout_fiber = sproutType,
-                backbone_fiber = backboneType,
+                sprout_fiber_type = sproutType,
+                backbone_fiber_type = backboneType,
                 geometry = geometry,
                 is_create_duct = isCreateDuct,
                 is_create_trench = isCreateTrench
@@ -383,34 +404,7 @@ namespace SmartInventory.Controllers
                 ErrorLogHelper.WriteErrorLog("UpdateSiteRoute", "BackBone", ex);
             }
             return Json(new { status = true, SpLength = SitePlanList.sprout_route_length, spTotalLength = SitePlanList.total_sp_route_length }, JsonRequestBehavior.AllowGet);
-        }
-        //public JsonResult CheckPlanStatus()
-        //{
-        //    bool IsProcessStatus = false;
-        //    bool recordExist = false;
-        //    try
-        //    {
-        //        int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-        //        var planDetails = new BLPlan().getBackboneRecordByPlanId(userId);
-        //        if (planDetails != null)
-        //        {
-        //            foreach(var itm in planDetails)
-        //            {
-        //                if (itm.status && !itm.isNotify)
-        //                {
-        //                    recordExist = true;
-        //                   new BLPlan().UpdateIsNotifyStatus(itm.plan_id, userId);
-        //                }
-        //                IsProcessStatus = itm.status;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ErrorLogHelper.WriteErrorLog("CheckPlanStatus", "BackBone", ex);
-        //    }
-        //    return Json(new { status = IsProcessStatus, recordExists = recordExist }, JsonRequestBehavior.AllowGet);
-        //}
+        }        
 
     }
 }

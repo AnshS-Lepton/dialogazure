@@ -2628,7 +2628,34 @@ CLASS
 			'no_defs'
 		END
 		
-		CLASSITEM 'cable_cores' 		 
+		CLASSITEM 'cable_cores' 
+		
+		#====================BackBone======================
+		CLASS 
+			EXPRESSION ('[cable_category]'  eq 'BackBone Cable')					
+		     STYLE
+				WIDTH 4
+				COLOR 0 255 0 				                					
+				PATTERN 10 5  END
+			END		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 0 0 0				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 255 255  # background rect.
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+				MAXSCALEDENOM 70000
+			END
+		END		
 		#====================Planned======================
 		CLASS 
 			EXPRESSION ('[network_status]'  eq 'P')					
