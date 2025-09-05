@@ -234,9 +234,9 @@ hr {
     width: 58.33333333%;
 }
 
-.col-md-5 {
+.mainPart .col-md-5 {
     padding: 0px 5px;
-    line-height: 2.2;
+    line-height: 1.2;
 }
 
 

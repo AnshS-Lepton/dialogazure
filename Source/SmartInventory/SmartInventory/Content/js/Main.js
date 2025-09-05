@@ -20963,7 +20963,7 @@ var Main = function () {
     }
     this.getNewCableDetails = function () {
         $('#btnSplitCable').prop('disabled', '');
-        var splitcablesystemid = $("input[name='Cable']:checked").attr('s_id');
+        var splitcablesystemid = $('input.Cable_address[name="Cable"]:checked').attr("s_id");
         $('#split_cable_system_id').val(splitcablesystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
         var splitEntitytype = $('#split_entity_type').val();
