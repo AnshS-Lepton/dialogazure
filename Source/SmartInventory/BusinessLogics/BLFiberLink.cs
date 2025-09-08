@@ -14,6 +14,10 @@ namespace BusinessLogics
         {
             return new DAFiberLink().getFiberLinkDetails(userId, objFiberLinkFilter);
         }
+        public List<Dictionary<string, string>> getFiberLinkDetailsById(int userId, FiberLinkFilter objFiberLinkFilter)
+        {
+            return new DAFiberLink().getFiberLinkDetailsById(userId, objFiberLinkFilter);
+        }
         public List<Dictionary<string, string>> getAssociatedFiberLinkDetails(int userId, FiberLinkFilter objFiberLinkFilter)
         {
             return new DAFiberLink().getAssociatedFiberLinkDetails(userId, objFiberLinkFilter);
