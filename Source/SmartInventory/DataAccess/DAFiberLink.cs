@@ -105,6 +105,31 @@ namespace DataAccess
             }
         }
 
+        public List<Dictionary<string, string>> getFiberLinkDetailsById(int userId, FiberLinkFilter objFiberLinkFilter)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_fiber_link_detailsById", new
+                {
+                    p_systemid = objFiberLinkFilter.system_id,
+                    p_searchby = objFiberLinkFilter.SearchbyText,
+                    p_searchtext = objFiberLinkFilter.Searchtext,
+                    P_PAGENO = objFiberLinkFilter.currentPage,
+                    P_PAGERECORD = objFiberLinkFilter.pageSize,
+                    P_SORTCOLNAME = objFiberLinkFilter.sort,
+                    P_SORTTYPE = objFiberLinkFilter.orderBy,
+                    p_userid = userId,
+                    p_searchfrom = objFiberLinkFilter.fromDate,
+                    p_searchto = objFiberLinkFilter.toDate
+                }, true).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
         public List<Dictionary<string, string>> getAssociatedFiberLinkDetails(int userId, FiberLinkFilter objFiberLinkFilter)
         {
             try
