@@ -210,7 +210,6 @@ namespace IntegrationServices.Controllers
                 int bufferInMtrs;
                 var apiKey = ApplicationSettings.Map_Key_Backend;
                 string lastCoord = string.Empty;
-                double strLlongitude = 0, strLatitude = 0, endLongitude = 0, endLatitude = 0;
                 if (!isLatLngValid(latitude.ToString(), longitude.ToString()))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "Invalid latitude or longitude!" });
@@ -235,24 +234,51 @@ namespace IntegrationServices.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, new { status = 400, message = "No structure found within the buffer range!" });
                 }
 
-                
+                // declare variables
+                double customerToRoadDistance = 0;
+                double structureroadDistance = 0;
+                List<Route> customerToRoadRoute = new List<Route>();
+
+                // Start:  get customer To Road path details using google direction api
                 var roadPathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (latitude + "," + longitude).ToString(), (lstFiberPoint[0].latitude + "," + lstFiberPoint[0].longitude).ToString(), apiKey, radius);
                 GeoData data = JsonConvert.DeserializeObject<GeoData>(roadPathRouteApiData[0].geojson_new_built);
                 double roadDistance = roadPathRouteApiData[0].total_new_length;
 
-                Structure nearestStructure = new Structure();
+                if(data.Coordinates.Count >0)
+                {
+                    var coordinates = new List<List<double>>
+                    {
+                     new List<double> { data.Coordinates[data.Coordinates.Count - 1][0], data.Coordinates[data.Coordinates.Count - 1][1] },
+                     new List<double> { lstFiberPoint[0].longitude, lstFiberPoint[0].latitude }
+                    };
 
+                    // get customer To Road details distance between road end point and customer point
+                    customerToRoadRoute = GetRouteList(data.Coordinates[data.Coordinates.Count - 1][1], data.Coordinates[data.Coordinates.Count - 1][0], lstFiberPoint[0].latitude, lstFiberPoint[0].longitude);
+                    customerToRoadDistance = CalculateTotalDistance(coordinates);
+                }
+                // End:  get customer To Road path details using google direction api
+
+
+                Structure nearestStructure = new Structure();
                 var lstNearestNetworkStructure = new BLMisc().getNearestNetworkStructure(lstFiberPoint[0].latitude , lstFiberPoint[0].longitude, lstFiberPoint[0].nearest_fiber_point);
 
+                // Start:  get structure To Road path details using google direction api
+                var structurePathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (data.Coordinates[data.Coordinates.Count - 1][1] + "," + data.Coordinates[data.Coordinates.Count - 1][0]).ToString(), (lstNearestNetworkStructure[0].latitude + "," + lstNearestNetworkStructure[0].longitude).ToString(), apiKey, 2);
+                GeoData structuredata = JsonConvert.DeserializeObject<GeoData>(structurePathRouteApiData[0].geojson_new_built);
+                 structureroadDistance = structurePathRouteApiData[0].total_new_length;
+                // End:  get structure To Road path details using google direction api
+
+
+
                 RouteSegment customer_to_roadSegment = new RouteSegment();
-                customer_to_roadSegment.geometry = roadPathRouteApiData[0].geojson_new_built;
-                customer_to_roadSegment.length = roadDistance;
+                customer_to_roadSegment.geometry = customerToRoadRoute[0].geojson_new_built;
+                customer_to_roadSegment.length = customerToRoadDistance;
                 RouteSegment road_pathSegment = new RouteSegment();
                 road_pathSegment.geometry = roadPathRouteApiData[0].geojson_new_built;
                 road_pathSegment.length = roadDistance;
                 RouteSegment structure_to_roadSegment = new RouteSegment();
-                structure_to_roadSegment.geometry = lstNearestNetworkStructure[0].cable_geom;
-                structure_to_roadSegment.length = lstNearestNetworkStructure[0].distance_meters;
+                structure_to_roadSegment.geometry = structurePathRouteApiData[0].geojson_new_built;
+                structure_to_roadSegment.length = structureroadDistance;
 
                 #region Nearest structure 
                 if (lstNearestNetworkStructure.Count > 0)
@@ -283,28 +309,38 @@ namespace IntegrationServices.Controllers
 
                 ProStructure proposedStructure = new ProStructure();
                 #region proposed structure 
+
+                
                 Location proLocation = new Location();
-                proLocation.latitude = lstFiberPoint[0].latitude;
-                proLocation.longitude = lstFiberPoint[0].longitude;
+                proLocation.latitude = lstFiberPoint[0].latitude; // set fiber path point as structure point
+                proLocation.longitude = lstFiberPoint[0].longitude;// set fiber path point as structure point
 
                 Routes proRoute = new Routes();
                 proRoute.customer_to_road = customer_to_roadSegment;
                 proRoute.road_path = road_pathSegment;
                 proRoute.structure_to_road = structure_to_roadSegment;
-                RouteBuffer proRouteCables_in_routeBuffer = new RouteBuffer();
-                proRouteCables_in_routeBuffer.cable_network_id = lstNearestNetworkStructure[0].cable_network_id;
-                proRouteCables_in_routeBuffer.cable_name = lstNearestNetworkStructure[0].cable_network_id;
-                proRouteCables_in_routeBuffer.geometry = lstNearestNetworkStructure[0].cable_geom;
-                List<RouteBuffer> lstProRouteBuffer = new List<RouteBuffer>();
-                lstProRouteBuffer.Add(proRouteCables_in_routeBuffer);
+               
 
                 proposedStructure.location = proLocation;
                 proposedStructure.route = proRoute;
-                proposedStructure.cables_in_route_buffer = lstProRouteBuffer;
+
+                #region There will no cable in proposed structure
+
+                //  RouteBuffer proRouteCables_in_routeBuffer = new RouteBuffer();
+                //  proRouteCables_in_routeBuffer.cable_network_id = lstNearestNetworkStructure[0].cable_network_id;
+                //    proRouteCables_in_routeBuffer.cable_name = lstNearestNetworkStructure[0].cable_network_id;
+                //  proRouteCables_in_routeBuffer.geometry = lstNearestNetworkStructure[0].cable_geom;
+                //    List<RouteBuffer> lstProRouteBuffer = new List<RouteBuffer>();
+                //    lstProRouteBuffer.Add(proRouteCables_in_routeBuffer);
+                //proposedStructure.cables_in_route_buffer = lstProRouteBuffer; 
+
+                #endregion
+
                 #endregion
 
 
 
+                // Final response
                 var responseData = new ResponseData
                 {
                     request_id = request_id,
@@ -319,7 +355,7 @@ namespace IntegrationServices.Controllers
             catch (Exception ex)
             {
                 ErrorLogHelper logHelper = new ErrorLogHelper();
-                logHelper.ApiLogWriter("getDarkFiberFeasibility()", "DaFiFeasibilityController", "", ex);
+                logHelper.ApiLogWriter("enterpriseFeasibility_new()", "DaFiFeasibilityController", "", ex);
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError, new { status = "UNKNOWN_ERROR", message = "Error while processing the request." });
             }
         }
