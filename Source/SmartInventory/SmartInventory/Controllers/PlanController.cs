@@ -160,7 +160,13 @@ namespace SmartInventory.Controllers
             if (user_id != 0)
             {
                 planobj = new BLPlan().PlanBom(model, user_id);
-            }
+                var planbom = planobj?.FirstOrDefault(); // get one record if exists
+
+                if (planbom != null)
+                {
+                    Session["SiteId"] = planbom.site_id; 
+                }
+             }
             return PartialView("_BomBoqList", planobj);
         }
 
@@ -310,10 +316,12 @@ namespace SmartInventory.Controllers
         public PartialViewResult GetLoopManage(int tempPlanid, double looplength, bool is_loop_updated)
         {
             List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid);
-           
-            if (!is_loop_updated) { 
-            list.ForEach(x => x.loop_length = looplength);
-            }
+            string SiteId = Session["SiteId"].ToString();
+            list.ForEach(x => x.site_id = SiteId);
+
+            //if (!is_loop_updated) { 
+            //list.ForEach(x => x.loop_length = looplength);
+            //}
             return PartialView("_LoopManage", list);
         }
 
