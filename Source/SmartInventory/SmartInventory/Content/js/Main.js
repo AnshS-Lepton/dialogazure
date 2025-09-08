@@ -11236,7 +11236,7 @@ var Main = function () {
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
         infoWindow = new google.maps.InfoWindow({
-            content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
+            content: `<div style="color: black;  padding-top: 9px;  font-size: 10px; font-weight: bold;">
         (${total_core}F)(${cable_measured_length} m)(${core_number})
                </div>`,
             position: midLatLng
