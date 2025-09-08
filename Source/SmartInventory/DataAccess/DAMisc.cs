@@ -2565,7 +2565,7 @@ namespace DataAccess
         {
             try
             {
-                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length , p_polespecvendor = model.poleSpecVendor , p_manholespecvendor  = model.manholeSpecVendor , p_scspecvendor  = model.spliceclosureSpecVendor }, true);
+                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length , p_polespecvendor = model.poleSpecVendor , p_manholespecvendor  = model.manholeSpecVendor , p_scspecvendor  = model.spliceclosureSpecVendor, p_loop_span = model.loop_span }, true);
                 return res;
             }
             catch (Exception ex)

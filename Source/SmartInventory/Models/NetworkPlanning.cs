@@ -77,6 +77,7 @@ namespace Models
         public  double? offset_value  { get; set; }
         public bool is_loop_required { get; set; }
         public double loop_length { get; set; }
+        public double loop_span { get; set; }
         [NotMapped]
         public bool is_loop_update { get; set; }
         [NotMapped]
@@ -103,6 +104,8 @@ namespace Models
         public string manholeSpecVendor { get; set; }
         [NotMapped]
         public string spliceclosureSpecVendor { get; set; }
+        [NotMapped]
+        public string site_id { get; set; }
         public NetworkPlanning()
         {
             objPM = new PageMessage();
@@ -159,6 +162,8 @@ namespace Models
         public double loop_length { get; set; }
         [NotMapped]
         public int entity_count { get; set; }
+        [NotMapped]
+        public string site_id { get; set; }
 
     }
     public class PlanBom
@@ -174,6 +179,7 @@ namespace Models
 
         public int temp_plan_id { get; set; }
         public double cable_length { get; set; }
+        public string site_id { get; set; }
     }
 
     public class ViewModelNetworkPlanning {

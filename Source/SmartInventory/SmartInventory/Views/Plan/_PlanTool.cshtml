@@ -219,6 +219,12 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                         @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return networkdata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                     </div>
                                 </div>
+                                <div id="dvLoopSpan" class="form-group" style="display:none;">
+                                    <label class="control-label col-md-5">Loop Span (m) :</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.loop_span, new { @id = "loopSpan", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
+                                    </div>
+                                </div>
                                 <div class="form-group" id="suggestBox" style="display:none;">
                                     <label class="control-label col-md-5 w-space">Suggested Routes:</label>
                                     <div class="col-md-7">
@@ -232,7 +238,7 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                     {
                                         <fieldset class="entity_@layers.layer_name">
                                             <legend>@layers.layer_name</legend>
-                                             
+
                                             <!-- Specification Dropdown -->
                                             <div class="row @layers.layer_name">
                                                 <label class="control-label col-sm-4" for="specification_@layers.layer_name">

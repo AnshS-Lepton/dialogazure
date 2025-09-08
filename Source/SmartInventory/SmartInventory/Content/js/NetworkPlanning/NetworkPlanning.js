@@ -117,6 +117,7 @@ var NetworkPlanning = function () {
         $('#is_create_duct').prop('checked', false);
         $('#trenchduct').hide();
         $('#loop_length').val(0);
+        $('#loopSpan').val(0);
         $('#DvloopLength').hide();
         $('#is_loop_requiredNo').prop('checked', true);
         $('#is_loop_requiredYes').prop('checked', false);
@@ -257,16 +258,29 @@ var NetworkPlanning = function () {
         var cableLength = parseFloat($('#cable_length').val()) || 0;
         var loop_length = parseFloat($('#loop_length').val()) || 0;
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
+        var loop_span = parseFloat($('#loopSpan').val()) || 0;
 
         if (loop_length <= 0 && is_loop_required == "True") {
             $('#loop_length').addClass('form-control input-validation-error');
             isValid = false;
-        } else if (loop_length >= cableLength) {
+        }
+        else if (loop_length >= cableLength) {
             alert("Loop length cannot be greater or equal to Cable Drum Length!");
             $('#loop_length').addClass('form-control input-validation-error');
             isValid = false;
-        } else {
+        }
+        else if (loop_span <= 0 && is_loop_required == "True") {
+            $('#loopSpan').addClass('form-control input-validation-error');
+            isValid = false
+        }
+        else if (loop_span >= cableLength) {
+            alert("Loop Span cannot be greater or equal to Cable Drum Length!");
+            $('#loopSpan').addClass('form-control input-validation-error');
+            isValid = false;
+        }
+        else {
             $('#loop_length').removeClass('input-validation-error');
+            $('#loopSpan').removeClass('input-validation-error');
         }
 
         // --- Entity dropdown validations ---
@@ -1533,13 +1547,16 @@ var NetworkPlanning = function () {
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
         if (is_loop_required == "True") {
             $('#DvloopLength').show();
+            $('#dvLoopSpan').show();
             $('#ManageLoop').show();
             return true;
         }
         else {
             $('#DvloopLength').hide();
+            $('#dvLoopSpan').hide();
             $('#ManageLoop').hide();
             $('#loop_length').val(0);
+            $('#loopSpan').val(0);
             return false;
         }
     }
