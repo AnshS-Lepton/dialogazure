@@ -117,6 +117,7 @@ var NetworkPlanning = function () {
         $('#is_create_duct').prop('checked', false);
         $('#trenchduct').hide();
         $('#loop_length').val(0);
+        $('#loopSpan').val(0);
         $('#DvloopLength').hide();
         $('#is_loop_requiredNo').prop('checked', true);
         $('#is_loop_requiredYes').prop('checked', false);
@@ -135,6 +136,8 @@ var NetworkPlanning = function () {
         $('#ddledit_path').attr('disabled', false).trigger("chosen:updated");
         if (networkdata.StartTmpLine != undefined && networkdata.StartTmpLine != null) { networkdata.StartTmpLine.setMap(null); networkdata.StartTmpLine = null; }
         if (networkdata.EndTmpLine != undefined && networkdata.EndTmpLine != null) { networkdata.EndTmpLine.setMap(null); networkdata.EndTmpLine = null; }
+        $(".planTool-fieldset select").val("").trigger("chosen:updated");
+        $(".planTool-fieldset input[type=text]").val("");    
     }
 
     this.ResetOffSet = function () {
@@ -235,33 +238,89 @@ var NetworkPlanning = function () {
     }
 
     this.loopValidation = function () {
+        let isValid = true;
 
-        return validateSpanlength() === 'true';
+        // --- Span length validation ---
+        if (validateSpanlength() !== 'true') {
+            isValid = false;
+        }
 
+        // --- Manual mode start/end ---
         if (!app.networkPlanningManualmode('start', false)) {
-            return false;
+            isValid = false;
         }
 
         if (!app.networkPlanningManualmode('end', false)) {
-            return false;
+            isValid = false;
         }
 
-
-        var cableLength = parseFloat($('#cable_length').val());
-        var loop_length = parseFloat($('#loop_length').val());
+        // --- Cable & Loop length checks ---
+        var cableLength = parseFloat($('#cable_length').val()) || 0;
+        var loop_length = parseFloat($('#loop_length').val()) || 0;
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
+        var loop_span = parseFloat($('#loopSpan').val()) || 0;
 
         if (loop_length <= 0 && is_loop_required == "True") {
             $('#loop_length').addClass('form-control input-validation-error');
-            return false;
+            isValid = false;
         }
-        if (loop_length >= cableLength) {
-            alert("Loop length cannot be greater and equal than Cable Drum Length!");
+        else if (loop_length >= cableLength) {
+            alert("Loop length cannot be greater or equal to Cable Drum Length!");
             $('#loop_length').addClass('form-control input-validation-error');
-            return false;
+            isValid = false;
         }
-        return true;
-    }
+        else if (loop_span <= 0 && is_loop_required == "True") {
+            $('#loopSpan').addClass('form-control input-validation-error');
+            isValid = false
+        }
+        else if (loop_span >= cableLength) {
+            alert("Loop Span cannot be greater or equal to Cable Drum Length!");
+            $('#loopSpan').addClass('form-control input-validation-error');
+            isValid = false;
+        }
+        else {
+            $('#loop_length').removeClass('input-validation-error');
+            $('#loopSpan').removeClass('input-validation-error');
+        }
+
+        // --- Entity dropdown validations ---
+        $(".planTool-fieldset fieldset:visible").each(function () {
+            var $fieldset = $(this);
+
+            // Specification dropdown
+            var $spec = $fieldset.find("select[id^='specification_']");
+            if (!$spec.val()) {
+                $spec.addClass("input-validation-error");
+                $spec.next(".chosen-container").addClass("input-validation-error");  
+                isValid = false;
+            } else {
+                $spec.removeClass("input-validation-error");
+                $spec.next(".chosen-container").removeClass("input-validation-error");
+            }
+
+            // Vendor dropdown
+            var $vendor = $fieldset.find("select[id^='ddlVendor_']");
+            if (!$vendor.val()) {
+                $vendor.addClass("input-validation-error");
+                $vendor.next(".chosen-container").addClass("input-validation-error");
+                isValid = false;
+            } else {
+                $vendor.removeClass("input-validation-error");
+                $vendor.next(".chosen-container").removeClass("input-validation-error");
+            }
+            // ✅ Item Code textbox
+            var $itemCode = $fieldset.find("input[id^='txtItemCode_']");
+            if (!$itemCode.val().trim()) {
+                $itemCode.addClass("input-validation-error");
+                isValid = false;
+            } else {
+                $itemCode.removeClass("input-validation-error");
+            }
+        });
+
+        return isValid;
+    };
+
 
     this.autoPlanningEndPoint = function () {
 
@@ -332,7 +391,7 @@ var NetworkPlanning = function () {
     }
 
     this.createAutoPlanNetwork = function () {
-
+        debugger;
         if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
@@ -447,20 +506,35 @@ var NetworkPlanning = function () {
         $('#is_create_duct').prop('checked', false);
         var cabletype = $('#cable_type').val();
         $('#txtdistance').html('');
+
         if (cabletype == "Underground") {
             $('#ddledit_path').val('google').trigger("chosen:updated");
             $('#trenchduct').show();
-            $('#ddledit_path').attr('disabled', false).trigger("chosen:updated");
-            $('#txtdistance').append(MultilingualKey.SI_OSP_GBL_JQ_FRM_217+" Span(m)<i class='clsMandatory'>*</i>:");
-        }
-        else if (cabletype == "Overhead") {
+            $('#ddledit_path').prop('disabled', false).trigger("chosen:updated");
+            $('#txtdistance').append(MultilingualKey.SI_OSP_GBL_JQ_FRM_217 + " Span(m)<i class='clsMandatory'>*</i>:");
+
+            $(".planTool-fieldset").show();             // show parent container
+            $(".planTool-fieldset fieldset").hide();   // hide all first
+            $(".entity_Manhole, .entity_SpliceClosure").show(); // only show needed for underground
+
+        } else if (cabletype == "Overhead") {
             $('#ddledit_path').val('manually');
-            $('#ddledit_path').attr('disabled', true).trigger("chosen:updated");
-            $('#trenchduct').hide(); $('#txtdistance').append("Pole Span(m)<i class='clsMandatory'>*</i>:");
+            $('#ddledit_path').prop('disabled', true).trigger("chosen:updated");
+            $('#trenchduct').hide();
+            $('#txtdistance').append("Pole Span(m)<i class='clsMandatory'>*</i>:");
+
+            $(".planTool-fieldset").show();             // show parent container
+            $(".planTool-fieldset fieldset").hide();   // hide all first
+            $(".entity_Pole, .entity_SpliceClosure").show(); // only show needed for underground           
+
+        } else {
+            $('.planTool-fieldset').hide();
+            $('#txtdistance').append("Span(m)<i class='clsMandatory'>*</i>:");        
         }
-        else { $('#txtdistance').append("Span(m)<i class='clsMandatory'>*</i>:"); }
+
         this.createFullNetwork();
     }
+
 
     this.createFullNetwork = function () {
 
@@ -1399,6 +1473,7 @@ var NetworkPlanning = function () {
         else {
             $('.mainPart').hide();
         }
+        $(".planTool-fieldset fieldset").hide(); 
     }
 
 
@@ -1472,13 +1547,16 @@ var NetworkPlanning = function () {
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
         if (is_loop_required == "True") {
             $('#DvloopLength').show();
+            $('#dvLoopSpan').show();
             $('#ManageLoop').show();
             return true;
         }
         else {
             $('#DvloopLength').hide();
+            $('#dvLoopSpan').hide();
             $('#ManageLoop').hide();
             $('#loop_length').val(0);
+            $('#loopSpan').val(0);
             return false;
         }
     }
@@ -1932,5 +2010,3 @@ function validateSpanlength() {
     }
     return status;
 }
-
-

@@ -88,6 +88,23 @@ namespace BusinessLogics
             return objDAMisc.getNearByFeasibility(latitude, longitude, bufferInMtr);
 
         }
+        public List<nearestFiberPoint> getNearestFiberPoint(double latitude, double longitude, int bufferInMtr)
+        {
+            return objDAMisc.getNearestFiberPoint(latitude, longitude, bufferInMtr);
+
+        }
+
+        public List<nearestStructure> getNearestNetworkStructure(double latitude, double longitude, string network_id)
+        {
+            return objDAMisc.getNearestNetworkStructure(latitude, longitude, network_id);
+
+        }
+        public List<customerToRoad> getcustomerToRoad(double latitude1, double longitude1, double latitude2, double longitude2)
+        {
+            return objDAMisc.getcustomerToRoad(latitude1, longitude1, latitude2, longitude2);
+
+        }
+
         public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
         {
             return objDAMisc.getRouteBufferFeasibility(coordinates,route_buffer);
@@ -1190,7 +1207,7 @@ namespace BusinessLogics
         {
             return new DAPlan().PlanBom(model, user_id);
         }
-        public List<DbMessageForPlan> savePoint2Point(NetworkPlanning objPlan)
+        public DbMessageForPlan savePoint2Point(NetworkPlanning objPlan)
         {
             return new DAPlan().savePoint2Point(objPlan);
         }
@@ -1271,11 +1288,11 @@ namespace BusinessLogics
 
         public void UpdateBackBoneLoopLength(List<BackbonePlanNetworkDetails> model)
         {
-            new DABackBonePlan().UpdateBackBoneLoopLength(model);
+            new DABackBoneNetworkPlan().UpdateBackBoneLoopLength(model);
         }
-        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, int userId)
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id, int userId, bool is_looprequired, string linegeom, double loopSpan, double loopLength)
         {
-            return new DABackBonePlan().GetBackBoneLoopList(plan_id, userId);
+            return new DABackBoneNetworkPlan().GetBackBoneLoopList(plan_id, userId, is_looprequired, linegeom, loopSpan, loopLength);
         }
         public List<BackBoneSproutFiberDetails> SaveNearestSite(List<SitePlanList> model , int userId)
         {
@@ -1288,6 +1305,14 @@ namespace BusinessLogics
         public SitePlanList updateSiteRoute(string geom, int planId, int p_systemId, int userId)
         {
              return new DABackBonePlanSite().updateSiteRoute(geom, planId, p_systemId, userId);
+        } 
+        public List<SitePlanList> getNearestSiteHistoryList( int planId)
+        {
+             return new DABackBonePlanSite().getNearestSiteHistoryList( planId);
+        }
+        public void getUpdateBackbonePlan(bool createPlan ,int planId)
+        {
+             new DABackBonePlan().getUpdateBackbonePlan(createPlan,planId);
         }
     }
     public class BLSiteCircle

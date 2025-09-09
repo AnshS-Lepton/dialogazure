@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iTextSharp.text.pdf.parser;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -76,6 +77,7 @@ namespace Models
         public  double? offset_value  { get; set; }
         public bool is_loop_required { get; set; }
         public double loop_length { get; set; }
+        public double loop_span { get; set; }
         [NotMapped]
         public bool is_loop_update { get; set; }
         [NotMapped]
@@ -86,8 +88,24 @@ namespace Models
         public double MaxAutoOffsetValue { get; set; }
         [NotMapped]
         public bool is_bomboq_reqested { get; set; }
-    
-
+        [NotMapped]
+        public string specification { get; set; }
+        [NotMapped]
+        public string vendor_id { get; set; }
+        [NotMapped]
+        public string item_code { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> lstSpecification { get; set; }
+        [NotMapped]
+        public List<KeyValueDropDown> lstVendor { get; set; }
+        [NotMapped]
+        public string poleSpecVendor { get; set; }
+        [NotMapped]
+        public string manholeSpecVendor { get; set; }
+        [NotMapped]
+        public string spliceclosureSpecVendor { get; set; }
+        [NotMapped]
+        public string site_id { get; set; }
         public NetworkPlanning()
         {
             objPM = new PageMessage();
@@ -98,7 +116,12 @@ namespace Models
           
         }
     }
-
+    public class LayerInputModel
+    {
+        public string LayerName { get; set; }
+        public string Specification { get; set; }
+        public string VendorId { get; set; }
+    }
     public class EntityDirection
     {
         public string layer_type { get; set; }
@@ -139,6 +162,8 @@ namespace Models
         public double loop_length { get; set; }
         [NotMapped]
         public int entity_count { get; set; }
+        [NotMapped]
+        public string site_id { get; set; }
 
     }
     public class PlanBom
@@ -154,6 +179,7 @@ namespace Models
 
         public int temp_plan_id { get; set; }
         public double cable_length { get; set; }
+        public string site_id { get; set; }
     }
 
     public class ViewModelNetworkPlanning {
@@ -176,4 +202,6 @@ namespace Models
             objPlanDataFilter = new NetworkPlanningDataFilter();
         }
     }
+   
+
 }

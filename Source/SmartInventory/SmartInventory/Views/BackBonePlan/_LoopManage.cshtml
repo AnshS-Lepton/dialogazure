@@ -36,22 +36,24 @@
                                     {
                                     counter = counter + 1;
                                     <div class="displayRows">
-                                        @*@Html.TextBox("lstLoopMangment[" + i + "].loop_length", @Model[i].loop_length, new { id = "lstLoopMangment_" + i + "_start_reading", @class = "form-control  enableControl", @onblur = "si.calculateLoopLength(" + i + ", " + @Model[i].loop_length + ");", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })*@
-                                        @Html.TextBoxFor(x=>x[i].loop_length, new { @class = "form-control  enableControl", id = "lstLoopMangment_" + i, @onblur = "return backbonedata.CheckLoopLenght(this)", onkeydown = "return ValidateNumberDecimal(this,event,5,2);"})
-
-                                        @counter
+                                        @Html.TextBoxFor(x => x[i].loop_length, new { @class = "form-control  enableControl", id = "lstLoopMangment_" + i, @onblur = "return backbonedata.CheckLoopLenght(this)", onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
+                                        @if (Model[i].entity_type == "Pole")
+                                        {
+                                        @("PL-" + counter.ToString("D2"))
+                                        }
+                                        else
+                                        {
+                                        @("MH-" + counter.ToString("D2"))
+                                        }
                                     </div>
                                     <div>
                                         @Html.HiddenFor(x => x[i].system_id)
                                         @Html.HiddenFor(x => x[i].entity_type)
-                                        @*@Html.HiddenFor(x => x[i].fraction)
-                                        @Html.HiddenFor(x => x[i].is_middle_point)*@
                                         @Html.HiddenFor(x => x[i].latitude)
                                         @Html.HiddenFor(x => x[i].longitude)
                                         @Html.HiddenFor(x => x[i].plan_id)
                                         @Html.HiddenFor(x => x[i].is_loop_required)
                                         @Html.HiddenFor(x => x[i].created_by)
-                                        @*@Html.HiddenFor(x => x[i].sp_geometry)*@
                                     </div>
                                     }
 

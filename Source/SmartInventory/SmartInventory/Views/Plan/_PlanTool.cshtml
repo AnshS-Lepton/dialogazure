@@ -44,6 +44,9 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                     @Html.HiddenFor(m => m.is_loop_update)
                     @Html.HiddenFor(m => m.MinAutoPlanEndPointBuffer)
                     @Html.HiddenFor(m => m.MaxAutoPlanEndPointBuffer)
+                    @Html.HiddenFor(m => m.manholeSpecVendor, new { id = "manholeSpecVendor" })
+                    @Html.HiddenFor(m => m.poleSpecVendor, new { id = "poleSpecVendor" })
+                    @Html.HiddenFor(m => m.spliceclosureSpecVendor, new { id = "spliceclosureSpecVendor" })
 
                     <div class="prowindowNetworkData">
                         <div class="createPlan">
@@ -216,14 +219,81 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                                         @Html.TextBoxFor(x => x.loop_length, new { @id = "loop_length", Value = "", @class = "form-control", @onblur = "return networkdata.CheckLoopLenght(this);", @onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                     </div>
                                 </div>
+                                <div id="dvLoopSpan" class="form-group" style="display:none;">
+                                    <label class="control-label col-md-5">Loop Span (m) :</label>
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(m => m.loop_span, new { @id = "loopSpan", @class = "form-control", Value = "", @onkeydown = "return ValidateNumberDecimal(this,event,7,2);" })
+                                    </div>
+                                </div>
                                 <div class="form-group" id="suggestBox" style="display:none;">
                                     <label class="control-label col-md-5 w-space">Suggested Routes:</label>
                                     <div class="col-md-7">
-                                        <div class="splicing--Box-check routeBox"> 
+                                        <div class="splicing--Box-check routeBox">
                                         </div>
                                     </div>
 
                                 </div>
+                                <div class="planTool-fieldset" style="display:none">
+                                    @foreach (var layers in Model.lstLayers)
+                                    {
+                                        <fieldset class="entity_@layers.layer_name">
+                                            <legend>@layers.layer_name</legend>
+
+                                            <!-- Specification Dropdown -->
+                                            <div class="row @layers.layer_name">
+                                                <label class="control-label col-sm-4" for="specification_@layers.layer_name">
+                                                    @Resources.Resources.SI_OSP_GBL_NET_FRM_012<i class="clsMandatory">*</i>:
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <select id="specification_@layers.layer_name"
+                                                            name="specification_@layers.layer_name"
+                                                            @*required="required"*@
+                                                            class="chosen-select col-sm-12"
+                                                            onchange="OnchangeBindVendor(this);">
+                                                        <option value="">-Select-</option>
+                                                        @foreach (var attribute in Model.lstSpecification
+                                                            .Where(x => x.key.Split(',')[3] == layers.layer_id.ToString())
+                                                            .Select(x => new { Value = x.value, Text = x.key, Type = x.type }))
+                                                        {
+                                                            <option value="@attribute.Text"
+                                                                    data-type="@attribute.Type"
+                                                                    @(Model.specification == attribute.Value ? "selected" : "")>
+                                                                @attribute.Value
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-01">
+                                                <!-- Vendor Dropdown -->
+                                                <label class="control-label col-sm-4" for="ddlVendor_@layers.layer_name">
+                                                    @Resources.Resources.SI_OSP_GBL_NET_FRM_013<i class="clsMandatory">*</i>:
+                                                </label>
+                                                <div class="col-md-8">
+                                                    <select id="ddlVendor_@layers.layer_name"
+                                                            name="vendor_id_@layers.layer_name"
+                                                            @*required="required"*@
+                                                            class="chosen-select form-control"
+                                                            onchange="si.ddlChangeRemoveCss('ddlVendor_@layers.layer_name', 'Vendor')">
+                                                        <option value="">Select Vendor</option>
+                                                        @foreach (var vendor in Model.lstVendor)
+                                                        {
+                                                            <option value="@vendor.key" @(Model.vendor_id == vendor.key ? "selected" : "")>@vendor.value</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-01">
+                                                <label class="control-label col-sm-4"> Item Code<i class="clsMandatory">*</i>:</label>
+                                                <div class="col-md-8">
+                                                    @Html.TextBoxFor(m => m.item_code, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtItemCode_" + layers.layer_name })
+
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    }
+                                </div>
+
                                 <div class="form-group">
                                     <label class="control-label col-md-12" id="lengthAutoPlaningDiv"></label>
                                 </div>
@@ -238,11 +308,13 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                             <div id="BomDetails"></div>
                         </div>
                     </div>
-
+                    <input type="hidden" id="poleSpecVendor" name="poleSpecVendor" />
+                    <input type="hidden" id="manholeSpecVendor" name="manholeSpecVendor" />
+                    <input type="hidden" id="spliceclosureSpecVendor" name="spliceclosureSpecVendor" />
                 }
             </div>
             <div class="tab-pane" id="planInfo"></div>
-
+           
         </div>
     </div>
 
@@ -252,13 +324,13 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
 <script type="text/javascript">
 
     var networkdata = new NetworkPlanning();
-
     var inputs = [];
     var defaultBufer = '@Model.end_point_buffer';
     $(document).ready(function () {
+        debugger;
         $('#suggestBox').hide();
         networkdata.initApp();
-
+     
         callFormValidator("frmNetworkPlanning");
         $('.chosen-select').chosen({ width: '100%' });
         $('form').on('keyup change paste', 'input, select, checkbox', function () {
@@ -270,14 +342,89 @@ new { id = "frmNetworkPlanning", enctype = "multipart/form-data", autocomplete =
                 networkdata.CheckLoopRequired();
             }
         });
+        $(document).on("change", "select[id^='specification_'], select[id^='ddlVendor_']", function () {
+            var $dropdown = $(this);
+            var $fieldset = $dropdown.closest("fieldset");
+            var $spec = $fieldset.find("select[id^='specification_']");
+            var $vendor = $fieldset.find("select[id^='ddlVendor_']");
+            var $itemcode = $fieldset.find("input[id^='txtItemCode_']"); 
+
+            // Check specification first (master control)
+            if ($spec.val()) {
+                // ✅ Specification selected → remove errors from both
+                $spec.removeClass("input-validation-error");
+                $spec.next(".chosen-container").removeClass("input-validation-error");
+
+                $vendor.removeClass("input-validation-error");
+                $vendor.next(".chosen-container").removeClass("input-validation-error");
+
+                $itemcode.removeClass("input-validation-error");
+            } else {
+                // ❌ Specification empty → show error for both
+                $spec.addClass("input-validation-error");
+                $spec.next(".chosen-container").addClass("input-validation-error");
+
+                $vendor.addClass("input-validation-error");
+                $vendor.next(".chosen-container").addClass("input-validation-error");
+
+                $itemcode.addClass("input-validation-error");
+            }
+        });
+
+
     });
+    
     $('#btnReset').on("click", function () {
         $('#ddlplanning_mode').val(0).trigger("chosen:updated");
         $('#plan_name').val('');
         networkdata.ResetPlanForm();
     });
 
+    function OnchangeBindVendor(specDropdown) {
+        debugger;
+        const $specDropdown = $(specDropdown);
+        const selectedSpec = $specDropdown.val();
 
+        const specDropdownId = $specDropdown.attr('id');
+        const layerName = specDropdownId.replace('specification_', '');
+        const vendorDropdownId = 'ddlVendor_' + layerName;
+        const itemCodeInputId = 'txtItemCode_' + layerName;
+
+        const $vendorDropdown = $('#' + vendorDropdownId);
+        const $itemCodeInput = $('#' + itemCodeInputId);
+
+        if (!selectedSpec || selectedSpec === '') {
+            $itemCodeInput.val('');
+
+            $vendorDropdown.empty().append(
+                $('<option>', { value: '', text: 'Select Vendor' })
+            ).val('').trigger('chosen:updated');
+
+            $(`#${layerName.toLowerCase()}SpecVendor`).val('');
+            return;
+        }
+
+        const vendorInfo = selectedSpec.split(',');
+        const itemCode = vendorInfo[1];
+        const vendorId = vendorInfo[2];
+
+        $itemCodeInput.val(itemCode);
+
+        ajaxReq('Plan/GetVendorListById', { vendorId: vendorId }, true, function (resp) {
+            if (resp) {
+                const vendor = resp;
+
+                $vendorDropdown.empty().append(
+                    $('<option>', { value: '', text: 'Select Vendor' }),
+                    $('<option>', { value: vendor.key, text: vendor.value })
+                ).val(vendor.key).trigger('chosen:updated');
+
+                const specVendorId = `${selectedSpec}`;
+                const hiddenFieldId = `#${layerName.toLowerCase()}SpecVendor`;
+                $(hiddenFieldId).val(specVendorId);
+            }
+        }, true, false, true);
+    }
 
 
 </script>

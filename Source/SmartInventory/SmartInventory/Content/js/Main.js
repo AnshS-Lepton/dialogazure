@@ -11295,7 +11295,7 @@ var Main = function () {
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
         infoWindow = new google.maps.InfoWindow({
-            content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
+            content: `<div style="color: black;  padding-top: 9px;  font-size: 10px; font-weight: bold;">
         (${total_core}F)(${cable_measured_length} m)(${core_number})
                </div>`,
             position: midLatLng
@@ -20338,7 +20338,7 @@ var Main = function () {
 
 
     }
-    this.BulkasPopAssociation = function (type, _entitySubtype) {
+    this.BulkasPopAssociation = function (type, _entitySubtype, selectionType) {
         //;
         if (type == 'All')
 
@@ -20353,7 +20353,7 @@ var Main = function () {
         pageTitleText = layerTitle + ' Association';
 
         modalClass = 'modal-lg';
-        popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype }, pageTitleText, modalClass);
+        popup.LoadModalDialog('CHILD', 'Library/GetPodDetailsInBulk', { geom: _geom, entity_sub_type: _entitySubtype, selectionType: selectionType }, pageTitleText, modalClass);
     }
     this.funBulkDeleteEntity = function (_networkStatus, _entitytype, _entitySubtype, system_id) {
         let selectedUsers = $("#ddlUsers").val().join(',');
@@ -21022,7 +21022,7 @@ var Main = function () {
     }
     this.getNewCableDetails = function () {
         $('#btnSplitCable').prop('disabled', '');
-        var splitcablesystemid = $("input[name='Cable']:checked").attr('s_id');
+        var splitcablesystemid = $('input.Cable_address[name="Cable"]:checked').attr("s_id");
         $('#split_cable_system_id').val(splitcablesystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
         var splitEntitytype = $('#split_entity_type').val();
@@ -33668,6 +33668,34 @@ var Main = function () {
         }
         return true;
     }
+    this.hideAllSegmentNetworkFile = function () {
+        if (si.startMarker)
+            si.startMarker.setMap(null);
+        if (si.endMarker)
+            si.endMarker.setMap(null);
+        if (si.gMapObj.infoEntity != undefined) { si.gMapObj.infoEntity.setMap(null); }
+        si.clearMarkers();
+        removeSegmentOldMarkersWithRemoveActive();
+        if (si.gMapObj.entitySrchObj)
+            si.gMapObj.entitySrchObj.setMap(null);
+        si.autoplanid = 0;
+        si.autobackboneplanid = 0;
+        app.autoplanningPlanId = 0;
+        if (si.distanceWidget) {
+            si.distanceWidget.set("map", null);
+            si.distanceWidget = null;
+        }
+        
+        if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
+        if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
+
+        app.NetworkStartPoint = null;
+        app.startLatLng = null;
+        app.endLatLng = null;
+        app.NetworkEndPoint = null;
+
+    }
+
     this.hideAllNetworkFile = function () {
         // app.deleteAllMiddleMarker();
         if (si.startMarker)

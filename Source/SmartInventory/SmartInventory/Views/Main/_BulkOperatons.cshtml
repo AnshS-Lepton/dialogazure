@@ -94,7 +94,7 @@
                             }
                             if (objUser.role_id != 1 && isPODAssociationEnabled)
                             {
-                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','','@Model.objFilterAttributes.selection_type');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
                             }
                             if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
                             {
@@ -117,7 +117,7 @@
                             }
                             if (objUser.role_id != 1)
                             {
-                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','','@Model.objFilterAttributes.selection_type');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
                             }
                             if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
                             {
@@ -136,7 +136,7 @@
                             }
                             if (objUser.role_id != 1)
                             {
-                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
+                                <button type="button" class="btn btn-primary" id="btnPopAssociationProcess" onclick="si.BulkasPopAssociation('All','','@Model.objFilterAttributes.selection_type');">@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159</button>
                             }
 
                             if (objUser.role_id == 1 || userModuleList.Contains("BDEL"))
@@ -261,7 +261,7 @@ grid.Column("", Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format:
                                                                     //}
                                                                     if (isPODAssociationEnabled)
                                                                     {
-                                                                        <span class="bulkEntityPodAsstn @(!item.is_pod_association_allowed || !editPermission ? "roledisabled" : "")" title="@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159" onclick="@(!item.is_pod_association_allowed || !editPermission ? "disabledItem(event);" : "si.BulkasPopAssociation( '" + item.entity_type + "','" + item.entity_sub_type + "')")"></span>
+                                                                        <span class="bulkEntityPodAsstn @(!item.is_pod_association_allowed || !editPermission ? "roledisabled" : "")" title="@layer_Detail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_159" onclick="@(!item.is_pod_association_allowed || !editPermission ? "disabledItem(event);" : "si.BulkasPopAssociation( '" + item.entity_type + "','" + item.entity_sub_type + "','" + @Model.objFilterAttributes.selection_type + "')")"></span>
                                                                     }
                                                                 }
                                                                 @if (objUser.role_id == 1 || (userModuleList.Contains("BDEL")))

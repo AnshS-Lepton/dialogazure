@@ -215,6 +215,52 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<nearestFiberPoint> getNearestFiberPoint(double latitude, double longitude, int bufferInMtr)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<nearestFiberPoint>("fn_get_nearestfiberpoint", new
+                {
+                    lat = latitude,
+                    lng = longitude,
+                    mtrBuffer = bufferInMtr
+
+                });
+            }
+            catch { throw; }
+        }
+        
+        public List<nearestStructure> getNearestNetworkStructure(double latitude, double longitude, string network_id)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<nearestStructure>("fn_get_connected_structure", new
+                {
+                    lat = latitude,
+                    lng = longitude,
+                    p_network_id = network_id
+
+                });
+            }
+            catch { throw; }
+        }
+
+        public List<customerToRoad> getcustomerToRoad(double latitude1, double longitude1, double latitude2, double longitude2)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<customerToRoad>("fn_get_linestring", new
+                {
+                    p_latitude1 = latitude1,
+                    p_longitude1 = longitude1,
+                    p_latitude2 = latitude2,
+                    p_longitude2 = longitude2,
+
+                });
+            }
+            catch { throw; }
+        }
+
         public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
         {
             try
@@ -229,7 +275,6 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
         public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
         {
             try
@@ -2565,7 +2610,7 @@ namespace DataAccess
         {
             try
             {
-                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length }, true);
+                var res = repo.ExecuteProcedure<PlanBom>("fn_network_planning_get_plan_bom_list", new { p_plan_name = model.plan_name, p_plan_mode = model.planning_mode, p_cable_type = model.cable_type, is_create_trench = model.is_create_trench, is_create_duct = model.is_create_duct, p_line_geom = model.geometry, p_cable_length = model.cable_length, p_distance = model.pole_manhole_distance, p_user_id = user_id, p_temp_plan_id = model.temp_plan_id, p_is_loop_require = model.is_loop_required, p_is_loop_update = model.is_loop_update, p_loop_length = model.loop_length , p_polespecvendor = model.poleSpecVendor , p_manholespecvendor  = model.manholeSpecVendor , p_scspecvendor  = model.spliceclosureSpecVendor, p_loop_span = model.loop_span }, true);
                 return res;
             }
             catch (Exception ex)
@@ -2574,12 +2619,12 @@ namespace DataAccess
             }
         }
 
-        public List<DbMessageForPlan> savePoint2Point(NetworkPlanning objPlan)
+        public DbMessageForPlan savePoint2Point(NetworkPlanning objPlan)
         {
             try
             {
-                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_network_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length });
-                return res;
+                var resp = repo.ExecuteProcedure<DbMessageForPlan>("fn_network_planning_save_auto_planning", new { p_plan_mode = objPlan.planning_mode, p_cable_type = objPlan.cable_type, is_create_trench = objPlan.is_create_trench, is_create_duct = objPlan.is_create_duct, p_line_geom = objPlan.geometry, p_cable_length = objPlan.cable_length, p_distance = objPlan.pole_manhole_distance, p_user_id = objPlan.created_by, p_plan_name = objPlan.plan_name, p_startpoint = objPlan.start_point, p_endpoint = objPlan.end_point, p_end_point_type = objPlan.end_point_type, p_end_point_buffer = objPlan.end_point_buffer, p_edit_path = objPlan.edit_path, p_end_point_entity_id = objPlan.end_point_entity, p_end_point_entity_type = objPlan.end_point_type, p_temp_plan_id = objPlan.temp_plan_id, is_loop_required = objPlan.is_loop_required, loop_length = objPlan.loop_length, p_polespecvendor = objPlan.poleSpecVendor, p_manholespecvendor = objPlan.manholeSpecVendor, p_scspecvendor = objPlan.spliceclosureSpecVendor }).FirstOrDefault();
+                return resp;
             }
             catch (Exception ex)
             {
@@ -2697,15 +2742,15 @@ namespace DataAccess
                         p_plan_name = plan.plan_name,
                         p_startpoint = plan.start_point,
                         p_endpoint = plan.end_point,
-                        p_sprout_fiber_type = plan.sprout_fiber,
-                        p_backbone_fiber_type = plan.backbone_fiber,
-                       // p_selected_site = plan.isSelectedSite,
+                        p_backbone_fiber_type = plan.backbone_fiber_type,
                         p_pole_span = Convert.ToDouble(plan.pole_distance),
                         p_manhole_span = Convert.ToDouble(plan.manhole_distance),
                         v_buffer = plan.buffer,
                         p_threshold = plan.threshold,
                         p_looplength = plan.loop_length,
-                        p_is_looprequired = plan.is_loop_required
+                        p_is_looprequired = plan.is_loop_required,
+                        cable_drum_length = plan.cable_length,
+                        p_loop_span = plan.loop_span
                     }, true).ToList();
                 return res;
             }
@@ -2729,8 +2774,8 @@ namespace DataAccess
                 var result = repo.ExecuteProcedure<BackBoneBOMOBOQResponse>("fn_backbone_get_plan_bom",
                     new { p_plan_id = model.plan_id,
                         p_user_id= userId, 
-                        p_backbone_fiber_type= model.backbone_fiber,
-                        p_sprout_fibertype = model.sprout_fiber,
+                        p_backbone_fiber_type= model.backbone_fiber_type,
+                        p_sprout_fibertype = model.sprout_fiber_type,
                         p_backbone_line_geom = model.geometry,
                         p_iscreateduct = model.is_create_duct,
                         p_iscreatetrench = model.is_create_trench
@@ -2775,16 +2820,36 @@ namespace DataAccess
                 },true);
             }
             catch { throw; }
-        }
-
+        }        
+ 
     }
-    public class DABackBonePlan : Repository<BackbonePlanNetworkDetails>
+    public class DABackBonePlan : Repository<BackBonePlanning>
     {
-        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int plan_id,int userId)
+        public void getUpdateBackbonePlan(bool createplan, int planId)
         {
             try
             {
-                return repo.GetAll(x => x.plan_id == plan_id && x.is_loop_required == true && x.created_by == userId).OrderBy(x => x.system_id).ToList();
+                var objPlan = repo.Get(x => x.plan_id == planId);
+                objPlan.is_create_plan = createplan;
+                objPlan.sprout_fiber_type = "48";
+                objPlan.total_cable_length = objPlan.total_cable_length == 0 || objPlan.total_cable_length == null  ? 1 : objPlan.total_cable_length;
+                objPlan.loop_span = objPlan.loop_span == 0 || objPlan.loop_span == null ? 1 : objPlan.loop_span; // or some default
+                objPlan.loop_length = objPlan.loop_length == 0 ? 1 : objPlan.loop_length;
+                if (objPlan != null)
+                {
+                    repo.Update(objPlan);
+                };
+            }
+            catch { throw; }
+        }
+    }
+    public class DABackBoneNetworkPlan : Repository<BackbonePlanNetworkDetails>
+    {
+        public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int planId, int userId,bool p_isloop_required, string line_geom, double loopSpan, double loopLength)
+        {
+            try
+            {                            
+                return repo.GetAll(x => x.plan_id == planId && x.is_loop_required == true && x.created_by == userId).OrderBy(x => x.system_id).ToList();
             }
             catch (Exception)
             {
@@ -2817,32 +2882,7 @@ namespace DataAccess
                 throw;
             }
         }
-        //public List<BackbonePlanNetworkDetails> getBackboneRecordByPlanId(int userId)
-        //{
-        //    try
-        //    {
-        //        List<BackbonePlanNetworkDetails> backbonePlanNetworkDetails = new List<BackbonePlanNetworkDetails>();
-        //        backbonePlanNetworkDetails = repo.GetAll(m => m.isNotify == false && m.created_by == userId && m.status == true).ToList();                              
-        //        return backbonePlanNetworkDetails;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //}
-        //public void UpdateIsNotifyStatus(int planId, int userId)
-        //{
-        //    try
-        //    {
-        //        var planDetails = repo.GetAll(m => m.plan_id == planId && m.created_by == userId ).SingleOrDefault();
-        //        planDetails.isNotify = true;
-        //        repo.Update(planDetails);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //}
+
     }
     public class DABackBonePlanSite : Repository<SitePlanList>
     {
@@ -2912,7 +2952,27 @@ namespace DataAccess
             {
                 throw;
             }
-        }        
+        }
+
+        public List<SitePlanList> getNearestSiteHistoryList(int planId)
+        {
+            try
+            {
+                var planDetail = repo.ExecuteProcedure<SitePlanList>("fn_backbone_get_history_sites",
+                new {planid = planId}, true);
+                if (planDetail.Count > 0) { 
+                return planDetail;
+                }
+                else
+                {
+                    return new List<SitePlanList>();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
         public class DAtemp_auto_network_plan : Repository<temp_auto_network_plan>
     {
@@ -3023,7 +3083,14 @@ namespace DataAccess
                 {
                     p_plan_id = planId
                 }, true).FirstOrDefault();
-                return res;
+                if (res != null)
+                {
+                    return res;
+                }
+                else
+                {
+                    return new BackBonePlanning();
+                }
             }
             catch { throw; }
         }

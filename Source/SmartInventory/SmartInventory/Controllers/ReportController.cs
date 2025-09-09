@@ -12083,121 +12083,233 @@ namespace SmartInventory.Controllers
 
             if (plan_id > 0)
             {
-                string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
-                string fileName = plan_name + "_BackBone_Planing_BomBOQ_Report_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
-                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                List<BackBonePlanBom> lstBomReport = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+                var plan = new BLPlan().GetBackbonePlanningById(plan_id);
+                string plan_name = plan?.plan_name;
 
-                DataTable dtReport = MiscHelper.ListToDataTable<BackBonePlanBom>(lstBomReport);
-                dtReport.TableName = "BOMBOQ";
+                string fileName = (string.IsNullOrEmpty(plan_name) ? "" : plan_name + "_")
+                                + "BackBone_Planing_BomBOQ_Report_"
+                                + DateTimeHelper.Now.ToString("ddMMyyyy") + "-"
+                                + DateTimeHelper.Now.ToString("HHmmss");
+
+                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+
+
+                DataTable dtReport;
+
+                if (string.IsNullOrEmpty(plan_name))
+                {
+                    // 🔹 Create a dummy DataTable with "No Record Found"
+                    dtReport = new DataTable("BOMBOQ");
+                    dtReport.Columns.Add("Message", typeof(string));
+                    dtReport.Rows.Add("No Record Found");
+                }
+                else
+                {
+                    List<BackBonePlanBom> lstBomReport = new BLPlan().GetBackBonePlanBomByPlanId(plan_id, user_id);
+                    dtReport = MiscHelper.ListToDataTable<BackBonePlanBom>(lstBomReport);
+                    dtReport.TableName = "BOMBOQ";
+
+                    if (dtReport.Rows.Count > 0)
+                    {
+                        if (dtReport.Columns.Contains("entity_type"))
+                            dtReport.Columns["entity_type"].ColumnName = "Entity Type";
+
+                        if (dtReport.Columns.Contains("length_qty"))
+                            dtReport.Columns["length_qty"].ColumnName = "Length/Qty";
+
+                        if (dtReport.Columns.Contains("cost_per_unit"))
+                            dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per "
+                                + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency);
+
+                        if (dtReport.Columns.Contains("service_cost_per_unit"))
+                            dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per "
+                                + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency);
+                    }
+                    else
+                    {
+                        // 🔹 If no BOM/BOQ rows found → still show "No Record Found"
+                        dtReport = new DataTable("BOMBOQ");
+                        dtReport.Columns.Add("Message", typeof(string));
+                        dtReport.Rows.Add("No Record Found");
+                    }
+                }
+
+                // Always export
+                ExportData(dtReport, fileName);
+            }
+        }
+
+        public void ExportKMLBackbonePlanBOMBOQReport(int plan_id)
+        {
+            var sbKml = new StringBuilder();
+            if (plan_id > 0)
+            {
+                string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
+                string fileName = string.IsNullOrEmpty(plan_name) ? "" : plan_name + "_BackBone_Planing_BomBOQ_KMLReport_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-"
+                                + DateTimeHelper.Now.ToString("HHmmss")+".kml";
+                if (plan_name != null)
+                {
+                    int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+
+                    sbKml.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    sbKml.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
+                    sbKml.AppendLine("<Document>");
+                    sbKml.AppendLine("<name>Backbone Plan BOM / BOQ</name>");
+
+                    // Define red line style
+                    sbKml.AppendLine("<Style id=\"redLine\">");
+                    sbKml.AppendLine("  <LineStyle>");
+                    sbKml.AppendLine("    <color>ff0000ff</color>"); // Red: AABBGGRR
+                    sbKml.AppendLine("    <width>3</width>");
+                    sbKml.AppendLine("  </LineStyle>");
+                    sbKml.AppendLine("</Style>");
+
+                    sbKml.AppendLine("<Folder><name>BOM / BOQ</name>");
+
+                    List<BackBonePlanKMLBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
+                    foreach (var row in rows)
+                    {
+                        string name = SecurityElement.Escape(row.entity_type);
+                        string qty = SecurityElement.Escape(row.length_qty.ToString());
+                        string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
+                        string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
+                        string total = SecurityElement.Escape(row.amount.ToString());
+
+                        sbKml.AppendLine("  <Placemark>");
+                        sbKml.AppendLine($"    <name>{name}</name>");
+                        sbKml.AppendLine("    <ExtendedData>");
+                        sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
+                        sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
+                        sbKml.AppendLine($"      <Data name=\"Service Cost Per Unit\"><value>{scpu}</value></Data>");
+                        sbKml.AppendLine($"      <Data name=\"Total Cost\"><value>{total}</value></Data>");
+                        sbKml.AppendLine("    </ExtendedData>");
+
+                        if (!string.IsNullOrEmpty(row.sp_geometry))
+                        {
+                            string trimmedGeom = row.sp_geometry.Trim();
+
+                            if (trimmedGeom.StartsWith("POINT", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Extract coordinates: POINT(lon lat)
+                                string coords = trimmedGeom.Replace("POINT", "").Replace("(", "").Replace(")", "").Trim();
+                                sbKml.AppendLine("    <Point>");
+                                sbKml.AppendLine($"      <coordinates>{coords},0</coordinates>");
+                                sbKml.AppendLine("    </Point>");
+                            }
+                            else if (trimmedGeom.StartsWith("LINESTRING", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Extract coordinates from LINESTRING(lon lat, lon lat...)
+                                string coordStr = trimmedGeom.Replace("LINESTRING(", "").Replace(")", "");
+                                string[] coordPairs = coordStr.Split(',');
+
+                                sbKml.AppendLine("    <styleUrl>#redLine</styleUrl>");
+                                sbKml.AppendLine("    <LineString>");
+                                sbKml.AppendLine("      <altitudeMode>clampToGround</altitudeMode>");
+                                sbKml.AppendLine("      <coordinates>");
+
+                                foreach (var pair in coordPairs)
+                                {
+                                    string[] parts = pair.Trim().Split(' ');
+                                    if (parts.Length >= 2)
+                                    {
+                                        sbKml.AppendLine($"        {parts[0]},{parts[1]},0");
+                                    }
+                                }
+
+                                sbKml.AppendLine("      </coordinates>");
+                                sbKml.AppendLine("    </LineString>");
+                            }
+                        }
+
+                        sbKml.AppendLine("  </Placemark>");
+                    }
+
+                    sbKml.AppendLine("</Folder>");
+                    sbKml.AppendLine("</Document>");
+                    sbKml.AppendLine("</kml>");
+
+                    Response.Clear();
+                    Response.ContentType = "application/vnd.google-earth.kml+xml";
+                    Response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\"");
+                    Response.Write(sbKml.ToString());
+                    Response.End();
+                }
+                else
+                {
+                    // No records found → Show message inside KML
+                    sbKml.AppendLine("  <Placemark>");
+                    sbKml.AppendLine("    <name>No Record Found</name>");
+                    sbKml.AppendLine("    <description>No data available for this plan.</description>");
+                    sbKml.AppendLine("  </Placemark>");
+                    sbKml.AppendLine("</Folder>");
+                    sbKml.AppendLine("</Document>");
+                    sbKml.AppendLine("</kml>");
+
+                    Response.Clear();
+                    Response.ContentType = "application/vnd.google-earth.kml+xml";
+                    Response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\"");
+                    Response.Write(sbKml.ToString());
+                    Response.End();
+                }
+            }
+        }
+        #endregion
+
+        public void ExportSiteHistoryReport(int plan_id)
+        {
+            List<SitePlanList> sitePlanList = new List<SitePlanList>();
+
+            if (plan_id > 0)
+            {
+                string fileName = "Sprout_Site_BackBone_Planing"
+                                + DateTimeHelper.Now.ToString("ddMMyyyy") + "-"
+                                + DateTimeHelper.Now.ToString("HHmmss");
+
+                sitePlanList = new BLPlan().getNearestSiteHistoryList(plan_id);
+                var specifications = new BLPlan().GetBackboneFiberTypeDropDownList();
+
+                // 🔥 Match and enrich sitePlanList with FiberKey
+                foreach (var site in sitePlanList)
+                {
+                    var matchedFiber = specifications.Where(f => f.dropdown_value == site.fibertype).FirstOrDefault();
+
+                    if (matchedFiber != null)
+                    {
+                        // Add a new property in SitePlanList for FiberKey if you want to export it
+                        site.fibertype = matchedFiber.dropdown_type;
+                    }
+                }
+
+                // Convert to DataTable
+                DataTable dtReport = MiscHelper.ListToDataTable<SitePlanList>(sitePlanList);
+                dtReport.TableName = "Sprout Site";
+
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
-                    if (dtReport.Columns.Contains("entity_type")) { dtReport.Columns["entity_type"].ColumnName = "Entity Type"; }
-                    if (dtReport.Columns.Contains("length_qty")) { dtReport.Columns["length_qty"].ColumnName = "Length/Qty"; }
-                    if (dtReport.Columns.Contains("cost_per_unit")) { dtReport.Columns["cost_per_unit"].ColumnName = "Cost Per " + String.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
-                    if (dtReport.Columns.Contains("service_cost_per_unit")) { dtReport.Columns["service_cost_per_unit"].ColumnName = "Service Cost Per " + string.Format(Resources.Resources.SI_OSP_GBL_NET_RPT_016, ApplicationSettings.Currency); }
+                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
+                    if (dtReport.Columns.Contains("fibertype")) { dtReport.Columns["fibertype"].ColumnName = "Sprout Fiber Type"; }
+                    if (dtReport.Columns.Contains("network_id")) { dtReport.Columns["network_id"].ColumnName = "Network Id"; }
+                    if (dtReport.Columns.Contains("sprout_route_length")) { dtReport.Columns["sprout_route_length"].ColumnName = "Route Length"; }
+
+                    // Remove unnecessary columns
+                    dtReport.Columns.Remove("geometry");
+                    dtReport.Columns.Remove("backbone_geom");
+                    dtReport.Columns.Remove("user_id");
+                    dtReport.Columns.Remove("line_geom");
+                    dtReport.Columns.Remove("is_update");
+                    dtReport.Columns.Remove("total_sp_route_length");
+                    dtReport.Columns.Remove("plan_id");
+                    dtReport.Columns.Remove("is_selected");
+                    dtReport.Columns.Remove("id");
                 }
+
                 if (dtReport.Rows.Count > 0)
                 {
                     ExportData(dtReport, fileName);
                 }
             }
         }
-        public void ExportKMLBackbonePlanBOMBOQReport(int plan_id)
-        {
-            if (plan_id > 0)
-            {
-                string plan_name = new BLPlan().GetBackbonePlanningById(plan_id).plan_name;
-                string fileName = $"{plan_name}_BackBone_Planing_BomBOQ_KMLReport_{DateTimeHelper.Now:ddMMyyyy-HHmmss}.kml";
-                int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-
-                var sbKml = new StringBuilder();
-                sbKml.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-                sbKml.AppendLine("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
-                sbKml.AppendLine("<Document>");
-                sbKml.AppendLine("<name>Backbone Plan BOM / BOQ</name>");
-
-                // Define red line style
-                sbKml.AppendLine("<Style id=\"redLine\">");
-                sbKml.AppendLine("  <LineStyle>");
-                sbKml.AppendLine("    <color>ff0000ff</color>"); // Red: AABBGGRR
-                sbKml.AppendLine("    <width>3</width>");
-                sbKml.AppendLine("  </LineStyle>");
-                sbKml.AppendLine("</Style>");
-
-                sbKml.AppendLine("<Folder><name>BOM / BOQ</name>");
-
-                List<BackBonePlanKMLBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
-                foreach (var row in rows)
-                {
-                    string name = SecurityElement.Escape(row.entity_type);
-                    string qty = SecurityElement.Escape(row.length_qty.ToString());
-                    string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
-                    string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
-                    string total = SecurityElement.Escape(row.amount.ToString());
-
-                    sbKml.AppendLine("  <Placemark>");
-                    sbKml.AppendLine($"    <name>{name}</name>");
-                    sbKml.AppendLine("    <ExtendedData>");
-                    sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
-                    sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
-                    sbKml.AppendLine($"      <Data name=\"Service Cost Per Unit\"><value>{scpu}</value></Data>");
-                    sbKml.AppendLine($"      <Data name=\"Total Cost\"><value>{total}</value></Data>");
-                    sbKml.AppendLine("    </ExtendedData>");
-
-                    if (!string.IsNullOrEmpty(row.sp_geometry))
-                    {
-                        string trimmedGeom = row.sp_geometry.Trim();
-
-                        if (trimmedGeom.StartsWith("POINT", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Extract coordinates: POINT(lon lat)
-                            string coords = trimmedGeom.Replace("POINT", "").Replace("(", "").Replace(")", "").Trim();
-                            sbKml.AppendLine("    <Point>");
-                            sbKml.AppendLine($"      <coordinates>{coords},0</coordinates>");
-                            sbKml.AppendLine("    </Point>");
-                        }
-                        else if (trimmedGeom.StartsWith("LINESTRING", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Extract coordinates from LINESTRING(lon lat, lon lat...)
-                            string coordStr = trimmedGeom.Replace("LINESTRING(", "").Replace(")", "");
-                            string[] coordPairs = coordStr.Split(',');
-
-                            sbKml.AppendLine("    <styleUrl>#redLine</styleUrl>");
-                            sbKml.AppendLine("    <LineString>");
-                            sbKml.AppendLine("      <altitudeMode>clampToGround</altitudeMode>");
-                            sbKml.AppendLine("      <coordinates>");
-
-                            foreach (var pair in coordPairs)
-                            {
-                                string[] parts = pair.Trim().Split(' ');
-                                if (parts.Length >= 2)
-                                {
-                                    sbKml.AppendLine($"        {parts[0]},{parts[1]},0");
-                                }
-                            }
-
-                            sbKml.AppendLine("      </coordinates>");
-                            sbKml.AppendLine("    </LineString>");
-                        }
-                    }
-
-                    sbKml.AppendLine("  </Placemark>");
-                }
-
-                sbKml.AppendLine("</Folder>");
-                sbKml.AppendLine("</Document>");
-                sbKml.AppendLine("</kml>");
-
-                Response.Clear();
-                Response.ContentType = "application/vnd.google-earth.kml+xml";
-                Response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\"");
-                Response.Write(sbKml.ToString());
-                Response.End();
-            }
-        }
-        #endregion
-
 
         public JsonResult GenerateFile(int p_entity_id)
         {

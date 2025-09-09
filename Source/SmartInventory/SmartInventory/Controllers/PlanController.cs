@@ -1,4 +1,6 @@
 ﻿using BusinessLogics;
+using DataAccess;
+using DataAccess.Admin;
 using Models;
 using Models.Admin;
 using Newtonsoft.Json;
@@ -8,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Web;
 using System.Web.Mvc;
 using Utility;
@@ -52,11 +55,24 @@ namespace SmartInventory.Controllers
             var userdetails = (User)Session["userDetail"];
             planobj.lstLayers = new BLLayer().GetLayerDetailsForAutoPlanning();
 
-            //planobj.end_point_buffer = Convert.ToDouble(new BLGlobalSetting().GetGlobalSettings().Where(x => x.key.ToUpper() == "AutoPlanEndBufferPoint".ToUpper()).FirstOrDefault().value);
             planobj.end_point_buffer = ApplicationSettings.DefaultAutoPlanEndPointBuffer;
             planobj.MinAutoPlanEndPointBuffer = ApplicationSettings.MinAutoPlanEndPointBuffer;
             planobj.MaxAutoPlanEndPointBuffer = ApplicationSettings.MaxAutoPlanEndPointBuffer;
             planobj.MaxAutoOffsetValue = ApplicationSettings.MaxAutoOffsetValue;
+            var lstLayerId = planobj.lstLayers.Select(s => s.layer_id).ToList();
+
+            var lstSpecification = new DAVendorSpecification()
+                .GetAllVendorSpecifications()
+                  .Where(s => lstLayerId.Contains(s.layer_id)).ToList();
+
+            planobj.lstSpecification = lstSpecification.Select(s => new KeyValueDropDown { key = s.id+ "," + s.code + ","+ s.vendor_id + ","+ s.layer_id, value = s.specification }).ToList();
+            var VendorLst = new DAVendor().GetAllVendorsData();
+            var vendorIds = lstSpecification.Select(x => x.vendor_id.ToString()).ToList();
+            planobj.lstVendor = VendorLst.Where(s => vendorIds.Contains(s.id.ToString())).Select(x => new KeyValueDropDown
+                {
+                    key = x.id.ToString(),
+                    value = x.name.ToString()
+                }).ToList();
             return PartialView("_PlanTool", planobj);
         }
 
@@ -144,7 +160,13 @@ namespace SmartInventory.Controllers
             if (user_id != 0)
             {
                 planobj = new BLPlan().PlanBom(model, user_id);
-            }
+                var planbom = planobj?.FirstOrDefault(); // get one record if exists
+
+                if (planbom != null)
+                {
+                    Session["SiteId"] = planbom.site_id; 
+                }
+             }
             return PartialView("_BomBoqList", planobj);
         }
 
@@ -199,9 +221,9 @@ namespace SmartInventory.Controllers
                     //objPlan = new BLPlan().SaveNetworkPlanning(objPlan);
 
                     var objResp = new BLPlan().savePoint2Point(objPlan);
-                    objPlan.objPM.message = objResp[0].message;
-                    objPlan.objPM.status = objResp[0].status.ToString();
-                    objPlan.planid = objResp[0].plan_id;
+                    objPlan.objPM.message = objResp.message;
+                    objPlan.objPM.status = objResp.status.ToString();
+                    objPlan.planid = objResp.plan_id;
                 }
             }
             BindCableTypeDropDown(objPlan);
@@ -294,10 +316,12 @@ namespace SmartInventory.Controllers
         public PartialViewResult GetLoopManage(int tempPlanid, double looplength, bool is_loop_updated)
         {
             List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid);
-           
-            if (!is_loop_updated) { 
-            list.ForEach(x => x.loop_length = looplength);
-            }
+            string SiteId = Session["SiteId"].ToString();
+            list.ForEach(x => x.site_id = SiteId);
+
+            //if (!is_loop_updated) { 
+            //list.ForEach(x => x.loop_length = looplength);
+            //}
             return PartialView("_LoopManage", list);
         }
 
@@ -440,5 +464,17 @@ namespace SmartInventory.Controllers
             objResp.status = ResponseStatus.OK.ToString();
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetVendorListById(int vendorId)
+        {
+            var vendorDetails = new DAVendor().GetVendorDetailsByID(vendorId);
+
+            var result = new KeyValueDropDown
+            {
+                key = vendorDetails.id.ToString(),
+                value = vendorDetails.name
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }
