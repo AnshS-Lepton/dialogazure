@@ -62,7 +62,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        
         /// <summary>
         /// In this function we get All OSP Layers 
         /// created by sapna
@@ -719,7 +719,7 @@ namespace DataAccess
 
             }
             catch { throw; }
-        }
+        }               
         public List<Dictionary<string, string>> GetExportReportSummaryViewNew(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
@@ -806,7 +806,7 @@ namespace DataAccess
                 throw;
             }
         }
-
+        
         public List<Dictionary<string, string>> GetExportReportSummaryViewNewAdditional(ExportEntitiesSummaryViewFilter objReportFilter, string layerName)
         {
             try
@@ -1418,7 +1418,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+    
         public List<WebGridColumns> GetLandBaseLayerWiseColumns(int entity_id, string layer_name, string setting_type, int user_id, int role_id)
         {
             try
@@ -1436,7 +1436,7 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        
         public List<Dictionary<string, string>> GetBuildingStatusHistory(ExportEntitiesSummaryViewFilter objReportFilter)
         {
             try
@@ -1649,7 +1649,7 @@ namespace DataAccess
             {
                 var lst = repo.ExecuteProcedure<Dictionary<string, string>>("fn_get_utilization_report_view",
                     new
-                    {
+                    { 
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
                         p_networkstatues = objReportFilter.SelectedNetworkStatues,
@@ -1722,7 +1722,7 @@ namespace DataAccess
                         p_pagerecord = objReportFilter.pageSize,
                         p_sortcolname = objReportFilter.sort,
                         p_sorttype = objReportFilter.sortdir,
-                        p_advancefilter = objReportFilter.advancefilter,
+                        p_advancefilter = (objReportFilter.advancefilter ?? "").Replace("'", "@"),
                         p_utilizationtype = objReportFilter.utilizationType,
                         p_ductutilization = objReportFilter.ductutilization,
                     }).FirstOrDefault();
@@ -1970,7 +1970,7 @@ namespace DataAccess
                         p_culturename = Convert.ToString(currentLang),
                         p_radious = objReportFilter.radius,
                         p_route = objReportFilter.selected_route_ids
-                    }, true);
+                    }, true); 
                 return lst;
             }
             catch { throw; }
@@ -2085,5 +2085,5 @@ namespace DataAccess
         }
 
     }
-
+   
 }

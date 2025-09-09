@@ -8284,11 +8284,19 @@ var Main = function () {
                     $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
                     $('#' + layersid).prop('checked', false);
                 }
+                else if ($('.layers .network li input[type=checkbox]:checked').filter('.checkbox-custom-SubChild').length
+                    == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom-SubChild').length) {
+                    $(app.DE.chkPlannedAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkAsBuiltAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chkDormentAll).not(":disabled").prop('checked', false);
+                    $(app.DE.chklabelAll).not(":disabled").prop('checked', false);
+                    $('#' + layersid).prop('checked', false);
+                }
                 else {
                     $('#' + layersid).prop('checked', true);
                 }
-                if (!($('.SubChild').is(":checked"))) {
-                    $("input[name='Cable']").prop('checked', false);
+                if (($('.SubChild').is(":checked"))) {
+                    $("input[name='Cable']").prop('checked', true);
                 }
             }
 
@@ -31584,7 +31592,8 @@ var Main = function () {
                 == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
 
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
-
+                if ($("input[type='checkbox'][data-mapabbr='CBL']").is(":checked"))
+                $("[data-layergroup='" + groupType + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', this.checked);
             }
             else {
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);              
@@ -31629,10 +31638,16 @@ var Main = function () {
                 == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
 
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
-
+                
+                   
             }
             else {
-                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);  
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
+                
+                if (lyrName =="CBL")
+
+                    $("[data-layergroup='" + groupType + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', false);
+   
             }
           
             /*Segment layer check box--Statr--*/
