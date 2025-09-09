@@ -31,6 +31,9 @@
     .fileUploadList .form-control {
             padding: 1px 1px;
         }
+    .text-break{
+        word-break:break-all;
+    }
 </style>
 <!DOCTYPE html>
 <div class="libDetail">
@@ -90,7 +93,7 @@
                                         var key = item.dropdown_key;
                                         <div class="form-group fileUploadList">
 
-                                            <label class="control-label" for="fileUpload_@key">
+                                            <label class="control-label text-break" for="fileUpload_@key">
                                                 @item.dropdown_value
                                             </label>
                                             <input type="file"

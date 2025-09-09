@@ -783,7 +783,7 @@ namespace SmartInventory.Controllers
                     objFiberLinkFilter.currentPage = 0;
                     objFiberLinkFilter.pageSize = 0;
                     objFiberLinkFilter.system_id = SystemId;
-                    FiberLinkExcelExport(objFiberLinkFilter);
+                    FiberLinkExcelExportById(objFiberLinkFilter);
                 }
             }
         }
@@ -930,6 +930,106 @@ namespace SmartInventory.Controllers
             var filename = "FiberLink_report";
             ExportData(ds, filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyyHHmmss"));
         }
+
+        public void FiberLinkExcelExportById(FiberLinkFilter objFiberLinkFilter)
+        {
+
+            List<Dictionary<string, string>> lstFiberLinkDetails = new BLFiberLink().getFiberLinkDetailsById(Convert.ToInt32(Session["user_id"]), objFiberLinkFilter);
+
+            lstFiberLinkDetails = BLConvertMLanguage.ExportMultilingualConvert(lstFiberLinkDetails);
+            DataTable dtReport = new DataTable();
+            dtReport = MiscHelper.GetDataTableFromDictionaries(lstFiberLinkDetails);
+            dtReport.Columns.Remove("s_no");
+            dtReport.Columns.Remove("system_id");
+            dtReport.Columns.Remove("totalrecords");
+            dtReport.Columns.Remove("OTDR Distance(meter)");
+            dtReport.Columns.Add("Jump", typeof(string));
+
+            dtReport.Columns["Network Id"].SetOrdinal(0);
+            dtReport.Columns["Allocations/Project"].SetOrdinal(1);
+            dtReport.Columns["Link/Route ID"].SetOrdinal(2);
+            dtReport.Columns["OP_ALIAS"].SetOrdinal(3);
+            dtReport.Columns["Site A"].SetOrdinal(4);
+            dtReport.Columns["Site Name"].SetOrdinal(5);
+            dtReport.Columns["Site B"].SetOrdinal(6);
+            dtReport.Columns["Site ID"].SetOrdinal(7);
+            dtReport.Columns["Jump"].SetOrdinal(8);
+            dtReport.Columns["Total Route Length(meter)"].SetOrdinal(9);
+            dtReport.Columns["Link Type"].SetOrdinal(10);
+            dtReport.Columns["Created By"].SetOrdinal(11);
+            dtReport.Columns["Created On\t"].SetOrdinal(12);
+            dtReport.Columns["Fiber Link Status"].SetOrdinal(13);
+            dtReport.Columns["Main Link ID"].SetOrdinal(14);
+            dtReport.Columns["GIS Length(meter)"].SetOrdinal(15);
+
+            DataSet ds = new DataSet();
+            ds.Tables.Add(dtReport);
+            ds.Tables[0].TableName = "Fiber Link";
+
+
+            //-------------Export Cable Info--------------
+            var lstFiberLinkIds = objFiberLinkFilter.lstFiberLinkDetails.Select(x => x.system_id.ToString()).ToList();
+            var strFiberLinkIds = String.Join(",", lstFiberLinkIds);
+            List<Dictionary<string, string>> info = new BLFiberLink().getExportCableInfoByLinkSystemIds(strFiberLinkIds);
+            if (objFiberLinkFilter.system_id == 0)
+            {
+                DataTable dtReport2 = new DataTable();
+                dtReport2 = MiscHelper.GetDataTableFromDictionaries(info);
+                if (dtReport2 != null && dtReport2.Rows.Count > 0)
+                {
+                    if (dtReport2.Columns.Contains("cable_network_id")) { dtReport2.Columns["cable_network_id"].ColumnName = "Cable Network Id"; }
+                    if (dtReport2.Columns.Contains("cable_name")) { dtReport2.Columns["cable_name"].ColumnName = "Cable Name"; }
+                    if (dtReport2.Columns.Contains("total_core")) { dtReport2.Columns["total_core"].ColumnName = "Total Core"; }
+                    if (dtReport2.Columns.Contains("no_of_tube")) { dtReport2.Columns["no_of_tube"].ColumnName = "No. Of Tube"; }
+                    if (dtReport2.Columns.Contains("a_location")) { dtReport2.Columns["a_location"].ColumnName = "A Location"; }
+                    if (dtReport2.Columns.Contains("b_location")) { dtReport2.Columns["b_location"].ColumnName = "B Location"; }
+                    if (dtReport2.Columns.Contains("fiber_number")) { dtReport2.Columns["fiber_number"].ColumnName = "Associated Fiber Number"; }
+                    if (dtReport2.Columns.Contains("link_network_id")) { dtReport2.Columns["link_network_id"].ColumnName = "Link Network Id"; }
+                    if (dtReport2.Columns.Contains("Link_id")) { dtReport2.Columns["Link_id"].ColumnName = "Link/Route Id"; }
+                }
+                ds.Tables.Add(dtReport2);
+                ds.Tables[1].TableName = "Cable Information";
+            }
+            //------------------END;
+            if (objFiberLinkFilter.system_id > 0)
+            {
+                DataTable dtReport1 = new DataTable();
+
+                List<Dictionary<string, string>> data = new BLFiberLink().getExportCableInfoByLinkId(objFiberLinkFilter.system_id);
+                if (data.Count > 0)
+                {
+                    foreach (Dictionary<string, string> dic in data)
+                    {
+                        var obj = (IDictionary<string, object>)new ExpandoObject();
+                        foreach (var col in dic)
+                        {
+                            obj.Add(col.Key, col.Value);
+                        }
+                    }
+
+                    dtReport1 = MiscHelper.GetDataTableFromDictionaries(data);
+
+                    if (dtReport1 != null && dtReport1.Rows.Count > 0)
+                    {
+                        if (dtReport1.Columns.Contains("network_id")) { dtReport1.Columns["network_id"].ColumnName = "Network Id"; }
+                        if (dtReport1.Columns.Contains("cable_name")) { dtReport1.Columns["cable_name"].ColumnName = "Cable Name"; }
+                        if (dtReport1.Columns.Contains("total_core")) { dtReport1.Columns["total_core"].ColumnName = "Total Core"; }
+                        if (dtReport1.Columns.Contains("no_of_tube")) { dtReport1.Columns["no_of_tube"].ColumnName = "No. Of Tube"; }
+                        if (dtReport1.Columns.Contains("a_location")) { dtReport1.Columns["a_location"].ColumnName = "A Location"; }
+                        if (dtReport1.Columns.Contains("b_location")) { dtReport1.Columns["b_location"].ColumnName = "B Location"; }
+                        if (dtReport1.Columns.Contains("fiber_number")) { dtReport1.Columns["fiber_number"].ColumnName = "Associated Fiber Number"; }
+                        if (dtReport1.Columns.Contains("cable_measured_length")) { dtReport1.Columns["cable_measured_length"].ColumnName = "Cable Measured Length"; }
+                        if (dtReport1.Columns.Contains("cable_calculated_length")) { dtReport1.Columns["cable_calculated_length"].ColumnName = "Cable Calculated Length"; }
+                    }
+                    ds.Tables.Add(dtReport1);
+                    ds.Tables[1].TableName = "Cable Information";
+                }
+            }
+
+            var filename = "FiberLink_report";
+            ExportData(ds, filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyyHHmmss"));
+        }
+
         private void ExportData(DataSet dsReport, string fileName, bool isDataContainBarcode = false)
         {
             using (var exportData = new MemoryStream())

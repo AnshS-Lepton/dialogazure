@@ -34,6 +34,9 @@ namespace Models
         [Required]
         [Range(double.Epsilon, double.MaxValue)]
         public double? cable_length { get; set; }
+        [Required]
+        [Range(double.Epsilon, double.MaxValue)]
+        public double? total_cable_length { get; set; }
         public int? created_by { get; set; }
         public int? modified_by { get; set; }
         public DateTime? modified_on { get; set; }
@@ -50,25 +53,30 @@ namespace Models
         public string region_ids { get; set; }
         [NotMapped]
         public string province_ids { get; set; }
-        public string layer_id { get; set; }
         [NotMapped]
         public int temp_plan_id { get; set; }
         public bool is_loop_required { get; set; }
+        [Required]
+        [Range(double.Epsilon, double.MaxValue)]
         public double loop_length { get; set; }
+        [Required]
+        [Range(double.Epsilon, double.MaxValue)]
+        public double? loop_span { get; set; }
         [NotMapped]
         public bool is_loop_update { get; set; }
         [NotMapped]
         public bool is_bomboq_reqested { get; set; }
-        [NotMapped]
+        //[NotMapped]
         public double buffer { get; set; }
         [Required]
-        public string backbone_fiber { get; set; }
+        public string backbone_fiber_type { get; set; }
         [Required]
-        public string sprout_fiber { get; set; }
+        public string sprout_fiber_type { get; set; }
+        [NotMapped]
         public string selectedSites { get; set; }
         public string backbone_geometry { get; set; }
-        public string startpoint_network_id { get; set; }
-        public string endpoint_network_id { get; set; }
+        //public string startpoint_network_id { get; set; }
+       // public string endpoint_network_id { get; set; }
         [Required]
         public double? threshold { get; set; }
         [NotMapped]
@@ -80,6 +88,11 @@ namespace Models
         public List<DropDownMaster> lstSproutFiber { get; set; }        
         public double? sprout_route_length { get; set; }
         public string status { get; set; }
+        public bool is_create_plan { get; set; }
+        [NotMapped]
+        public bool create_plan { get; set; }
+        [NotMapped]
+        public string layer_id { get; set; }
 
         public BackBonePlanning()
         {
@@ -103,6 +116,8 @@ namespace Models
         public int totalRecord { get; set; }
         public int currentPage { get; set; }
         public double total_sprout_length { get; set; }
+        public string site_status { get; set; }
+        public int plan_id { get; set; }
     }
     public class SitePlanList
     {

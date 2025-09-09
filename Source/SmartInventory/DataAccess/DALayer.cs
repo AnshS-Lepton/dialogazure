@@ -113,6 +113,40 @@ namespace DataAccess
             return lst;
             // return  repo.ExecuteSQLCommand(string.Format("select dropdown_value from dropdown_master where dropdown_type='Cable_Category' and is_active=true"));
         }
+
+        public List<DropDownMaster> GetSegmentList()
+        {
+            DataTable dt = new DataTable();
+            List<DropDownMaster> lst = new List<DropDownMaster>();
+            dt = repo.GetDataTable("select segment_code,region_id,ts.id as segment_id from top_segment ts where agg1_site_id is not null and agg2_site_id  is not null and route_id is not null");
+            foreach (DataRow row in dt.Rows)
+            {
+                DropDownMaster obj = new DropDownMaster();
+                obj.dropdown_value = row["segment_code"].ToString();
+                obj.dropdown_type = row["region_id"].ToString();
+                obj.dropdown_key = row["segment_id"].ToString();
+                // obj.file_type = row["filetype"].ToString();
+                lst.Add(obj);
+            }
+            return lst;
+            
+        }
+
+        public List<DropDownMaster> GetSegmentListRegion()
+        {
+            DataTable dt = new DataTable();
+            List<DropDownMaster> lst = new List<DropDownMaster>();
+            dt = repo.GetDataTable("select id as region_code, region_name from top_region tr order by region_name asc");
+            foreach (DataRow row in dt.Rows)
+            {
+                DropDownMaster obj = new DropDownMaster();
+                obj.dropdown_value = row["region_name"].ToString();
+                obj.dropdown_type = row["region_code"].ToString();
+                lst.Add(obj);
+            }
+            return lst;
+        }
+
         public List<landBaseLayres> GetLandBaseLayres(int userId, int roleId)
         {
             try
@@ -766,7 +800,7 @@ namespace DataAccess
                     }, true); ; ;
                 return lst;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 throw;

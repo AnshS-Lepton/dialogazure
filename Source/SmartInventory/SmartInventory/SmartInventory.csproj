@@ -2489,6 +2489,7 @@
     <Content Include="Views\Report\_UpdateBOMBOQDetails.cshtml" />
     <Content Include="Views\Report\_SiteBomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_SiteList.cshtml" />
+    <Content Include="Views\BackBonePlan\_SiteHistory.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

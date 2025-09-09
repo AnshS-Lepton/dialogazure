@@ -61,44 +61,7 @@ var BackbonePlanning = function () {
 
         $(app.NP.closeBackBonePlanTool).on("click", function () {
 
-            $("#dvAutoBackBonePlanData").slideToggle('slow', function () {
-
-                si.ActiveNetworkPlanning = false;
-                if (app.autoplanningplanid > 0 || si.autobackboneplanid > 0) {
-                    si.autobackboneplanid = 0;
-                    app.autoplanningplanid = 0;
-                    si.LoadLayersOnMap();
-                }
-                $(app.NP.divBackBonePlanTool).hide();
-                app.hideAllNetworkFile();
-                removeOldMarkers();
-                $('.BackBonePlan').removeClass('activeToolBar');
-                $('#closeModalPopup').trigger("click");
-                if (app.routePolyline) {
-                    app.routePolyline.setMap(null);
-                    app.routePolyline = null;
-                }
-                if (app.directionsSiteRenderer) {
-                    app.directionsSiteRenderer.setMap(null);
-                    app.directionsSiteRenderer = null;
-                }
-                if (app.directionsRenderer) {
-                    app.directionsRenderer.setMap(null);
-                    app.directionsRenderer = null;
-                }
-                if (app.StartSiteTmpLine) {
-                    app.StartSiteTmpLine.setMap(null);
-                    app.StartSiteTmpLine = null;
-                }
-                if (app.EndSiteTmpLine) {
-                    app.EndSiteTmpLine.setMap(null);
-                    app.EndSiteTmpLine = null;
-                }
-                if (app.sitePointMarker) {
-                    app.sitePointMarker.setMap(null);
-                    app.sitePointMarker = null;
-                }
-            });
+            si.ViewBackboneplan();
         });
     }
 
@@ -132,8 +95,9 @@ var BackbonePlanning = function () {
         $('#geometry').val('');
         backbonedata.NetworkStartPoint = null;
         backbonedata.NetworkEndPoint = null;
-        $('#manhole_distance').val('');
-        $('#pole_distance').val('');
+        $('#manholeSpan').val('');
+        $('#poleSpan').val('');
+        $('#cabledrumLength').val('');
         $('#cablelength').val('');
         $('#startpoint').val('');
         $('#endpoint').val('');
@@ -157,23 +121,24 @@ var BackbonePlanning = function () {
         }
         $('#sproutFiberDropdown').val('').trigger("chosen:updated");
         $('#backboneFiberDropdown').val('').trigger("chosen:updated");
-        $('#threshold').val('');
+        $('#sproutThreshold').val('');
+        $('#sproutlength').val('');
         $('#planbuffer').val('');
         $('#siteDropdownToggle').val('--Select Site--');        
         $('#plan_name').val('');
-        $('#cablelength').val('');
-        $('#loop_length').val('');
+        $('#total_cable_length').val('');
+        $('#loopLength').val('');
+        $('#loopSpan').val('');
         if (app.routePolyline) {
             app.routePolyline.setMap(null);
             app.routePolyline = null;
         }
         if (app.directionsSiteRenderer) {
             app.directionsSiteRenderer.setMap(null);
-            app.directionsSiteRenderer = null; 
         }
         if (app.directionsRenderer) {
             app.directionsRenderer.setMap(null);
-            app.directionsRenderer = null; 
+            
         }  
         if (app.StartSiteTmpLine) {
             app.StartSiteTmpLine.setMap(null);
@@ -236,14 +201,14 @@ var BackbonePlanning = function () {
         let geom = $('#geometry').val();            
         let planId = $('#plan_id').val();            
         if (!isNaN(buffer)) {
-            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, planId: planId }, "Sprout Site", 'modal-xl');
-            if (!si.startMarker.getMap()) {
-                si.startMarker.setMap(si.map);
-            }
+            popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneNearestSiteList', { geom: geom, buffer: buffer, planId: planId }, "Sprout Site", 'modal-xl');           
+        }
+        if (!si.startMarker.getMap()) {
+            si.startMarker.setMap(si.map);
+        }
 
-            if (!si.endMarker.getMap()) {
-                si.endMarker.setMap(si.map);
-            }
+        if (!si.endMarker.getMap()) {
+            si.endMarker.setMap(si.map);
         }
     }
     this.PlanningBufferPoint = function () {
@@ -259,7 +224,7 @@ var BackbonePlanning = function () {
         }
     };
 
-    this.createBackbonePlanNetwork = function () {
+    this.createBackbonePlanNetwork = function (is_create_plan) {
        
         let cableLength = $('#cablelength').val();
         let sproutlength = $('#sproutlength').val();
@@ -271,6 +236,7 @@ var BackbonePlanning = function () {
         // Append the updated cable_length
         formData += '&cable_length=' + encodeURIComponent(cableLength);
         formData += '&sprout_route_length=' + encodeURIComponent(sproutlength);
+        formData += '&create_plan=' + encodeURIComponent(is_create_plan);
         ajaxReq('BackBonePlan/SaveBackboneProcess', formData, true, function (resp) {
             $('#closeModalPopup').trigger("click");
             app.autoPlanningShowNetworkLayer(resp);
@@ -298,7 +264,7 @@ var BackbonePlanning = function () {
         $('.glyphicon glyphicon-eye-open').removeClass('activemarker');
         $('i[id^="dvHighlight_"]').removeClass('activemarker'); // Remove from all
         if (status != "Completed") {
-            alert('Backbone planning is in progress.');
+            alert('The planning process is currently in progress');
             return false;
         }
         ajaxReq('BackBonePlan/GetBackboneForMap', { plan_id: planId }, true, function (resp) {
@@ -408,6 +374,12 @@ var BackbonePlanning = function () {
     }
     this.downloadBackboneBomKMLReport = function (planId) {
         window.location = appRoot + 'Report/ExportKMLBackbonePlanBOMBOQReport?plan_id=' + planId;
+    }
+    this.downloadBackboneSiteHistoryReport = function (planId) {
+        window.location = appRoot + 'Report/ExportSiteHistoryReport?plan_id=' + planId;
+    }
+    this.getSiteHistory = function (planId) {
+        popup.LoadModalDialog('PARENT', 'BackBonePlan/GetBackboneSiteHistory', { planId: planId}, "Site History", 'modal-lg');    
     }
 
     this.NetworkPlanning = function (ismappicker, destination_point) {
@@ -539,7 +511,7 @@ var BackbonePlanning = function () {
 
         // 1. Clear existing directions if present
         if (app.directionsRenderer) {
-            app.directionsRenderer.set('directions', null);
+            app.directionsRenderer.setMap(null);
         } else {
             app.directionsRenderer = new google.maps.DirectionsRenderer({
                 map: si.map,
@@ -867,7 +839,7 @@ var BackbonePlanning = function () {
                 return;
             }
             si.removeNode(si.gMapObj.infoEntity, e.vertex);
-            ShowAutoPlanLineLength();
+            app.ShowAutoPlanLineLength();
             const buf = $('#planbuffer').val();
             if (buf && +buf > 0) app.PlanningBufferPoint();
         });
@@ -890,7 +862,7 @@ var BackbonePlanning = function () {
 
                 const path = google.maps.geometry.encoding.decodePath(dir.routes[0].overview_polyline);
                 app.ShowAutoPlanLineLength(path);
-                backbonedata.hideAllNetworkFile?.();
+                //backbonedata.hideAllNetworkFile?.();
                 let isBuffer = $('#planbuffer').val();
                 if (isBuffer.trim() !== '' && isBuffer > 0) {
                     app.PlanningBufferPoint();
@@ -962,38 +934,55 @@ var BackbonePlanning = function () {
         }, false, true, false);
     }
 
-    this.loopValidation = function () {
-        var cableLength = parseFloat($('#cablelength').val());
-        var loop_length = parseFloat($('#loop_length').val());
-        var threshold = parseFloat($('#threshold').val());
-        var pole_distance = parseFloat($('#pole_distance').val());
-        var manhole_distance = parseFloat($('#manhole_distance').val());
+    this.loopValidation = function () {       
+        var backboneCableLength = parseFloat($('#cablelength').val());
+        var cableDrumLength = parseFloat($('#cabledrumLength').val());
+        var loop_length = parseFloat($('#loopLength').val());
+        var loop_span = parseFloat($('#loopSpan').val());
+        var threshold = parseFloat($('#sproutThreshold').val());
+        var pole_distance = parseFloat($('#poleSpan').val());
+        var manhole_distance = parseFloat($('#manholeSpan').val());
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
-
-        if (loop_length <= 0 && is_loop_required == "True") {
-            $('#loop_length').addClass('form-control input-validation-error');
+      
+        if ((isNaN(loop_length) || loop_length === 0) && is_loop_required == "True") {
+            $('#loopLength').addClass('form-control input-validation-error');
             return false;
         }
-        if (loop_length >= cableLength) {
-            alert("Loop length cannot be greater and equal than Cable Route Length!");
-            $('#loop_length').addClass('form-control input-validation-error');
+        if ((isNaN(loop_span) || loop_span === 0) && is_loop_required == "True") {
+            $('#loopSpan').addClass('form-control input-validation-error');
             return false;
         }
-        if (threshold >= cableLength) {
-            alert("Threshold value cannot be greater and equal than Cable Route Length!");
-            $('#loop_length').addClass('form-control input-validation-error');
+        if (backboneCableLength < cableDrumLength) {
+            $('#cabledrumLength').addClass('form-control input-validation-error');
+            alert("Cable Drum length cannot be greater than Backbone Route Length!");
+            return false;
+        }       
+        if (loop_length >= cableDrumLength) {
+            alert("Loop length cannot be greater and equal than Cable Drum Length!");
+            $('#loopLength').addClass('form-control input-validation-error');
             return false;
         }
-        if (pole_distance >= cableLength) {
-            alert("Pole distance cannot be greater and equal than Cable Route Length!");
-            $('#loop_length').addClass('form-control input-validation-error');
+        if (loop_span >= cableDrumLength) {
+            alert("Loop Span cannot be greater and equal than Cable Drum Length!");
+            $('#loopSpan').addClass('form-control input-validation-error');
             return false;
         }
-        if (manhole_distance >= cableLength) {
-            alert("Manhole distance cannot be greater and equal than Cable Route Length!");
-            $('#loop_length').addClass('form-control input-validation-error');
+        if (manhole_distance >= cableDrumLength) {
+            alert("Manhole distance cannot be greater and equal than Backbone Route Length!");
+            $('#manholeSpan').addClass('form-control input-validation-error');
             return false;
         }
+        if (pole_distance >= cableDrumLength) {
+            alert("Pole distance cannot be greater and equal than Backbone Route Length!");
+            $('#poleSpan').addClass('form-control input-validation-error');
+            return false;
+        }
+        if (threshold >= cableDrumLength) {
+            alert("Sprout threshold value cannot be greater and equal than Backbone Route Length!");
+            $('#sproutThreshold').addClass('form-control input-validation-error');
+            return false;
+        }     
+        
         return true;
     }
     this.onChangeEditPath = function (input) {
@@ -1016,21 +1005,26 @@ var BackbonePlanning = function () {
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
         if (is_loop_required == "True") {
             $('#DvloopLength').show();
+            $('#dvLoopSpan').show();
             $('#ManageLoop').show();
             return true;
         }
         else {
             $('#DvloopLength').hide();
+            $('#dvLoopSpan').hide();
             $('#ManageLoop').hide();
-            $('#loop_length').val(0);
+            $('#loopLength').val(0);
+            $('#loopSpan').val(0);
             return false;
         }
     }
     this.Manage_Loop = function () {
         if (isNaN($('#BomDetails').html())) {
-            var loop_length = $('#loop_length').val();
+            var loop_length = $('#loopLength').val();
             let temp_Plan_id = $('#plan_id').val();
-            popup.LoadModalDialog(si.ParentModel, 'BackBonePlan/GetLoopManage', { planid: temp_Plan_id, looplength: loop_length, is_loop_updated: true }, 'Loop Management', 'modal-lg');
+            let geometry = $('#geometry').val();
+            let p_loopSpan = $('#loopSpan').val();
+            popup.LoadModalDialog(si.ParentModel, 'BackBonePlan/GetLoopManage', { planid: temp_Plan_id, looplength: loop_length, is_loop_updated: true, line_geom: geometry, loopSpan: p_loopSpan }, 'Loop Management', 'modal-lg');
         }
         else {
             alert("First get BOM/BOQ");

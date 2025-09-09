@@ -1268,6 +1268,32 @@ LAYER
 			'no_defs'
 		END
 		CLASSITEM 'cable_cores' 
+		#====================BackBone======================
+		CLASS 
+			EXPRESSION ('[cable_category]'  eq 'BackBone Cable')					
+		     STYLE
+				WIDTH 4
+				COLOR 0 255 0			                					
+				PATTERN 10 5  END
+			END		
+			LABEL
+				FONT arial
+				TYPE truetype
+				COLOR 0 0 0				
+				SIZE 8
+				STYLE
+					GEOMTRANSFORM 'labelpoly'
+					COLOR 255 255 255  # background rect.
+				END
+				OFFSET 0 0
+				ANTIALIAS TRUE
+				POSITION CC
+				ANGLE AUTO
+				FORCE FALSE
+				PARTIALS FALSE
+				MAXSCALEDENOM 70000
+			END
+		END	
 		#====================Planned======================
 		CLASS 
 			EXPRESSION ('[network_status]'  eq 'P')					
@@ -3703,5 +3729,68 @@ LAYER
 			END	  
 		END		
 	END	
+
+	# ================================== Segment ======================================== 
+	LAYER
+  NAME 'SEG'
+  TYPE LINE
+  DUMP true
+  TEMPLATE fooOnlyForWMSGetFeatureInfo
+  INCLUDE "datashare.inc"
+
+  DATA 'route_geom FROM vw_segment_details_map USING UNIQUE segment_id USING SRID=4326'
+  FILTER ((%SegmentFilter%))
+
+  VALIDATION
+    'SegmentFilter'  '.*'
+    
+  END
+
+  METADATA
+    'ows_title' 'SEGMENT'
+  END
+
+  STATUS OFF
+  GROUP 'Network1'
+  TRANSPARENCY 100
+  LABELITEM 'segment_code'
+
+  PROJECTION
+    'proj=longlat'
+    'datum=WGS84'
+    'no_defs'
+  END
+
+  # ==================== Default style for all segments ====================
+  CLASS
+    STYLE
+      WIDTH 2
+      COLOR 0 255 0
+    END
+
+    LABEL
+      FONT arial
+      TYPE truetype
+      COLOR 0 0 0
+      SIZE 8
+	  POSITION AUTO
+	 PARTIALS FALSE
+      STYLE
+        GEOMTRANSFORM 'labelpoly'
+        COLOR 255 255 255  # background rect (same as CBL)
+      END
+      OFFSET 0 0
+      ANTIALIAS TRUE
+      POSITION CC
+      ANGLE AUTO
+      FORCE FALSE
+      PARTIALS FALSE
+      MAXSCALEDENOM 70000
+    END
+  END
+END
+
+
+
 
 END
