@@ -99,6 +99,11 @@ namespace BusinessLogics
             return objDAMisc.getNearestNetworkStructure(latitude, longitude, network_id);
 
         }
+        public List<customerToRoad> getcustomerToRoad(double latitude1, double longitude1, double latitude2, double longitude2)
+        {
+            return objDAMisc.getcustomerToRoad(latitude1, longitude1, latitude2, longitude2);
+
+        }
 
         public List<RouteBuffer> getRouteBufferFeasibility(string coordinates, int route_buffer)
         {

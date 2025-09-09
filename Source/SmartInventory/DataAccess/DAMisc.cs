@@ -245,6 +245,22 @@ namespace DataAccess
             catch { throw; }
         }
 
+        public List<customerToRoad> getcustomerToRoad(double latitude1, double longitude1, double latitude2, double longitude2)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<customerToRoad>("fn_get_linestring", new
+                {
+                    p_latitude1 = latitude1,
+                    p_longitude1 = longitude1,
+                    p_latitude2 = latitude2,
+                    p_longitude2 = longitude2,
+
+                });
+            }
+            catch { throw; }
+        }
+
         public List<EntityDetail> getNearByFeasibility(double latitude, double longitude, int bufferInMtr)
         {
             try

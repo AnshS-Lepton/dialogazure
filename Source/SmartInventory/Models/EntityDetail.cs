@@ -97,4 +97,9 @@ namespace Models
         public double latitude { get; set; }
         public double distance_meters { get; set; }
     }
+    public class customerToRoad
+    {
+        public string geom { get; set; }
+        public double length_meters { get; set; }
+    }
 }

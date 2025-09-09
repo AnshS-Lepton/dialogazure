@@ -237,7 +237,7 @@ namespace IntegrationServices.Controllers
                 // declare variables
                 double customerToRoadDistance = 0;
                 double structureroadDistance = 0;
-                List<Route> customerToRoadRoute = new List<Route>();
+                var customerToRoadRoute="";
 
                 // Start:  get customer To Road path details using google direction api
                 var roadPathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (latitude + "," + longitude).ToString(), (lstFiberPoint[0].latitude + "," + lstFiberPoint[0].longitude).ToString(), apiKey, radius);
@@ -246,38 +246,43 @@ namespace IntegrationServices.Controllers
 
                 if(data.Coordinates.Count >0)
                 {
-                    var coordinates = new List<List<double>>
-                    {
-                     new List<double> { data.Coordinates[data.Coordinates.Count - 1][0], data.Coordinates[data.Coordinates.Count - 1][1] },
-                     new List<double> { lstFiberPoint[0].longitude, lstFiberPoint[0].latitude }
-                    };
-
-                    // get customer To Road details distance between road end point and customer point
-                    customerToRoadRoute = GetRouteList(data.Coordinates[data.Coordinates.Count - 1][1], data.Coordinates[data.Coordinates.Count - 1][0], lstFiberPoint[0].latitude, lstFiberPoint[0].longitude);
-                    customerToRoadDistance = CalculateTotalDistance(coordinates);
+                    var lstcustomerToRoad = new BLMisc().getcustomerToRoad(data.Coordinates[data.Coordinates.Count - 1][1], data.Coordinates[data.Coordinates.Count - 1][0],lstFiberPoint[0].latitude, lstFiberPoint[0].longitude);
+                    string customerToRoadRouteGeom= lstcustomerToRoad[0].geom;
+                    List<List<double>> coordinates = ParseLineString(customerToRoadRouteGeom);
+                    customerToRoadRoute = JsonConvert.SerializeObject(new { type = "LineString", coordinates });
+                    customerToRoadDistance = lstcustomerToRoad[0].length_meters;
+                   
                 }
+
                 // End:  get customer To Road path details using google direction api
 
 
                 Structure nearestStructure = new Structure();
                 var lstNearestNetworkStructure = new BLMisc().getNearestNetworkStructure(lstFiberPoint[0].latitude , lstFiberPoint[0].longitude, lstFiberPoint[0].nearest_fiber_point);
 
-                // Start:  get structure To Road path details using google direction api
-                var structurePathRouteApiData = BLDarkFiberFeasibility.Instance.GetNewFiberRoutes(request_id, (data.Coordinates[data.Coordinates.Count - 1][1] + "," + data.Coordinates[data.Coordinates.Count - 1][0]).ToString(), (lstNearestNetworkStructure[0].latitude + "," + lstNearestNetworkStructure[0].longitude).ToString(), apiKey, 2);
-                GeoData structuredata = JsonConvert.DeserializeObject<GeoData>(structurePathRouteApiData[0].geojson_new_built);
-                 structureroadDistance = structurePathRouteApiData[0].total_new_length;
-                // End:  get structure To Road path details using google direction api
+
+                var lststructurePathRoute = new BLMisc().getcustomerToRoad(lstFiberPoint[0].latitude, lstFiberPoint[0].longitude,data.Coordinates[0][1], data.Coordinates[0][0]);
+                string structurePathRouteGeom = lststructurePathRoute[0].geom;
+                string structurePathRoute = "";
+                if (structurePathRouteGeom.Length >0)
+                {
+                    List<List<double>> coordinates = ParseLineString(structurePathRouteGeom);
+                    structurePathRoute = JsonConvert.SerializeObject(new { type = "LineString", coordinates });
+                    structureroadDistance = lststructurePathRoute[0].length_meters;
+                }
+               
+
 
 
 
                 RouteSegment customer_to_roadSegment = new RouteSegment();
-                customer_to_roadSegment.geometry = customerToRoadRoute[0].geojson_new_built;
+                customer_to_roadSegment.geometry = customerToRoadRoute;
                 customer_to_roadSegment.length = customerToRoadDistance;
                 RouteSegment road_pathSegment = new RouteSegment();
                 road_pathSegment.geometry = roadPathRouteApiData[0].geojson_new_built;
                 road_pathSegment.length = roadDistance;
                 RouteSegment structure_to_roadSegment = new RouteSegment();
-                structure_to_roadSegment.geometry = structurePathRouteApiData[0].geojson_new_built;
+                structure_to_roadSegment.geometry = structurePathRoute;
                 structure_to_roadSegment.length = structureroadDistance;
 
                 #region Nearest structure 
