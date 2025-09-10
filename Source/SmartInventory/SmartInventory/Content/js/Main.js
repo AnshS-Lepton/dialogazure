@@ -21883,16 +21883,16 @@ var Main = function () {
                 }, false, false);
             }
             else {
-                if (networkdata.autoplanningplanid > 0 || app.autoplanid > 0) {
-                    app.autoplanid = 0;
-                    networkdata.autoplanningplanid = 0;
-                    app.LoadLayersOnMap();
-                }
+                
                 if (typeof networkdata !== 'undefined' && networkdata != null) {
                     networkdata.hideAllNetworkFile();
                     $("#openNetworkPlanningData").hide();
+                    if (networkdata.autoplanningplanid > 0 || app.autoplanid > 0) {
+                        app.autoplanid = 0;
+                        networkdata.autoplanningplanid = 0;
+                        app.LoadLayersOnMap();
+                    }
                 }
-
             }
         });
     }
