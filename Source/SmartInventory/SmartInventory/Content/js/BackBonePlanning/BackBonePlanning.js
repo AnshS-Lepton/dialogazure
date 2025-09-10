@@ -509,10 +509,8 @@ var BackbonePlanning = function () {
         app.minDistance = 0;
         app.AllPathResponses = [];
 
-        // 1. Clear existing directions if present
-        if (app.directionsRenderer) {
-            app.directionsRenderer.setMap(null);
-        } else {
+        // 1. Reset existing directionsRenderer
+        if (!app.directionsRenderer) {
             app.directionsRenderer = new google.maps.DirectionsRenderer({
                 map: si.map,
                 draggable: true,
@@ -533,15 +531,17 @@ var BackbonePlanning = function () {
                 app.ShowAutoPlanLineLength(path);
                 const buf = $('#planbuffer').val();
                 if (buf && +buf > 0) app.PlanningBufferPoint();
-                $('#closeModalPopup').trigger("click");
-                if (!si.startMarker.getMap()) {
-                    si.startMarker.setMap(si.map);
-                }
+                //$('#closeModalPopup').trigger("click");
 
-                if (!si.endMarker.getMap()) {
-                    si.endMarker.setMap(si.map);
-                }
+                if (!si.startMarker.getMap()) si.startMarker.setMap(si.map);
+                if (!si.endMarker.getMap()) si.endMarker.setMap(si.map);
             });
+        } else {
+            // Clear previous route
+            // Clear previous route safely
+            app.directionsRenderer.setMap(null);
+            app.directionsRenderer.setDirections(null);
+            app.directionsRenderer.setMap(si.map);
         }
 
         if (!app.NetworkStartPoint || !app.NetworkEndPoint) return;
@@ -573,7 +573,10 @@ var BackbonePlanning = function () {
             travelMode: google.maps.TravelMode.DRIVING,
             provideRouteAlternatives: true
         };
+
         directionsService.route(forwardRequest, function (response, status) {
+            console.log("Directions API status:", status, response);
+
             if (status === google.maps.DirectionsStatus.OK) {
                 const paths = response.routes;
                 const firstRoute = paths[0];
@@ -584,45 +587,47 @@ var BackbonePlanning = function () {
                 app.directionsRenderer.setMap(si.map);
 
                 const latLngArr = google.maps.geometry.encoding.decodePath(firstRoute.overview_polyline);
-
-                var endIndex = latLngArr.length - 1;
+                const endIndex = latLngArr.length - 1;
 
                 const startPoint = new google.maps.LatLng(app.startLatLng.lat, app.startLatLng.lng);
-                const startPointLineArr = [];
-                startPointLineArr.push(latLngArr[0]);
-                startPointLineArr.push(startPoint);
+                const startPointLineArr = [latLngArr[0], startPoint];
                 app.StartTmpLine = app.createAutoPlanLine(startPointLineArr, false, false);
                 app.StartTmpLine.setMap(si.map);
 
-
                 const EndPoint = new google.maps.LatLng(app.endLatLng.lat, app.endLatLng.lng);
-                const EndPointLineArr = [];
-                EndPointLineArr.push(latLngArr[endIndex]);
-                EndPointLineArr.push(EndPoint);
+                const EndPointLineArr = [latLngArr[endIndex], EndPoint];
                 app.EndTmpLine = app.createAutoPlanLine(EndPointLineArr, false, false);
                 app.EndTmpLine.setMap(si.map);
 
                 app.createDirectionMarker(startPoint, EndPoint);
                 latLngArr.splice(0, 0, startPoint);
                 latLngArr.push(EndPoint);
-                console.log('createCableBetweenMakers');
+
+                console.log('createCableBetweenMakers - Route drawn');
                 app.ShowAutoPlanLineLength(latLngArr);
+
                 const buf = $('#planbuffer').val();
                 if (buf && +buf > 0) app.PlanningBufferPoint();
-                $('#closeModalPopup').trigger("click");
-                if (!si.startMarker.getMap()) {
-                    si.startMarker.setMap(si.map);
-                }
+               // $('#closeModalPopup').trigger("click");
 
-                if (!si.endMarker.getMap()) {
-                    si.endMarker.setMap(si.map);
-                }
+                if (!si.startMarker.getMap()) si.startMarker.setMap(si.map);
+                if (!si.endMarker.getMap()) si.endMarker.setMap(si.map);
+
             } else {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_FRM_016);
+                console.warn("No driving route found, drawing fallback line instead.");
+                // Draw a straight polyline between start and end
+                new google.maps.Polyline({
+                    path: [app.startLatLng, app.endLatLng],
+                    map: si.map,
+                    strokeColor: "#db5333",
+                    strokeOpacity: 1,
+                    strokeWeight: 4,
+                    zIndex: 10
+                });
             }
         });
     };
-   
+
     this.fillnetworkPlanningMarker = function (LatLong, end) {
 
         var lat;
