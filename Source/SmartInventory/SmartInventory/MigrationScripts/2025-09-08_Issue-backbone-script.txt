@@ -1,0 +1,657 @@
+INSERT INTO public.dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'BackBone Cable', true, 1, now(), NULL, NULL, 'BackBone Cable', NULL, 'Cable_Category', true, true, 0);
+
+
+alter table att_details_network_plan add column loop_span double precision default 0;
+
+--------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_save_plan(is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_user_id integer, backbone_plan_id integer)
+ RETURNS TABLE(status boolean, message character varying, v_plan_id integer)
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_arow_cable record;
+v_line_geom geometry;
+v_region_province record;
+v_arow_closure record;
+v_arow_prev_closure record;
+v_line_total_length DOUBLE PRECISION;
+p_rfs_type character varying;
+--backbone_plan_id integer;
+v_temp_point_entity record;
+v_geom_str character varying;
+p_cable_type character varying;
+p_skip_last_sc  integer;
+p_skip_last_manhole_pole  integer;
+v_geom geometry;
+    v_result TEXT;
+BEGIN
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+
+create temp table temp_generate_network_code(
+status boolean,
+network_id character varying,
+entity_type character varying,
+sequence_id integer,
+province_id integer,
+network_code character varying,
+parent_entity_type character varying
+) on commit drop;
+
+create temp table temp_point_geom(
+entity_type character varying,
+sp_geometry character varying
+) on commit drop;
+
+select system_id into p_skip_last_manhole_pole  from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole','Pole') and planned_cable_entity = 'BackBone Cable' order by system_id desc limit 1;
+
+select system_id into p_skip_last_sc  from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('SpliceClosure') and planned_cable_entity = 'BackBone Cable' order by system_id desc limit 1;
+EXECUTE 'ALTER TABLE point_master DISABLE TRIGGER ALL';
+
+----- insert manhole
+INSERT INTO att_details_manhole(is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,category,backbone_system_id)
+
+SELECT true,'Own',
+longitude,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id,region_id ,province_id,'Manhole' ,system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and system_id not in (p_skip_last_manhole_pole) and sp_geometry is not NULL order by system_id;
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select system_id,'Manhole',longitude,latitude, 'A', ST_GEOMFROMTEXT('POINT('||longitude||' '||latitude||')', 4326),
+now(),'NA','NA',p_user_id,network_id, 'P',network_id,backbone_plan_id,'backbone planning'
+    from att_details_manhole where system_id not in (select system_id from point_master where entity_type='Manhole');
+   
+	 UPDATE att_details_manhole adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Manhole'
+	      AND specification = 'Generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+---------insert sc
+
+INSERT INTO att_details_spliceclosure (is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,category,backbone_system_id)
+
+SELECT true,'Own',
+longitude ,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id,region_id ,province_id ,'SpliceClosure',system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('SpliceClosure') and system_id not in (p_skip_last_sc) and sp_geometry is not NULL order by system_id;
+
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select system_id,'SpliceClosure',longitude,latitude, 'A', ST_GEOMFROMTEXT('POINT('||longitude||' '||latitude||')', 4326),
+now(),'NA','NA',p_user_id,network_id, 'P',network_id,backbone_plan_id,'backbone planning'
+    from att_details_spliceclosure where system_id not in (select system_id from point_master where entity_type='SpliceClosure');
+ 
+	 UPDATE att_details_spliceclosure adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id,
+	    no_of_ports = itm.no_of_port,
+	    no_of_input_port= itm.no_of_input_port,
+	    no_of_output_port = itm.no_of_output_port
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'SpliceClosure'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+-----------insert pole
+
+INSERT INTO att_details_pole(is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,pole_type,category,backbone_system_id)
+
+SELECT true,'Own',
+longitude ,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id::varchar,region_id ,province_id ,'Electrical','Pole',system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Pole') and system_id not in (p_skip_last_manhole_pole) and sp_geometry is not NULL order by system_id;
+
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select system_id,'Pole',longitude,latitude, 'A', ST_GEOMFROMTEXT('POINT('||longitude||' '||latitude||')', 4326),
+now(),'NA','NA',p_user_id,network_id, 'P',network_id,backbone_plan_id::varchar,'backbone planning' 
+    from att_details_pole where system_id not in (select system_id from point_master where entity_type='Pole');
+   
+	 UPDATE att_details_pole adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Pole'
+	      AND specification = 'Generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+----------- insert cable
+INSERT INTO ATT_DETAILS_CABLE(is_visible_on_map,total_core,no_of_tube,no_of_core_per_tube,cable_measured_length,cable_calculated_length,
+	cable_type,specification,category,subcategory1,subcategory2,subcategory3,item_code,	
+	vendor_id,network_status,status,created_by,created_on,cable_category,start_reading,	
+	end_reading,structure_id,utilization,duct_id,trench_id,is_used,source_ref_type,source_ref_id,ownership_type,region_id,province_id,backbone_system_id,a_system_id,b_system_id)
+select true,0,0,0,ST_Length(plan.line_sp_geometry,false),
+ST_Length(plan.line_sp_geometry,false),plan.cable_type  ,plan.fiber_type,'Cable', null, null, null,null,
+	0,'P','A',p_user_id,now(),case when plan.planned_cable_entity = 'BackBone Cable' then 'BackBone Cable' else 'Feeder' end,
+	0,0,0,'L',0,0,true,'backbone planning',backbone_plan_id,'OWN',region_id,province_id , plan.system_id,0,0 
+from backbone_plan_network_details plan where plan.plan_id = backbone_plan_id and plan.created_by = p_user_id and plan.entity_type = 'Cable' and plan.line_sp_geometry  is not null order by system_id;
+
+EXECUTE 'ALTER TABLE line_master DISABLE TRIGGER ALL';
+
+INSERT INTO LINE_MASTER(system_id,common_name ,display_name ,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,network_status,is_virtual,source_ref_type,source_ref_id,sp_geometry,status)
+select cbl.system_id,cbl.network_id,cbl.network_id,'Cable','A','','', p_user_id,0 ,'P',false,'backbone planning',backbone_plan_id , np.line_sp_geometry ,'A'
+from ATT_DETAILS_CABLE cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id
+where cbl.system_id not in (select system_id from line_master where entity_type='Cable') and np.entity_type = 'Cable' and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning' and np.line_sp_geometry is not null;
+
+
+ UPDATE att_details_cable adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id,
+	    total_core = itm.other::integer,
+	    no_of_tube = itm.no_of_tube,
+	    no_of_core_per_tube = itm.no_of_core_per_tube
+from    
+	(select adm.system_id ,itm.* FROM att_details_cable adm
+	join item_template_master itm
+	    on category_reference = 'Cable'
+	      AND '(' || code || ')' || other = adm.specification  
+	      where adm.source_ref_id = backbone_plan_id::varchar
+  AND adm.source_ref_type = 'backbone planning'
+	) itm
+	WHERE adm.system_id = itm.system_id;
+	
+----------- insert trench
+if is_create_trench = true then
+insert into att_details_trench(is_visible_on_map,trench_name,trench_width,trench_height,customer_count,trench_type,no_of_ducts,network_status,status,pin_code,province_id,region_id,construction,activation,accessibility,category,subcategory1,subcategory2,subcategory3,vendor_id,type,
+	brand,model,remarks,created_by,created_on,project_id,planning_id,purpose_id,workorder_id,mcgm_ward,strata_type,
+	is_used,source_ref_type,source_ref_id,ownership_type,backbone_system_id,a_system_id,b_system_id)
+	select true,'',0,0,0,'HDD',0,'P','A','',province_id,region_id,0,0,0,
+	'Trench' ,null,null,null, 0,0,0,0,'',p_user_id,now(),0 ,0,0,0,'','',false,'backbone planning',backbone_plan_id,'OWN',tp.system_id ,0,0
+	from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and tp.line_sp_geometry is not null and created_by = p_user_id;
+	
+	INSERT INTO LINE_MASTER(system_id,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,common_name,network_status,is_virtual,display_name,source_ref_id,source_ref_type,sp_geometry,status)
+	select cbl.system_id,'Trench','A','','', p_user_id,0 ,'','P',false,'',backbone_plan_id,'backbone planning',np.line_sp_geometry,'A' 
+from att_details_trench cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id where cbl.system_id not in (select system_id from line_master where entity_type='Trench') and np.entity_type in ('Manhole') and np.line_sp_geometry is not null and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';	
+
+
+ UPDATE att_details_trench adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	    FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Trench'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+end if;
+
+-------- insert duct
+if is_create_duct = true then
+insert into att_details_duct(is_visible_on_map,duct_name,calculated_length,manual_length,network_status,
+	status,pin_code,province_id,region_id,utilization,no_of_cables,offset_value,construction,activation,accessibility,specification,category,subcategory1,subcategory2,
+	subcategory3,item_code,vendor_id,type,brand,model,remarks,created_by,created_on,project_id,planning_id,purpose_id,workorder_id,inner_dimension,outer_dimension,
+	is_used,source_ref_type,source_ref_id,trench_id,ownership_type,backbone_system_id,a_system_id,b_system_id)
+	select true,'',ST_Length(tp.line_sp_geometry,false),ST_Length(tp.line_sp_geometry,false),'P','A','',province_id,region_id,'L',0,0,0,0,0,'','Duct',null,null,null,'',0,0,0,0,'',p_user_id,now(),0 ,0,0,0,0,0,false,'backbone planning',backbone_plan_id,0,'OWN',tp.system_id ,0,0
+	from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and created_by = p_user_id;
+	
+	INSERT INTO LINE_MASTER(system_id,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,common_name,network_status,is_virtual,display_name,source_ref_id,source_ref_type,sp_geometry,status)
+	select cbl.system_id,'Duct','A','','', p_user_id,0 ,'','P',false,'',backbone_plan_id,'backbone planning' ,np.line_sp_geometry ,'A'
+from att_details_duct cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id where cbl.system_id not in (select system_id from line_master where entity_type='Duct') and np.entity_type ='Manhole' and np.line_sp_geometry is not null and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';	
+
+
+ UPDATE att_details_duct adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	    FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Duct'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+end if;
+
+   FOR v_temp_point_entity IN 
+        SELECT province_id 
+        FROM backbone_plan_network_details 
+        WHERE plan_id = backbone_plan_id 
+          AND created_by = p_user_id 
+          AND province_id IS NOT NULL 
+        GROUP BY province_id
+    loop
+
+	INSERT INTO temp_point_geom(entity_type, sp_geometry)
+SELECT 'Manhole', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type = 'Manhole'
+      and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS manhole_geom
+
+UNION ALL
+
+SELECT 'Pole', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type = 'Pole'
+      and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS pole_geom
+
+UNION ALL
+
+SELECT 'Loop', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id and is_loop_required = true and loop_length > 0
+      AND entity_type in ('Manhole','Pole')
+      and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS loop_geom
+
+ UNION ALL
+
+SELECT 'SpliceClosure', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type IN ('SpliceClosure')
+      and system_id not in (p_skip_last_sc)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS spliceclosure_geom;
+
+	 --- generaTE NETWORK CODE FOR POINT ENTITY   
+	INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id, network_code, parent_entity_type)
+	SELECT f.status, f.message, t.entity_type, f.o_sequence_id, v_temp_point_entity.province_id, f.o_p_network_id, f.o_p_entity_type
+	FROM temp_point_geom t,
+	LATERAL fn_get_clone_network_code(
+	    t.entity_type,
+	    'Point',
+	    t.sp_geometry,
+	    0,
+	    ''
+	) AS f
+	WHERE t.sp_geometry IS NOT NULL;
+
+delete from temp_generate_network_code cc where cc.status = false;
+ 
+-------------------update network id 
+PERFORM fn_backbone_update_network_code('att_details_manhole', 'Manhole',backbone_plan_id::text , 'backbone planning','manhole_name');
+PERFORM fn_backbone_update_network_code('att_details_pole', 'Pole',backbone_plan_id::text, 'backbone planning', 'pole_name');
+PERFORM fn_backbone_update_network_code('att_details_spliceclosure', 'SpliceClosure',backbone_plan_id::text, 'backbone planning', 'spliceclosure_name' );
+
+---- generate network code cable
+
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Cable')
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Cable', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Cable','','',v_geom_str,'OSP') AS f;
+
+PERFORM fn_backbone_update_network_code('att_details_cable', 'Cable', backbone_plan_id::text, 'backbone planning','cable_name');
+
+end if;
+
+
+--- generate network codes for trench and duct
+if is_create_trench = true then
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Manhole')
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Trench', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Trench','','',v_geom_str,'OSP'::character varying,0,'') as f;
+
+PERFORM fn_backbone_update_network_code('att_details_trench', 'Trench', backbone_plan_id::text, 'backbone planning','trench_name');
+end if;
+end if;
+
+if is_create_duct = true
+then
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Manhole') 
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Duct', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Duct','','',v_geom_str,'OSP'::character varying,0,'') as f;
+
+PERFORM fn_backbone_update_network_code('att_details_duct', 'Duct', backbone_plan_id::text, 'backbone planning','duct_name');
+
+end if;
+end if;
+
+END LOOP;
+
+ 
+   INSERT INTO routing_data_core_plan (id, system_id, source, target, cost, reverse_cost, geom)
+    SELECT 
+  lm.system_id ,lm.system_id,null as source,null as target,
+        ST_Length(lm.sp_geometry::geography) / 1000 AS cost,
+        ST_Length(lm.sp_geometry::geography) / 1000 AS reverse_cost,
+        ST_Force2D(lm.sp_geometry) AS geom
+    FROM line_master lm    
+    WHERE lm.entity_type = 'Cable'
+    AND lm.source_ref_id = backbone_plan_id::varchar and lm.source_ref_type ='backbone planning';
+
+            SELECT pgr_createTopology('routing_data_core_plan', 0.000025, 'geom') INTO v_result;
+            IF v_result <> 'OK' THEN
+                RETURN QUERY SELECT FALSE AS status, 'Error in creating topology for INSERT' AS message;
+            END IF;
+            SELECT pgr_analyzegraph('routing_data_core_plan', 0.000025, 'geom') INTO v_result;
+            IF v_result <> 'OK' THEN
+                RETURN QUERY SELECT FALSE AS status, 'Error in analyzing graph for INSERT' AS message;
+            END IF;
+           
+PERFORM(fn_backbone_get_loop_entity(backbone_plan_id));
+
+ EXECUTE 'ALTER TABLE line_master ENABLE TRIGGER ALL';
+ EXECUTE 'ALTER TABLE point_master ENABLE TRIGGER ALL';
+
+V_MESSAGE:='BackBone network plan processed successfully!';
+update backbone_plan_details t set status = 'Completed' where t.plan_id = backbone_plan_id and created_by = p_user_id;
+
+RETURN QUERY SELECT V_IS_VALID::boolean AS STATUS, V_MESSAGE::CHARACTER VARYING AS MESSAGE,backbone_plan_id :: integer as v_plan_id ;
+
+end;
+$function$
+;
+
+---------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_draft_update_loop_network(p_line_geom character varying, p_plan_id integer, p_is_loop_required boolean, p_user_id integer, p_loop_span double precision, p_looplength double precision)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_line_geom geometry;
+    v_line_geom_length double precision;
+    current_fraction double precision := 0.0;
+    step_fraction double precision;
+    structure_location geometry;
+BEGIN
+    -- Optional: if this table is global, TRUNCATE will affect all sessions
+    -- Better to filter by plan_id instead of truncating
+    DELETE FROM backbone_plan_temp_loop WHERE plan_id = p_plan_id;
+
+    -- Convert input to geometry
+    SELECT ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+    INTO v_line_geom;
+
+    -- Line length in meters
+    SELECT ST_Length(v_line_geom::geography)
+    INTO v_line_geom_length;
+
+    -- Step fraction (normalized 0–1)
+    step_fraction := (p_loop_span / v_line_geom_length);
+
+    -- Step along the line and insert matching loops
+    WHILE current_fraction < 1.0 LOOP
+        structure_location := ST_LineInterpolatePoint(
+                                v_line_geom,
+                                LEAST(current_fraction + step_fraction, 1.0)
+                             );
+        RAISE INFO 'structure_location %', ST_AsText(structure_location);
+
+        -- Insert only if a Pole/Manhole exists near this location
+        INSERT INTO backbone_plan_temp_loop (
+            system_id, plan_id, entity_type, entity_network_id,
+            longitude, latitude, sp_geometry, province_id, region_id,
+            created_by, line_sp_geometry, is_middle_point, fraction,
+            cable_id, entity_system_id, display_name, cable_network_id,
+            duct_id, trench_id, trench_network_id, duct_network_id,
+            fiber_type, intersect_line_geom, site_geom, cable_length,
+            is_loop_required, planned_cable_entity, site_network_id,
+            is_update, cable_type, loop_length
+        )
+        SELECT DISTINCT ON (bpnd.system_id)  -- avoid duplicates
+               bpnd.system_id, bpnd.plan_id, bpnd.entity_type, bpnd.entity_network_id,
+               bpnd.longitude, bpnd.latitude, bpnd.sp_geometry, bpnd.province_id, bpnd.region_id,
+               bpnd.created_by, bpnd.line_sp_geometry, bpnd.is_middle_point, bpnd.fraction,
+               bpnd.cable_id, bpnd.entity_system_id, bpnd.display_name, bpnd.cable_network_id,
+               bpnd.duct_id, bpnd.trench_id, bpnd.trench_network_id, bpnd.duct_network_id,
+               bpnd.fiber_type, bpnd.intersect_line_geom, bpnd.site_geom, bpnd.cable_length,
+               bpnd.is_loop_required, bpnd.planned_cable_entity, bpnd.site_network_id,
+               bpnd.is_update, bpnd.cable_type, p_looplength
+        FROM backbone_plan_network_details bpnd
+        WHERE ST_Intersects(bpnd.sp_geometry, (structure_location))
+          AND bpnd.plan_id = p_plan_id
+          AND bpnd.entity_type IN ('Pole','Manhole')
+          AND bpnd.is_loop_required = p_is_loop_required
+        ORDER BY bpnd.system_id;
+
+        current_fraction := current_fraction + step_fraction;
+        RAISE INFO 'current_fraction %', current_fraction;
+    END LOOP;
+
+    -- Ensure all Pole/Manhole loops are copied (avoid missing ones)
+    INSERT INTO backbone_plan_temp_loop (
+        system_id, plan_id, entity_type, entity_network_id,
+        longitude, latitude, sp_geometry, province_id, region_id,
+        created_by, line_sp_geometry, is_middle_point, fraction,
+        cable_id, entity_system_id, display_name, cable_network_id,
+        duct_id, trench_id, trench_network_id, duct_network_id,
+        fiber_type, intersect_line_geom, site_geom, cable_length,
+        is_loop_required, planned_cable_entity, site_network_id,
+        is_update, cable_type, loop_length
+    )
+    SELECT bpnd.system_id, bpnd.plan_id, bpnd.entity_type, bpnd.entity_network_id,
+           bpnd.longitude, bpnd.latitude, bpnd.sp_geometry, bpnd.province_id, bpnd.region_id,
+           bpnd.created_by, bpnd.line_sp_geometry, bpnd.is_middle_point, bpnd.fraction,
+           bpnd.cable_id, bpnd.entity_system_id, bpnd.display_name, bpnd.cable_network_id,
+           bpnd.duct_id, bpnd.trench_id, bpnd.trench_network_id, bpnd.duct_network_id,
+           bpnd.fiber_type, bpnd.intersect_line_geom, bpnd.site_geom, bpnd.cable_length,
+           bpnd.is_loop_required, bpnd.planned_cable_entity, bpnd.site_network_id,
+           bpnd.is_update, bpnd.cable_type, bpnd.loop_length
+    FROM backbone_plan_network_details bpnd
+    WHERE bpnd.plan_id = p_plan_id
+      AND bpnd.entity_type IN ('Pole','Manhole')
+      AND bpnd.is_loop_required = p_is_loop_required
+      AND bpnd.system_id NOT IN (
+            SELECT system_id FROM backbone_plan_temp_loop
+      );
+
+    -- Remove the very last pole/manhole (end of cable)
+    DELETE FROM backbone_plan_temp_loop
+    WHERE system_id = (
+        SELECT system_id
+        FROM backbone_plan_network_details
+        WHERE entity_type IN ('Pole','Manhole')
+          AND plan_id = p_plan_id
+        ORDER BY system_id DESC
+        LIMIT 1
+    );
+
+    -- Update loop_length in main table
+    UPDATE backbone_plan_network_details np
+    SET loop_length = lp.loop_length
+    FROM backbone_plan_temp_loop lp
+    WHERE np.system_id = lp.system_id;
+
+    RETURN;
+END;
+$function$
+;
+
+------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_auto_network_plan_draft_update_loop_network(p_line_geom character varying, p_plan_id integer, p_user_id integer, p_loop_span double precision, p_looplength double precision)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_line_geom geometry;
+    v_line_geom_length double precision;
+    current_fraction double precision := 0.0;
+    step_fraction double precision;
+    structure_location geometry;
+BEGIN
+    -- Temp table to hold results
+    CREATE TEMP TABLE auto_network_plan_temp_loop
+    ON COMMIT DROP AS
+    SELECT * FROM temp_auto_network_plan WHERE false;
+
+    -- Convert input to geometry
+    SELECT ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+    INTO v_line_geom;
+
+    -- Line length in meters
+    SELECT ST_Length(v_line_geom::geography)
+    INTO v_line_geom_length;
+
+    -- Calculate step fraction (normalized distance along line)
+    step_fraction := (p_loop_span / v_line_geom_length);
+
+    -- Step along the line and insert matching loops
+    WHILE current_fraction < 1.0 LOOP
+        structure_location := ST_LineInterpolatePoint(
+                                v_line_geom,
+                                LEAST(current_fraction + step_fraction, 1.0)
+                             );
+
+        INSERT INTO auto_network_plan_temp_loop (
+            system_id, plan_id, entity_type, entity_network_id, longitude, latitude, sp_geometry,
+            province_id, region_id, created_by, line_sp_geometry, is_middle_point, fraction, loop_length,
+            loop_parent_network_id, loop_parent_entity_type, loop_network_code, loop_sequence_id,
+            loop_parent_system_id, cable_id, loop_associated_network_id, loop_associated_system_id,
+            loop_entity_type, entity_system_id, display_name, cable_network_id, duct_id, trench_id,
+            trench_network_id, duct_network_id
+        )
+        SELECT *
+        FROM temp_auto_network_plan bpnd
+        WHERE ST_Intersects(
+                  ST_SetSRID(bpnd.sp_geometry, 4326),
+                  st_buffer_meters(structure_location,0.5)
+              )
+          AND bpnd.plan_id = p_plan_id
+        ORDER BY ST_Distance(ST_SetSRID(bpnd.sp_geometry,4326), structure_location)
+        LIMIT 1;
+
+        RAISE INFO 'structure_location %', ST_AsText(structure_location);
+
+        current_fraction := current_fraction + step_fraction;
+    END LOOP;
+
+    -- Update loop_length for matched entities
+    UPDATE temp_auto_network_plan np
+    SET loop_length = p_looplength
+    FROM auto_network_plan_temp_loop lp
+    WHERE np.system_id = lp.system_id;
+
+    -- Reset loop_length to 0 for all others
+    UPDATE temp_auto_network_plan np
+    SET loop_length = 0
+    WHERE np.system_id NOT IN (SELECT lp.system_id FROM auto_network_plan_temp_loop lp);
+
+    RETURN;
+END;
+$function$
+;
+
+
+

@@ -968,12 +968,12 @@ var BackbonePlanning = function () {
             return false;
         }
         if (manhole_distance >= cableDrumLength) {
-            alert("Manhole distance cannot be greater and equal than Backbone Route Length!");
+            alert("Manhole distance cannot be greater and equal than Cable Drum Length!");
             $('#manholeSpan').addClass('form-control input-validation-error');
             return false;
         }
         if (pole_distance >= cableDrumLength) {
-            alert("Pole distance cannot be greater and equal than Backbone Route Length!");
+            alert("Pole distance cannot be greater and equal than Cable Drum Length!");
             $('#poleSpan').addClass('form-control input-validation-error');
             return false;
         }
