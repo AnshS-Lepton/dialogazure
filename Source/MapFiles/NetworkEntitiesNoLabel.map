@@ -2779,12 +2779,13 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_loop_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) and (%NetworkFilter%))	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) and (%NetworkFilter%)  AND (%AutoPlanningNetworkFilter%))
 		VALIDATION		
 			'provinceFilter'   '.*'
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
 			'NetworkFilter' '.*'			
+			'AutoPlanningNetworkFilter' '.*'			
 		END 
 		METADATA
 			'ows_title' 'Loop'

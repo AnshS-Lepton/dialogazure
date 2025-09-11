@@ -3000,10 +3000,14 @@ namespace DataAccess
                 throw;
             }
         }
-        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id)
+        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id,string SiteId)
         {
             try
             {
+                if (SiteId.Contains("--DESC"))
+                {
+                    return repo.GetAll(x => x.plan_id == temp_plan_id).OrderByDescending(x => x.system_id).ToList();
+                } 
                 return repo.GetAll(x => x.plan_id == temp_plan_id).OrderBy(x => x.system_id).ToList();
             }
             catch (Exception)
