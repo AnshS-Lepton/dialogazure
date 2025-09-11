@@ -529,14 +529,20 @@ WHERE mh.backbone_system_id = lp.backbone_system_id
   AND lp.source_ref_type = 'backbone planning'
   AND lp.source_ref_id = p_plan_id::varchar;
  
- UPDATE att_details_loop lp
+ 
+UPDATE att_details_loop lp
 SET cable_system_id = cbl.system_id
-FROM att_details_cable cbl
-WHERE cbl.backbone_system_id = lp.backbone_system_id
-  AND cbl.source_ref_id = lp.source_ref_id
+FROM line_master cbl
+WHERE cbl.entity_type = 'Cable'
   AND lp.source_ref_type = 'backbone planning'
-  AND lp.source_ref_id = p_plan_id::varchar;
-
+  AND lp.source_ref_id = p_plan_id::varchar
+  AND cbl.source_ref_id = p_plan_id::varchar
+  AND cbl.source_ref_type = 'backbone planning'
+  AND ST_DWithin(
+        cbl.sp_geometry::geography,
+        ST_SetSRID(ST_MakePoint(lp.longitude, lp.latitude), 4326)::geography,
+        2
+      );
 
 
 END
@@ -834,3 +840,202 @@ BEGIN
 
 END;
 $BODY$;
+
+---------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_draft_network(is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_user_id integer, p_plan_name character varying, p_startpoint character varying, p_endpoint character varying, p_backbone_fiber_type character varying, p_pole_span double precision, p_manhole_span double precision, v_buffer double precision, p_threshold double precision, p_looplength double precision, p_is_looprequired boolean, cable_drum_length double precision, p_loop_span double precision)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_plan_id INTEGER;
+    v_line_geom geometry;
+    v_line_geom_length double precision;
+    current_fraction double precision := 0.0;
+    structure_location geometry;
+    step_fraction double precision;
+    line_geom geometry;
+    manhole_fraction double precision;
+    p_cable_type character varying;
+    p_entity_type character varying;
+BEGIN
+    -- Create plan entry
+    INSERT INTO backbone_plan_details (
+        plan_name, start_point, end_point, is_create_trench, is_create_duct, 
+        pole_distance, created_by, backbone_fiber_type, 
+        threshold, buffer, is_loop_required, loop_length, manhole_distance, backbone_geometry,cable_length 
+    )
+    VALUES (
+        p_plan_name, p_startpoint, p_endpoint, is_create_trench, is_create_duct,
+        p_pole_span, p_user_id, p_backbone_fiber_type,
+        p_threshold, v_buffer, p_is_looprequired, COALESCE(p_looplength,0),
+        p_manhole_span, p_line_geom,cable_drum_length
+    )
+    RETURNING plan_id INTO v_plan_id;
+
+    -- Convert geometry
+    SELECT ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326) INTO v_line_geom;
+    SELECT ST_Length(v_line_geom::geography) INTO v_line_geom_length;
+
+    -------------------------------------------------------------------
+    -- Structure placement (skip first + last point)
+    -------------------------------------------------------------------
+     WHILE current_fraction < 1.0 LOOP
+        -- Try pole first
+        structure_location := ST_LineInterpolatePoint(v_line_geom, LEAST(current_fraction + (p_pole_span / v_line_geom_length), 1.0));
+
+        -- Check if it's in a restricted area
+        IF NOT EXISTS (
+            SELECT 1 FROM polygon_master
+            WHERE ST_Intersects(sp_geometry, structure_location)
+              AND entity_type = 'RestrictedArea'
+        ) THEN
+            step_fraction := p_pole_span / v_line_geom_length;
+            line_geom := ST_LineSubstring(v_line_geom, current_fraction, LEAST(current_fraction + step_fraction, 1.0));
+         
+            INSERT INTO backbone_plan_network_details (
+                plan_id, entity_type, longitude, latitude, sp_geometry, created_by, fiber_type,fraction,planned_cable_entity ,is_loop_required ,loop_length 
+            ) VALUES (
+                v_plan_id, 'Pole', ST_X(ST_EndPoint(line_geom)),  ST_Y(ST_EndPoint(line_geom)) , ST_EndPoint(line_geom), p_user_id, p_backbone_fiber_type,current_fraction,'BackBone Cable',p_is_looprequired,0
+            );           
+           
+        else
+        	line_geom = NULL;
+            step_fraction := p_manhole_span / v_line_geom_length;
+            line_geom := ST_LineSubstring(v_line_geom, current_fraction, LEAST(current_fraction + step_fraction, 1.0));
+          
+            INSERT INTO backbone_plan_network_details (
+                plan_id, entity_type, longitude, latitude, sp_geometry, created_by, fiber_type,line_sp_geometry,fraction,loop_length ,planned_cable_entity , is_loop_required
+            ) VALUES (
+                v_plan_id, 'Manhole', ST_X(ST_EndPoint(line_geom)), ST_Y(ST_EndPoint(line_geom)), ST_EndPoint(line_geom), p_user_id, p_backbone_fiber_type,line_geom,current_fraction,p_looplength,'BackBone Cable',p_is_looprequired
+            );
+
+        END IF;
+
+        -- Move to next step
+        current_fraction := current_fraction + step_fraction;
+
+        -- Exit safety
+        EXIT WHEN current_fraction >= 1.0;
+    END LOOP; 
+   
+    delete from backbone_plan_network_details where system_id = (select system_id from backbone_plan_network_details where plan_id = v_plan_id and entity_type in ('Pole','Manhole') order by system_id desc limit 1);
+   
+ --	update backbone_plan_network_details set is_loop_required = false where system_id =
+  --  (select system_id from backbone_plan_network_details where plan_id = v_plan_id and entity_type in ('Pole','Manhole')
+   -- order by system_id desc limit 1);
+    -------------------------------------------------------------------
+    -- Add SpliceClosure at start
+    -------------------------------------------------------------------
+  /*  INSERT INTO backbone_plan_network_details (
+        plan_id, entity_type, longitude, latitude, sp_geometry, created_by, fiber_type, fraction, planned_cable_entity
+    )
+    VALUES (
+        v_plan_id, 'SpliceClosure',
+        ST_X(ST_StartPoint(v_line_geom)), ST_Y(ST_StartPoint(v_line_geom)),
+        ST_StartPoint(v_line_geom), p_user_id, p_backbone_fiber_type, 0.0, 'BackBone Cable'
+    );*/
+
+    -------------------------------------------------------------------
+    -- Cable placement
+    -------------------------------------------------------------------
+    current_fraction := 0.0;
+
+    WHILE current_fraction < 1.0 LOOP
+        step_fraction := cable_drum_length / v_line_geom_length;
+
+        -- Prevent overshoot
+        IF current_fraction + step_fraction > 1.0 THEN
+            step_fraction := 1.0 - current_fraction;
+        END IF;
+
+        line_geom := ST_LineSubstring(v_line_geom, current_fraction, current_fraction + step_fraction);
+
+        structure_location := ST_LineInterpolatePoint(v_line_geom, current_fraction + step_fraction);
+
+        -- cable type logic
+        IF EXISTS (
+            SELECT 1 FROM polygon_master
+            WHERE ST_Intersects(sp_geometry, structure_location)
+              AND entity_type = 'RestrictedArea'
+        ) THEN
+            p_cable_type := 'Underground';
+            p_entity_type = 'Manhole';
+        ELSE
+            p_cable_type := 'Overhead';
+            p_entity_type = 'Pole';
+        END IF;
+
+        -- insert cable
+        INSERT INTO backbone_plan_network_details (
+            plan_id, entity_type, created_by, fiber_type, fraction, planned_cable_entity, cable_type, line_sp_geometry, sp_geometry
+        )
+        VALUES (
+            v_plan_id, 'Cable', p_user_id, p_backbone_fiber_type,
+            current_fraction, 'BackBone Cable', p_cable_type, line_geom, ST_EndPoint(line_geom)
+        );
+
+        -- insert splice closure at segment end
+        INSERT INTO backbone_plan_network_details (
+            plan_id, entity_type, longitude, latitude, sp_geometry, created_by, fiber_type, fraction, planned_cable_entity
+        )
+        VALUES (
+            v_plan_id, 'SpliceClosure',
+            ST_X(ST_EndPoint(line_geom)), ST_Y(ST_EndPoint(line_geom)),
+            ST_EndPoint(line_geom), p_user_id, p_backbone_fiber_type, current_fraction + step_fraction, 'BackBone Cable'
+        );
+       
+       if not exists (SELECT 1 FROM backbone_plan_network_details
+            WHERE plan_id = v_plan_id and ST_Intersects(sp_geometry, structure_location)
+              AND entity_type = p_entity_type and sp_geometry is not null) 
+              then 
+ 		INSERT INTO backbone_plan_network_details (
+            plan_id, entity_type, longitude, latitude, sp_geometry, created_by, fiber_type, fraction, planned_cable_entity,is_loop_required 
+        )
+        VALUES (
+            v_plan_id, p_entity_type,
+            ST_X(ST_EndPoint(line_geom)), ST_Y(ST_EndPoint(line_geom)),
+            ST_EndPoint(line_geom), p_user_id, p_backbone_fiber_type, current_fraction + step_fraction, 'BackBone Cable',p_is_looprequired
+        );
+       end if;
+      
+        current_fraction := current_fraction + step_fraction;
+
+        EXIT WHEN current_fraction >= 1.0;
+    END LOOP;
+   
+delete from backbone_plan_network_details where system_id = (select system_id from backbone_plan_network_details where plan_id = v_plan_id and entity_type in ('Pole','Manhole') order by system_id desc limit 1);
+  
+delete from backbone_plan_network_details where system_id = (select system_id from backbone_plan_network_details where plan_id = v_plan_id and entity_type in ('SpliceClosure') order by system_id desc limit 1);
+   
+
+ --  update backbone_plan_network_details set is_loop_required = false where system_id =
+ --  (select system_id from backbone_plan_network_details where plan_id = v_plan_id and entity_type in ('Pole','Manhole')
+ -- order by system_id desc limit 1);
+   
+   if (p_is_looprequired) 
+   then
+  perform (fn_backbone_draft_update_loop_network(p_line_geom, v_plan_id, p_is_looprequired,p_user_id, p_loop_span,p_looplength));
+  end if;
+    -------------------------------------------------------------------
+    -- Update region + province
+    -------------------------------------------------------------------
+    UPDATE backbone_plan_network_details AS np
+    SET province_id = pm.id,
+        region_id   = rm.id
+    FROM region_boundary AS rm,
+         province_boundary AS pm
+    WHERE rm.isvisible = TRUE
+      AND pm.isvisible = TRUE
+      AND ST_Intersects(pm.sp_geometry, np.sp_geometry)
+      AND ST_Intersects(rm.sp_geometry, np.sp_geometry)
+      AND np.plan_id = v_plan_id
+      AND np.created_by = p_user_id
+      AND np.sp_geometry IS NOT NULL;
+
+    RETURN QUERY
+    SELECT row_to_json(t)
+    FROM (SELECT v_plan_id AS plan_id) AS t;
+END;
+$function$
+;
