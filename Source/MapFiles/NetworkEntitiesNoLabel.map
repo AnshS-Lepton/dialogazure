@@ -1671,7 +1671,18 @@ LAYER
 			'ows_title' 'POD'
 		END
 		STATUS OFF
-		GROUP 'Network'		
+		GROUP 'Network'	
+		
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[pod_type]'  eq 'OLT')  			
+			STYLE
+				SYMBOL "icons/Planned/Podgreen.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END			
+		END	
+
 		CLASS
 		NAME 'POD'
 		EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'true')
@@ -1727,7 +1738,8 @@ CLASS
 				OFFSET 0 -5				
 			END
             			
-		END		
+		END	
+		
 	END	
 	#=================================================EQUIPMENT ====
 	LAYER

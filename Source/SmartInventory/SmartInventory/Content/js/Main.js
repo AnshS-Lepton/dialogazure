@@ -8968,7 +8968,21 @@ var Main = function () {
         var pAllId = app.getParentallid(childnetworkType);
         var parId = $(cb).attr("data-layerid").split('_')[1];
         var layerGroup = $(cb).attr("data-layergroup");
+        var subchildlayerGroup = $(cb).attr("data-subchild-layergroup");
         var disCheckboxLength = $('input[type=checkbox]').filter('.' + childnetworkClass + '').filter('[data-ntp=False]').length;
+
+        if (parId == 19) {
+            if ($("input[data-subchild-layergroup=" + subchildlayerGroup +"]").is(":checked")) {
+                
+                //$('#chk_nLyr_' + parId).prop('checked', true);
+                $('[data-Child-layergroup=' + subchildlayerGroup + ']').prop('checked', true);
+            }
+            else {
+              //  $('#chk_nLyr_' + parId).prop('checked', false);
+                $('[data-Child-layergroup=' + subchildlayerGroup + ']').prop('checked', false);
+            }
+        }
+       
 
 
         if (childnetworkType != 'L') {
@@ -31610,7 +31624,10 @@ var Main = function () {
             else if (checked === total && total > 0) {$targetChk.prop("checked", true);}
             else if (checked > 0 && total === 0) {$targetChk.prop("checked", false);}
             else if (checked > 0 && total > 0) { $("#" + chkid).prop("checked", true);}
-            else { $("#" + chkid).prop("checked", false);}
+            else {
+              //  $("#" + chkid).prop("checked", false);
+                
+            }
             /*Segment layer check box--End--*/
 
         }
@@ -31660,7 +31677,10 @@ var Main = function () {
  else if (checked === total && total > 0) { $targetChk.prop("checked", false); }
  else if (checked > 0 && total === 0) { $targetChk.prop("checked", false);} 
  else if (checked > 0 && total > 0) { $("#" + chkid).prop("checked", false); }
- else { $("#" + chkid).prop("checked", true);}
+ else { 
+     //$("#" + chkid).prop("checked", true);
+     
+ }
             /*Segment layer check box--Statr--*/
 
             //var remLyrItem  app.DE.layerManager.includes(lyrName);
