@@ -795,7 +795,7 @@ namespace SmartInventory.Controllers
                 objFiberLinkFilter.currentPage = 0;
                 objFiberLinkFilter.pageSize = 0;
                 objFiberLinkFilter.system_id = 0;
-                FiberLinkExcelExport(objFiberLinkFilter);
+                FiberLinkExcelExportById(objFiberLinkFilter);
             }
         }
 
@@ -943,6 +943,7 @@ namespace SmartInventory.Controllers
             dtReport.Columns.Remove("system_id");
             dtReport.Columns.Remove("totalrecords");
             dtReport.Columns.Remove("OTDR Distance(meter)");
+            dtReport.Columns.Remove("Link/Route Name");
             dtReport.Columns.Add("Jump", typeof(string));
 
             dtReport.Columns["Network Id"].SetOrdinal(0);

@@ -1602,6 +1602,31 @@ MAP
 		STATUS OFF
 		LABELITEM 'label_column'
 		GROUP 'Network'
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[pod_type]'  eq 'OLT')  			
+			STYLE
+				SYMBOL "icons/Planned/Podgreen.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END	
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  0 255 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END	
+		END	
 CLASS
 			NAME 'POD'
             EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'false')  			
