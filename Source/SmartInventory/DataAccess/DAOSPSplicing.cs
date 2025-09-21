@@ -238,6 +238,33 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public connectionInfo GetCableroute(ExportReportFilter objExportEntitiesReport)
+        {
+            try
+            {
+
+                return repo.ExecuteProcedure<connectionInfo>("fn_get_fms_connection_report_new", new
+                {
+                    p_networkstatues = objExportEntitiesReport.SelectedNetworkStatues,
+                    p_provinceids = objExportEntitiesReport.SelectedProvinceIds,
+                    p_regionids = objExportEntitiesReport.SelectedRegionIds,
+                    p_layer_name = objExportEntitiesReport.layerName,
+                    P_searchby = objExportEntitiesReport.SearchbyColumnName,
+                    p_searchbytext = objExportEntitiesReport.SearchbyText,
+                    p_fromdate = objExportEntitiesReport.fromDate,
+                    p_todate = objExportEntitiesReport.toDate,
+                    p_pageno = objExportEntitiesReport.currentPage,
+                    p_pagerecord = objExportEntitiesReport.pageSize,
+                    p_sortcolname = objExportEntitiesReport.sort,
+                    p_sorttype = objExportEntitiesReport.sortdir,
+                    p_geom = objExportEntitiesReport.geom,
+                    p_duration_based_column = objExportEntitiesReport.DurationBasedColumnName,
+                    p_radius = objExportEntitiesReport.radius,
+                    p_userid = objExportEntitiesReport.userId
+                }, true).FirstOrDefault();
+            }
+            catch { throw; }
+        }
         public SchematicView GetSchematicView(ConnectionInfoFilter objFilterAttributes, bool isUpstream, bool isConnectedPort)
         {
             try

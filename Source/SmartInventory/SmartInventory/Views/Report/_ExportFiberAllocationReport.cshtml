@@ -85,7 +85,7 @@
                             @Html.TextBoxFor(m => m.objReportFilters.SearchbyText, new { @id = "txtSearchText", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_101, @maxlength = 50 })
                         </div>
                     </div>
-                    <div class="form-group row">
+                    @*<div class="form-group row">
                         <label class="control-label col-sm-2" for="searchby">@Resources.Resources.SI_OSP_GBL_NET_FRM_071</label>
                         <div class="col-sm-4">
                             @Html.DropDownListFor(m => m.objReportFilters.DurationBasedColumnName,
@@ -123,7 +123,7 @@
                             @Html.TextBoxFor(m => m.objReportFilters.toDate, new { @id = "txtDateTo", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_097, @tabindex = "4", @class = "input-sm form-control", @readonly = true })
                             <img id="imgToDate" class="assign-calen" src="~/Content/images/calendar.png" />
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>
@@ -145,11 +145,11 @@
     $(document).ready(function () {
         $('#hdnLayerName').val('FMS');
 
-        if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
+        //if ($("#customedate_chosen").children('a').text().trim() != "Custom") {
 
-            $('#imgFromDate').hide();
-            $('#imgToDate').hide();
-        }
+        //    $('#imgFromDate').hide();
+        //    $('#imgToDate').hide();
+        //}
         //if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() != "") {
         //    $("#ddlProvinces").attr("readonly", true).trigger("chosen:updated"); $("#ddlRegions").attr("readonly", true).trigger("chosen:updated"); $("#txtSearchText").attr("readonly", true);
         //    $("#ddlLayerColumns").attr("readonly", true).trigger("chosen:updated");;
@@ -167,8 +167,8 @@
         $("#SelectedNetworkStatus").val(selectedNetworkStatuses.split(',')).trigger("chosen:updated");
 
 
-        addDefaultSortingIcons('tblExportReport');
-        si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
+        //addDefaultSortingIcons('tblExportReport');
+        //si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
 
         $("#btnShowReportData").on("click", function () {
        
@@ -181,30 +181,30 @@
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
                 return false;
             }
-            else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "" ) {
-                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
-                return false;
-            }
-            else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "" ) {
-                alert("Please Select Duration!");
-                return false;
-            }
-            else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
-                return false;
-            }
+            //else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "" ) {
+            //     alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+            //    return false;
+            //}
+            //else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "" ) {
+            //    alert("Please Select Duration!");
+            //    return false;
+            //}
+            //else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+            //    return false;
+            //}
 
-            else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
-                return false;
-            }
+            //else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+            //    return false;
+            //}
 
-            else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
-                var startDate = new Date($('#txtDateFrom').val());
-                var endDate = new Date($('#txtDateTo').val());
-                var configuredDay = 365;
-                return si.GetDaysDifference(startDate, endDate, configuredDay);
-            }
+            //else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+            //    var startDate = new Date($('#txtDateFrom').val());
+            //    var endDate = new Date($('#txtDateTo').val());
+            //    var configuredDay = 365;
+            //    return si.GetDaysDifference(startDate, endDate, configuredDay);
+            //}
             else {
                 si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
             }
@@ -221,30 +221,30 @@
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
                 return false;
             }
-            else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "") {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
-                return false;
-            }
-            else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "") {
-                alert("Please Select Duration!");
-                return false;
-            }
-            else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
-                return false;
-            }
+            //else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "") {
+            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
+            //    return false;
+            //}
+            //else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "") {
+            //    alert("Please Select Duration!");
+            //    return false;
+            //}
+            //else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
+            //    return false;
+            //}
 
-            else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-                alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
-                return false;
-            }
+            //else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
+            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
+            //    return false;
+            //}
 
-            else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
-                var startDate = new Date($('#txtDateFrom').val());
-                var endDate = new Date($('#txtDateTo').val());
-                var configuredDay = 365;
-                return si.GetDaysDifference(startDate, endDate, configuredDay);
-            }
+            //else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
+            //    var startDate = new Date($('#txtDateFrom').val());
+            //    var endDate = new Date($('#txtDateTo').val());
+            //    var configuredDay = 365;
+            //    return si.GetDaysDifference(startDate, endDate, configuredDay);
+            //}
             else {
                 si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
             }
