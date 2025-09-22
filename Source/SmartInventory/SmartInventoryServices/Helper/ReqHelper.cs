@@ -91,30 +91,37 @@ namespace SmartInventoryServices.Helper
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
             return (Math.Sign(byteCount) * num).ToString() + " " + suf[place];
         }
-        public static void DeleteFileFromFTP(string filePath)
+        public static bool DeleteFileFromFTP(string filePath)
         {
+            string strFTPPath = System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"];
+            string strFTPUserName = System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"];
+            string strFTPPassWord = System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+
             try
             {
-                string strFTPPath = System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"];
-                string strFTPUserName = System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"];
-                string strFTPPassWord = System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+                // Ensure the FTP path ends without a trailing slash
+                if (!strFTPPath.EndsWith("/"))
+                    strFTPPath += "/";
 
-                if (isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
+                // Build the full FTP file URI
+                string ftpFilePath = strFTPPath + filePath;
+
+                // Create the request
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpFilePath);
+                request.Method = WebRequestMethods.Ftp.DeleteFile;
+                request.Credentials = new NetworkCredential(strFTPUserName, strFTPPassWord);
+
+                // Execute and close response
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
                 {
-
-                    System.Net.FtpWebRequest request = (System.Net.FtpWebRequest)System.Net.WebRequest.Create(strFTPPath + @"\" + filePath);
-
-                    //If you need to use network credentials
-                    request.Credentials = new System.Net.NetworkCredential(strFTPUserName, strFTPPassWord);
-                    //additionally, if you want to use the current user's network credentials, just use:
-                    //System.Net.CredentialCache.DefaultNetworkCredentials
-                    request.Method = System.Net.WebRequestMethods.Ftp.DeleteFile;
-                    System.Net.FtpWebResponse response = (System.Net.FtpWebResponse)request.GetResponse();
-                    response.Close();
+                    Console.WriteLine($"Delete status: {response.StatusDescription}");
                 }
+
+                return true; // success
             }
-            catch { throw; }
+            catch (WebException ex) { throw new Exception("Unable to Delete File to FTP Server", ex); }
         }
+
         public static bool isValidFTPConnection(string ftpUrl, string strUserName, string strPassWord)
         {
             try
