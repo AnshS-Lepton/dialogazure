@@ -1652,7 +1652,7 @@ namespace DataAccess
                     { 
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
-                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_networkstatues = (objReportFilter.SelectedNetworkStatues ?? "").Replace("'", "@"),
                         p_layer_name = objReportFilter.layerName,
                         p_projectcodes = objReportFilter.SelectedProjectIds,
                         p_planningcodes = objReportFilter.SelectedPlanningIds,
@@ -1681,7 +1681,7 @@ namespace DataAccess
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
-                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_networkstatues = (objReportFilter.SelectedNetworkStatues ?? "").Replace("'", "@"),
                         p_layer_name = objReportFilter.layerName,
                         p_projectcode = objReportFilter.SelectedProjectIds,
                         p_planningcode = objReportFilter.SelectedPlanningIds,
