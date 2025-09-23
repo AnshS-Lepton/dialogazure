@@ -9392,7 +9392,7 @@ var Main = function () {
             app.fSource_ref_type = '';
             app.fIs_new_entity = false;
             app.fStatus = 'A';
-            app.filterNetworkTicketValue = " [status]='A'";
+           // app.filterNetworkTicketValue = " [status]='A'";
         }
 
     }
