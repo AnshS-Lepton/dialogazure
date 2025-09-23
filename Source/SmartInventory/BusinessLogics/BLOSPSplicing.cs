@@ -66,6 +66,10 @@ namespace BusinessLogics
         {
             return new DAOSPSplicing().GetCablerouteInfo(objExportEntitiesReport);
         }
+        public connectionInfo GetCableroute(ExportReportFilter objExportEntitiesReport)
+        {
+            return new DAOSPSplicing().GetCableroute(objExportEntitiesReport);
+        }
         public SchematicView GetSchematicView(ConnectionInfoFilter objFilterAttributes, bool isUpstream, bool isConnectedPort)
         {
             return new DAOSPSplicing().GetSchematicView(objFilterAttributes, isUpstream, isConnectedPort);

@@ -3052,6 +3052,15 @@ namespace Models
         public bool isshaft { get; set; }
 
     }
+    public class ODFReportLst
+    {
+        public int source_port_no { get; set; }
+        public string client_link_id { get; set; }
+        public string source_network_id { get; set; }
+        public string destination_network_id { get; set; }
+        public string op_alias { get; set; }     
+
+    }
 
     public class ExportEntitiesReport
     {
