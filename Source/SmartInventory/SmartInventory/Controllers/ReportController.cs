@@ -12215,6 +12215,8 @@ namespace SmartInventory.Controllers
                     if (dtReport.Columns.Contains("temp_plan_id")) { dtReport.Columns.Remove("temp_plan_id"); }
                     if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns.Remove("cable_length"); }
                     if (dtReport.Columns.Contains("geometry")) { dtReport.Columns.Remove("geometry"); }
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns.Remove("site_id"); }
+
                     //if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
                     //if (dtReport.Columns.Contains("system Id")) { dtReport.Columns.Remove("system Id"); }
                 }
@@ -12432,11 +12434,11 @@ namespace SmartInventory.Controllers
 
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
-                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
-                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
-                    if (dtReport.Columns.Contains("fibertype")) { dtReport.Columns["fibertype"].ColumnName = "Sprout Fiber Type"; }
                     if (dtReport.Columns.Contains("network_id")) { dtReport.Columns["network_id"].ColumnName = "Network Id"; }
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
+                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
                     if (dtReport.Columns.Contains("sprout_route_length")) { dtReport.Columns["sprout_route_length"].ColumnName = "Route Length"; }
+                    if (dtReport.Columns.Contains("fibertype")) { dtReport.Columns["fibertype"].ColumnName = "Sprout Fiber Type"; }
 
                     // Remove unnecessary columns
                     dtReport.Columns.Remove("geometry");

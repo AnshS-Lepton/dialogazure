@@ -1035,7 +1035,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Planned/PBDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1045,8 +1045,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1059,7 +1059,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/PBDB.png" 
 				SIZE 16			
 			END
 			LEADER
@@ -1069,8 +1069,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1083,7 +1083,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Dorment/PBDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1093,8 +1093,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1108,7 +1108,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Planned/BDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1118,8 +1118,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1132,7 +1132,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/AsBuild/BDB.png" 
 				SIZE 16			
 			END
 			LEADER
@@ -1142,8 +1142,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1156,7 +1156,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Dorment/BDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1166,8 +1166,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -3293,8 +3293,9 @@ END
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Planned/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3303,7 +3304,7 @@ END
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3317,8 +3318,8 @@ END
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20			
+				SYMBOL "icons/AsBuild/WallMount.png" 
+				SIZE 25			
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3327,7 +3328,7 @@ END
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3341,8 +3342,9 @@ END
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Dorment/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3351,7 +3353,7 @@ END
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3360,7 +3362,7 @@ END
 				POSITION AUTO
 				PARTIALS FALSE	
             END				
-		END	
+		END		
 	END	
 	#=======================================PEP==========
 	LAYER

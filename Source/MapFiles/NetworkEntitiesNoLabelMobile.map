@@ -1970,8 +1970,9 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Planned/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
             			
 		END
@@ -1979,8 +1980,8 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20			
+				SYMBOL "icons/AsBuild/WallMount.png" 
+				SIZE 25			
 			END
             			
 		END
@@ -1988,8 +1989,9 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Dorment/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
             			
 		END		
