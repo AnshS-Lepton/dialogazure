@@ -96,9 +96,11 @@ namespace SmartInventoryServices.Helper
             string strFTPPath = System.Configuration.ConfigurationManager.AppSettings["FTPAttachment"];
             string strFTPUserName = System.Configuration.ConfigurationManager.AppSettings["FTPUserNameAttachment"];
             string strFTPPassWord = System.Configuration.ConfigurationManager.AppSettings["FTPPasswordAttachment"];
+            ErrorLogHelper errorLog = new ErrorLogHelper();
 
             try
             {
+                errorLog.ApiLogWriter("DeleteFileFromFTP", "", $"FTP Path={filePath}", null);
                 // Ensure the FTP path ends without a trailing slash
                 if (!strFTPPath.EndsWith("/"))
                     strFTPPath += "/";
@@ -114,7 +116,7 @@ namespace SmartInventoryServices.Helper
                 // Execute and close response
                 using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
                 {
-                    Console.WriteLine($"Delete status: {response.StatusDescription}");
+                    //Console.WriteLine($"Delete status: {response.StatusDescription}");
                 }
 
                 return true; // success

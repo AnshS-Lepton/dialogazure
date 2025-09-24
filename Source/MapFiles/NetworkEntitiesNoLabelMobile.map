@@ -1309,19 +1309,10 @@ CLASS
 		GROUP 'Network'		
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber') 			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20			
 			END
             			
 		END
@@ -1329,56 +1320,62 @@ CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[network_status]'  eq 'D' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END	
-
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
 		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+	    
+		
+		
 		CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20			
 			END
             			
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')  			
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END	
-		
-		
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
 		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P') 			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		
+		
 		CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/loopChamber.png" 
+				SIZE 20			
 			END
             			
 		END
@@ -1386,11 +1383,22 @@ CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/loopChamber.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
-		END	
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/loopChamber.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
 	END	
 	# ================================== CABLE ======================================== 
 	LAYER
