@@ -160,6 +160,7 @@ namespace Models
         public string cost_per_unit { get; set; }
         public string service_cost_per_unit { get; set; }
         public string total_cost { get; set; }
+        public string site_endpoint { get; set; }
         public List<siteBufferGeometry> backbonelinegeom { get; set; }
     }
     public class SiteBufferGeometryRaw
@@ -218,6 +219,7 @@ namespace Models
     public class BackBonePlanKMLBom
     {
         public string entity_type { get; set; }
+        public string entity_name { get; set; }
         public string length_qty { get; set; }
         public double cost_per_unit { get; set; }
         public double service_cost_per_unit { get; set; }
@@ -232,8 +234,8 @@ namespace Models
         public int plan_id { get; set; }
         public string entity_type { get; set; }
         public string entity_network_id { get; set; }
-        public double longitude { get; set; }
-        public double latitude { get; set; }
+        public double? longitude { get; set; }
+        public double? latitude { get; set; }
         public int created_by { get; set; }
         public int cable_id { get; set; }
         public int? entity_system_id { get; set; }
@@ -243,8 +245,12 @@ namespace Models
         public string trench_network_id { get; set; }
         public string duct_network_id { get; set; }
         public string fiber_type { get; set; }
-        public double loop_length { get; set; }
-        public bool is_loop_required { get; set; }       
+        public double? loop_length { get; set; }
+        public bool is_loop_required { get; set; }
+        public string entity_name { get; set; }
+        public double? fraction { get; set; }
+          
+          
     }
 
 
