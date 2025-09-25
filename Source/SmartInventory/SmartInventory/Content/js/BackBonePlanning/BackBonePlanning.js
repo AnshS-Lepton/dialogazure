@@ -1001,7 +1001,7 @@ var BackbonePlanning = function () {
             return false;
         }
         if (threshold >= cableDrumLength) {
-            alert("Sprout threshold value cannot be greater and equal than Backbone Route Length!");
+            alert("Sprout threshold value cannot be greater and equal than Cable Drum Length!");
             $('#sproutThreshold').addClass('form-control input-validation-error');
             return false;
         }     
