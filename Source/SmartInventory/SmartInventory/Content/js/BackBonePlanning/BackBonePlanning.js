@@ -1056,6 +1056,8 @@ var BackbonePlanning = function () {
     }
     this.loopDetails = function () {
 
+        alert("Loop Updated Successfully!");       
+
         let plan_id = $('#plan_id').val();
         let sproutDropdownType = $('#sproutFiberDropdown').val();
         let backboneDropdownType = $('#backboneFiberDropdown').val();

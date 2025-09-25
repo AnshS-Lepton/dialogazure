@@ -37,14 +37,8 @@
                                     counter = counter + 1;
                                     <div class="displayRows">
                                         @Html.TextBoxFor(x => x[i].loop_length, new { @class = "form-control  enableControl", id = "lstLoopMangment_" + i, @onblur = "return backbonedata.CheckLoopLenght(this)", onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
-                                        @if (Model[i].entity_type == "Pole")
-                                        {
-                                        @("PL-" + counter.ToString("D2"))
-                                        }
-                                        else
-                                        {
-                                        @("MH-" + counter.ToString("D2"))
-                                        }
+                                        @Model[i].entity_name
+
                                     </div>
                                     <div>
                                         @Html.HiddenFor(x => x[i].system_id)
@@ -54,6 +48,7 @@
                                         @Html.HiddenFor(x => x[i].plan_id)
                                         @Html.HiddenFor(x => x[i].is_loop_required)
                                         @Html.HiddenFor(x => x[i].created_by)
+                                        @Html.HiddenFor(x => x[i].entity_name)
                                     </div>
                                     }
 

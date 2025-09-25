@@ -12317,14 +12317,22 @@ namespace SmartInventory.Controllers
                     List<BackBonePlanKMLBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
                     foreach (var row in rows)
                     {
-                        string name = SecurityElement.Escape(row.entity_type);
+                        string entity_type = SecurityElement.Escape(row.entity_type);
+                        string name = SecurityElement.Escape(row.entity_name);
                         string qty = SecurityElement.Escape(row.length_qty.ToString());
                         string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
                         string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
                         string total = SecurityElement.Escape(row.amount.ToString());
 
                         sbKml.AppendLine("  <Placemark>");
-                        sbKml.AppendLine($"    <name>{name}</name>");
+                        if (entity_type == "Pole" || entity_type == "Manhole" || entity_type == "Cable")
+                        {
+                            sbKml.AppendLine($"    <name>{entity_type} {name}</name>");
+                        }
+                        else
+                        {
+                            sbKml.AppendLine($"    <name>{entity_type}</name>");
+                        }
                         sbKml.AppendLine("    <ExtendedData>");
                         sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
                         sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
