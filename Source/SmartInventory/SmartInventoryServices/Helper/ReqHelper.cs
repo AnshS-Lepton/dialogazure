@@ -134,7 +134,7 @@ namespace SmartInventoryServices.Helper
                 request.GetResponse();
             }
             catch (WebException ex) { throw new Exception("Unable to connect to FTP Server", ex); }
-            return true;
+                return true;
         }
         public static string CreateNestedDirectoryOnFTP(string strFTPPath, string strUserName, string strPassWord, params string[] directories)
         {
@@ -281,7 +281,7 @@ namespace SmartInventoryServices.Helper
                 {
                     File.Delete(localFilePath);
                 }
-
+                strFTPFilePath = strFTPFilePath + "/";
                 return strFTPFilePath.Replace(strFTPPath, "");
             }
             catch (Exception ex)
