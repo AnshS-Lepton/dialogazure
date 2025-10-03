@@ -359,3 +359,19 @@ $function$;
 
 ----------------------------------------------------------------------------------------------------------------
 
+CREATE OR REPLACE FUNCTION public.fn_get_reportcolumn_list(p_layer_name character varying)
+RETURNS SETOF json
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+v_layerId int;
+BEGIN
+
+select layer_id into v_layerId from layer_details where lower(layer_name) = lower(p_layer_name);
+
+RETURN QUERY select row_to_json(row) from (select s.display_name as value, s.column_name as key from layer_columns_settings s
+where s.layer_id=v_layerId and upper(s.setting_type)='REPORT' and s.is_active=true and column_name in('network_id','fms_name','site_id','cable_category') order by column_sequence) row;
+
+END
+$function$
+;
