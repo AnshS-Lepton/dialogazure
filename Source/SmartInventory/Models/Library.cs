@@ -3837,6 +3837,7 @@ namespace Models
         public string fileType { get; set; }
         public string utilizationType { get; set; }
         public string ductutilization { get; set; }
+        public string lst_LayerIds { get; set; }
     }
 
     public class UtilizationAdvFilterDetail

@@ -1,6 +1,7 @@
 ﻿using BusinessLogics;
 using BusinessLogics.Admin;
 using BusinessLogics.DaFiFeasibilityAPI;
+using DataAccess;
 using Ionic.Zip;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
@@ -9983,25 +9984,47 @@ namespace SmartInventory.Controllers
 
         public JsonResult ShowUtilizationOnMapBasedOnNetworkStatus(string network_status)
         {
-            string objUtilizationEntitiesReport = String.Empty;
+            string objEntitiesReport = String.Empty;
             try
             {
-                // Call your BLLayer method
-                objUtilizationEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(network_status);
-            }
-            catch (Exception ex)
-            {
-                // Log exception if needed
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                if (Session["UtilizationReportFilter"] != null)
+                {
+                    UtilizationEntitiesSummaryView objUtilizationEntitiesReport = new UtilizationEntitiesSummaryView();
+                    UtilizationReport objUtilizationSummary = new UtilizationReport();
+                    objUtilizationSummary = (UtilizationReport)Session["UtilizationSummaryData"];
 
-                // Rethrow without losing stack trace
+                    UtilizationFilter objUtilizationFilter = new UtilizationFilter();
+                    objUtilizationFilter = (UtilizationFilter)Session["UtilizationReportFilter"];
+
+                    objUtilizationEntitiesReport.objReportFilters.SelectedRegionIds = objUtilizationFilter.SelectedRegionIds;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedProvinceIds = objUtilizationFilter.SelectedProvinceIds;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedNetworkStatues = objUtilizationFilter.SelectedNetworkStatues;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedLayerId = objUtilizationFilter.SelectedLayerId;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedProjectIds = objUtilizationFilter.SelectedProjectIds;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedPlanningIds = objUtilizationFilter.SelectedPlanningIds;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedWorkOrderIds = objUtilizationFilter.SelectedWorkOrderIds;
+                    objUtilizationEntitiesReport.objReportFilters.SelectedPurposeIds = objUtilizationFilter.SelectedPurposeIds;
+                    objUtilizationEntitiesReport.objReportFilters.geom = objUtilizationFilter.geom;
+
+                    List<int> SelectedLayerId = objUtilizationEntitiesReport.objReportFilters.SelectedLayerId;
+                    List<int> SelectedLayerIdSummary = objUtilizationFilter.SelectedLayerId;
+                    var utilizationSummaryData = objUtilizationSummary.lstReportData;
+
+                    objUtilizationEntitiesReport.objReportFilters.SelectedLayerId = objUtilizationSummary.objReportFilters.SelectedLayerId;
+                    objUtilizationFilter.SelectedLayerId = objUtilizationSummary.objReportFilters.SelectedLayerId;
+                    objUtilizationEntitiesReport.objReportFilters.lst_LayerIds = string.Join(",", objUtilizationFilter.SelectedLayerId);
+                    // Call your BLLayer method
+                    objEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(objUtilizationEntitiesReport.objReportFilters, network_status);
+                }
+            }
+            catch (Exception ex) { 
                 throw;
             }
 
             // Use Json() helper with large max length
             return new JsonResult
             {
-                Data = objUtilizationEntitiesReport,
+                Data = objEntitiesReport,
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet,
                 MaxJsonLength = int.MaxValue
             };
