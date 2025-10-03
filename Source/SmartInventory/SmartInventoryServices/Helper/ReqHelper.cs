@@ -101,7 +101,7 @@ namespace SmartInventoryServices.Helper
 
                 if (isValidFTPConnection(strFTPPath, strFTPUserName, strFTPPassWord))
                 {
-
+                   
                     System.Net.FtpWebRequest request = (System.Net.FtpWebRequest)System.Net.WebRequest.Create(strFTPPath + @"\" + filePath);
 
                     //If you need to use network credentials
@@ -125,7 +125,7 @@ namespace SmartInventoryServices.Helper
                 request.GetResponse();
             }
             catch (WebException ex) { throw new Exception("Unable to connect to FTP Server", ex); }
-            return true;
+                return true;
         }
         public static string CreateNestedDirectoryOnFTP(string strFTPPath, string strUserName, string strPassWord, params string[] directories)
         {
@@ -272,7 +272,7 @@ namespace SmartInventoryServices.Helper
                 {
                     File.Delete(localFilePath);
                 }
-
+                strFTPFilePath = strFTPFilePath + "/";
                 return strFTPFilePath.Replace(strFTPPath, "");
             }
             catch (Exception ex)
