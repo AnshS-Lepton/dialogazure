@@ -1730,14 +1730,22 @@ namespace DataAccess
             }
             catch (Exception ex) { throw; }
         }
-        public string ShowUtilizationBasedOnNetworkStausOnMap(string networkStatus)
+        public string ShowUtilizationBasedOnNetworkStausOnMap(UtilizationEntitiesSummaryViewFilter objReportFilter,string p_networkStatus)
         {
             try
             {
                 var lst = repo.ExecuteProcedure<string>("fn_get_utilization_show_on_map",
                     new
                     {
-                        p_networkstatues = networkStatus 
+                        p_networkstatues = p_networkStatus,
+                        p_regionids = objReportFilter.SelectedRegionIds,
+                        p_provinceids = objReportFilter.SelectedProvinceIds,
+                        p_layer_ids = objReportFilter.lst_LayerIds,
+                        p_projectcode = objReportFilter.SelectedProjectIds,
+                        p_planningcode = objReportFilter.SelectedPlanningIds,
+                        p_workordercode = objReportFilter.SelectedWorkOrderIds,
+                        p_purposecode = objReportFilter.SelectedPurposeIds,
+                        p_geom = objReportFilter.geom,
                     }).FirstOrDefault();
                 return lst;
             }
