@@ -3158,5 +3158,43 @@ namespace Models
         public string nearest_cable_geom { get; set; }
 
     }
+
+	public class GeoJsonFeatureCollection
+    {
+        [ Newtonsoft.Json.JsonProperty("type")]
+        public string Type { get; set; } // "FeatureCollection"
+
+        [Newtonsoft.Json.JsonProperty("features")]
+        public List<GeoJsonFeature> Features { get; set; }
+    }
+
+    public class GeoJsonFeature
+    {
+        [Newtonsoft.Json.JsonProperty("type")]
+        public string Type { get; set; } // "Feature"
+
+        [Newtonsoft.Json.JsonProperty("id")]
+        public long Id { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("geometry")]
+        public GeoJsonGeometry Geometry { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("properties")]
+        public GeoJsonProperties Properties { get; set; }
+    }
+
+
+    public class GeoJsonProperties
+    {
+        [Newtonsoft.Json.JsonProperty("network_id")]
+        public string NetworkId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("entity_title")]
+        public string EntityTitle { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("entity_name")]
+        public string EntityName { get; set; }
+    }
+
 }
 
