@@ -257,9 +257,15 @@
                                     for (int i = 0; i < arrSelectedNetworkStatus.Length; i++)
                                     {
                             <tr>
-                                <td colspan="9">
-                                    @Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @CultureInfo.InvariantCulture.TextInfo.ToTitleCase(arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built") ? @arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-") : @arrSelectedNetworkStatus[i].ToString().ToLower())
-                                </td>
+                                           <td colspan="9">
+                                             @Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @CultureInfo.InvariantCulture.TextInfo.ToTitleCase(arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built") ? @arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-") : @arrSelectedNetworkStatus[i].ToString().ToLower())
+                                             <button onclick="si.ShowNetworkStatusBasedUtilizationOnMap('@(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
+                                                arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built")
+                                                ? arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-")
+                                                : arrSelectedNetworkStatus[i].ToString().ToLower()
+                                                )
+                                            )')"> Show on Map </button>
+                                                        </td>
                             </tr>
                                         var list = Model.lstReportData.Where(x => x.network_status.ToLower() == arrSelectedNetworkStatus[i].ToString().ToLower()).ToList();
                                         if (list.Count > 0)

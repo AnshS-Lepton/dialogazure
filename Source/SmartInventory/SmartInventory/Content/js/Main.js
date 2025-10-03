@@ -31201,6 +31201,42 @@ var Main = function () {
             });
         }
     }
+    this.ShowNetworkStatusBasedUtilizationOnMap = function (networkStatus) {
+        debugger;
+      
+            ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
+                network_status: networkStatus
+            }, true, function (resps) {
+                debugger;
+                var resp = JSON.parse(resps);
+                var eCheck = resp.features == null ? false : true;
+                if (eCheck) {
+                    app.RemoveOldFeature();
+                   
+                    si.UtilizationloadMapNetworkStatusShapes(resp);
+                        $(popup.DE.MinimizeModel).trigger("click");
+                }
+                //else {
+                //    si.map.data.forEach(function (feature) {
+                //        si.map.data.remove(feature);
+                //    });
+                //    var utilData = entitytitle + " (" + networkstatus + "):";
+                //    if (entitytitle != "Duct") {
+                //        $("#dvUtilizationShowonmap").show();
+                //    }
+                //    $("#utlSummaryId").val(summaryid);
+                //    $("#utlnetworkstatus").val(networkstatus);
+                //    $("#utlentitytitle").val(entitytitle);
+                //    $("#dvUtilizationShowonmap_p").html(utilData);
+                //    $("#s_L").html(lowcount);
+                //    $("#s_M").html(moderatecount);
+                //    $("#s_H").html(highcount);
+                //    $("#s_O").html(overcount);
+                //    if (reportminval)
+                //        $(popup.DE.MinimizeModel).trigger("click");
+                //}
+            }, true, true);        
+    }
     this.UtilizationloadMapShapes = function UtilizationloadMapShapes(JSONData) {
         si.map.data.addGeoJson(JSONData, {
             idPropertyName: 'id'
@@ -31279,6 +31315,94 @@ var Main = function () {
 
     }
 
+    this.UtilizationloadMapNetworkStatusShapes = function UtilizationloadMapShapes(JSONData) {
+        debugger;
+        si.map.data.addGeoJson(JSONData, {
+            idPropertyName: 'id'
+        });
+        var bounds = new google.maps.LatLngBounds();
+        si.map.data.setStyle(function (feature) {
+            var geomstyle;
+            var id = feature.getProperty('network_id');
+
+            // Get the entity name of THIS feature
+            var entity_name = feature.getProperty('entity_name');
+            var utilization = feature.getProperty('utilization').toUpperCase();
+
+            // Set color based on utilization
+            var color = utilization == "L" ? "#2F80ED" :
+                utilization == "M" ? "#F0B500" :
+                    utilization == "H" ? "#F0B500" :
+                        utilization == "O" ? "#EB5757" : "#2F80ED";
+
+            var type = feature.getGeometry().getType();
+            switch (type) {
+                case "LineString":
+                    //var color = 'red';
+                    geomstyle = si.GetFiberPath(color);
+                    si.SetFiberBound(bounds, feature);
+                    si.map.data.addListener("mouseover", event => {
+                        ////;
+                        app._focusMe('Line', event.feature.getGeometry().i, 'Cable', null);
+                    });
+
+                    si.map.data.addListener("mouseout", event => {
+                        si.RemoveOldInfoWindow();
+                        si.removeInfoHoverItem();
+                    });
+                    break;
+                case "Polygon":
+                    geomstyle = {
+                        strokeWeight: 1,
+                        strokeColor: '#000',
+                        zIndex: 0.5,
+                        fillColor: '#FF0000',
+                        fillOpacity: 0.75,
+                        title: id
+                    }
+                    feature.getGeometry().forEachLatLng(function (latlng) {
+                        bounds.extend(latlng);
+                    });
+                    si.map.fitBounds(bounds);
+                    break;
+                case "Point":
+                    ////;
+                    // ADB_L.png
+                    var imageUrl = 'Content/images/icons/lib/UtilizationIcons/' + entity_name + '_' + utilization + '.png';
+                    geomstyle = {
+                        icon: imageUrl,
+                        title: id
+                    };
+                    feature.getGeometry().forEachLatLng(function (latlng) {
+                        bounds.extend(latlng);
+                        si.map.fitBounds(bounds);
+                    });
+                    //}
+                   break;
+            
+            }
+            return geomstyle;
+        });
+        
+        si.RemoveOldInfoWindow();
+        app.infowindow = new google.maps.InfoWindow();
+        si.map.data.addListener('click', function (event) {
+            //;
+            var network_id = event.feature.getProperty("network_id");
+            var entity_title = event.feature.getProperty("entity_title");
+            var table = "<h4>" + entity_title + " " + MultilingualKey.SI_OSP_GBL_GBL_GBL_052 + "</h4><p><span class='Info-content'> " + MultilingualKey.SI_ISP_GBL_GBL_GBL_008 + " : </span>" + network_id + "</p>"
+            app.infowindow.setContent("<div style='width:auto;'>" + table + "</div>");
+            // position the infowindow on the marker
+            app.infowindow.setPosition(event.latLng);
+            // anchor the infowindow on the marker
+            app.infowindow.setOptions({ pixelOffset: new google.maps.Size(0, -30) });
+            app.infowindow.open(si.map);
+        });
+        si.map.addListener("click", event => {
+            si.RemoveOldInfoWindow();
+        })
+
+    }
     this.refreshRegionProvince = function () {
         var activeRegion = [];
         var activeProvince = [];

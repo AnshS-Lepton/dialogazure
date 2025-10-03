@@ -9981,6 +9981,31 @@ namespace SmartInventory.Controllers
             return new JsonResult { Data = lstUtilizationEntitiesDetail, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
         }
 
+        public JsonResult ShowUtilizationOnMapBasedOnNetworkStatus(string network_status)
+        {
+            string objUtilizationEntitiesReport = String.Empty;
+            try
+            {
+                // Call your BLLayer method
+                objUtilizationEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(network_status);
+            }
+            catch (Exception ex)
+            {
+                // Log exception if needed
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+
+                // Rethrow without losing stack trace
+                throw;
+            }
+
+            // Use Json() helper with large max length
+            return new JsonResult
+            {
+                Data = objUtilizationEntitiesReport,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                MaxJsonLength = int.MaxValue
+            };
+        }
         public void DownloadUtilizationReportIntoCSVAll(string summaryids, string fileType)
         {
             if (Session["UtilizationReportFilter"] != null)
