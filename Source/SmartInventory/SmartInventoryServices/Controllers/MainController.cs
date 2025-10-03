@@ -3475,6 +3475,7 @@ namespace SmartInventoryServices.Controllers
                         deleteChk = new BLAttachment().DeleteAttachmentById(DocumentId);
                         if (deleteChk == 1)
                         {
+                            ErrorLogHelper.WriteErrorLog(sFilePath, "Main", null);
                             ReqHelper.DeleteFileFromFTP(sFilePath);
                         }
                         else

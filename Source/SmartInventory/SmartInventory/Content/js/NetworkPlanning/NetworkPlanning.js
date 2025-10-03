@@ -1671,6 +1671,7 @@ var NetworkPlanning = function () {
     this.loopDetails = function () {
 
         var temp_plan_id = $('#temp_plan_id').val();
+        alert('Loop Updated Successfully!');
         /* $('#temp_plan_id').val(temp_plan_id);*/
         ajaxReq('plan/getLoopLength', { temp_plan_id: temp_plan_id }, false, function (resp) {
 

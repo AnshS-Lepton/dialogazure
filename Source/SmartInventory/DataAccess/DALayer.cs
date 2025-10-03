@@ -930,14 +930,14 @@ namespace DataAccess
                         p_pagerecord = objReportFilter.pageSize,
                         p_sortcolname = objReportFilter.sort,
                         p_sorttype = objReportFilter.sortdir,
-                        p_advancefilter = objReportFilter.advancefilter,
+                        p_advancefilter = (objReportFilter.advancefilter ?? "").Replace("'", "@"),
                         p_userid = objReportFilter.userId,
                         p_roleid = objReportFilter.roleId,
                         p_ownership_type = objReportFilter.SelectedOwnerShipType,
                         p_thirdparty_vendor_ids = objReportFilter.SelectedThirdPartyVendorIds,
                         p_culturename = Convert.ToString(currentLang),
                         p_radious = objReportFilter.radius,
-                        p_route = objReportFilter.selected_route_ids
+                       p_route = objReportFilter.selected_route_ids
                     }, true); ; ;
                 return lst;
             }
@@ -1652,7 +1652,7 @@ namespace DataAccess
                     { 
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
-                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_networkstatues = (objReportFilter.SelectedNetworkStatues ?? "").Replace("'", "@"),
                         p_layer_name = objReportFilter.layerName,
                         p_projectcodes = objReportFilter.SelectedProjectIds,
                         p_planningcodes = objReportFilter.SelectedPlanningIds,
@@ -1681,7 +1681,7 @@ namespace DataAccess
                     {
                         p_regionids = objReportFilter.SelectedRegionIds,
                         p_provinceids = objReportFilter.SelectedProvinceIds,
-                        p_networkstatues = objReportFilter.SelectedNetworkStatues,
+                        p_networkstatues = (objReportFilter.SelectedNetworkStatues ?? "").Replace("'", "@"),
                         p_layer_name = objReportFilter.layerName,
                         p_projectcode = objReportFilter.SelectedProjectIds,
                         p_planningcode = objReportFilter.SelectedPlanningIds,
@@ -1725,6 +1725,19 @@ namespace DataAccess
                         p_advancefilter = (objReportFilter.advancefilter ?? "").Replace("'", "@"),
                         p_utilizationtype = objReportFilter.utilizationType,
                         p_ductutilization = objReportFilter.ductutilization,
+                    }).FirstOrDefault();
+                return lst;
+            }
+            catch (Exception ex) { throw; }
+        }
+        public string ShowUtilizationBasedOnNetworkStausOnMap(string networkStatus)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<string>("fn_get_utilization_show_on_map",
+                    new
+                    {
+                        p_networkstatues = networkStatus 
                     }).FirstOrDefault();
                 return lst;
             }

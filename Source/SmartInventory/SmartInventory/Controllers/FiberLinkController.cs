@@ -950,10 +950,10 @@ namespace SmartInventory.Controllers
             dtReport.Columns["Allocations/Project"].SetOrdinal(1);
             dtReport.Columns["Link/Route ID"].SetOrdinal(2);
             dtReport.Columns["OP_ALIAS"].SetOrdinal(3);
-            dtReport.Columns["Site A"].SetOrdinal(4);
-            dtReport.Columns["Site Name"].SetOrdinal(5);
-            dtReport.Columns["Site B"].SetOrdinal(6);
-            dtReport.Columns["Site ID"].SetOrdinal(7);
+            dtReport.Columns["Site A ID"].SetOrdinal(4);
+            dtReport.Columns["Site A Name"].SetOrdinal(5);
+            dtReport.Columns["Site B ID"].SetOrdinal(6);
+            dtReport.Columns["Site B Name"].SetOrdinal(7);
             dtReport.Columns["Jump"].SetOrdinal(8);
             dtReport.Columns["Total Route Length(meter)"].SetOrdinal(9);
             dtReport.Columns["Link Type"].SetOrdinal(10);
@@ -1026,7 +1026,6 @@ namespace SmartInventory.Controllers
                     ds.Tables[1].TableName = "Cable Information";
                 }
             }
-
             var filename = "FiberLink_report";
             ExportData(ds, filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyyHHmmss"));
         }

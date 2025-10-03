@@ -946,6 +946,10 @@ namespace Models
     {
         public List<CablerouteInfo> lstConnectionInfo { get; set; }
     }
+    public class connectionInfo
+    {
+        public List<ODFReportLst> lstConnectionInfo { get; set; }
+    }
     public class CablerouteInfo
     {
 

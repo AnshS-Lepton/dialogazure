@@ -2056,6 +2056,188 @@ namespace SmartInventory.Controllers
             }
 
         }
+        //public void DownloadFiberAllocationReportIntoExcel(ExportEntitiesReport objExportEntitiesReport)
+        //{
+        //    try
+        //    {
+        //        System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(cancellationToken =>
+        //        {
+        //            var userdetails = (User)Session["userDetail"];
+        //            objExportEntitiesReport.objReportFilters.SelectedNetworkStatues = objExportEntitiesReport.objReportFilters.SelectedNetworkStatus != null && objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.Count > 0 ? "'" + string.Join("','", objExportEntitiesReport.objReportFilters.SelectedNetworkStatus.ToArray()) + "'" : "";
+        //            objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
+        //            objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
+        //            objExportEntitiesReport.objReportFilters.pageSize = 10;
+        //            List<CablerouteInfo> lstrouteconnectionInfo = new List<CablerouteInfo>();
+        //            lstrouteconnectionInfo = new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo != null ? new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo.ToList() : new List<CablerouteInfo>();
+        //            var filename = "ConnectionRoute" + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
+
+        //            string tempFileName = filename;
+        //            string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
+        //            string ftpUserName = ApplicationSettings.FTPUserNameAttachment;
+        //            string ftpPwd = ApplicationSettings.FTPPasswordAttachment;
+
+        //            ExportReportLog exportReportLog = new ExportReportLog();
+        //            exportReportLog.user_id = userdetails.user_id;
+        //            exportReportLog.export_started_on = DateTime.Now;
+        //            exportReportLog.file_name = filename;
+        //            exportReportLog.file_type = "Excel";
+        //            exportReportLog.file_extension = ".xlsx";
+        //            exportReportLog.status = "InProgress";
+        //            exportReportLog.applied_filter = null;//JsonConvert.SerializeObject(dtFilter);
+        //            exportReportLog.file_location = ftpFolder + tempFileName;
+        //            exportReportLog.log_type = "FiberAllocation";
+        //            exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+        //            try
+        //            {
+        //                IWorkbook workbook = new XSSFWorkbook(); int i = 1; int j = 1; bool IsFMS = false;
+        //                var distinctFmsId = lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList().Select(m => m.source_network_id).ToList();
+        //                var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
+        //                ISheet sheet1 = workbook.CreateSheet("Summary");
+        //                IRow currRowH = sheet1.CreateRow(0);
+        //                NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 0, "FMS Id", cellstyle, true, false);
+        //                NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 1, "Sheet Name", cellstyle, true, false);
+
+
+        //                var prvR = 0;
+        //                var currR = 0;
+        //                IRow currRow = null;
+        //                IRow prvRow = null;
+
+
+
+        //                foreach (var item in distinctFmsId)
+        //                {
+        //                    ICellStyle hyperlinkStyle = workbook.CreateCellStyle();
+        //                    IFont hyperlinkFont = workbook.CreateFont();
+        //                    hyperlinkFont.Underline = FontUnderlineType.Single; // Underline the text
+        //                    hyperlinkFont.Color = IndexedColors.Blue.Index; // Set the text color to blue
+        //                    hyperlinkStyle.SetFont(hyperlinkFont);
+
+        //                    IRow currRowSum = sheet1.CreateRow(j);
+        //                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 0, item, cellstyle, true, false);
+        //                    NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 1, "Sheet-" + j, hyperlinkStyle, true, false);
+        //                    XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.Document);
+        //                    var sheetname = "Sheet-" + j;
+        //                    hyperlink.Address = $"'{sheetname}'!B1";
+        //                    hyperlink.Tooltip = "Click to go to " + sheetname;
+        //                    currRowSum.GetCell(1).Hyperlink = hyperlink;
+        //                    j = j + 1;
+        //                }
+        //                foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
+        //                {
+        //                    IsFMS = true;
+        //                    int incrforOther = 0;
+        //                    var filteredData3 = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
+        //                    var filteredData1 = filteredData3.Where(m => m.destination_entity_type == "Splitter").Take(1);// first splitter
+        //                    var filteredData2 = filteredData3.Where(m => m.destination_entity_type != "Splitter" && m.source_entity_type != "Splitter");
+        //                    var filteredData = filteredData2.Concat(filteredData1).ToList();
+        //                    var link = lstrouteconnectionInfo.Where(m => m.client_core_id == item.client_id).ToList();
+        //                    ISheet sheet = workbook.CreateSheet("Sheet-" + i);
+        //                    var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
+        //                    var headerCount = filteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+        //                    int distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
+        //                    bool isSpl = false;
+        //                    int? fromsplId = 0;
+        //                    int incrforSpl = 0;
+
+        //                    //--------------------------------for splitter as source-----------------------------------
+        //                    int Countspl = 0;
+        //                    foreach (var spl in filteredData3.Where(m => m.splitter_id != null)
+        //                     .GroupBy(m => new { m.path_id, m.splitter_id })
+        //                     .Select(group => group.First())
+        //                     .ToList())
+        //                    {
+        //                        isSpl = true;
+        //                        var splfilteredData = filteredData3.Where(m => m.splitter_id == spl.splitter_id).ToList();
+        //                        var fromspl = splfilteredData.Select(m => m.source_network_id).FirstOrDefault();
+        //                        var headerCountspl = splfilteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
+        //                        if (incrforSpl == 0)
+        //                        {
+        //                            currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5);
+        //                            prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 4);
+        //                            prvR = prvRow.RowNum;
+        //                            currR = currRow.RowNum;
+        //                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, distinctPathCount, isSpl);
+        //                            Countspl = headerCountspl;
+        //                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow, 0);
+        //                        }
+        //                        else
+        //                        {
+        //                            //currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5+ Countspl+15);
+        //                            //prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5 + Countspl + 15-1);
+
+        //                            //currRow = sheet.CreateRow(5 +currR+ headerCountspl *3);
+        //                            // prvRow = sheet.CreateRow(5+prvR+ headerCountspl *3);
+        //                            currRow = sheet.CreateRow(5 + currR + Countspl + 8);
+        //                            prvRow = sheet.CreateRow(5 + prvR + Countspl + 8);
+        //                            prvR = prvRow.RowNum;
+        //                            currR = currRow.RowNum;
+        //                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, headerCountspl, isSpl);
+        //                            Countspl = headerCountspl;
+        //                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow);
+        //                        }
+        //                        incrforSpl = incrforSpl + 1;
+        //                        fromsplId = splfilteredData.Select(m => m.splitter_id).FirstOrDefault();
+        //                    }
+
+        //                    currRow = sheet.CreateRow(incrforOther * 2 + 5);
+        //                    prvRow = sheet.CreateRow(incrforOther * 2 + 4);
+                       
+
+        //                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from, 0, 0, distinctPathCount);
+        //                    workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from, currRow, prvRow, distinctPathCount, IsFMS);
+        //                    i = i + 1;
+        //                    incrforOther = incrforOther + 1;
+        //                    incrforSpl = 0;
+        //                }
+
+        //                using (var exportData = new MemoryStream())
+        //                {
+        //                    LogHelper.GetInstance.WriteDebugLog("\r\n");
+        //                    LogHelper.GetInstance.WriteDebugLog($"Start Process to write the data in excel: {DateTime.Now}");
+
+        //                    LogHelper.GetInstance.WriteDebugLog($"End Process to write the data in excel: {DateTime.Now}");
+        //                    LogHelper.GetInstance.WriteDebugLog("\r\n");
+        //                    string downloadTempPath = Settings.ApplicationSettings.DownloadTempPath;
+        //                    string directoryPath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"));
+        //                    string tempfilePath = Path.Combine(Server.MapPath(downloadTempPath + "ExportReportLog"), filename);
+        //                    if (Directory.Exists(directoryPath).Equals(false))
+        //                        Directory.CreateDirectory(directoryPath);
+        //                    using (FileStream xfile = new FileStream(tempfilePath, FileMode.Create, System.IO.FileAccess.Write))
+        //                    {
+        //                        workbook.Write(xfile);
+        //                    }
+        //                    LogHelper.GetInstance.WriteDebugLog($"FTP Connection created: {DateTime.Now}");
+        //                    CommonUtility.FTPFileUpload(tempfilePath, filename, ftpFilePath, ftpUserName, ftpPwd);
+        //                    LogHelper.GetInstance.WriteDebugLog($"File uploaded and FTP Connection closed: {DateTime.Now}");
+        //                    System.IO.File.Delete(tempfilePath);
+        //                }
+
+        //                exportReportLog.user_id = userdetails.user_id;
+        //                exportReportLog.export_started_on = DateTime.Now;
+        //                exportReportLog.file_name = filename;
+        //                exportReportLog.file_type = "Excel";
+        //                exportReportLog.file_extension = ".xlsx";
+        //                exportReportLog.export_ended_on = DateTime.Now;
+        //                exportReportLog.status = "Success";
+        //                exportReportLog.file_location = ftpFolder + tempFileName;
+        //                exportReportLog.log_type = "FiberAllocation";
+        //                exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                exportReportLog.export_ended_on = DateTime.Now;
+        //                exportReportLog.status = "Error occurred while processing request";
+        //                exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
+        //                ErrorLogHelper.WriteErrorLog("DownloadFiberAllocationReportIntoExcel()", "Report", ex);
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         public void DownloadFiberAllocationReportIntoExcel(ExportEntitiesReport objExportEntitiesReport)
         {
             try
@@ -2067,9 +2249,9 @@ namespace SmartInventory.Controllers
                     objExportEntitiesReport.objReportFilters.SelectedProvinceIds = objExportEntitiesReport.objReportFilters.SelectedProvinceId != null && objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToList().Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedProvinceId.ToArray()) : "";
                     objExportEntitiesReport.objReportFilters.SelectedRegionIds = objExportEntitiesReport.objReportFilters.SelectedRegionId != null && objExportEntitiesReport.objReportFilters.SelectedRegionId.Count > 0 ? string.Join(",", objExportEntitiesReport.objReportFilters.SelectedRegionId.ToArray()) : "";
                     objExportEntitiesReport.objReportFilters.pageSize = 10;
-                    List<CablerouteInfo> lstrouteconnectionInfo = new List<CablerouteInfo>();
-                    lstrouteconnectionInfo = new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo != null ? new BLOSPSplicing().GetCablerouteInfo(objExportEntitiesReport.objReportFilters).lstConnectionInfo.ToList() : new List<CablerouteInfo>();
-                    var filename = "ConnectionRoute" + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
+                    List<ODFReportLst> lstrouteconnectionInfo = new List<ODFReportLst>();
+                    lstrouteconnectionInfo = new BLOSPSplicing().GetCableroute(objExportEntitiesReport.objReportFilters).lstConnectionInfo != null ? new BLOSPSplicing().GetCableroute(objExportEntitiesReport.objReportFilters).lstConnectionInfo.ToList() : new List<ODFReportLst>();
+                    var filename = lstrouteconnectionInfo[0].source_network_id +"_"+DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss") + ".xlsx";
 
                     string tempFileName = filename;
                     string ftpFilePath = ApplicationSettings.FTPAttachment + ftpFolder;
@@ -2089,108 +2271,53 @@ namespace SmartInventory.Controllers
                     exportReportLog = new BLExportReportLog().SaveExportReportLog(exportReportLog);
                     try
                     {
-                        IWorkbook workbook = new XSSFWorkbook(); int i = 1; int j = 1; bool IsFMS = false;
-                        var distinctFmsId = lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList().Select(m => m.source_network_id).ToList();
-                        var cellstyle = NPOIExcelHelper.getCellStyle(workbook);
-                        ISheet sheet1 = workbook.CreateSheet("Summary");
-                        IRow currRowH = sheet1.CreateRow(0);
-                        NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 0, "FMS Id", cellstyle, true, false);
-                        NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowH, 1, "Sheet Name", cellstyle, true, false);
+   var distinctList = lstrouteconnectionInfo
 
+    .GroupBy(x => new
+    {
+        x.source_port_no,
+        x.client_link_id,
+        x.source_network_id,
+        x.destination_network_id,
+        x.op_alias
+    })
+     .Select(g => g.First())
+    .OrderBy(x => x.source_port_no)  // Order by source_port_no
+    .ToList();
 
-                        var prvR = 0;
-                        var currR = 0;
-                        IRow currRow = null;
-                        IRow prvRow = null;
-
-
-
-                        foreach (var item in distinctFmsId)
+                        foreach (var item in distinctList)
                         {
-                            ICellStyle hyperlinkStyle = workbook.CreateCellStyle();
-                            IFont hyperlinkFont = workbook.CreateFont();
-                            hyperlinkFont.Underline = FontUnderlineType.Single; // Underline the text
-                            hyperlinkFont.Color = IndexedColors.Blue.Index; // Set the text color to blue
-                            hyperlinkStyle.SetFont(hyperlinkFont);
-
-                            IRow currRowSum = sheet1.CreateRow(j);
-                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 0, item, cellstyle, true, false);
-                            NPOIExcelHelper.CreateCustomCellFiberAllocation(currRowSum, 1, "Sheet-" + j, hyperlinkStyle, true, false);
-                            XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.Document);
-                            var sheetname = "Sheet-" + j;
-                            hyperlink.Address = $"'{sheetname}'!B1";
-                            hyperlink.Tooltip = "Click to go to " + sheetname;
-                            currRowSum.GetCell(1).Hyperlink = hyperlink;
-                            j = j + 1;
-                        }
-                        foreach (var item in lstrouteconnectionInfo.GroupBy(m => m.fms_id).Select(group => group.First()).ToList())
-                        {
-                            IsFMS = true;
-                            int incrforOther = 0;
-                            var filteredData3 = lstrouteconnectionInfo.Where(m => m.fms_id == item.fms_id).ToList();
-                            var filteredData1 = filteredData3.Where(m => m.destination_entity_type == "Splitter").Take(1);// first splitter
-                            var filteredData2 = filteredData3.Where(m => m.destination_entity_type != "Splitter" && m.source_entity_type != "Splitter");
-                            var filteredData = filteredData2.Concat(filteredData1).ToList();
-                            var link = lstrouteconnectionInfo.Where(m => m.client_core_id == item.client_id).ToList();
-                            ISheet sheet = workbook.CreateSheet("Sheet-" + i);
-                            var from = filteredData.Select(m => m.source_network_id).FirstOrDefault();
-                            var headerCount = filteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
-                            int distinctPathCount = filteredData.Select(m => m.path_id).Distinct().Count();
-                            bool isSpl = false;
-                            int? fromsplId = 0;
-                            int incrforSpl = 0;
-
-                            //--------------------------------for splitter as source-----------------------------------
-                            int Countspl = 0;
-                            foreach (var spl in filteredData3.Where(m => m.splitter_id != null)
-                             .GroupBy(m => new { m.path_id, m.splitter_id })
-                             .Select(group => group.First())
-                             .ToList())
+                            if (!string.IsNullOrEmpty(item.source_network_id))
                             {
-                                isSpl = true;
-                                var splfilteredData = filteredData3.Where(m => m.splitter_id == spl.splitter_id).ToList();
-                                var fromspl = splfilteredData.Select(m => m.source_network_id).FirstOrDefault();
-                                var headerCountspl = splfilteredData.GroupBy(m => m.path_id).OrderByDescending(group => group.Count()).FirstOrDefault().Count();
-                                if (incrforSpl == 0)
+                                string[] parts = item.source_network_id.Split('-');
+                                if (parts.Length > 1)
                                 {
-                                    currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5);
-                                    prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 4);
-                                    prvR = prvRow.RowNum;
-                                    currR = currRow.RowNum;
-                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, distinctPathCount, isSpl);
-                                    Countspl = headerCountspl;
-                                    workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow, 0);
+                                    item.source_network_id = parts[1]; 
                                 }
-                                else
-                                {
-                                    //currRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5+ Countspl+15);
-                                    //prvRow = sheet.CreateRow(5 + distinctPathCount * 2 + 5 + Countspl + 15-1);
-
-                                    //currRow = sheet.CreateRow(5 +currR+ headerCountspl *3);
-                                    // prvRow = sheet.CreateRow(5+prvR+ headerCountspl *3);
-                                    currRow = sheet.CreateRow(5 + currR + Countspl + 8);
-                                    prvRow = sheet.CreateRow(5 + prvR + Countspl + 8);
-                                    prvR = prvRow.RowNum;
-                                    currR = currRow.RowNum;
-                                    NPOIExcelHelper.AddHeader(workbook, sheet, headerCountspl, fromspl, currR, prvR, headerCountspl, isSpl);
-                                    Countspl = headerCountspl;
-                                    workbook = NPOIExcelHelper.DataTableToExcelCableRoute(splfilteredData, workbook, "xlsx", sheet, fromspl, currRow, prvRow);
-                                }
-                                incrforSpl = incrforSpl + 1;
-                                fromsplId = splfilteredData.Select(m => m.splitter_id).FirstOrDefault();
                             }
-
-                            currRow = sheet.CreateRow(incrforOther * 2 + 5);
-                            prvRow = sheet.CreateRow(incrforOther * 2 + 4);
-                       
-
-                            NPOIExcelHelper.AddHeader(workbook, sheet, headerCount, from, 0, 0, distinctPathCount);
-                            workbook = NPOIExcelHelper.DataTableToExcelCableRoute(filteredData, workbook, "xlsx", sheet, from, currRow, prvRow, distinctPathCount, IsFMS);
-                            i = i + 1;
-                            incrforOther = incrforOther + 1;
-                            incrforSpl = 0;
+                            if (!string.IsNullOrEmpty(item.destination_network_id))
+                            {
+                                string[] parts = item.destination_network_id.Split('-');
+                                if (parts.Length > 1)
+                                {
+                                    item.destination_network_id = parts[1]; 
+                                }
+                            }
                         }
-
+                        DataTable dtReport = new DataTable();
+                        dtReport = MiscHelper.ListToDataTable<ODFReportLst>(distinctList);
+                        dtReport.Columns["SOURCE_PORT_NO"].ColumnName = "Port_No";
+                        dtReport.Columns["CLIENT_LINK_ID"].ColumnName = "Client Id";
+                        dtReport.Columns["SOURCE_NETWORK_ID"].ColumnName = "Site A";
+                        dtReport.Columns["DESTINATION_NETWORK_ID"].ColumnName = "Site B";
+                        dtReport.Columns["OP_ALIAS"].ColumnName = "OP Alias";
+                       
+                        // Exportcableroute(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
+                        IWorkbook workbook = NPOIExcelHelper.DataTableToExcel("xlsx", dtReport);
+                        if (workbook.NumberOfSheets > 0)
+                        {
+                            workbook.SetSheetName(0, lstrouteconnectionInfo[0].source_network_id);
+                        }
                         using (var exportData = new MemoryStream())
                         {
                             LogHelper.GetInstance.WriteDebugLog("\r\n");
@@ -2236,6 +2363,25 @@ namespace SmartInventory.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        private void Exportcableroute(DataTable dtReport, string fileName)
+        {
+            using (var exportData = new MemoryStream())
+            {
+                Response.Clear();
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    if (string.IsNullOrEmpty(dtReport.TableName))
+                        dtReport.TableName = fileName;
+                    IWorkbook workbook = NPOIExcelHelper.DataTableToExcel("xlsx", dtReport);
+
+                    workbook.Write(exportData);
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", fileName + ".xlsx"));
+                    Response.BinaryWrite(exportData.ToArray());
+                    Response.End();
+                }
             }
         }
         public void DownloadEntityReportNewIntoPDF(string entityids)
@@ -9835,6 +9981,31 @@ namespace SmartInventory.Controllers
             return new JsonResult { Data = lstUtilizationEntitiesDetail, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
         }
 
+        public JsonResult ShowUtilizationOnMapBasedOnNetworkStatus(string network_status)
+        {
+            string objUtilizationEntitiesReport = String.Empty;
+            try
+            {
+                // Call your BLLayer method
+                objUtilizationEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(network_status);
+            }
+            catch (Exception ex)
+            {
+                // Log exception if needed
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+
+                // Rethrow without losing stack trace
+                throw;
+            }
+
+            // Use Json() helper with large max length
+            return new JsonResult
+            {
+                Data = objUtilizationEntitiesReport,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                MaxJsonLength = int.MaxValue
+            };
+        }
         public void DownloadUtilizationReportIntoCSVAll(string summaryids, string fileType)
         {
             if (Session["UtilizationReportFilter"] != null)
@@ -12069,6 +12240,8 @@ namespace SmartInventory.Controllers
                     if (dtReport.Columns.Contains("temp_plan_id")) { dtReport.Columns.Remove("temp_plan_id"); }
                     if (dtReport.Columns.Contains("cable_length")) { dtReport.Columns.Remove("cable_length"); }
                     if (dtReport.Columns.Contains("geometry")) { dtReport.Columns.Remove("geometry"); }
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns.Remove("site_id"); }
+
                     //if (dtReport.Columns.Contains("Barcode")) { dtReport.Columns.Remove("Barcode"); }
                     //if (dtReport.Columns.Contains("system Id")) { dtReport.Columns.Remove("system Id"); }
                 }
@@ -12169,14 +12342,22 @@ namespace SmartInventory.Controllers
                     List<BackBonePlanKMLBom> rows = new BLPlan().GetBackBonePlanBomKMLByPlanId(plan_id, user_id);
                     foreach (var row in rows)
                     {
-                        string name = SecurityElement.Escape(row.entity_type);
+                        string entity_type = SecurityElement.Escape(row.entity_type);
+                        string name = SecurityElement.Escape(row.entity_name);
                         string qty = SecurityElement.Escape(row.length_qty.ToString());
                         string cpu = SecurityElement.Escape(row.cost_per_unit.ToString());
                         string scpu = SecurityElement.Escape(row.service_cost_per_unit.ToString());
                         string total = SecurityElement.Escape(row.amount.ToString());
 
                         sbKml.AppendLine("  <Placemark>");
-                        sbKml.AppendLine($"    <name>{name}</name>");
+                        if (entity_type == "Pole" || entity_type == "Manhole" || entity_type == "Cable")
+                        {
+                            sbKml.AppendLine($"    <name>{entity_type} {name}</name>");
+                        }
+                        else
+                        {
+                            sbKml.AppendLine($"    <name>{entity_type}</name>");
+                        }
                         sbKml.AppendLine("    <ExtendedData>");
                         sbKml.AppendLine($"      <Data name=\"Length / Qty\"><value>{qty}</value></Data>");
                         sbKml.AppendLine($"      <Data name=\"Cost Per Unit\"><value>{cpu}</value></Data>");
@@ -12286,11 +12467,11 @@ namespace SmartInventory.Controllers
 
                 if (dtReport != null && dtReport.Rows.Count > 0)
                 {
-                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
-                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
-                    if (dtReport.Columns.Contains("fibertype")) { dtReport.Columns["fibertype"].ColumnName = "Sprout Fiber Type"; }
                     if (dtReport.Columns.Contains("network_id")) { dtReport.Columns["network_id"].ColumnName = "Network Id"; }
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
+                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
                     if (dtReport.Columns.Contains("sprout_route_length")) { dtReport.Columns["sprout_route_length"].ColumnName = "Route Length"; }
+                    if (dtReport.Columns.Contains("fibertype")) { dtReport.Columns["fibertype"].ColumnName = "Sprout Fiber Type"; }
 
                     // Remove unnecessary columns
                     dtReport.Columns.Remove("geometry");

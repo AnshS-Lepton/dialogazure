@@ -209,9 +209,10 @@
         }
     }
     this.LoadModalDialog = function (popUpType, url, params, titleText, modalDialogClass, callback, isasync) {
-        if (popUpType.toUpperCase() == 'PARENT') {
-            $("#closeModalPopup").trigger("click");
-        }
+     
+        //if (popUpType.toUpperCase() == 'PARENT') {
+        //    $("#closeModalPopup").trigger("click");
+        //}
         $(app.DE.ModalPopUp).removeClass('ModalPopUpPosition');
         $(app.DE.modalContent).removeClass('minimize');
         $(app.DE.ChildContent).removeClass('minimize');

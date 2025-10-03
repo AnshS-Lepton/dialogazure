@@ -1,0 +1,633 @@
+CREATE OR REPLACE FUNCTION public.fn_get_utilization_report_kml_shape(p_regionids character varying, p_provinceids character varying, p_networkstatues character varying, p_layer_name character varying, p_projectcode character varying, p_planningcode character varying, p_workordercode character varying, p_purposecode character varying, p_geom character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_advancefilter character varying, p_filetype character varying, p_userid integer, p_roleid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+Declare v_arow record;
+sql TEXT;
+StartSNo INTEGER;   
+EndSNo INTEGER;
+LowerStart  character varying;
+LowerEnd  character varying;
+TotalRecords integer; 
+WhereCondition character varying;
+s_report_view_name character varying;
+s_geom_type character varying;
+s_layer_id integer; 
+s_layer_columns text; 
+s_entity_title character varying; 
+s_layer_columns_val text; 
+
+Begin
+LowerStart:='';
+LowerEnd:='';
+
+p_networkstatues := replace(coalesce(p_networkstatues, ''), '@', '''');
+
+-- GET LAYER ID AND REPORT VIEW NAME--
+SELECT LAYER_ID, REPORT_VIEW_NAME, GEOM_TYPE,layer_title INTO S_LAYER_ID, S_REPORT_VIEW_NAME,S_GEOM_TYPE,s_entity_title FROM LAYER_DETAILS WHERE LOWER(LAYER_NAME) = LOWER(P_LAYER_NAME);
+
+-- SELECT ALL ACTIVE COLUMNS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER // FOR SHAPE FILE - ALL ACTIVE COLUMNS, FOR KML ONLY CONFIGURED COLUMN	
+SELECT STRING_AGG(COLUMN_NAME||' as "'||DISPLAY_NAME||'"', ',') INTO S_LAYER_COLUMNS FROM (
+Select * from (
+SELECT  COLUMN_NAME,DISPLAY_NAME  FROM LAYER_COLUMNS_SETTINGS WHERE case when p_filetype ='SHAPE' THEN 1=1 ELSE  is_kml_column_required = true END and LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE ORDER BY COLUMN_SEQUENCE)cl
+union 
+  SELECT  'Utilization','Utilization' 
+) A;
+
+-- SELECT ALL FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..
+SELECT STRING_AGG(COLUMN_NAME||' as "'||DISPLAY_NAME||'"', ',') INTO S_LAYER_COLUMNS_VAL FROM (
+SELECT  COLUMN_NAME,DISPLAY_NAME  FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' ORDER BY COLUMN_SEQUENCE) A;
+  
+-- IF NULL THEN SET IT BLANK TO AVOID ERROR
+S_LAYER_COLUMNS := coalesce(S_LAYER_COLUMNS,'');
+
+-- DYNAMIC QUERY
+IF ((p_geom) != '') 
+THEN
+	create temp table temp_entity_inside_geom(
+	system_id integer,
+	sp_geometry geometry,
+	entity_type character varying
+	)on commit drop;
+
+	IF(lower(p_layer_name) = lower('Building')) 
+	THEN
+		execute 'insert into temp_entity_inside_geom(system_id,entity_type,sp_geometry) 
+		select system_id ,entity_type,ST_Centroid(m.sp_geometry) from POLYGON_MASTER m where upper(m.entity_type)=upper('''||P_LAYER_NAME||''') and ST_Intersects(m.sp_geometry, st_geomfromtext(''POLYGON(('||p_geom||'))'',4326))
+		UNION
+		select system_id ,entity_type,m.sp_geometry from POINT_MASTER m where upper(m.entity_type)=upper('''||P_LAYER_NAME||''') and ST_Intersects(m.sp_geometry, st_geomfromtext(''POLYGON(('||p_geom||'))'',4326))';
+	ELSE	
+		execute 'insert into temp_entity_inside_geom(system_id,entity_type,sp_geometry) 
+		select system_id ,entity_type,m.sp_geometry from '||s_geom_type||'_master m
+		where upper(m.entity_type)=upper('''||P_LAYER_NAME||''') and ST_Intersects(m.sp_geometry, st_geomfromtext(''POLYGON(('||p_geom||'))'',4326))';	
+	END IF;
+
+	-- ISP CABLE WILL NOT BE THE PART OF KML AND SHAPE FILE AS THEIR IS NO GEOM FOR ISP CABLE.
+	sql:= 'select  ROW_NUMBER() OVER (ORDER BY system_id desc) AS S_No,'''||s_geom_type||''' as 
+ 	geom_type,'''||s_entity_title||''' as entity_title,''''as entity_name,ST_ASTEXT(sp_geometry) as 
+ 	geom, '||S_LAYER_COLUMNS||' from(select m.sp_geometry,a.* from '||S_REPORT_VIEW_NAME||' a inner join temp_entity_inside_geom m
+ 	on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''')  
+ 	inner join user_permission_area pa on pa.province_id = a.province_id and pa.user_id = '||p_userid||' and 1=1 ';
+ELSE
+	IF(lower(p_layer_name) = lower('Building')) 
+	THEN	
+	       sql:= 'SELECT * FROM ( SELECT  ROW_NUMBER() OVER (ORDER BY system_id desc) AS S_No,geom_type,entity_title,entity_name,
+	       geom, '||S_LAYER_COLUMNS||' from (
+	         select a.*,ST_ASTEXT(sp_geometry) as geom,'''||s_geom_type||''' as geom_type,'''||s_entity_title||''' as   
+	         entity_title,  a.building_name as entity_name from '||S_REPORT_VIEW_NAME||' a inner join point_master m
+	         on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''') 
+	         inner join user_permission_area pa on pa.province_id = a.province_id and pa.user_id = '||p_userid||' 
+	         union
+	         select a.*,ST_ASTEXT(ST_Centroid(sp_geometry))  as geom,''Point'' as geom_type,
+	         '''||s_entity_title||''' as entity_title,a.building_name as entity_name from '||S_REPORT_VIEW_NAME||' a 
+	         inner join Polygon_master m on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''')
+	         inner join user_permission_area pa on pa.province_id = a.province_id and pa.user_id = '||p_userid||'
+	       ) a where 1=1 ';
+	else
+	      -- ISP CABLE WILL NOT BE THE PART OF KML AND SHAPE FILE AS THEIR IS NO GEOM FOR ISP CABLE.
+	      sql:= 'SELECT  ROW_NUMBER() OVER (ORDER BY system_id desc) AS S_No,'''||s_geom_type||''' as geom_type,
+              '''||s_entity_title||''' as entity_title,''''as entity_name,geom, '||S_LAYER_COLUMNS||' from (
+                select a.*,ST_ASTEXT(sp_geometry) as geom from '||S_REPORT_VIEW_NAME||' a 
+                inner join user_permission_area pa on pa.province_id = a.province_id and pa.user_id = '||p_userid||'
+                left join '||s_geom_type||'_master m on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||'''
+              ) where 1=1 ';
+	END IF;	
+END IF;
+-- REGION FILTER
+IF ((p_RegionIds) != '') THEN
+	sql:= sql ||' AND a.region_id IN ('||p_RegionIds||')';
+END IF;
+-- PROVINCE FILTER
+IF ((P_ProvinceIds) != '') THEN
+	sql:= sql ||' AND a.province_id IN ('||P_ProvinceIds||')';
+END IF;
+-- NETOWRK STATUS FILTER
+IF ((p_networkStatues) != '' and upper(S_LAYER_COLUMNS_VAL) like '%NETWORK_STATUS%') THEN
+RAISE INFO 'network status %', 1;
+	sql:= sql ||' AND upper(Cast(a.network_status as TEXT)) in('||p_networkStatues||')';
+END IF;
+-- PROJECT CODE FILTER
+IF ((p_projectcode) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PROJECT_ID%') THEN
+	sql:= sql ||' AND  a.project_id IN ('||p_projectcode||')';
+else IF ((p_projectcode) != '') then 
+	sql:= sql ||' AND  0 = 1';
+END IF;
+END IF;
+-- PLANNING CODE FILTER
+IF ((p_planningcode) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PLANNING_ID%') THEN
+	sql:= sql ||' AND  a.planning_id IN ('||p_planningcode||')';
+END IF;
+-- WORKORDER CODE FILTER
+IF ((p_workordercode) != '' and upper(S_LAYER_COLUMNS_VAL) like '%WORKORDER_ID%') THEN
+	sql:= sql ||' AND  a.workorder_id IN ('||p_workordercode||')';
+END IF;
+-- PURPOSE CODE FILTER
+IF ((p_purposecode) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PURPOSE_ID%') THEN
+	sql:= sql ||' AND  a.purpose_id IN ('||p_purposecode||')';
+END IF;
+
+-- ADVANCED FILTER
+IF ((p_advancefilter) != '') THEN
+sql:= sql ||''|| p_advancefilter||'';
+END IF;
+
+sql:= sql ||' )X';
+
+-- GET TOTAL RECORD COUNT
+EXECUTE   'SELECT COUNT(1)  FROM ('||sql||') as a' INTO TotalRecords;
+
+--GET PAGE WISE RECORD (FOR PARTICULAR PAGE)
+ IF((P_PAGENO) <> 0) THEN
+	StartSNo:=  P_PAGERECORD * (P_PAGENO - 1 ) + 1;
+	EndSNo:= P_PAGENO * P_PAGERECORD;
+	sql:= 'SELECT '||TotalRecords||' as totalRecords, *
+                FROM (' || sql || ' ) T 
+                WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+
+ ELSE
+         sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ') T';                  
+ END IF; 
+
+sql:= 'Select * from ('||sql||')a where geom is not null';
+
+RAISE INFO 'QUERY %', sql;
+	
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||sql||') row';
+End;
+
+$function$
+;
+
+---------------------------------------------------------------------------------------------------------------
+
+-- public.vw_layer_mapping source
+
+CREATE OR REPLACE VIEW public.vw_layer_mapping
+AS SELECT lm.id,
+    lm.layer_id AS child_layer_id,
+    ch.layer_title AS child_layer_name,
+    ch.geom_type AS child_geom_type,
+    ch.layer_table AS child_layer_table,
+    lm.parent_layer_id,
+        CASE
+            WHEN pa.layer_name IS NULL THEN 'Province'::character varying
+            ELSE pa.layer_name
+        END AS parent_layer_name,
+    pa.geom_type AS parent_geom_type,
+    pa.layer_table AS parent_layer_table,
+    pa.layer_title,
+    lm.parent_sequence,
+    lm.is_enable_inside_parent_info,
+    lm.is_used_for_network_id,
+    lm.network_code_format,
+    lm.is_default_parent
+   FROM layer_mapping lm
+     LEFT JOIN layer_details ch ON lm.layer_id = ch.layer_id
+     LEFT JOIN layer_details pa ON lm.parent_layer_id = pa.layer_id;
+
+------------------------------------------------------------------------------------------------------------------
+
+-- FUNCTION: public.fn_nwt_get_ticket_entity_details(integer, integer, integer, integer, character varying, character varying)
+
+-- DROP FUNCTION IF EXISTS public.fn_nwt_get_ticket_entity_details(integer, integer, integer, integer, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION public.fn_nwt_get_ticket_entity_details(
+	p_pageno integer,
+	p_pagerecord integer,
+	p_userid integer,
+	p_ticket_id integer,
+	p_sortcolname character varying,
+	p_sorttype character varying)
+    RETURNS SETOF json 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+
+ DECLARE
+ lyrtitle record;
+   sql TEXT;
+    NWEntityStatus TEXT;
+   StartSNo    INTEGER;   
+   EndSNo      INTEGER;
+   TotalRecords integer; 
+   v_entity_name character varying;
+    v_new_entity_name character varying;
+    v_user_role_id integer;
+	v_ticket_status  character varying;
+    network_name_expr text;
+
+BEGIN
+sql:='';
+select sm.name into v_ticket_status from ticket_status_master sm
+inner join att_details_networktickets att on sm.id=att.ticket_status_id where att.ticket_id=p_ticket_id;
+
+		
+create temp table temp_nt_entity_detalis
+ 		(
+ 		id integer,
+ 		entity_type character varying(50),
+ 		entity_title character varying(50),
+ 		network_id character varying(50),
+ 		entity_name character varying,
+		region character varying(50),
+ 		province character varying(50),
+ 		network_ticket_id character varying(50),
+		geom_type character varying(50),
+		status character varying(10),
+		status_description character varying(50),
+		status_color character varying(50),
+		layer_name character varying(50),
+		entity_action character varying(50),
+		is_freezed Boolean,
+		action_color_code text,
+		created_on timestamp,
+		status_remarks character varying(500),
+		entity_action_atr character varying(50),
+		entity_status character varying,
+		opacity integer,
+		display_name character varying,
+		is_revert_allowed boolean,
+		network_status character varying
+ 		)on commit drop;	
+	
+		FOR lyrtitle IN select distinct layer_title,layer_table,layer_name,geom_type from layer_details where isvisible=true  and is_network_ticket_entity=true
+LOOP
+	network_name_expr := ' '''' as network_name';
+			v_entity_name:=lower(lyrtitle.layer_name)||'_name'; 
+			select coalesce((SELECT column_name into v_new_entity_name FROM information_schema.columns
+			WHERE table_name=lyrtitle.layer_table and column_name in('name',v_entity_name,'network_name')),'');
+			
+	raise info 'v_entity_name %',v_entity_name;
+		raise info 'v_new_entity_name %',v_new_entity_name;		
+
+	-- Build network_name expression
+IF coalesce(v_new_entity_name,'') != '' THEN
+    -- no valid column, just return empty string literal
+   -- network_name_expr := ' '''' as network_name';
+ --ELSE
+    -- valid column, wrap in CASE
+    network_name_expr := 'lv.' || quote_ident(v_new_entity_name) ||
+                         ' as network_name';
+						 		raise info 'network_name_expr %',network_name_expr;		
+
+END IF;
+
+		
+IF EXISTS 		(SELECT 1  FROM information_schema.columns WHERE table_name=lyrtitle.layer_table and column_name ='source_ref_id')THEN
+BEGIN	
+			 sql:='insert into 
+			 temp_nt_entity_detalis(id,entity_type,entity_title,network_id,entity_name,region,province,
+			 network_ticket_id,geom_type,status,layer_name,entity_action,
+			 action_color_code,created_on,status_remarks,entity_action_atr,status_description,is_freezed,status_color,entity_status,
+			 opacity,display_name,is_revert_allowed,network_status) 
+
+			select tbl.system_id,'''||lyrtitle.layer_name||''' ,'''||lyrtitle.layer_title||''',tbl.network_id,tbl.network_name,
+			tbl.region_name,tbl.province_name, tbl.ticket_network_id,tbl.geom_type
+			,tbl.status,'''||lyrtitle.layer_name||'''
+			,tbl.entity_action,tbl.color_code,tbl.created_on,tbl.status_remark,tbl.entity_action_abbr,esm.description,
+			esm.is_freezed,esm.color_code,tbl.entity_status,esm.opacity,tbl.display_name,coalesce(esm.is_revert_allowed,true),tbl.network_status from(
+  			Select lv.system_id,lv.network_id, ' || network_name_expr || ',
+  			rb.region_name,pb.province_name, adn.network_id as ticket_network_id,
+			case when Upper('''||lyrtitle.layer_name||''')=''BUILDING'' then ''Polygon'' else '''||lyrtitle.geom_type||'''End as geom_type,lv.status,'''||lyrtitle.layer_name||''',
+			case when coalesce(eom.entity_action,'''') = '''' then ''New'' else eom.entity_action end as entity_action
+			,eom.color_code   
+			,lv.created_on,lv.status_remark,case when coalesce(eom.description,'''') = '''' then ''NW'' else eom.description end as entity_action_abbr,
+			(case when lv.status=''D'' and lv.is_new_entity=true then ''NEW''
+			when lv.status=''D'' and (attribute_info->>''curr_status'')::text is not null and (attribute_info->>''curr_status'')::text=''D'' 
+			then ''DMT''
+			when  lv.status=''D'' and lv.is_new_entity=false then ''MFD''
+			else lv.status end) as entity_status,pm.display_name,(case when (attribute_info->>''curr_status'')::text is not null then (attribute_info->>''curr_status'')
+			else lv.network_status end)as network_status,'''||lyrtitle.geom_type||''' as geomtype  from '||lyrtitle.layer_table||' lv 
+ 			join att_details_networktickets adn on lv.source_ref_id=adn.ticket_id::character varying and Upper(source_ref_type)=''NETWORK_TICKET'' 
+			join region_boundary rb on rb.id=lv.region_id join province_boundary pb on pb.id=lv.province_id 
+			left join vw_att_details_edit_entity_info eei on lv.system_id=eei.entity_system_id and upper(eei.entity_type)=upper('''||lyrtitle.layer_name||''')		
+			left join entity_operations_master eom on eom.id=eei.entity_action_id' ;
+			sql:=sql||' inner join ';
+
+			if(upper(lyrtitle.layer_name)='BUILDING')
+			then
+				sql:=sql||'( select system_id,entity_type,display_name,''Point'' as geomtype from point_master
+				 union
+				select system_id,entity_type,display_name,''Polygon'' as geomtype from polygon_master ) pm';
+			else
+				sql:=sql||''||lyrtitle.geom_type||'_master pm ';
+			end if;
+			
+			sql:=sql||' on pm.system_id=lv.system_id and upper(pm.entity_type)=upper('''||lyrtitle.layer_name||''')			
+			where adn.ticket_id='||p_ticket_id||')tbl
+			left join entity_status_master esm on upper(tbl.entity_status)=upper(esm.status)' ;
+
+			execute sql;
+			--when  lv.status=''D'' and lv.is_new_entity=false then ''MDFT''
+			RAISE INFO '%', sql;
+
+			
+ END;
+ END IF	;		
+END LOOP;
+
+		-- DYNAMIC QUERY
+		sql:= 'SELECT  ROW_NUMBER() OVER (ORDER BY '|| CASE WHEN (p_sortcolname) = '' THEN 'nt.id' ELSE p_sortcolname END || ' ' ||CASE WHEN (p_sorttype) ='' THEN 'ASC' else p_sorttype end||') AS S_No
+		,* from temp_nt_entity_detalis nt WHERE 1=1 ' ;
+		
+		--RAISE INFO '||%||', sql;
+
+      NWEntityStatus:= 'SELECT tsm.description::character varying as ticket_status ,count(nt.status) as ticket_count,tsm.color_code,tsm.opacity  from 
+ 			entity_status_master tsm  left join temp_nt_entity_detalis nt on upper(tsm.status)=upper(nt.entity_status)
+			where is_active=true';
+			 
+	if upper(v_ticket_status)='INPROGRESS'
+	then 
+		NWEntityStatus:=NWEntityStatus||' and tsm.status in (''NEW'',''MFD'',''DMT'')';
+	elsif exists((select 1 from global_settings where key='isVerifyActionEnabled' and value='1'))and upper(v_ticket_status)!='INPROGRESS'
+	then 
+		NWEntityStatus:=NWEntityStatus||' and tsm.status in (''N'',''V'')';
+	elsif exists((select 1 from global_settings where key='isVerifyActionEnabled' and value='0'))
+	and (upper(v_ticket_status)='COMPLETED')
+	then 
+		NWEntityStatus:=NWEntityStatus||' and tsm.status in (''A'',''R'',''S'')';
+	elsif exists((select 1 from global_settings where key='isVerifyActionEnabled' and value='0'))and upper(v_ticket_status)='REJECTED'
+	then 
+		NWEntityStatus:=NWEntityStatus||' and tsm.status in (''A'',''R'',''S'',''NEW'',''MFD'',''DMT'')';
+	elsif exists((select 1 from global_settings where key='isVerifyActionEnabled' and value='0'))and upper(v_ticket_status)='APPROVED'
+	then 
+		NWEntityStatus:=NWEntityStatus||' and tsm.status in (''A'',''S'',''NEW'',''MFD'',''DMT'')';	
+	end if;
+	NWEntityStatus:=NWEntityStatus||' group by tsm.description,nt.entity_status,tsm.color_code,tsm.column_sequence,tsm.opacity  order by tsm.column_sequence';
+		-- GET TOTAL RECORD COUNT
+		EXECUTE  'SELECT COUNT(1)  FROM ('||sql||') as a' INTO TotalRecords;
+		--GET PAGE WISE RECORD (FOR PARTICULAR PAGE)
+ IF((p_pageno) <> 0) THEN
+		StartSNo:=  p_pagerecord * (p_pageno - 1 ) + 1;
+		EndSNo:= p_pageno * p_pagerecord;
+		sql:= 'SELECT '||TotalRecords||' as totalRecords, *
+                FROM (' || sql || ' ) T 
+                WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+ ELSE
+		sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ' ) T ';                  
+ END IF; 
+
+--sql:= sql||' order by created_on desc';
+
+	
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from (
+ 		select(
+ 			select array_to_json(array_agg(row_to_json(x)))
+ 			from (
+ 			'||NWEntityStatus||'	
+ 			) x
+ 		) as lstNWEntityStatus,
+ 		(
+            select array_to_json(array_agg(row_to_json(x)))
+            from('||sql ||')x
+			            		
+ 		) as lstNWEntityDetails
+ 	) row';
+
+END ;
+
+$BODY$;
+
+-------------------------------------------------------------------------------------------------
+
+
+UPDATE public.layer_details
+SET is_network_ticket_entity = false 
+WHERE layer_id in (select layer_id  from layer_details where layer_name in('FiberLink','RestrictedArea'));
+
+
+--------------------------------------------------------------------------------------------------
+
+
+UPDATE public.dropdown_master
+SET dropdown_value='Stay Strut',  dropdown_key='Stay Strut'
+WHERE layer_id=14 and dropdown_key='Stay/Strut';
+
+-------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_utilization_report_view(p_regionids character varying, p_provinceids character varying, p_networkstatues character varying, p_layer_name character varying, p_projectcodes character varying, p_planningcodes character varying, p_workordercodes character varying, p_purposecodes character varying, p_geom character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_advancefilter character varying, p_userid integer, p_roleid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+
+Declare v_arow record;
+sql TEXT;
+StartSNo INTEGER;   
+EndSNo INTEGER;
+LowerStart  character varying;
+LowerEnd  character varying;
+TotalRecords integer; 
+WhereCondition character varying;
+s_report_view_name character varying;
+s_geom_type character varying;
+s_layer_id integer; 
+s_layer_name character varying;
+s_layer_columns text; 
+s_layer_columns_val text; 
+core_join_query text;
+core_select_query text;
+core_join_query_1 text;
+core_select_query_1 text;
+s_layer_columns_val2 text;
+Begin
+LowerStart:='';
+LowerEnd:='';
+WhereCondition:='';
+p_advancefilter := replace(coalesce(p_advancefilter, ''), '@', '''');
+p_networkstatues := replace(coalesce(p_networkstatues, ''), '@', '''');
+
+-- public.temp_port definition
+
+-- Drop table
+
+-- DROP TABLE temp_port;
+
+CREATE temp TABLE temp_port (
+	parent_system_id integer,
+	parent_entity_type character varying,
+	out_utilized integer,
+	out_available integer,
+	input_utilized integer,
+	input_available integer
+)on commit drop;
+
+
+CREATE temp TABLE temp_core (
+	cable_id integer,
+	a_end_utilized integer,
+	a_end_available integer,
+	b_end_utilized integer,
+	b_end_available integer
+)on commit drop;
+
+core_join_query:='select * from (select cable_id, count(case when a_end_status_id=2 then 1 end) as a_end_utilized,
+count(case when a_end_status_id=1 then 1 end) as a_end_available, count(case when b_end_status_id=2 then 1 end) as b_end_utilized
+,count(case when b_end_status_id=1 then 1 end) as b_end_available from att_details_cable_info group by cable_id)
+                                        cfo ';
+										/*Commented as changes asked from the client side*/
+--core_select_query:=' ,x.a_end_utilized as "Utilized core(a)",x.a_end_available as "Available core(a)",x.b_end_utilized as "Utilized core(b)",x.b_end_available as "Available core(b)"
+--,
+--x.a_end_utilized * 100/X.total_core as "Utilized Core(a) Percentage(%)",x.b_end_utilized * 100/x.total_core as "Utilized Core(b) Percentage(%)"';
+
+core_select_query:=' ,x.a_end_utilized as "Utilized core",x.a_end_available as "Available core",
+ROUND(x.a_end_utilized * 100/X.total_core::NUMERIC,2) as "Utilized Core Percentage(%)",ROUND(x.a_end_available * 100/X.total_core ::NUMERIC,2) as "Available Core Percentage(%)"';
+
+
+core_join_query_1:='select * from (select parent_system_id,parent_entity_type, count(case when port_status_id=2 and
+                                input_output=''O'' then 1 end)
+                           as out_utilized,count(case when port_status_id=1 and input_output=''O'' then 1 end) as out_available,
+                           count(case when port_status_id=2 and input_output=''I'' then 1 end) as input_utilized,
+                           count(case when port_status_id=1 and input_output=''I'' then 1 end) as input_available
+                           from isp_port_info group by parent_system_id,parent_entity_type)cfo 
+						   ';
+core_select_query_1:=' ,x.input_utilized as "Utilized port(I)",x.input_available as "Available port(I)",
+                                        x.out_utilized as "Utilized port(O)",x.out_available as "Available port(O)"';
+
+					
+execute 'insert into temp_port (parent_system_id ,parent_entity_type ,out_utilized ,out_available ,input_utilized ,input_available) '||core_join_query_1||' '; 
+execute 'insert into temp_core (cable_id ,a_end_utilized ,a_end_available ,b_end_utilized ,b_end_available) '||core_join_query||' '; 
+
+
+-- GET LAYER ID AND REPORT VIEW NAME--
+SELECT LAYER_ID, REPORT_VIEW_NAME, GEOM_TYPE,layer_name INTO S_LAYER_ID, S_REPORT_VIEW_NAME,S_GEOM_TYPE,s_layer_name FROM LAYER_DETAILS 
+WHERE LOWER(LAYER_NAME) = LOWER(P_LAYER_NAME);
+
+IF ((p_geom) != '') THEN
+
+ Create temp table temp_entity_inside_geom
+  (
+      system_id integer,
+      entity_type character varying
+  )
+  on commit drop;
+  -- HERE WE ARE FETCHING ALL THE ENTITY WITHIN THE ARAE SELECTED BY USER INTO A TEMP TABLE.
+  perform(fn_get_export_report_entity_within_geom(S_LAYER_ID::character varying,p_geom));
+  
+end if;
+
+-- MANAGE SORT COLUMN NAME
+IF (coalesce(P_SORTCOLNAME,'')!='') THEN 
+
+	--SELECT ACTUAL COLUMN NAME FROM LAYER_COLUMN_SETTING BASED ON DISPLAY NAME.
+	select column_name into P_SORTCOLNAME  from layer_columns_settings where layer_id=S_LAYER_ID and upper(setting_type)='REPORT' and 
+	upper(display_name)=upper(P_SORTCOLNAME) and is_active=true;
+	
+	-- CHECK THE DATA TYPE OF SORT COLUMN, IF TEXT OR CHARACTER VARYING THEN SORT WITH LOWER FUNCTION TO MAKE IT CASE INSENSITIVE
+	IF EXISTS (select 1 from information_schema.columns where upper(table_name) = upper(S_REPORT_VIEW_NAME) and 
+	upper(column_name) = upper(P_SORTCOLNAME) and upper(data_type) in('CHARACTER VARYING','TEXT')) THEN
+		LowerStart:='LOWER(';
+	else
+		LowerStart:='(';
+	end if;
+	LowerEnd:=')';	
+END IF;
+
+-- SELECT ALL ACTIVE FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..	
+SELECT STRING_AGG(COLUMN_NAME||' as "'||case when COALESCE(res_field_key,'') ='' then DISPLAY_NAME else res_field_key  end||'"', ',') INTO S_LAYER_COLUMNS FROM (
+SELECT  COLUMN_NAME,DISPLAY_NAME,res_field_key  FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE and is_utilization_column=true ORDER BY COLUMN_SEQUENCE) A;
+
+-- SELECT ALL ACTIVE FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..	
+SELECT STRING_AGG(COLUMN_NAME, ',') INTO s_layer_columns_val2 FROM (
+SELECT  COLUMN_NAME,DISPLAY_NAME,res_field_key  FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE and is_utilization_column=true ORDER BY COLUMN_SEQUENCE) A;
+
+
+
+-- SELECT ALL FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..
+SELECT STRING_AGG(COLUMN_NAME||' as "'||case when COALESCE(res_field_key,'') ='' then DISPLAY_NAME else res_field_key  end||'"', ',') INTO S_LAYER_COLUMNS_VAL FROM (
+SELECT  COLUMN_NAME,DISPLAY_NAME,res_field_key  FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' and is_utilization_column=true ORDER BY COLUMN_SEQUENCE) A;
+  
+-- DYNAMIC QUERY
+IF ((p_geom) != '') THEN
+	--FETCH RECORD BASED ON SELECTED GEOMETRY.
+	sql:= 'SELECT  ROW_NUMBER() OVER (ORDER BY '|| LowerStart || CASE WHEN (P_SORTCOLNAME) = '' THEN 'system_id' ELSE P_SORTCOLNAME END
+	||LowerEnd|| ' ' ||CASE WHEN (P_SORTTYPE) ='' THEN 'desc' else P_SORTTYPE end||') AS S_No, 
+	'||S_LAYER_COLUMNS||' 
+	'||case when P_LAYER_NAME='Cable' then core_select_query else core_select_query_1 end||'
+	from (select a.system_id,a.region_id,a.province_id,'||s_layer_columns_val2||',cfo.* from '||S_REPORT_VIEW_NAME||' a inner join temp_entity_inside_geom m on a.system_id=m.system_id 
+	and upper(m.entity_type)=upper('''||s_layer_name||''') 
+	inner join vw_user_permission_area pa on pa.province_id = a.province_id and 
+	pa.user_id = '||p_userid||' and 1=1 '||case when P_LAYER_NAME='Cable' then ' left join temp_core cfo on cfo.cable_id=a.system_id ' else ' left join temp_port cfo on cfo.parent_system_id=a.system_id
+                           and Replace(a.category,'' '','''')=cfo.parent_entity_type ' end||'
+	';
+
+ELSE
+	-- FETCH RECORDS BASED ON SELECTED FILTERS.
+	sql:= 'SELECT  ROW_NUMBER() OVER (ORDER BY '|| LowerStart || CASE WHEN (P_SORTCOLNAME) = '' THEN 'system_id' ELSE P_SORTCOLNAME END
+	||LowerEnd|| ' ' ||CASE WHEN (P_SORTTYPE) ='' THEN 'desc' else P_SORTTYPE end||') AS S_No, '||S_LAYER_COLUMNS||' 
+	'||case when P_LAYER_NAME='Cable' then core_select_query else core_select_query_1 end||'
+	from (select a.system_id,a.region_id,a.province_id,'||s_layer_columns_val2||',cfo.*  from '||S_REPORT_VIEW_NAME||' a 
+	inner join vw_user_permission_area pa on pa.province_id = a.province_id and pa.user_id = '||p_userid||' and 1=1 
+	'||case when P_LAYER_NAME='Cable' then ' left join temp_core cfo on cfo.cable_id=a.system_id ' else 'left join temp_port cfo on cfo.parent_system_id=a.system_id
+                           and Replace(a.category,'' '','''')=cfo.parent_entity_type ' end||'
+	';
+END IF;
+-- REGION FILTER
+IF ((p_RegionIds) != '') THEN
+	sql:= sql ||' AND a.region_id IN ('||p_RegionIds||')';
+END IF;
+-- PROVINCE FILTER
+IF ((P_ProvinceIds) != '') THEN
+	sql:= sql ||' AND a.province_id IN ('||P_ProvinceIds||')';
+END IF;
+-- NETOWRK STATUS FILTER
+IF ((p_networkStatues) != '' and upper(S_LAYER_COLUMNS_VAL) like '%NETWORK_STATUS%') THEN
+	sql:= sql ||' AND upper(Cast(a.network_status as TEXT)) in('||p_networkStatues||')';
+END IF;
+-- PROJECT CODE FILTER
+IF ((p_projectcodes) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PROJECT_ID%') THEN
+	sql:= sql ||' AND  a.project_id IN ('||p_projectcodes||')';
+else IF ((p_projectcodes) != '') then 
+	sql:= sql ||' AND  0 = 1';
+END IF;
+END IF;
+-- PLANNING CODE FILTER
+IF ((p_planningcodes) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PLANNING_ID%') THEN
+	sql:= sql ||' AND  a.planning_id IN ('||p_planningcodes||')';
+END IF;
+-- WORKORDER CODE FILTER
+IF ((p_workordercodes) != '' and upper(S_LAYER_COLUMNS_VAL) like '%WORKORDER_ID%') THEN
+	sql:= sql ||' AND  a.workorder_id IN ('||p_workordercodes||')';
+END IF;
+-- PURPOSE CODE FILTER
+IF ((p_purposecodes) != '' and upper(S_LAYER_COLUMNS_VAL) like '%PURPOSE_ID%') THEN
+	sql:= sql ||' AND  a.purpose_id IN ('||p_purposecodes||')';
+END IF;
+
+-- ADVANCE FILTER SELCTED BY USER
+IF ((p_advancefilter) != '') THEN
+	sql:= sql ||''|| p_advancefilter||'';
+END IF;
+
+sql:= sql ||' )X';
+RAISE INFO 'queryS_ %', sql;
+-- GET TOTAL RECORD COUNT
+EXECUTE   'SELECT COUNT(1)  FROM ('||sql||') as a' INTO TotalRecords;
+-- RAISE EXCEPTION  'Calling result(%)', sql;
+--GET PAGE WISE RECORD (FOR PARTICULAR PAGE)
+ IF((P_PAGENO) <> 0) THEN
+	StartSNo:=  P_PAGERECORD * (P_PAGENO - 1 ) + 1;
+	EndSNo:= P_PAGENO * P_PAGERECORD;
+	sql:= 'SELECT '||TotalRecords||' as totalRecords, *
+                FROM (' || sql || ' ) T 
+                WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+
+ ELSE
+         sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ') T';                  
+ END IF;
+-- insert into data_query(data_sql,created_date)
+--select sql,now();
+
+RAISE INFO 'QUERY %', sql;
+	
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||sql||') row';
+End;
+
+$function$
+;

@@ -992,7 +992,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Planned/PBDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1002,8 +1002,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1016,7 +1016,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/PBDB.png" 
 				SIZE 16			
 			END
 			LEADER
@@ -1026,8 +1026,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1040,7 +1040,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Dorment/PBDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1050,8 +1050,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1065,7 +1065,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Planned/BDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1075,8 +1075,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1089,7 +1089,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/AsBuild/BDB.png" 
 				SIZE 16			
 			END
 			LEADER
@@ -1099,8 +1099,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1113,7 +1113,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Dorment/BDB.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -1123,8 +1123,8 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
+			END
+            LABEL
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
@@ -1640,13 +1640,38 @@ MAP
 		STATUS OFF
 		LABELITEM 'label_column'
 		GROUP 'Network'		
-		CLASS
-		
+			CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P')  			
+            EXPRESSION ('[pod_type]'  eq 'OLT')  			
 			STYLE
-				SYMBOL [icon_path] 
-				SIZE 18			
+				SYMBOL "icons/Planned/Podgreen.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END	
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  0 255 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END	
+		END	
+CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'false')  			
+			STYLE
+				SYMBOL "icons/Planned/POD.png" 
+				SIZE 25
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -1655,7 +1680,56 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END	         		
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'true')  			
+			STYLE
+				SYMBOL "icons/Planned/Podag.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END	         		
+		END
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'false')  			
+			STYLE
+				SYMBOL "icons/AsBuild/POD.png" 
+				SIZE 21		
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -1667,12 +1741,11 @@ MAP
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
-				SYMBOL [icon_path] 
-				SIZE 18			
+				SYMBOL "icons/AsBuild/Podag.png" 
+				SIZE 21		
 			END
-			
 			LEADER
 			  GRIDSTEP 6
 			  MAXDISTANCE 10000
@@ -1680,7 +1753,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -1694,8 +1767,9 @@ MAP
 			NAME 'POD'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path] 
-				SIZE 18			
+				SYMBOL "icons/Dorment/POD.png" 
+				SIZE 25
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -1704,7 +1778,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -1713,7 +1787,7 @@ MAP
 				POSITION AUTO
 				PARTIALS FALSE	
             END			
-		END			
+		END					
 	END	
 	#=================================================Equipment ====
 	LAYER
@@ -2194,10 +2268,11 @@ MAP
 		
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
-				SYMBOL[icon_path]
-				SIZE 18			
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2206,31 +2281,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
-				COLOR  255 0 0  		
-				FONT "arial"
-				TYPE truetype
-				SIZE 8
-				POSITION AUTO
-				PARTIALS FALSE	
-            END			
-		END
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'D' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
 			END
-			LEADER
-			  GRIDSTEP 6
-			  MAXDISTANCE 10000
-			  STYLE
-				COLOR 200 100 100
-				WIDTH 1
-			  END
-			END	
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2244,57 +2295,40 @@ MAP
 			NAME 'MANHOLE'
             EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 20			
 			END
-			LEADER
-			  GRIDSTEP 6
-			  MAXDISTANCE 10000
-			  STYLE
-				COLOR 200 100 100
-				WIDTH 1
-			  END
-			END	
-            LABEL 
-				COLOR  255 0 0  		
-				FONT "arial"
-				TYPE truetype
-				SIZE 8
-				POSITION AUTO
-				PARTIALS FALSE	
-            END			
-		END
-
-        CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'A' )  			
-			STYLE
-				SYMBOL[icon_path]
-				SIZE 18			
-			END
-			LEADER
-			  GRIDSTEP 6
-			  MAXDISTANCE 10000
-			  STYLE
-				COLOR 200 100 100
-				WIDTH 1
-			  END
-			END	
-            LABEL 
-				COLOR  255 0 0  		
-				FONT "arial"
-				TYPE truetype
-				SIZE 8
-				POSITION AUTO
-				PARTIALS FALSE	
-            END			
+            			
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')  			
+            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20
+			END
+            			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'D' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+			STYLE
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+            			
+		END
+		
+				
+				
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2303,7 +2337,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2317,8 +2351,9 @@ MAP
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 20			
+			    OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2327,32 +2362,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
-            LABEL 
-				COLOR  255 0 0  		
-				FONT "arial"
-				TYPE truetype
-				SIZE 8
-				POSITION AUTO
-				PARTIALS FALSE	
-            END			
-		END
-
-        CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'A' )  			
-			STYLE
-				SYMBOL[icon_path]
-				SIZE 18			
 			END
-			LEADER
-			  GRIDSTEP 6
-			  MAXDISTANCE 10000
-			  STYLE
-				COLOR 200 100 100
-				WIDTH 1
-			  END
-			END	
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2364,10 +2374,11 @@ MAP
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'D')  			
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20
+			    OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2376,7 +2387,61 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END			
+		END
+		
+		
+		
+				
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/loopChamber.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2390,8 +2455,9 @@ MAP
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Planned/loopChamber.png" 
+				SIZE 20			
+			    OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2400,7 +2466,7 @@ MAP
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2409,7 +2475,57 @@ MAP
 				POSITION AUTO
 				PARTIALS FALSE	
             END			
-		END		
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'A')  			
+			STYLE
+				SYMBOL "icons/AsBuild/loopChamber.png"
+				SIZE 20
+			    OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END			
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'D')  			
+			STYLE
+				SYMBOL "icons/Dorment/loopChamber.png" 
+				SIZE 30	
+				OFFSET 0 -5				
+			END
+			LEADER
+			  GRIDSTEP 6
+			  MAXDISTANCE 10000
+			  STYLE
+				COLOR 200 100 100
+				WIDTH 1
+			  END
+			END
+            LABEL 
+				COLOR  255 0 0  		
+				FONT "arial"
+				TYPE truetype
+				SIZE 8
+				POSITION AUTO
+				PARTIALS FALSE	
+            END			
+		END	
 	END	
 	# ================================== CABLE ======================================== 
 	LAYER
@@ -2546,7 +2662,8 @@ LAYER
             EXPRESSION ('[network_status]'  eq 'P' && ('[is_virtual]'  = 'false'))  			
 			STYLE
 				SYMBOL "icons/Planned/spliceclosure.png" 
-				SIZE 30			
+				SIZE 30
+				OFFSET 0 -5
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2555,15 +2672,15 @@ LAYER
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
 				TYPE truetype
 				SIZE 8
-				POSITION AUTO
-				PARTIALS FALSE	
-            END				
+				POSITION AUTO  				
+                PARTIALS FALSE							
+			END	
 		END
 		CLASS
 			NAME 'Splice Closure'
@@ -2579,7 +2696,7 @@ LAYER
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2595,6 +2712,7 @@ LAYER
 			STYLE
 				SYMBOL "icons/Dorment/spliceclosure.png" 
 				SIZE 30			
+				OFFSET 0 -5
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2603,7 +2721,7 @@ LAYER
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2619,7 +2737,8 @@ CLASS
             EXPRESSION ('[network_status]'  eq 'P' && ('[is_virtual]'  = 'true'))  			
 			STYLE
 				SYMBOL "icons/Planned/v_spliceclosure.png" 
-				SIZE 30			
+				SIZE 30
+				OFFSET 0 -5
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2628,7 +2747,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2652,7 +2771,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2668,6 +2787,7 @@ CLASS
 			STYLE
 				SYMBOL "icons/Dorment/v_spliceclosure.png" 
 				SIZE 30			
+				OFFSET 0 -5
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -2676,7 +2796,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -2995,10 +3115,12 @@ CLASS
 			'no_defs'
 		END
 		CLASSITEM 'count_ducts' 
+		#====================Planned======================
 		CLASS 
 			NAME "count_ducts"
 			#TEXT "[count_ducts]"
-			EXPRESSION "count_ducts"
+			#EXPRESSION "count_ducts"
+			EXPRESSION ('[network_status]'  eq 'P')	
 			STYLE
 				WIDTH 3
 				COLOR 255 0 0
@@ -3030,14 +3152,53 @@ CLASS
 				PARTIALS FALSE
 			END
 		END
+		
+			#====================As-Built======================
 		CLASS 
-			NAME "Out_Of_Range"   
+    NAME "count_ducts"
+    EXPRESSION ('[network_status]' eq 'A')    
+    STYLE
+        WIDTH 3
+        COLOR 255 0 0  # red line color
+        LINECAP ROUND
+        PATTERN 10 5 1 5 END
+    END
+    LABEL
+        OUTLINEWIDTH 5
+        OUTLINECOLOR 255 255 255
+        FONT arial
+        TYPE truetype
+        COLOR 0 0 0  # black text
+        SIZE 8
+        STYLE
+            GEOMTRANSFORM 'labelpoly'
+            COLOR 255 0 0  # red background rectangle
+        END
+        STYLE
+            GEOMTRANSFORM 'labelunderline'
+            COLOR 0 0 255  # optional: blue underline
+            OFFSET 0 -1
+        END
+        OFFSET 0 0
+        ANTIALIAS TRUE
+        POSITION CC
+        ANGLE AUTO
+        FORCE FALSE
+        PARTIALS FALSE
+    END
+END
+
+		#====================Dormant======================
+		CLASS 
+			NAME "count_ducts"
 			#TEXT "[count_ducts]"
+			#EXPRESSION "count_ducts"
+			EXPRESSION ('[network_status]'  eq 'D')	
 			STYLE
 				WIDTH 3
-				COLOR 255 0 0
+				COLOR 255 192 203
 				LINECAP ROUND
-				PATTERN 10 10 END
+				#PATTERN 10 10 END
 			END
 			LABEL
 			    OUTLINEWIDTH 5
@@ -3053,8 +3214,8 @@ CLASS
 				END
 				STYLE
 					GEOMTRANSFORM 'labelunderline'
-					COLOR  0 0 255  # underline
-					OFFSET 0 -1 	# with some offset
+					COLOR   0 0 255 # underline
+					OFFSET 	0 -1 	# with some offset
 				END
 				OFFSET 0 0
 				ANTIALIAS TRUE
@@ -3089,8 +3250,9 @@ CLASS
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Planned/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3099,7 +3261,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3113,8 +3275,8 @@ CLASS
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20			
+				SYMBOL "icons/AsBuild/WallMount.png" 
+				SIZE 25			
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3123,7 +3285,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3137,8 +3299,9 @@ CLASS
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Dorment/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
 			LEADER
 			  GRIDSTEP 6
@@ -3147,7 +3310,7 @@ CLASS
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3156,7 +3319,7 @@ CLASS
 				POSITION AUTO
 				PARTIALS FALSE	
             END				
-		END	
+		END		
 	END	
 	#=======================================PEP==========
 	LAYER
@@ -3373,7 +3536,7 @@ LAYER
 			NAME 'FMS'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Planned/fms.png"
 				SIZE 25			
 			END
 			LEADER
@@ -3397,7 +3560,7 @@ LAYER
 			NAME 'FMS'
             EXPRESSION ('[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/fms.png"  
 				SIZE 12			
 			END
 			LEADER
@@ -3421,7 +3584,7 @@ LAYER
 			NAME 'FMS'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Dorment/fms.png" 
 				SIZE 25			
 			END
 			LEADER
@@ -3860,9 +4023,10 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_fault_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		#FILTER (%layerFilter% AND (%NetworkFilter%))
+		FILTER ((%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
+			#'layerFilter' '.*'
 			'NetworkFilter' '.*'		
 			'userid' '.*'			
 		END
@@ -3876,18 +4040,18 @@ LAYER
 			NAME 'Fault'
             EXPRESSION ('[fault_status]'  eq 'Temporary Resolved')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20
-				OFFSET 0 -5			
+				SYMBOL "icons/Fault/temporary_resolved.png" 
+				SIZE 21
+				OFFSET 0 -5
 			END
-			LEADER
+            LEADER
 			  GRIDSTEP 6
 			  MAXDISTANCE 10000
 			  STYLE
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3895,23 +4059,24 @@ LAYER
 				SIZE 8
 				POSITION AUTO
 				PARTIALS FALSE	
-            END			
+            END				
 		END
 		CLASS
 			NAME 'Fault'
             EXPRESSION ('[fault_status]'  eq 'Reopened')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20			
+				SYMBOL "icons/Fault/reopened.png" 
+				SIZE 21	
+				OFFSET 0 -5
 			END
-			LEADER
+            LEADER
 			  GRIDSTEP 6
 			  MAXDISTANCE 10000
 			  STYLE
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3919,24 +4084,24 @@ LAYER
 				SIZE 8
 				POSITION AUTO
 				PARTIALS FALSE	
-            END			
+            END				
 		END
 		CLASS
 			NAME 'Fault'
             EXPRESSION ('[fault_status]'  eq 'Unresolved')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20
-				OFFSET 0 -5			
+				SYMBOL "icons/Fault/unresolved.png" 
+				SIZE 21
+				OFFSET 0 -5				
 			END
-			LEADER
+            LEADER
 			  GRIDSTEP 6
 			  MAXDISTANCE 10000
 			  STYLE
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3944,25 +4109,24 @@ LAYER
 				SIZE 8
 				POSITION AUTO
 				PARTIALS FALSE	
-            END			
-		END
-		
+            END				
+		END	
 		CLASS
 			NAME 'Fault'
             EXPRESSION ('[fault_status]'  eq 'Resolved')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20
-				OFFSET 0 -5			
+				SYMBOL "icons/Fault/resolved.png" 
+				SIZE 21
+				OFFSET 0 -5				
 			END
-			LEADER
+            LEADER
 			  GRIDSTEP 6
 			  MAXDISTANCE 10000
 			  STYLE
 				COLOR 200 100 100
 				WIDTH 1
 			  END
-			END	
+			END
             LABEL 
 				COLOR  255 0 0  		
 				FONT "arial"
@@ -3970,9 +4134,8 @@ LAYER
 				SIZE 8
 				POSITION AUTO
 				PARTIALS FALSE	
-            END			
-		END
-        			
+            END				
+		END			
 	END	
 	# ===================================Cabinet=======================================
 	LAYER

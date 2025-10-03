@@ -1,0 +1,139 @@
+
+CREATE OR REPLACE VIEW public.vw_layer_mapping
+AS SELECT lm.id,
+    lm.layer_id AS child_layer_id,
+    ch.layer_name AS child_layer_name,
+    ch.geom_type AS child_geom_type,
+    ch.layer_table AS child_layer_table,
+    lm.parent_layer_id,
+        CASE
+            WHEN pa.layer_name IS NULL THEN 'Province'::character varying
+            ELSE pa.layer_name
+        END AS parent_layer_name,
+    pa.geom_type AS parent_geom_type,
+    pa.layer_table AS parent_layer_table,
+    pa.layer_title,
+    lm.parent_sequence,
+    lm.is_enable_inside_parent_info,
+    lm.is_used_for_network_id,
+    lm.network_code_format,
+    lm.is_default_parent
+   FROM layer_mapping lm
+     LEFT JOIN layer_details ch ON lm.layer_id = ch.layer_id
+     LEFT JOIN layer_details pa ON lm.parent_layer_id = pa.layer_id;
+
+---------------------------------------------------------------------------------------------
+
+-- FUNCTION: public.fn_get_validate_entitycreation_area(text, integer, character varying, integer)
+
+-- DROP FUNCTION IF EXISTS public.fn_get_validate_entitycreation_area(text, integer, character varying, integer);
+
+CREATE OR REPLACE FUNCTION public.fn_get_validate_entitycreation_area(
+	p_geom text,
+	p_userid integer,
+	p_selectiontype character varying,
+	p_ticket_id integer)
+    RETURNS TABLE(status boolean, message character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+DECLARE
+    result text;
+    result_status bool;
+    v_province_id integer;
+    v_geom geometry;
+BEGIN
+    -- Convert geometry based on selection type
+    IF lower(p_selectiontype) = 'polygon' OR lower(p_selectiontype) = 'circle' THEN
+        v_geom := ST_GeomFromText('POLYGON(('||p_geom||'))', 4326);
+    ELSIF lower(p_selectiontype) = 'line' THEN
+        v_geom := ST_GeomFromText('LINESTRING('||p_geom||')', 4326);
+    ELSE
+        v_geom := ST_GeomFromText('POINT('||p_geom||')', 4326);
+    END IF;
+
+    -- Province permission check
+    IF EXISTS (
+        SELECT 1
+        FROM province_boundary pb
+        JOIN vw_user_permission_area pa ON pb.id = pa.province_id
+        WHERE pa.user_id = p_userid
+          AND ST_Intersects(pb.sp_geometry, v_geom)
+    ) THEN
+        result := 'Success';
+        result_status := true;
+    ELSE
+        result := 'Selected area not exists in permitted region/province. Please contact your administrator !';
+        result_status := false;
+    END IF;
+
+    -- Ticket-based validation
+    IF result_status THEN
+        IF p_ticket_id > 0 THEN
+            -- If ticket geometry exists in polygon_master
+            IF EXISTS (
+                SELECT 1 FROM polygon_master
+                WHERE system_id = p_ticket_id AND UPPER(entity_type) = 'NETWORK_TICKET'
+            ) THEN
+                -- ✅ Strict containment check (full geometry must be inside ticket)
+                IF EXISTS (
+                    SELECT 1
+                    FROM polygon_master pm
+                    WHERE pm.system_id = p_ticket_id
+                      AND UPPER(pm.entity_type) = 'NETWORK_TICKET'
+                      AND ST_CoveredBy(v_geom, pm.sp_geometry)  -- full containment
+                ) THEN
+                    result := 'Success';
+                    result_status := true;
+                ELSE
+                    IF lower(p_selectiontype) = 'line' THEN
+                        result := 'Trench line must be fully inside the assigned ticket area. Please contact your administrator !';
+                    ELSE
+                        result := 'Entity cannot be created outside the assigned ticket area. Please contact your administrator !';
+                    END IF;
+                    result_status := false;
+                END IF;
+
+            ELSE
+                -- Province based ticket validation
+                SELECT province_id INTO v_province_id
+                FROM att_details_networktickets
+                WHERE ticket_id = p_ticket_id;
+
+                IF v_province_id = 0 THEN
+                    result := 'Success';
+                    result_status := true;
+                ELSE
+                    IF EXISTS (SELECT 1 FROM province_boundary WHERE id = v_province_id) THEN
+                        IF EXISTS (
+                            SELECT 1
+                            FROM province_boundary pb
+                            WHERE pb.id = v_province_id
+                              AND ST_CoveredBy(v_geom, pb.sp_geometry) -- full containment
+                        ) THEN
+                            result := 'Success';
+                            result_status := true;
+                        ELSE
+                            IF lower(p_selectiontype) = 'line' THEN
+                                result := 'Line Entity must be fully inside the assigned ticket area. Please contact your administrator !';
+                            ELSE
+                                result := 'Entity cannot be created outside the assigned ticket area. Please contact your administrator !';
+                            END IF;
+                            result_status := false;
+                        END IF;
+                    END IF;
+                END IF;
+            END IF;
+        END IF;
+    END IF;
+
+    RETURN QUERY
+        SELECT result_status AS status, result::character varying AS message;
+END;
+$BODY$;
+
+ALTER FUNCTION public.fn_get_validate_entitycreation_area(text, integer, character varying, integer)
+    OWNER TO postgres;

@@ -917,12 +917,13 @@ var BackbonePlanning = function () {
         }
     }
 
-    this.planBomAndBOQ = function (resp, totalSproutLength = 0) {
+    this.planBomAndBOQ = function (resp, totalSproutLength = 0) {     
         $('#plan_id').val(resp.result.plan_id);
         let planId = $('#plan_id').val();
         $('#sproutlength').val(totalSproutLength);
-        
-        ajaxReq('BackBonePlan/GetBomBOQData', $('form').serialize(), true, function (resp) {
+        let serialized = $('form').serialize();
+        let uniqueSerialized = removeDuplicateParams(serialized);
+        ajaxReq('BackBonePlan/GetBomBOQData', uniqueSerialized, true, function (resp) {
             $("#BomBoqDetails").html(resp);
             $('#btnNearestSite').prop('disabled', false);
             $("#ManageLoop").attr("disabled", false);
@@ -937,6 +938,23 @@ var BackbonePlanning = function () {
                 clickable: false, 
             }); 
         }, false, true, false);
+    }
+
+     removeDuplicateParams = function (serialized) {
+        const params = new URLSearchParams(serialized);
+        const unique = new Map();
+
+        // Iterate in order, but only keep the first occurrence
+        for (const [key, value] of params.entries()) {
+            if (!unique.has(key)) {
+                unique.set(key, value);
+            }
+        }
+
+        // Build back the query string
+        return Array.from(unique)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
     }
 
     this.loopValidation = function () {       
@@ -983,7 +1001,7 @@ var BackbonePlanning = function () {
             return false;
         }
         if (threshold >= cableDrumLength) {
-            alert("Sprout threshold value cannot be greater and equal than Backbone Route Length!");
+            alert("Sprout threshold value cannot be greater and equal than Cable Drum Length!");
             $('#sproutThreshold').addClass('form-control input-validation-error');
             return false;
         }     
@@ -1037,6 +1055,8 @@ var BackbonePlanning = function () {
 
     }
     this.loopDetails = function () {
+
+        alert("Loop Updated Successfully!");       
 
         let plan_id = $('#plan_id').val();
         let sproutDropdownType = $('#sproutFiberDropdown').val();

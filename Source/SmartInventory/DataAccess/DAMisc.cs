@@ -2848,8 +2848,15 @@ namespace DataAccess
         public List<BackbonePlanNetworkDetails> GetBackBoneLoopList(int planId, int userId,bool p_isloop_required, string line_geom, double loopSpan, double loopLength)
         {
             try
-            {                            
-                return repo.GetAll(x => x.plan_id == planId && x.is_loop_required == true && x.created_by == userId).OrderBy(x => x.system_id).ToList();
+            {
+                return repo.ExecuteProcedure<BackbonePlanNetworkDetails>("fn_backbone_get_loop_list",
+               new
+               {
+                   p_plan_id = planId,
+                   p_p_isloop_required = p_isloop_required,
+                   p_userId = userId
+               }, true).ToList();
+
             }
             catch (Exception)
             {

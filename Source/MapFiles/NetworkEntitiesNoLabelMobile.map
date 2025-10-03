@@ -320,8 +320,8 @@ MAP
 				OUTLINECOLOR 0 0 0
 				COLOR [color_code] 
 			END
-		END
-	END
+			  END
+			END
 # ==================SURVEY AREA============================== 	
 	LAYER 
 		NAME 'SVA'
@@ -668,7 +668,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Planned/PBDB.png" 
 				SIZE 25			
 			END
             			
@@ -677,7 +677,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/AsBuild/PBDB.png" 
 				SIZE 16			
 			END
             			
@@ -686,7 +686,7 @@ MAP
 			NAME 'Primary BDB'
             EXPRESSION ('[entity_category]'  eq 'Primary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL  "icons/Dorment/PBDB.png" 
 				SIZE 25			
 			END
             			
@@ -696,7 +696,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
+				SYMBOL "icons/Planned/BDB.png" 
 				SIZE 25			
 			END
             			
@@ -705,7 +705,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/AsBuild/BDB.png" 
 				SIZE 16			
 			END
             			
@@ -714,7 +714,7 @@ MAP
 			NAME 'Secondary BDB'
             EXPRESSION ('[entity_category]'  eq 'Secondary' AND '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path] 
+				SYMBOL "icons/Dorment/BDB.png" 
 				SIZE 25			
 			END
             			
@@ -953,30 +953,69 @@ MAP
 		END
 		STATUS OFF
 		GROUP 'Network'		
+			CLASS
+			NAME 'POD'
+            EXPRESSION ('[pod_type]'  eq 'OLT')  			
+			STYLE
+				SYMBOL "icons/Planned/Podgreen.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END			
+		END	
+
+		CLASS
+		NAME 'POD'
+		EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'true')
+		STYLE
+			SYMBOL "icons/Planned/Podag.png"
+			SIZE 25
+			OFFSET 0 -5
+		END
+	END
+	CLASS
+		NAME 'POD'
+		EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'false')
+		STYLE
+			SYMBOL "icons/Planned/POD.png"
+			SIZE 25
+			OFFSET 0 -5
+		END
+	END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'P')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/AsBuild/Podag.png" 
+				SIZE 21			
 			END
             			
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'false')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 25			
+				SYMBOL "icons/AsBuild/POD.png" 
+				SIZE 21			
 			END
             			
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'true')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/Podag.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END
+            			
+		END	
+CLASS
+			NAME 'POD'
+            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'false')  			
+			STYLE
+				SYMBOL "icons/Dorment/POD.png" 
+				SIZE 25
+				OFFSET 0 -5				
 			END
             			
 		END			
@@ -1270,19 +1309,10 @@ MAP
 		GROUP 'Network'		
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber') 			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20			
 			END
             			
 		END
@@ -1290,56 +1320,62 @@ MAP
 			NAME 'MANHOLE'
             EXPRESSION ('[network_status]'  eq 'D' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END	
-
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
 		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+	    
+		
+		
 		CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/manhole.png" 
+				SIZE 20			
 			END
             			
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')  			
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'D')			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
-			END
-            			
-		END	
-		
-		
-		CLASS
-			NAME 'MANHOLE'
-            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
-			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
 		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Splice Chamber' and '[network_status]'  eq 'P') 			
+			STYLE
+				SYMBOL "icons/Planned/manhole.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
+		
+		
 		CLASS
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 18			
+				SYMBOL "icons/AsBuild/loopChamber.png" 
+				SIZE 20			
 			END
             			
 		END
@@ -1347,11 +1383,22 @@ MAP
 			NAME 'MANHOLE'
             EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 30			
+				SYMBOL "icons/Dorment/loopChamber.png" 
+				SIZE 30
+				OFFSET 0 -5				
 			END
             			
-		END	
+		END
+		CLASS
+			NAME 'MANHOLE'
+            EXPRESSION ('[manhole_types]' eq 'Loop Chamber' and '[network_status]'  eq 'P')  			
+			STYLE
+				SYMBOL "icons/Planned/loopChamber.png" 
+				SIZE 30
+				OFFSET 0 -5				
+			END
+            			
+		END
 	END	
 	# ================================== CABLE ======================================== 
 	LAYER
@@ -1931,8 +1978,9 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Planned/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
             			
 		END
@@ -1940,8 +1988,8 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'A')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 20			
+				SYMBOL "icons/AsBuild/WallMount.png" 
+				SIZE 25			
 			END
             			
 		END
@@ -1949,8 +1997,9 @@ LAYER
 			NAME 'WallMount'
             EXPRESSION ('[network_status]'  eq 'D')  			
 			STYLE
-				SYMBOL [icon_path]
-				SIZE 40			
+				SYMBOL "icons/Dorment/WallMount.png" 
+				SIZE 35
+				OFFSET 0 -5				
 			END
             			
 		END		

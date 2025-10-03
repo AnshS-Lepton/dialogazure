@@ -46,11 +46,25 @@
                                         @Html.TextBoxFor(x => x[i].loop_length, new { @class = "form-control  enableControl", id = "lstLoopMangment_" + i, @onblur = "return networkdata.CheckLoopLenght(this)", onkeydown = "return ValidateNumberDecimal(this,event,5,2);" })
                                         @if (Model[i].site_id == "" || Model[i].site_id == null)
                                         {
-                                            @counter
+                                            if (Model[i].entity_type == "Pole")
+                                            {
+                                                @("PL-" + counter.ToString("D2"))
+                                            }
+                                            else
+                                            {
+                                                @("MH-" + counter.ToString("D2"))
+                                            }
                                         }
                                         else
                                         {
-                                            @(Model[i].site_id + "-" + counter.ToString("D2"))
+                                            if (Model[i].entity_type == "Pole")
+                                            {
+                                                @(Model[i].site_id + "-" + "PL-" + counter.ToString("D2"))
+                                            }
+                                            else
+                                            {
+                                                @(Model[i].site_id + "-" + "MH-" + counter.ToString("D2"))
+                                            }
                                         }
                                     </div>
                                     <div>
