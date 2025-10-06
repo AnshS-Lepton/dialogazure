@@ -10012,7 +10012,10 @@ namespace SmartInventory.Controllers
 
                     objUtilizationEntitiesReport.objReportFilters.SelectedLayerId = objUtilizationSummary.objReportFilters.SelectedLayerId;
                     objUtilizationFilter.SelectedLayerId = objUtilizationSummary.objReportFilters.SelectedLayerId;
-                    objUtilizationEntitiesReport.objReportFilters.lst_LayerIds = string.Join(",", objUtilizationFilter.SelectedLayerId);
+                    if (objUtilizationFilter.SelectedLayerId != null)
+                    {
+                        objUtilizationEntitiesReport.objReportFilters.lst_LayerIds = string.Join(",", objUtilizationFilter.SelectedLayerId);
+                    }
                     // Call your BLLayer method
                     objEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(objUtilizationEntitiesReport.objReportFilters, network_status);
                 }

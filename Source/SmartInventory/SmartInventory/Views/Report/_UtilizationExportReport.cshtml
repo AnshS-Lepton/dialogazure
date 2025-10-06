@@ -259,7 +259,7 @@
                             <tr>
                                            <td colspan="9">
                                              @Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @CultureInfo.InvariantCulture.TextInfo.ToTitleCase(arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built") ? @arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-") : @arrSelectedNetworkStatus[i].ToString().ToLower())
-                                             <button onclick="si.ShowNetworkStatusBasedUtilizationOnMap('@(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
+                                             <button style="font-size: 12px; padding: 2px 6px;" onclick="si.ShowNetworkStatusBasedUtilizationOnMap('@(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
                                                 arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built")
                                                 ? arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-")
                                                 : arrSelectedNetworkStatus[i].ToString().ToLower()

@@ -21053,12 +21053,15 @@ var Main = function () {
 
         var CableValue = $("input[name='Cable']:checked").val();
         var displayname = $("input[name='Cable']:checked").attr('cbl_display_name');
+        let splitCableParentName = $('input.Cable_address[name="Cable"]:checked').val();
+
         if (CableValue == undefined) {
             alert(MultilingualKey.SI_OSP_CAB_JQ_FRM_006);
         }
         else {
             ajaxReq('Library/getNearCableDetail', { split_entity_system_id: splitEntitySystem_id, split_entity_type: splitEntitytype, split_cable_system_id: splitcablesystemid, Split_entity_Core: splitEntityCore }, false, function (resp) {
                 if (resp.status == 'OK') {
+                   
                     if ($('#cable_one_start_reading').length > 0 && $('#cable_one_end_reading').length > 0) {
                         $('#cable_one_start_reading,#cable_one_end_reading').keyup(function () {
                             app.calculateCableLength('', '' + resp.result.network_status + '', 'cable_one_start_reading', 'cable_one_end_reading', 'cable_one_calculated_length')
@@ -21093,7 +21096,7 @@ var Main = function () {
 
                     $('#cable_one_network_id').val(firstCableNetworkId);
                     /* $('#cable_one_name').val(firstCableNetworkId);*/
-                    $('#cable_one_name').val(resp.result.cable1_name);
+                    $('#cable_one_name').val(splitCableParentName);
                     $('#cable_one_a_location').val(resp.result.cable1_a_location);
                     $('#cable_one_b_location').val(splitEnityNetworkId);
 
@@ -21101,7 +21104,7 @@ var Main = function () {
                     var secondCableNetworkId = '';
                     $('#cable_two_network_id').val(secondCableNetworkId);
                     /* $('#cable_two_name').val(secondCableNetworkId);*/
-                    $('#cable_two_name').val(resp.result.cable2_name);
+                    $('#cable_two_name').val(splitCableParentName);
                     $('#cable_two_a_location').val(splitEnityNetworkId);
                     $('#cable_two_b_location').val(resp.result.cable2_b_location);
 
