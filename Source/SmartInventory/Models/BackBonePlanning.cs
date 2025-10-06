@@ -123,22 +123,22 @@ namespace Models
     {
         [Key]
         public int id { get; set; }
-        public string site_name { get; set; }
-        public string site_id { get; set; }
         public string network_id { get; set; }
+        public string site_id { get; set; }
+        public string site_name { get; set; }
         public string geometry { get; set; }
         [NotMapped]
         public string backbone_geom { get; set; }   
         public bool is_selected { get; set; }
         public int plan_id { get; set; }
         public int user_id { get; set; }
-        public string fibertype { get; set; }
         public string line_geom { get; set; }
         public bool is_update { get; set; }
         [NotMapped]
         public double sprout_route_length { get; set; }
         [NotMapped]
         public double total_sp_route_length { get; set; }
+        public string fibertype { get; set; }
     }
     public class BackBoneSproutFiberDetails
     {

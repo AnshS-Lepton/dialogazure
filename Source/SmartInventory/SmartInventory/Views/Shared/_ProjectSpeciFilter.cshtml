@@ -213,84 +213,103 @@
 <script type="text/javascript">
 
 
-
     function bindPrimaryPODDropdown(preselectedValues = []) {
-        var $ddl = $('#ddlPrimaryPOD');
+    preselectedValues = preselectedValues || [];
 
-        // Init Chosen once
+    var $ddl = $('#ddlPrimaryPOD');
+    var typingTimer;
+    var currentRequest = null;
+
+    // Initialize Chosen once
+    if (!$ddl.data('chosen')) {
         $ddl.chosen({
             width: "100%",
             placeholder_text_multiple: "Type to search POD..."
         });
+    }
 
-        // Attach event on Chosen's internal search input
-        $ddl.siblings('.chosen-container').find('.search-field input').on('keyup', function () {
-            var searchText = $(this).val();
+    function performSearch(searchText) {
+        if (searchText.length < 3) return;
 
-            if (searchText.length >= 3) {
-                $.ajax({
-                    url: "@Url.Content("~/Library/searchSite")",
-                    type: 'GET',
-                    data: { term: searchText },
-                    success: function (resp) {
+        if (currentRequest) {
+            currentRequest.abort();
+        }
 
-                        if (resp.results && resp.results.length > 0) {
-                            const selected = $ddl.val() || [];
-
-                            // Clear non-selected options
-                            $ddl.find('option').not(':selected').remove();
-
-                            // Add new options if not already present
-                            $.each(resp.results, function (index, item) {
-                                if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
-                                    $ddl.append($('<option>', {
-                                        value: item.systemId,
-                                        text: item.Name
-                                    }));
-                                }
-                            });
-
-                            // Reapply selected values
-                            $ddl.val([...new Set([...selected, ...preselectedValues.map(String)])]);
-
-                            $ddl.trigger("chosen:updated");
-                        }
-                    }
-                });
-            }
-        });
-
-        // Bind initial selected values (if needed before typing)
-        if (preselectedValues.length > 0) {
-            $.ajax({
-                url: "@Url.Content("~/Library/searchSite")",
-                type: 'GET',
-                data: { term: '' }, // fetch all or with logic to return selected
-                success: function (resp) {
-                    if (resp.results && resp.results.length > 0) {
-                        $ddl.empty();
-                        $.each(resp.results, function (index, item) {
+        currentRequest = $.ajax({
+            url: "@Url.Content("~/Library/searchSite")",
+            type: 'GET',
+            data: { term: searchText },
+            success: function (resp) {
+                if (resp && resp.results && resp.results.length > 0) {
+                    const selected = $ddl.val() || [];
+                    $ddl.empty();
+                    // Add only new options (do NOT remove existing ones)
+                    $.each(resp.results, function (index, item) {
+                        if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
                             $ddl.append($('<option>', {
                                 value: item.systemId,
                                 text: item.Name
                             }));
-                        });
+                        }
+                    });
 
-                        $ddl.val(preselectedValues.map(String));
-                        $ddl.trigger("chosen:updated");
-                    }
+                    // Reapply selected & preselected values
+                    $ddl.val([...new Set([...selected, ...preselectedValues.map(String)])]);
+                    $ddl.trigger("chosen:updated");
+
+                    // Keep typed text in search box
+                    const $searchInput = $ddl.siblings('.chosen-container').find('.search-field input');
+                    $searchInput.val(searchText).focus();
                 }
-            });
-        }
+            },
+            complete: function () {
+                currentRequest = null;
+            }
+        });
     }
 
-
-    $(document).ready(function () {
-
-        var selectedPODIds = @Html.Raw(Json.Encode(Model.primary_pop_system_id));
-
-        bindPrimaryPODDropdown();
+    // Debounced keyup handler
+    $ddl.siblings('.chosen-container').find('.search-field input').on('keyup', function () {
+        clearTimeout(typingTimer);
+        var searchText = $(this).val();
+        typingTimer = setTimeout(function () {
+            performSearch(searchText);
+        }, 400);
     });
+
+    // Optional: load preselected values initially
+    if (preselectedValues.length > 0) {
+        $.ajax({
+            url: "@Url.Content("~/Library/searchSite")",
+            type: 'GET',
+            data: { term: '' },
+            success: function (resp) {
+                if (resp && resp.results && resp.results.length > 0) {
+                    $ddl.empty();
+                    $.each(resp.results, function (index, item) {
+                        if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
+                            $ddl.append($('<option>', {
+                                value: item.systemId,
+                                text: item.Name
+                            }));
+                        }
+                    });
+
+                    $ddl.val(preselectedValues.map(String));
+                    $ddl.trigger("chosen:updated");
+                }
+            }
+        });
+    }
+}
+
+
+
+$(document).ready(function () {
+    var selectedPODIds = @Html.Raw(Json.Encode(Model.primary_pop_system_id));
+    bindPrimaryPODDropdown(selectedPODIds);
+});
+
 
 
 
