@@ -2160,12 +2160,12 @@
 
                     <div id="SegmentArea">
 
-                        <ul class="mainlyr grpNetwork treeview" style="display:block;">
+                        <ul class="mainlyr grpNetwork treeview segementLayer" style="display:block;">
 
                             @foreach (var objSegmentRegionLayer in Model.listsegmentRegion.ToList())
                             {
 
-
+                                var segmentRegion = objSegmentRegionLayer.dropdown_value;
                                 SegChkid++;
                                 bool isSegChecked = false;
 
@@ -2186,16 +2186,26 @@
                                                 @{var whiteSpaceRemove = objSegmentRegionLayer.dropdown_type.Replace(" ", "");
                                                     var ids = whiteSpaceRemove + @objSegmentRegionLayer.dropdown_type;}
 
-                                                <input id="chk_nLyrseg_@objsegmentLayer.dropdown_value" class="mainLyr checkbox-custom treeview" type="checkbox" data-parent-group="@objSegmentRegionLayer.dropdown_type" data-mapabbr="@objSegmentRegionLayer.dropdown_type" data-layerid="@objSegmentRegionLayer.dropdown_type" data-layergroup="schkid_@SegChkid"
-                                                       data-segmentId="@objsegmentLayer.dropdown_key" data-maplayerseq="@objSegmentRegionLayer.dropdown_type" style="width: 0px;" />
-                                                <b><label for="chk_nLyrseg_@objsegmentLayer.dropdown_value" class="checkbox-custom-label"><span>@objsegmentLayer.dropdown_value</span></label></b>&nbsp;
+                                                <input id="chk_nLyrseg_@((objSegmentRegionLayer.dropdown_value ?? "") + "_" + (objsegmentLayer.dropdown_value ?? ""))"
+                                                       class="mainLyr checkbox-custom treeview"
+                                                       type="checkbox"
+                                                       data-parent-group="@objSegmentRegionLayer.dropdown_type"
+                                                       data-mapabbr="@objSegmentRegionLayer.dropdown_type"
+                                                       data-layerid="@objSegmentRegionLayer.dropdown_type"
+                                                       data-layergroup="schkid_@SegChkid"
+                                                       data-segmentId="@objsegmentLayer.dropdown_key"
+                                                       data-maplayerseq="@objSegmentRegionLayer.dropdown_type"
+                                                       style="width: 0px;" />
 
+                                                <b><label for="chk_nLyrseg_@((objSegmentRegionLayer.dropdown_value ?? "") + "_" + (objsegmentLayer.dropdown_value ?? ""))" class="checkbox-custom-label"><span>@objsegmentLayer.dropdown_value</span></label></b>&nbsp;
 
+                                                <div class="text-right regionDetails floatVisibility pos-rel" id="dvReg_dtl_@((objSegmentRegionLayer.dropdown_value ?? "") + "_" + (objsegmentLayer.dropdown_value ?? ""))">
+                                                    <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.ShowOnMapSegmentlayer('chk_nLyrseg_@objSegmentRegionLayer.dropdown_value','chk_nLyrseg_@((objSegmentRegionLayer.dropdown_value ?? "") + "_" + (objsegmentLayer.dropdown_value ?? ""))')" ;"><i style="cursor: pointer;" class="fa rp-iconSize  fa-globe"></i></i>
+                                                    <i href="#" class="dropdown-toggle mr-01" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_077" onclick="si.loadLayerOnEntity()" ;"> <i id="loadSegmentL_@objsegmentLayer.dropdown_value" class="fa rp-iconSize fa-refresh" onclick="refreshSegmentIcon('loadSegmentL_@objsegmentLayer.dropdown_value')" style="cursor: pointer; "></i></i>
+
+                                                </div>
                                             </li>
-
-                                        }
-
-
+                                                    }
                                     </ul>
 
                                 </li>

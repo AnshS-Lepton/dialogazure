@@ -97,6 +97,18 @@ namespace DataAccess
             }
             catch { throw; }
         }
+        public List<ViewRegionProvinces> GetSegmentRegionProvince(string segmentId, string regionId)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<ViewRegionProvinces>("fn_get_segment_regionprovince_details", new
+                {
+                    p_segmentId = segmentId,
+                    p_regionId = regionId
+                }, true);
+            }
+            catch { throw; }
+        }
         public List<InRegionByProvince> GetRegionDetailbyProvinceGeom(string geomtext)
         {
             try

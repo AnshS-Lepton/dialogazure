@@ -373,9 +373,9 @@ namespace BusinessLogics
         {
             return new DALayer().ShowUtilizationOnMap(objReportFilter);
         }
-        public string ShowUtilizationBasedOnNetworkStausOnMap(UtilizationEntitiesSummaryViewFilter objReportFilter, string p_networkStatus)
+        public string ShowUtilizationBasedOnNetworkStausOnMap(UtilizationEntitiesSummaryViewFilter objReportFilter, string p_networkStatus,string utilizationType)
         {
-            return new DALayer().ShowUtilizationBasedOnNetworkStausOnMap(objReportFilter, p_networkStatus);
+            return new DALayer().ShowUtilizationBasedOnNetworkStausOnMap(objReportFilter, p_networkStatus, utilizationType);
         }
         public List<layerDetail> GetActiveLayers()
         {

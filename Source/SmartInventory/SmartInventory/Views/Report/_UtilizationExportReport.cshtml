@@ -8,7 +8,7 @@
     var high_count = 0;
     var over_count = 0;
     var total_count = 0;
-    
+
 }
 <style>
     .table-scroll {
@@ -20,12 +20,12 @@
         height: 380px;
     }
 
-    .table-scroll table {
-        width: 100%;
-        margin: auto;
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
+        .table-scroll table {
+            width: 100%;
+            margin: auto;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
 
     .table-wrap {
         position: relative;
@@ -39,7 +39,7 @@
     }
 
     .table-scroll thead th {
-      /*  background: #00ba8a;*/
+        /*  background: #00ba8a;*/
         color: #fff;
         position: -webkit-sticky;
         position: sticky;
@@ -79,19 +79,23 @@
         top: 225px !important;
         left: 500px !important;
     }
+
     .legendparent {
-        margin-left:20px;
+        margin-left: 20px;
     }
 
     .Low {
         background-color: #3380EC;
     }
+
     .Moderate {
         background-color: #F5C84B;
     }
+
     .High {
         background-color: #F19A4D;
     }
+
     .Over {
         background-color: #EC5856;
     }
@@ -107,7 +111,7 @@
 <div class="ExportReportbody">
     @using (Ajax.BeginForm("UtilizationExportReport", "Report", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvModalBody", LoadingElementId = "dvReportProgress", OnSuccess = "switchToResultTab()" }, new { id = "frmExportEntitiesSummaryData", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
     {
-        @Html.HiddenFor(m => m.isGetData,new {id ="hdnIsGetData" })
+        @Html.HiddenFor(m => m.isGetData, new { id = "hdnIsGetData" })
         @Html.HiddenFor(m => m.objReportFilters.geom)
         @Html.HiddenFor(m => m.objReportFilters.geomType)
         <div class="EEReport" id="divFilter">
@@ -192,155 +196,162 @@
             <div id="dvReportProgress" class="ExportReportProgress"></div>
             @if (Model.lstReportData.Count > 0)
             {
-            <div class="utili-color-box d-flex">
-                <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035: @Model.lstReportData.Count</div>
-                <div class="legendparent d-flex">
-                    <div class="Low colorDots"></div>
-                    <div id="divLow" class="Assign assignColor">Low</div>
-                </div>
-                <div class="legendparent d-flex">
-                    <div class="Moderate colorDots"></div>
-                    <div id="divModerate" class="Assign assignColor">Moderate</div>
-                </div>
-                <div class="legendparent d-flex">
-                    <div class="High colorDots"></div>
-                    <div id="divHigh" class="Assign assignColor">High</div>
-                </div>
-                <div class="legendparent d-flex">
-                    <div class="Over colorDots"></div>
-                    <div id="divOver" class="Assign assignColor">Over</div>
-                </div>
-                <div class="ml-auto">
-                    <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-                    <div class="dropbox">
-                        @*<span onclick="ExportSummaryDetail('PDF')">@Resources.Resources.SI_OSP_GBL_NET_GBL_004</span>*@
-                        <span onclick="ExportSummaryDetail('EXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_005</span>
-                        <span onclick="ExportSummaryDetail('ALLEXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_006</span>
-                        @*<span onclick="ExportSummaryDetail('ALLCSV')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_262</span>*@
-                        <span onclick="ExportSummaryDetail('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
-                        <span onclick="ExportSummaryDetail('ALLSHAPE')">@Resources.Resources.SI_OSP_GBL_NET_FRM_074</span>
-                        @*<span onclick="ExportSummaryDetail('ALLTXT')">All Data (TXT)</span>
-                        <span onclick="ExportSummaryDetail('XML')">Record (XML)</span>*@
+                <div class="utili-color-box d-flex">
+                    <div class="fw-bold">@Resources.Resources.SI_OSP_GBL_GBL_GBL_035: @Model.lstReportData.Count</div>
+                    <div class="legendparent d-flex">
+                        <div class="Low colorDots"></div>
+                        <div id="divLow" class="Assign assignColor">Low</div>
+                    </div>
+                    <div class="legendparent d-flex">
+                        <div class="Moderate colorDots"></div>
+                        <div id="divModerate" class="Assign assignColor">Moderate</div>
+                    </div>
+                    <div class="legendparent d-flex">
+                        <div class="High colorDots"></div>
+                        <div id="divHigh" class="Assign assignColor">High</div>
+                    </div>
+                    <div class="legendparent d-flex">
+                        <div class="Over colorDots"></div>
+                        <div id="divOver" class="Assign assignColor">Over</div>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-default dropfiles">@Resources.Resources.GBL_GBL_GBL_GBL_GBL_010 <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        <div class="dropbox">
+                            @*<span onclick="ExportSummaryDetail('PDF')">@Resources.Resources.SI_OSP_GBL_NET_GBL_004</span>*@
+                            <span onclick="ExportSummaryDetail('EXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_005</span>
+                            <span onclick="ExportSummaryDetail('ALLEXCEL')">@Resources.Resources.SI_OSP_GBL_NET_GBL_006</span>
+                            @*<span onclick="ExportSummaryDetail('ALLCSV')">@Resources.Resources.SI_OSP_GBL_GBL_GBL_262</span>*@
+                            <span onclick="ExportSummaryDetail('KML')">@Resources.Resources.SI_OSP_GBL_NET_GBL_007</span>
+                            <span onclick="ExportSummaryDetail('ALLSHAPE')">@Resources.Resources.SI_OSP_GBL_NET_FRM_074</span>
+                            @*<span onclick="ExportSummaryDetail('ALLTXT')">All Data (TXT)</span>
+                                <span onclick="ExportSummaryDetail('XML')">Record (XML)</span>*@
+                        </div>
+                    </div>
+
+                    <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
+                        <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
                     </div>
                 </div>
-
-                <div id="dvReportProgress1" class="progress utili-prog-bar" style="display:none;">
-                    <div class="progress-bar progress-bar-striped" style="width:70%;background-color: darkgreen;">@Resources.Resources.SI_OSP_GBL_NET_FRM_073</div>
-                </div>
-            </div>
             }
-        <div class="scrollDiv table-scroll">
-            
+            <div class="scrollDiv table-scroll">
+
                 @if (Model.lstReportData.Count > 0)
-                    {
-                <table class="table-scroll grid" id="tblSummaryAll">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <input type="checkbox" checked="checked" class="checkbox-custom" id="checkallentity" onclick="selectallentity(this)"><b><label for="checkallentity" class="checkbox-custom-label"></label></b>
-                            </th>
-                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_144</th>
-                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_065</th>
-                            <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_066</th>
-                            <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_107</th>
-                            <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_108</th>
-                            <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_109</th>
-                            <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_110</th>
-                            @*<th scope="col">Utilized Port</th>
-                            <th scope="col">Available Port</th>*@
-                            <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{
-
-                                    for (int i = 0; i < arrSelectedNetworkStatus.Length; i++)
-                                    {
+                {
+                    <table class="table-scroll grid" id="tblSummaryAll">
+                        <thead>
                             <tr>
-                                           <td colspan="9">
-                                             @Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @CultureInfo.InvariantCulture.TextInfo.ToTitleCase(arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built") ? @arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-") : @arrSelectedNetworkStatus[i].ToString().ToLower())
-                                             <button style="font-size: 12px; padding: 2px 6px;" onclick="si.ShowNetworkStatusBasedUtilizationOnMap('@(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(
-                                                arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built")
-                                                ? arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-")
-                                                : arrSelectedNetworkStatus[i].ToString().ToLower()
-                                                )
-                                            )')"> Show on Map </button>
-                                                        </td>
+                                <th scope="col">
+                                    <input type="checkbox" checked="checked" class="checkbox-custom" id="checkallentity" onclick="selectallentity(this)"><b><label for="checkallentity" class="checkbox-custom-label"></label></b>
+                                </th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_144</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_065</th>
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_NET_FRM_066</th>
+                                <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_107</th>
+                                <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_108</th>
+                                <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_109</th>
+                                <th scope="col">@Resources.Resources.SI_GBL_GBL_GBL_GBL_110</th>
+                                @*<th scope="col">Utilized Port</th>
+                                    <th scope="col">Available Port</th>*@
+                                <th scope="col">@Resources.Resources.SI_OSP_GBL_GBL_GBL_028</th>
                             </tr>
-                                        var list = Model.lstReportData.Where(x => x.network_status.ToLower() == arrSelectedNetworkStatus[i].ToString().ToLower()).ToList();
-                                        if (list.Count > 0)
+                        </thead>
+                        <tbody>
+                            @{
+
+                                for (int i = 0; i < arrSelectedNetworkStatus.Length; i++)
+                                {
+                                    <tr>
+                                        <td colspan="9">
+                                            @Resources.Resources.SI_OSP_GBL_GBL_GBL_014 : @CultureInfo.InvariantCulture.TextInfo.ToTitleCase(arrSelectedNetworkStatus[i].ToString().ToLower().Contains("built") ? @arrSelectedNetworkStatus[i].ToString().ToLower().Replace(" ", "-") : @arrSelectedNetworkStatus[i].ToString().ToLower())
+                                            @{
+                                                var networkStatus = arrSelectedNetworkStatus[i].ToString().ToLower();
+                                                if (networkStatus.Contains("built"))
+                                                {
+                                                    networkStatus = networkStatus.Replace(" ", "-");
+                                                }
+                                                var displayStatus = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(networkStatus);
+                                                //var codes = "'H','O','L','M'";
+                                                }
+                                            <button style="font-size: 12px; padding: 2px 6px;"
+                                                    onclick="ShowUtilizationReportOnMap('@displayStatus')">
+                                                Show on Map
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    var list = Model.lstReportData.Where(x => x.network_status.ToLower() == arrSelectedNetworkStatus[i].ToString().ToLower()).ToList();
+                                    if (list.Count > 0)
+                                    {
+                                        var entityList = list.Select(x => x.entity_id).Distinct().ToList();
+                                        for (int l = 0; l < list.Count; l++)
                                         {
-                                            var entityList = list.Select(x => x.entity_id).Distinct().ToList();
-                                            for (int l = 0; l < list.Count; l++)
-                                            {
-                                                var chkid = list[l].summary_id;
-                                                var chkViewId = list[l].entity_id+ "_" + list[l].network_status + "_" + list[l].region_id + "_" + list[l].province_id;
-                    <tr>
-                        <td style="background: lightgray;"><input type="checkbox" checked="checked" class="checkbox-custom chksingle" id="@chkid" data-view-id="@chkViewId" onclick="ManageHeaderCheckBox()"><b><label for="@chkid" class="checkbox-custom-label"></label></b></td>
-                        <td style="background: lightgray;" align="center"><label title="@list[l].utilization_text" data-toggle="tooltip">@list[l].entity_title</label></td>
-                        <td style="background: lightgray;">@list[l].region</td>
-                        <td style="background: lightgray;">@list[l].province</td>
-                        @if (list[l].entity_name.ToUpper() == "DUCT")
-                        {
+                                            var chkid = list[l].summary_id;
+                                            var chkViewId = list[l].entity_id + "_" + list[l].network_status + "_" + list[l].region_id + "_" + list[l].province_id;
+                                            <tr>
+                                                <td style="background: lightgray;"><input type="checkbox" checked="checked" class="checkbox-custom chksingle" id="@chkid" data-view-id="@chkViewId" onclick="ManageHeaderCheckBox()"><b><label for="@chkid" class="checkbox-custom-label"></label></b></td>
+                                                <td style="background: lightgray;" align="center"><label title="@list[l].utilization_text" data-toggle="tooltip">@list[l].entity_title</label></td>
+                                                <td style="background: lightgray;">@list[l].region</td>
+                                                <td style="background: lightgray;">@list[l].province</td>
+                                                @if (list[l].entity_name.ToUpper() == "DUCT")
+                                                {
 
-                            <td colspan="4" style="background: lightgray;" align="center" class="tdlowcount"><label>@list[l].low_count @list[l].entity_name @list[l].utilization_text</label></td>
-                        }
-                        else
-                        {
-                            <td style="background: lightgray;" align="center" class="tdlowcount">@list[l].low_count</td>
-                            <td style="background: lightgray;" align="center" class="tdmoderatecount">@list[l].moderate_count</td>
-                            <td style="background: lightgray;" align="center" class="tdhighcount">@list[l].high_count</td>
-                            <td style="background: lightgray;" align="center" class="tdovercount">@list[l].over_count</td>
-                        }
-                        <td style="background: lightgray;" align="center">
-                            <a href="#" id="aShowBoundary" data-toggle="tooltip" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"
-                               onclick="ShowOnMap('@list[l].summary_id','@list[l].entity_title','@list[l].network_status','@list[l].low_count','@list[l].moderate_count','@list[l].high_count','@list[l].over_count','@list[l].utilization_text')"><i class="fa fa-map-marker" aria-hidden="true" style="color:grey;font-size: 21px;"></i></a>
-                        </td>
-                        @{
-                            low_count += list[l].low_count;
-                            moderate_count += list[l].moderate_count;
-                            high_count += list[l].high_count;
-                            over_count += list[l].over_count;
-                           
-                            total_count = low_count + moderate_count + high_count + over_count;
+                                                    <td colspan="4" style="background: lightgray;" align="center" class="tdlowcount"><label>@list[l].low_count @list[l].entity_name @list[l].utilization_text</label></td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="background: lightgray;" align="center" class="tdlowcount">@list[l].low_count</td>
+                                                    <td style="background: lightgray;" align="center" class="tdmoderatecount">@list[l].moderate_count</td>
+                                                    <td style="background: lightgray;" align="center" class="tdhighcount">@list[l].high_count</td>
+                                                    <td style="background: lightgray;" align="center" class="tdovercount">@list[l].over_count</td>
+                                                }
+                                                <td style="background: lightgray;" align="center">
+                                                    <a href="#" id="aShowBoundary" data-toggle="tooltip" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036"
+                                                       onclick="ShowOnMap('@list[l].summary_id','@list[l].entity_title','@list[l].network_status','@list[l].low_count','@list[l].moderate_count','@list[l].high_count','@list[l].over_count','@list[l].utilization_text')"><i class="fa fa-map-marker" aria-hidden="true" style="color:grey;font-size: 21px;"></i></a>
+                                                </td>
+                                                @{
+                                                    low_count += list[l].low_count;
+                                                    moderate_count += list[l].moderate_count;
+                                                    high_count += list[l].high_count;
+                                                    over_count += list[l].over_count;
 
-                        }
-                    </tr>
+                                                    total_count = low_count + moderate_count + high_count + over_count;
+
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td align="center" colspan="9">@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</td>
+                                        </tr>
+                                    }
                                 }
                             }
-                            else
-                            {
-                            <tr>
-                                <td align="center" colspan="9">@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</td>
-                            </tr>
-                                                            }
-                                                        }
-                        }
 
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th align="center" colspan="4" id="thtotalName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_041</th>
-                            <th align="center" id="thlowtotal">@low_count</th>
-                            <th align="center" id="thmoderatetotal">@moderate_count</th>
-                            <th align="center" id="thhightotal">@high_count</th>
-                            <th align="center" id="thovertotal">@over_count</th>
-                           
-                            <th align="center" id="thalltotal">@total_count</th>
-                        </tr>
-                    </tfoot>
-                </table>
-                                                        }
-            
-                                                        else
-                                                        {
-                <div class="nr-found">
-                    <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
-                </div>
-                                                        }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th align="center" colspan="4" id="thtotalName">@Resources.Resources.SI_OSP_GBL_GBL_GBL_041</th>
+                                <th align="center" id="thlowtotal">@low_count</th>
+                                <th align="center" id="thmoderatetotal">@moderate_count</th>
+                                <th align="center" id="thhightotal">@high_count</th>
+                                <th align="center" id="thovertotal">@over_count</th>
+
+                                <th align="center" id="thalltotal">@total_count</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+
+                else
+                {
+                    <div class="nr-found">
+                        <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+                    </div>
+                }
             </div>
         </div>
-                                                        }
+    }
 </div>
 <script type="text/javascript">
 
@@ -404,7 +415,7 @@
     }
 
     function isValidReportFilter() {
-        // 
+        //
         //if ($('#ddlRegions').val() == "0") {
         //    alert("Please select region!");
         //    return false;
@@ -532,7 +543,7 @@
 
     function ExportSummaryDetail(purpose) {
         var summaryids = "";
-         
+
         var chkAll = document.getElementById("checkallentity");
         if (chkAll.checked == true) {
             summaryids = '';
@@ -580,7 +591,7 @@
                 //SummaryTotal = 110000;
                 var MaxRecord = $("#hdnExportReportMaxRecord").val();
                 if (SummaryTotal > MaxRecord) {
-                    
+
                     alert($.validator.format(MultilingualKey.SI_OSP_GBL_JQ_FRM_067, MaxRecord));
                     //alert(MultilingualKey.SI_OSP_STR_JQ_FRM_002 + " " + MaxRecord + " " + MultilingualKey.SI_OSP_GBL_JQ_FRM_067);
                     $("#divSummary .dropfiles").trigger("click");
@@ -637,7 +648,10 @@
     })
     function ShowOnMap(summaryid, entitytitle,networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization)
     {
-         
+
         si.ShowUtilizationOnMap(summaryid, entitytitle, networkstatus, lowcount, moderatecount, highcount, overcount, ductutilization, "'H','O','L','M'",true);
+    }
+    function ShowUtilizationReportOnMap(networkstatus) {
+        si.UtilizationReportShowOnMap(networkstatus, "'H','O','L','M'");
     }
 </script>

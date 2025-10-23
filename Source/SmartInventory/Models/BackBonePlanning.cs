@@ -93,7 +93,8 @@ namespace Models
         public bool create_plan { get; set; }
         [NotMapped]
         public string layer_id { get; set; }
-
+        [NotMapped]
+        public string user_name { get; set; }
         public BackBonePlanning()
         {
             objPM = new PageMessage();

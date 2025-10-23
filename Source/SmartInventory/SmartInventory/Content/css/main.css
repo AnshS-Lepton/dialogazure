@@ -7450,6 +7450,37 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
     font-size: 13px;
 }
 
+#dvUtilizationContainer {
+    position: absolute;
+    bottom: 7%;
+    right: 0;
+    left: 0;
+    width: 400px; /* adjust width */
+    margin: 0 auto;
+    z-index: 1000;
+}
+
+.dvUtilizationShowonmap {
+    padding: 14px;
+    border-radius: 4px;
+    border: 1px #b9b9b9 solid;
+    background: #ffffff;
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(217 220 223 / 0.89));
+    box-shadow: 0 8px 8px rgb(0 0 0 / 15%);
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .dvUtilizationShowonmap p {
+        margin: 0 0 6px 0;
+        font-weight: bold;
+    }
+
+    .dvUtilizationShowonmap .checkboxes label {
+        margin-right: 10px;
+    }
+
 .UtilizationOnMap {
     padding: 14px;
     border-radius: 4px;
@@ -7472,6 +7503,64 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
     .UtilizationOnMap p {
         margin: 0;
     }
+/* Base checkbox style */
+.dvUtilizationShowonmap input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+}
+
+    /* Checked icon (tick mark) */
+    .dvUtilizationShowonmap input[type="checkbox"]::after {
+        content: "✔";
+        color: white;
+        font-size: 12px;
+        position: absolute;
+        top: -1px;
+        left: 2px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+/* Colors for checked states */
+.dvUtilizationShowonmap input[name="LL"]:checked {
+    background-color: #4CAF50; /* green for Low */
+    border-color: #4CAF50;
+}
+
+.dvUtilizationShowonmap input[name="MM"]:checked {
+    background-color: #F5C84B; /* yellow for Moderate */
+    border-color: #F5C84B;
+}
+
+.dvUtilizationShowonmap input[name="HH"]:checked {
+    background-color: #FF9800; /* orange for High */
+    border-color: #FF9800;
+}
+
+.dvUtilizationShowonmap input[name="OO"]:checked {
+    background-color: #F44336; /* red for Over */
+    border-color: #F44336;
+}
+
+/* Tick mark only visible when checked */
+.dvUtilizationShowonmap input[type="checkbox"]:checked::after {
+    opacity: 1;
+}
+
+/* Unchecked (faded grey look) */
+.dvUtilizationShowonmap input[type="checkbox"]:not(:checked) {
+    background-color: #eee;
+    border-color: #ccc;
+}
 
 .NetworkOnMap {
     font-size: 13px;
@@ -9708,6 +9797,10 @@ tfoot tr td a:hover {
     position: absolute;
 }
 
+.checkbox-custom-Segemnt {
+    opacity: 0;
+    position: absolute;
+}
 .checkbox-custom-SubChild {
     opacity: 0;
     position: absolute;

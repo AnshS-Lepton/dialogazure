@@ -2280,7 +2280,11 @@ namespace SmartInventory.Controllers
         x.client_link_id,
         x.source_network_id,
         x.destination_network_id,
-        x.op_alias
+        x.op_alias,
+        x.b_site_id,
+        x.a_site_id,
+        x.a_site_name,
+        x.b_site_name
     })
      .Select(g => g.First())
     .OrderBy(x => x.source_port_no)  // Order by source_port_no
@@ -2307,12 +2311,19 @@ namespace SmartInventory.Controllers
                         }
                         DataTable dtReport = new DataTable();
                         dtReport = MiscHelper.ListToDataTable<ODFReportLst>(distinctList);
-                        dtReport.Columns["SOURCE_PORT_NO"].ColumnName = "Port_No";
-                        dtReport.Columns["CLIENT_LINK_ID"].ColumnName = "Client Id";
-                        dtReport.Columns["SOURCE_NETWORK_ID"].ColumnName = "Site A";
-                        dtReport.Columns["DESTINATION_NETWORK_ID"].ColumnName = "Site B";
+                        dtReport.Columns["SOURCE_PORT_NO"].ColumnName = "Port No";
+                        dtReport.Columns["CLIENT_LINK_ID"].ColumnName = "Link Id";
+                        dtReport.Columns["a_site_id"].ColumnName = "Site A ID";
+                        dtReport.Columns["a_site_name"].ColumnName = "Site A Name";
+                        dtReport.Columns["b_site_id"].ColumnName = "Site B ID";
+                        dtReport.Columns["b_site_name"].ColumnName = "Site B Name";
                         dtReport.Columns["OP_ALIAS"].ColumnName = "OP Alias";
-                       
+
+                        if (dtReport.Columns.Contains("destination_network_id"))
+                            dtReport.Columns.Remove("destination_network_id");
+                        if (dtReport.Columns.Contains("source_network_id"))
+                            dtReport.Columns.Remove("source_network_id");
+
                         // Exportcableroute(dtReport, "Export_" + filename + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss"));
                         IWorkbook workbook = NPOIExcelHelper.DataTableToExcel("xlsx", dtReport);
                         if (workbook.NumberOfSheets > 0)
@@ -9982,7 +9993,7 @@ namespace SmartInventory.Controllers
             return new JsonResult { Data = lstUtilizationEntitiesDetail, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
         }
 
-        public JsonResult ShowUtilizationOnMapBasedOnNetworkStatus(string network_status)
+        public JsonResult ShowUtilizationOnMapBasedOnNetworkStatus(string network_status,string utilizationType)
         {
             string objEntitiesReport = String.Empty;
             try
@@ -10017,7 +10028,7 @@ namespace SmartInventory.Controllers
                         objUtilizationEntitiesReport.objReportFilters.lst_LayerIds = string.Join(",", objUtilizationFilter.SelectedLayerId);
                     }
                     // Call your BLLayer method
-                    objEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(objUtilizationEntitiesReport.objReportFilters, network_status);
+                    objEntitiesReport = new BLLayer().ShowUtilizationBasedOnNetworkStausOnMap(objUtilizationEntitiesReport.objReportFilters, network_status, utilizationType);
                 }
             }
             catch (Exception ex) { 

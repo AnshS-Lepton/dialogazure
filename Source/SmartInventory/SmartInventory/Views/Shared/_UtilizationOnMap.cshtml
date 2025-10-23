@@ -1,84 +1,90 @@
 ﻿<style>
-.checkboxes label {
-   display: inline-block;
-   padding-right: 10px;
-   white-space: nowrap;
-}
+        .checkboxes label {
+            display: inline-block;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
 
-.checkboxes input {
-    vertical-align: middle;
-}
+        .checkboxes input {
+            vertical-align: middle;
+        }
 
-.checkboxes label span {
-     vertical-align: middle;
-     font-weight:600;
-}
-#dvUtilizationShowonmap input[type=checkbox] {
-    cursor: pointer;
-    margin-right:0.5rem;
-    margin-top:0;
-}
+        .checkboxes label span {
+            vertical-align: middle;
+            font-weight: 600;
+        }
 
-#dvUtilizationShowonmap input[name=L]:after, #dvUtilizationShowonmap input[name=M]:after, #dvUtilizationShowonmap input[name=H]:after,
-#dvUtilizationShowonmap input[name=O]:after {
-     content: " ";
-     display: inline-block;
-     position: relative;
-     top: -3px;
-     width: 16px;
-     height: 16px;
-     text-align: center;
-     color: white;
-     border-radius:3px;
-     box-shadow:3px 3px 4px rgba(0 0 0 / 15%);
-}
-#dvUtilizationShowonmap input[name=L]:after{
-    background-color: #3380EC;
-}
+        #dvUtilizationShowonmap input[type=checkbox] {
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-top: 0;
+        }
 
-#dvUtilizationShowonmap input[name=L]:checked:after {
-    content: "\2714";
-    vertical-align:middle;
-}
-#dvUtilizationShowonmap input[name=M]:after {
-    background-color: #F5C84B;
-}
+        #dvUtilizationShowonmap input[name=L]:after, #dvUtilizationShowonmap input[name=M]:after, #dvUtilizationShowonmap input[name=H]:after,
+        #dvUtilizationShowonmap input[name=O]:after {
+            content: " ";
+            display: inline-block;
+            position: relative;
+            top: -3px;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+            color: white;
+            border-radius: 3px;
+            box-shadow: 3px 3px 4px rgba(0 0 0 / 15%);
+        }
 
-#dvUtilizationShowonmap input[name=M]:checked:after {
-    content: "\2714";
-    vertical-align:middle;
-}
-#dvUtilizationShowonmap input[name=H]:after {
-    background-color: #F19A4D;
-}
+        #dvUtilizationShowonmap input[name=L]:after {
+            background-color: #3380EC;
+        }
 
-#dvUtilizationShowonmap input[name=H]:checked:after {
-    content: "\2714";
-    vertical-align:middle;
-}
-#dvUtilizationShowonmap input[name=O]:after {
-    background-color: #EC5856;
-}
+        #dvUtilizationShowonmap input[name=L]:checked:after {
+            content: "\2714";
+            vertical-align: middle;
+        }
 
-#dvUtilizationShowonmap input[name=O]:checked:after {
-  content: "\2714";
-  vertical-align:middle;
-}
-    /*.chkutl:after {
-  content: " ";
-  background-color: #5C2799;
-  display: inline-block;
-  visibility: visible;
-}
+        #dvUtilizationShowonmap input[name=M]:after {
+            background-color: #F5C84B;
+        }
 
-.chkutl:checked:after {
-  content: "\2714";
-  text-align: center;
-  font-size: 9px;
-  color: white;
-}*/
+        #dvUtilizationShowonmap input[name=M]:checked:after {
+            content: "\2714";
+            vertical-align: middle;
+        }
+
+        #dvUtilizationShowonmap input[name=H]:after {
+            background-color: #F19A4D;
+        }
+
+        #dvUtilizationShowonmap input[name=H]:checked:after {
+            content: "\2714";
+            vertical-align: middle;
+        }
+
+        #dvUtilizationShowonmap input[name=O]:after {
+            background-color: #EC5856;
+        }
+
+        #dvUtilizationShowonmap input[name=O]:checked:after {
+            content: "\2714";
+            vertical-align: middle;
+        }
+        /*.chkutl:after {
+      content: " ";
+      background-color: #5C2799;
+      display: inline-block;
+      visibility: visible;
+    }
+
+    .chkutl:checked:after {
+      content: "\2714";
+      text-align: center;
+      font-size: 9px;
+      color: white;
+    }*/
 </style>
 <script type="text/javascript" src="~/Content/js/jquery-3.7.1.js"></script>
+<div id="dvUtilizationContainer"></div>
 
 <input id="utlSummaryId" type="hidden" value="" />
 <input id="utlnetworkstatus" type="hidden" value="" />
@@ -95,13 +101,67 @@
 </div>
 <script>
     $('.chkutl').on("click", function () {
-         
+
         var utilizationType = "";
         $("input:checkbox[class=chkutl]:checked").each(function () {
-             
+
             utilizationType = utilizationType == "" ? "'" + this.id + "'" : utilizationType + "," + "'" + this.id + "'";
         })
         //alert(utilizationType);
         si.ShowUtilizationOnMap($("#utlSummaryId").val(), $("#utlentitytitle").val(), $("#utlnetworkstatus").val(), $("#s_L").html(), $("#s_M").html(), $("#s_H").html(), $("#s_O").html(), $("#ductutilization").val(), utilizationType, false);
     });
+
+    // Delegate click event for any checkbox with class starting with 'Utilized_' inside #dvUtilizationContainer
+    $("#dvUtilizationContainer").on("click", "input[class^='Utilized_']", function () {
+        // Get the entity from the clicked checkbox's class
+        let entityClass = $(this).attr("class").split(" ").find(c => c.startsWith("Utilized_"));
+        if (!entityClass) return;
+
+        let entity = entityClass.replace("Utilized_", ""); // e.g., PDP, FTC, Cable
+
+        // Collect all checked checkboxes for this entity
+        let utilizationType = "";
+        $("#dvUtilizationContainer input." + entityClass + ":checked").each(function () {
+            utilizationType = utilizationType === "" ? "'" + this.id + "'" : utilizationType + "," + "'" + this.id + "'";
+        });
+
+        // Call your function for the clicked entity
+        si.ShowUtilizationOnMap(
+            $("#utlSummaryId").val(),
+            entity,                       // dynamically determined entity
+            $("#utlnetworkstatus").val(),
+            $("#s_L").html(),
+            $("#s_M").html(),
+            $("#s_H").html(),
+            $("#s_O").html(),
+            $("#ductutilization").val(),
+            utilizationType,
+            false
+        );
+    });
+
+    $("#dvUtilizationContainer").on("click", "input[class^='UtilizedEntity_']", function () {
+        let checkbox = this; // store reference to clicked checkbox
+
+        let entityClass = $(checkbox).attr("class").split(" ").find(c => c.startsWith("UtilizedEntity_"));
+        if (!entityClass) return;
+
+        let entity = entityClass.replace("UtilizedEntity_", "");
+        let text = $(`#networkStatus_${entity}`).text();
+        let match = text.match(/\(([^)]+)\)/);
+        let networkstatus = match ? match[1] : "";
+
+        let utilizationType = "";
+        $("#dvUtilizationContainer input." + entityClass + ":checked").each(function () {
+            let prefix = this.id.split("_")[0];
+            utilizationType = utilizationType === "" ? "'" + prefix + "'" : utilizationType + "," + "'" + prefix + "'";
+        });
+
+        // Call async function and disable checkbox only after completion
+        si.UtilizationReportShowOnMap(networkstatus, utilizationType, function () {
+            $(checkbox).prop("disabled", true);
+        });
+    });
+
+
 </script>

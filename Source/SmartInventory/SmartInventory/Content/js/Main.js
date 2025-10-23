@@ -302,7 +302,7 @@ var Main = function () {
     this.fIs_new_entity = false;
     this.fStatus = '';
     this.backbonePolyline = {};
-    this.backboneself = undefined; 
+    this.backboneself = undefined;
     this.LayerLoadingStatusMap = new Map();
     this.pod_system_id='';
     this.DE = {
@@ -455,7 +455,7 @@ var Main = function () {
     this.provinceListData = [];
     this.IsZoomInTriggered = false;
     this.provinceDeltaFetchTime = new Map();
-    this.previousInfoWindow = []; 
+    this.previousInfoWindow = [];
     this.ShowHideVectorLayerByZoomSetting = function () {
         let _Zoom = app.map.getZoom();
         const _OldlayerChekedState = app.layerChekedState;// new Map([...app.layerChekedState]);
@@ -7033,7 +7033,7 @@ var Main = function () {
                     //networkdata.ResetBomDetails();
                     networkdata.deleteAllMiddleMarker();
                     ShowAutoPlanLineLength(path);
-                    }
+                }
                 else {
                     var path = google.maps.geometry.encoding.decodePath(directionsDisplay.directions.routes[0].overview_polyline);
                     app.ShowAutoPlanLineLength(path);
@@ -7569,7 +7569,7 @@ var Main = function () {
                     }
                 }
                 else {
-                     alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_326);
+                    alert(MultilingualKey.SI_OSP_GBL_GBL_GBL_326);
                     return;
                 }
             }
@@ -8973,16 +8973,16 @@ var Main = function () {
 
         if (parId == 19) {
             if ($("input[data-subchild-layergroup=" + subchildlayerGroup +"]").is(":checked")) {
-                
+
                 //$('#chk_nLyr_' + parId).prop('checked', true);
                 $('[data-Child-layergroup=' + subchildlayerGroup + ']').prop('checked', true);
             }
             else {
-              //  $('#chk_nLyr_' + parId).prop('checked', false);
+                //  $('#chk_nLyr_' + parId).prop('checked', false);
                 $('[data-Child-layergroup=' + subchildlayerGroup + ']').prop('checked', false);
             }
         }
-       
+
 
 
         if (childnetworkType != 'L') {
@@ -9075,14 +9075,23 @@ var Main = function () {
     this.getActiveSegmenRegion = function () {
         var lyrs = []
 
-      //  var RegionData = $("input[type=checkbox][id^='chk_nLyrseg_']:checked[data-segRegionid]");
-     //   var dataLe = $(this).length;
+        //  var RegionData = $("input[type=checkbox][id^='chk_nLyrseg_']:checked[data-segRegionid]");
+        //   var dataLe = $(this).length;
         $.each($("input[type=checkbox][id^='chk_nLyrseg_']:checked[data-segRegionid]"), function () {
             if ($(this).length > 0) {
                 lyrs.push($(this).attr('data-segRegionid'));
             }
         });
-        
+
+        $("input[type=checkbox][id^='chk_nLyrseg_']:checked[data-segmentId]").each(function () {
+            var $child = $(this);
+            // Add the parent regionId if not already included
+            var parentRegionId = $child.data('segregionid');
+            if (parentRegionId && !lyrs.includes(parentRegionId)) {
+                lyrs.push(parentRegionId);
+            }
+        });
+
         return lyrs;
     }
     this.getActiveSegments = function () {
@@ -9090,12 +9099,12 @@ var Main = function () {
         var lyrs = []
        
         $.each($("input[type=checkbox][id^='chk_nLyrseg_']:checked[data-segmentId]"), function () {
-                
-                if ($(this).length > 0) {
-                    lyrs.push($(this).attr('data-segmentId'));
-                }
+
+            if ($(this).length > 0) {
+                lyrs.push($(this).attr('data-segmentId'));
+            }
         });
-        
+
         return lyrs;
     }
 
@@ -9203,29 +9212,29 @@ var Main = function () {
 
     this.SetAutoNetworkFilters = function () {
         if (app.autobackboneplanid == '0' || app.autobackboneplanid == undefined) {
-        app.filterAutoNetworkValue = "1 = 1";
+            app.filterAutoNetworkValue = "1 = 1";
 
-        if (app.autoplanid != '0' && app.autoplanid != undefined) {
-            app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
+            if (app.autoplanid != '0' && app.autoplanid != undefined) {
+                app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autoplanid + "') and [source_ref_type]='planning'";
+            }
         }
-    }
     }
     this.SetAutoBackBoneNetworkFilters = function () {
         if (app.autoplanid == '0' || app.autoplanid == undefined) {
-        app.filterAutoNetworkValue = "1 = 1";
+            app.filterAutoNetworkValue = "1 = 1";
 
-        if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
-            app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
+            if (app.autobackboneplanid != '0' && app.autobackboneplanid != undefined) {
+                app.filterAutoNetworkValue = " ([source_ref_id] ='" + app.autobackboneplanid + "') and [source_ref_type]='backbone planning'";
+            }
         }
-    }
     }
 
     this.getcablecategoryfilters = function () {
-         
+
         var lyrsh = [];
         $('input[name="chkcategory-Cable"]:checked').each(function () {
             //{
-             
+
             //// if ($('#' + this.id).is(":checked"))
             //  { 
             var chkid = this.id;
@@ -9240,7 +9249,7 @@ var Main = function () {
         return lyrsh;
     }
     this.SetCableCategoryFilters = function () {
-         
+
         app.filtercablecategory = "";
         app.filtercablecategoryvalue = app.getcablecategoryfilters();
         //app.cable_type = $('#ddlFilterCableType').val();
@@ -9357,7 +9366,7 @@ var Main = function () {
         //        app.filterPODvalue += " and ([secondary_pod_system_id] =" + app.secondary_pod_system_id + ")";
         //    }
         //}
-        
+
         if (app.filterPODvalue == "") {
             app.filterPODvalue = "1 = 1";
         }
@@ -9392,7 +9401,7 @@ var Main = function () {
             app.fSource_ref_type = '';
             app.fIs_new_entity = false;
             app.fStatus = 'A';
-           // app.filterNetworkTicketValue = " [status]='A'";
+            // app.filterNetworkTicketValue = " [status]='A'";
         }
 
     }
@@ -9429,21 +9438,23 @@ var Main = function () {
         app.ActiveSegmenRegion = app.getActiveSegmenRegion();
         app.ActiveSegments = app.getActiveSegments();
         var segmentLayer = app.ActiveSegments;
-        if (app.role_Id == 1 && app.ActiveSegments.length == 0) {
-            segmentLayer = [0];
-        }
-        app.filterSegmentRegion = " [segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ")";
+        //if (app.role_Id == 1 && app.ActiveSegments.length == 0) {
+        //    segmentLayer = [0];
+        //}
+        //app.filterSegmentRegion = " [segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ")";
         if (app.ActiveSegmenRegion.length > 0 && app.ActiveSegments.length > 0) {
             app.filterSegment = "([segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ") AND [segment_id] in (" + segmentLayer.join(",") + "))";
         }
-        else if (app.ActiveSegmenRegion.length >0) {
+        else if (app.ActiveSegmenRegion.length > 0) {
             app.filterSegment = " [segment_region_id] in (" + app.ActiveSegmenRegion.join(",") + ")";
         }
-        else{}
+        else if (app.ActiveSegments.length > 0) {
+            app.filterSegment = " [segment_id] in (" + segmentLayer.join(",") + ")";
+        }
     }
 
     this.clearDraggableLibrary = function () { //remove draggable library element
-   
+
         LandBase.clearTempNewEntity();
         app.clearTempNewEntity();
         app.ClearMapAddressTool();
@@ -9547,7 +9558,7 @@ var Main = function () {
             var segment_overlayLayer = createOverlayLayer(Segment_layerParam, true, function () { $(app.DE.lyrRefresh).removeClass('eaSpin'); });
             app.addNewOverlay(segment_overlayLayer);
         }
-       
+
 
         var hdnIsWMSLayerLoadingEnabled = $("#hdnIsWMSLayerLoadingEnabled").val();
 
@@ -9639,7 +9650,7 @@ var Main = function () {
             var layerParam = { Name: app.ActiveAsBuiltlayers.length > 0 ? app.ActiveAsBuiltlayers.join(",") : '', DisplayName: "AsBuilt_Layers", Filters: AsBuiltLayerFilter, MapFilePath: app.mapDirPath + "NetworkEntitiesNoLabel.map", isNetworkLayer: true, network_status: 'A', isWithLabel: false };
             LayerFilters.push(layerParam);
         }
-      
+
         /////////////////// Layer with labels 
 
         //---------------------------------------------OLD END---------------------------------------------------//
@@ -10579,7 +10590,7 @@ var Main = function () {
             $.each(si.gMapObj.TraceRoute, function (indx, itm) {
                 itm.setMap(null);
             })
-        } 
+        }
 
         app.gMapObj = {};
         ajaxReq('RingDetails/getRingConnectedElementDetail', { ring_id: ringId }, true, function (resp) {
@@ -10738,7 +10749,7 @@ var Main = function () {
     }
 
     this.showRouteDetailsOnMap = function (routeid) {
-        
+
         if (splicing) {
             $.each(splicing.gMapObj.pointMarkers, function (indx, itm) {
                 itm.setMap(null);
@@ -10748,8 +10759,8 @@ var Main = function () {
             $.each(si.gMapObj.TraceRoute, function (indx, itm) {
                 itm.setMap(null);
             })
-        } 
-        
+        }
+
         app.gMapObj = {};
         ajaxReq('Report/getRouteConnectedElementDetail', { routeid: routeid }, true, function (resp) {
             if (resp.status = 'OK') {
@@ -10770,7 +10781,7 @@ var Main = function () {
                         circleSpiralSwitchover: Infinity,//infinity= circle format, 0= spiral format with 9 element in one spiral round
                         legWeight: 2.4
                     });
-                    
+
                     if (resp.lstcableinfo != null || resp.lstcableinfo != undefined) {
                         var cableNetworkFiberMap = {};
                         for (var i = 0; i < resp.lstcableinfo.length; i++) {
@@ -11374,7 +11385,7 @@ var Main = function () {
         var midLatLng = getMidpoint(_path);
         // Create a Fixed Tooltip (InfoWindow)
         //css code is written in main.js file
-         infoWindow = new google.maps.InfoWindow({
+        infoWindow = new google.maps.InfoWindow({
             content: `<div style="color: black;  padding-top: 9px;  font-size: 12px; font-weight: bold;">
                    Core: ${core_number}
                </div>`,
@@ -13218,7 +13229,7 @@ var Main = function () {
         }
     }
     this.GetNearByEntitiesByLatLong = function (latLng, objId) {
-      
+
 
         app.collapseRemove();
         var _zoom = app.map.getZoom();
@@ -13250,7 +13261,7 @@ var Main = function () {
                         }
                         else {
                             $('#searchNBEntities').css('top', (app.currentMousePos.y));
-                        }                     
+                        }
                         $('#searchNBEntities').show();
                     }
                 },
@@ -14148,7 +14159,7 @@ var Main = function () {
 
 
     this.intializeInfoToolBar = function (eType, network_status, systemID, gType, networkId, displayname, geom, _isBackButtonRequired = true, siteIdSiteName = '') {
-        
+
         $("#infoTB").css('background-image', 'url(' + baseUrl + 'Content/images/loading_new.gif)');
         $("#infoTB").html("");
         var NetworkStatus = $('#' + eType + '_' + systemID).children('#hdnNetwtyp').val();
@@ -14304,7 +14315,7 @@ var Main = function () {
 
 
     this.initializeToolbarFunctions = function (systemId, entityType, geomType, networkId, displayname, geom, siteIdSiteName = '') {
-      
+
         var lyrDetail = getLayerDetail(entityType);
         var layerMapping = getLayerMapping(entityType);
         var chkClone = lyrDetail['is_clone'];
@@ -14319,7 +14330,7 @@ var Main = function () {
 
         $(document).off("click", ".tool_bar  [id^=Entity]");
         $(document).on('click', ".tool_bar  [id^=Entity]", function (e) {
-             
+
             var $iconElement = $(this);
             if (!$iconElement.hasClass("dvdisabled") && !$iconElement.hasClass("roledisabled") && !$iconElement.hasClass("buffer-disabled")) {
                 var actionName = $iconElement.data("action")
@@ -14412,7 +14423,7 @@ var Main = function () {
                     case "HISTORY":
                         app.showHistory(systemId, entityType, geomType);
                         break;
-                   
+
                     case "FIBERALLOCATIONREPORT":
                         //;
                         app.fiberAllocationReport(systemId, entityType, networkId);
@@ -17864,7 +17875,7 @@ var Main = function () {
         $('#searchNBEntities').hide();
     }
     this.bindNetworkIdToCorePlanner = function (network_id, objId) {
-      
+
         si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
@@ -17873,11 +17884,11 @@ var Main = function () {
         $(popup.DE.Maxi).trigger("click");
         if (flag == 0) {
             $('#txtODF1').val(network_id);
-           // $(popup.DE.MinimizeModel).trigger("click");
+            // $(popup.DE.MinimizeModel).trigger("click");
         }
         else if (flag == 1) {
             $('#txtODF2').val(network_id);
-           // $(popup.DE.MinimizeModel).trigger("click");
+            // $(popup.DE.MinimizeModel).trigger("click");
         }
     }
     this.addTerminationPoint = function (_data) {
@@ -18014,14 +18025,14 @@ var Main = function () {
                     var startLatLog = e.latLng.lat().toFixed(6) + "," + e.latLng.lng().toFixed(6);
                     app.NetworkStartPoint = e.latLng.lat() + "," + e.latLng.lng();
                     app.SegmentNetworkManual(destination_point);
-                   
+
 
                     $('#startpoint').val(startLatLog);
                     $('#start_point').val(startLatLog);
 
-                   // app.ResetBomDetails();
+                    // app.ResetBomDetails();
                     //  si.clearInfoRelatedObjects();
-                     si.GetNearByTopologyEntityByLatLong(e.latLng, obj.id);
+                    si.GetNearByTopologyEntityByLatLong(e.latLng, obj.id);
 
                 });
             }
@@ -18035,17 +18046,17 @@ var Main = function () {
                     app.endLatLng = f.latLng;
                     var endLatLog = f.latLng.lat().toFixed(6) + "," + f.latLng.lng().toFixed(6);
                     app.NetworkEndPoint = f.latLng.lat() + "," + f.latLng.lng();
-                  
+
                     $('#endpoint').val(endLatLog);
                     $('#end_point').val(endLatLog);
 
-                   
+
                     app.SegmentNetworkManual(destination_point);
-                   // app.ResetBomDetails();
+                    // app.ResetBomDetails();
 
                     //  si.clearInfoRelatedObjects();
-                      si.GetNearByTopologyEntityByLatLong(f.latLng, obj.id);
-                   
+                    si.GetNearByTopologyEntityByLatLong(f.latLng, obj.id);
+
                 });
             }
         }
@@ -18106,7 +18117,7 @@ var Main = function () {
 
 
     this.bindNetworkIdToTopology = function (network_id, objId, system_id, display_name) {
-  
+
         si.ClearMapAddressTool();
         var objEntity = $('#' + objId);
         var flag = objEntity.data("entity");
@@ -18121,8 +18132,8 @@ var Main = function () {
                 alert("The source and destination aggregate sites must be different.");
             }
             $('#hdnAgg1SystemId').val(system_id);
-            
-           // si.bindSegmentRouteDetails();
+
+            // si.bindSegmentRouteDetails();
         }
         else if (flag == 1) {
             $('#txtagg2').val(network_id);
@@ -18132,7 +18143,7 @@ var Main = function () {
                 alert("The source and destination aggregate sites must be different.");
             }
             $('#hdnAgg2SystemId').val(system_id);
-            
+
             //si.bindSegmentRouteDetails();
             // $(popup.DE.MinimizeModel).trigger("click");
         }
@@ -18145,17 +18156,17 @@ var Main = function () {
     }
 
     this.bindSegmentRouteDetails = function (regionname = null, segmentcode = null, routename = null) {
-        
+
         var regionId = $('#ddlregionid').val(); // Get the selected RegionId
         var agg1 = $("#hdnAgg1SystemId").val();
         var agg2 = $("#hdnAgg2SystemId").val();
 
-        if (agg1 === "" || agg1 ==="0") {
-           
+        if (agg1 === "" || agg1 === "0") {
+
             return false;
         }
         if (agg2 === "" || agg2 === "0") {
-           
+
             return false;
         }
 
@@ -18221,12 +18232,12 @@ var Main = function () {
 
         }, false, false);
 
-       
+
     };
 
     this.bindManualRoutes = function (_geom) {
-  
-       
+
+
         var agg1 = $("#hdnAgg1SystemId").val();
         var agg2 = $("#hdnAgg2SystemId").val();
 
@@ -18236,32 +18247,32 @@ var Main = function () {
 
             ajaxReq('Report/getManualRouteDetails', { geom: _geom, agg1: agg1, agg2: agg2 }, true, function (data) {
 
-               
-       debugger;
+
+                debugger;
                 if (data.status =="VALIDATION_FAILED")
                     alert(data.message);
                 $("#hdnrouteid").val("");
                 if (data.status == "OK")
                     {
-                        var ddlroute = $('#ddlmanualroute');
-                        ddlroute.empty(); // Clear existing options
-                        ddlroute.append('<option value="">--Select Route--</option>');
+                    var ddlroute = $('#ddlmanualroute');
+                    ddlroute.empty(); // Clear existing options
+                    ddlroute.append('<option value="">--Select Route--</option>');
 
-                        // Append new options from response
-                        $.each(data.result, function (index, item) {
-                            $("#hdnrouteid").val(item.route_id);
+                    // Append new options from response
+                    $.each(data.result, function (index, item) {
+                        $("#hdnrouteid").val(item.route_id);
 
-                            ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
+                        ddlroute.append('<option value="' + item.route_id + '">' + item.route_name + '</option>');
 
-                        });
-                    
+                    });
+
                     var hdnrouteid = $('#hdnrouteid');
                     If(hdnrouteid =="")
                     alert("Failed to get cable route details.")
-                        // **Update Chosen Dropdown**
-                        ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
-                    }
-                    
+                    // **Update Chosen Dropdown**
+                    ddlroute.trigger("chosen:updated"); // Ensure chosen dropdown updates
+                }
+
             }, false, false);
 
 
@@ -18274,7 +18285,7 @@ var Main = function () {
 
     this.getSegmentDetailsRoutewise = function () {
 
-        
+
         var systemId = $("#hdnSystemId").val() || 0;
 
         if (!systemId) {
@@ -18351,7 +18362,7 @@ var Main = function () {
 
                         si.selectByText("ddlringtype", response.ring);
                         $("#ddlringtype").trigger("chosen:updated");
-                        
+
                         if (response.ring_a_site_id > 0) {
                             si.selectByValue("ddlRingASite", response.ring_a_site_id.toString());
                         }
@@ -18374,7 +18385,7 @@ var Main = function () {
                 }
             } else {
                 var ddlsegment = $("#ddlsegment");
-                
+
                 // Clear existing options
                 ddlsegment.empty();
 
@@ -18399,7 +18410,7 @@ var Main = function () {
         }
 
         ajaxReq('Report/Gettopologygetsites', { systemId: systemId, ringId: ringid, distance: maxdistancepeer, segment_id: segmentid }, true, function (response) {
-           
+
             $("#dvProgress").hide();
             if (response && response.lsttopologygetsites && response.lsttopologygetsites.length > 0) {
                 si.populateDropdowns(response.lsttopologygetsites, ring_a_site_id, ring_b_site_id);
@@ -18411,7 +18422,7 @@ var Main = function () {
     }
 
     this.getSiteListItemRingwise = function (isfresh = false, ring_a_site_id = null, ring_b_site_id = null) {
-       
+
         var ddltopologytype = $("#ddltopologytype").val();
         if (ddltopologytype == "Linear" && ring_a_site_id != null) {
             ring_a_site_id = isfresh;
@@ -18447,12 +18458,12 @@ var Main = function () {
 
         function filterDropdownOptions($dropdown, condition, hideOthers = true, isfresh = true) {
 
-            
+
             if (isfresh) {
                 $dropdown.find("option").each(function () {
                     var ringId = $(this).attr("data-ringid");
                     var is_agg_site = $(this).attr("data-is_agg_site");
-                    
+
                     if ((ddltopologytype == "Dual Home" || ddltopologytype == "Linear") && condition != "0" && (ringId === condition || ringId === undefined)) {
                         $(this).show();
                         if (hideOthers) visibleCount++;
@@ -18476,7 +18487,7 @@ var Main = function () {
                 const $options = $dropdown.find("option");
                 let allAreAggRing0 = false;
                 let hasMatchingNonAgg = false;
-                
+
                 // ---------------- CASE 1: Check if all items have ringId == "0" and are aggregate ----------------
                 $options.each(function () {
                     const ringId = $(this).attr("data-ringid");
@@ -18490,7 +18501,7 @@ var Main = function () {
                     $options.each(function () {
                         const isAgg = $(this).attr("data-is_agg_site") === "true";
                         const ringId = $(this).attr("data-ringid");
-                        
+
                         if (isAgg) {
                             $(this).show();
                         } else {
@@ -18504,7 +18515,7 @@ var Main = function () {
                 $options.each(function () {
                     const ringId = $(this).attr("data-ringid");
                     const isAgg = $(this).attr("data-is_agg_site") === "true";
-                    
+
                     const showThis =
                         (isAgg && ringId !== "0") ||
                         (!isAgg && (ringId === condition));
@@ -18522,7 +18533,7 @@ var Main = function () {
                     $options.each(function () {
                         const ringId = $(this).attr("data-ringid");
                         const isAgg = $(this).attr("data-is_agg_site") === "true";
-                        
+
                         if (isAgg && ringId !== "0") {
                             $(this).show();
                             if (hideOthers) visibleCount++;
@@ -18547,14 +18558,14 @@ var Main = function () {
             filterDropdownOptions($dropdownB, selectedRingId, false, isfresh);
         }
 
-        
+
 
         //--- Start Case Third ---
         if ((ddltopologytype == "Dual Home" && visibleCount == 1) || (visibleCount === 2 || isfresh)) {
             $ddlOtherRingSite.find("option").each(function () {
                 var ringId = $(this).attr("data-ringid");
                 var is_agg_site = $(this).attr("data-is_agg_site");
-                
+
                 if (ringId !== selectedRingId && ringId !== "0" && ringId !== "" || ringId === undefined) {
                     $(this).show();
                     thirdCount++;
@@ -18564,7 +18575,7 @@ var Main = function () {
             });
 
         }
-        
+
         if (thirdCount > 1 && selectedRingId !== null || isfresh) {
 
             si.updateGrid();
@@ -18613,7 +18624,7 @@ var Main = function () {
             //let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
 
             let parts = fullText.split(/\s*\(\s*/); // Split by "(" ignoring spaces
-            
+
             if (parts.length > 1) {
 
                 let siteName = parts[0] + " (" + parts[1]; // Remove ")"; // "siteN-2"
@@ -18626,7 +18637,7 @@ var Main = function () {
                 }
 
 
-                
+
 
                 // Skip empty/default option
                 if (ringId !== "" && ringId != 0 && is_agg_site == false) {
@@ -18679,8 +18690,8 @@ var Main = function () {
         dropdownOther.empty();
 
         // Append default option
-       // dropdownA.append('<option value="">--Select--</option>');
-      //  dropdownB.append('<option value="">--Select--</option>');
+        // dropdownA.append('<option value="">--Select--</option>');
+        //  dropdownB.append('<option value="">--Select--</option>');
         // Append new options
         $.each(sites, function (index, item) {
             var optionHtml = '<option style="display:none;" value="' + item.siteid + '" data-distance="' + item.sitedistance + '" data-ringid="' + item.ringid + '"   data-siteid="' + item.siteid + '" data-is_agg_site="' + item.is_agg_site + '">' + item.sitename + ' (' + (item.sitedistance / 1000).toFixed(3) + ')</option>';
@@ -18693,7 +18704,7 @@ var Main = function () {
         if (dropdownB && dropdownB.options.length > 1) {
             dropdownB.selectedIndex = 1;
         }
-   
+
         si.getSiteListItemRingwise(isfresh, ring_a_site_id, ring_b_site_id);
         // Refresh dropdowns
         dropdownA.trigger("chosen:updated");
@@ -18724,7 +18735,7 @@ var Main = function () {
 
 
     this.bindRingDetails = function (ring = null) {
-        
+
         var regionId = $('#ddlregionid').val(); // Get the selected RegionId
         var agg1 = $("#txtagg1").val();
         var agg2 = $("#txtagg2").val();
@@ -18747,20 +18758,20 @@ var Main = function () {
             return false;
         }
 
-        
+
         if (segmentId) {
 
             ajaxReq('Report/GetRingTypesByRegion', { segmentId: segmentId, numberofsites: nofsites, ringcapacity: ringcap }, true, function (data) {
-               
+
                 var ringTypeDropdown = $('#ddlringtype');
 
-                
+
                 ringTypeDropdown.empty(); // Clear existing options
                 ringTypeDropdown.append('<option value="">--Select Ring--</option>');
 
                 // Append new options from response
                 $.each(data, function (index, item) {
-                    
+
                     const match = item.ring_info.match(/\((\d+)\)/);
                     const data = match ? parseInt(match[1], 0) : null;
                     if (data != 0 && topologyType == "Linear")
@@ -18771,7 +18782,7 @@ var Main = function () {
 
                 });
 
-                
+
                 if (ring != null) {
                     selectByText("ddlringtype", ring);
                 }
@@ -18779,7 +18790,7 @@ var Main = function () {
                 ringTypeDropdown.trigger("chosen:updated"); // Ensure chosen dropdown updates
             }, false, false);
 
-            
+
         } else {
             // Clear the ring type dropdown if no segment is selected
             $('#ddlringtype').empty().append('<option value="">--Select Ring--</option>');
@@ -18797,7 +18808,7 @@ var Main = function () {
     }
 
     this.selectByValue = function (dropdownId, textToSelect) {
-        
+
         let dropdown = document.getElementById(dropdownId);
         for (let i = 0; i < dropdown.options.length; i++) {
             if (dropdown.options[i].value === textToSelect) {
@@ -18849,7 +18860,7 @@ var Main = function () {
             app.map.setCenter(app.getLatLongFromPT(dragPT)); app.map.setZoom(15);
         }
 
-        
+
         google.maps.event.addListener(app.map, 'click', function (evt) {
             ;
             app.drawAddLineRouteEntity(evt.latLng);
@@ -18866,7 +18877,7 @@ var Main = function () {
     }
 
     this.drawAddLineRouteEntity = function (latLng) {
-      
+
         if ($('#hdnMaxLineEntityLength').val() != '') {
             if (si.MaxCableLength > parseInt($('#hdnMaxLineEntityLength').val()) && si.LengthUnit != 'meter') {
                 alert("Maximum " + parseInt($('#hdnMaxLineEntityLength').val()) + " KM length of an entity can be created!");
@@ -18890,10 +18901,10 @@ var Main = function () {
             } else {
                 app.removeNode(app.mapListners["TempLibItm"], event.vertex);
             }
-          
-            
-                app.createLineBuffer(app.mapListners["TempLibItm"].getPath().getArray(), 1);
-         
+
+
+            app.createLineBuffer(app.mapListners["TempLibItm"].getPath().getArray(), 1);
+
             ShowLineLength();
         });
 
@@ -18901,42 +18912,42 @@ var Main = function () {
             var newPath = app.mapListners["TempLibItm"].getPath();
             app.gMapObj.libPath = newPath.getArray();
             app.IsCreateLineExist();
-           
-                app.createLineBuffer(app.gMapObj.libPath, 1);
-            
+
+            app.createLineBuffer(app.gMapObj.libPath, 1);
+
             ShowLineLength();
         });
 
         google.maps.event.addListener(app.mapListners["TempLibItm"].getPath(), 'insert_at', function (indx) {
             var newPath = app.mapListners["TempLibItm"].getPath();
             app.gMapObj.libPath = newPath.getArray();
-            
-                app.createLineBuffer(app.gMapObj.libPath, 1);
-            
+
+            app.createLineBuffer(app.gMapObj.libPath, 1);
+
             ShowLineLength();
         });
 
 
         app.mapListners["mapListners"] = google.maps.event.addListener(app.mapListners["TempLibItm"], 'click', function (evt) {
 
-              app.EntityAttributeDetails.strokeWidth = 1;
+            app.EntityAttributeDetails.strokeWidth = 1;
             app.setRouteToolEvents(app.EntityAttributeDetails);
-         
+
         });
-        
-            app.createLineBuffer(app.mapListners["TempLibItm"].getPath().getArray(), 1);
-       
+
+        app.createLineBuffer(app.mapListners["TempLibItm"].getPath().getArray(), 1);
+
 
     }
     this.setRouteToolEvents = function (libItem) {
 
-       
+
         var centerLineGeom = '';
         var bufferWidth = 0;
         var geomType = app.EntityAttributeDetails["geomType"];
-      
+
         var eType = libItem["enType"];
-     
+
         var isTemplate = libItem["isTemplate"];
         var ntkIdType = libItem["ntkIdType"];
         var txtGeom = null;
@@ -18945,16 +18956,16 @@ var Main = function () {
         if (txtGeom == false) {
             return false;
         }
-      
-            centerLineGeom = txtGeom;
-            var _path = app.gMapObj.ROWPath;
-            if (_path.length > 2) {
-                _path.push(_path[0]);
-                txtGeom = app.getGeomFromlatLngArr(_path);
-            }
-            geomType = 'Polygon';
-            bufferWidth = app.EntityAttributeDetails['strokeWidth'];
-     
+
+        centerLineGeom = txtGeom;
+        var _path = app.gMapObj.ROWPath;
+        if (_path.length > 2) {
+            _path.push(_path[0]);
+            txtGeom = app.getGeomFromlatLngArr(_path);
+        }
+        geomType = 'Polygon';
+        bufferWidth = app.EntityAttributeDetails['strokeWidth'];
+
         ajaxReq('Main/ValidateEntityGeom', { geomType: geomType, enType: eType, txtGeom: txtGeom, isTemplate: isTemplate }, true,
             function (resp) {
                 if (resp.status == "OK") {
@@ -18964,24 +18975,24 @@ var Main = function () {
                     $('#topologyLibraryTools a:nth-child(2)').on('click', function () {
                         debugger;
                         app.closeTopologyLibTools();
-                                  //  app.loadLayerOnEntity();
-                                    app.clearDraggableLibrary();
+                        //  app.loadLayerOnEntity();
+                        app.clearDraggableLibrary();
                         si.bindManualRoutes(centerLineGeom);
                         $(popup.DE.MaximizeModel).trigger("click");
-                       
-                      
+
+
                     });
 
                 }
                 else {
                     alert(resp.error_message);
-                   
+
                 }
             }, true, true);
     }
 
     this.showTopologyLibraryTools = function () {
-        
+
         $('#topologygreyDiv').show();
         var marlft = $(window).width() - (132 + ($('#map_canvas').width() / 2));
         var marBot = $(window).height() - 83 - $('#map_canvas').height() + ($('#map_canvas').height() / 2) - 14;
@@ -19334,10 +19345,10 @@ var Main = function () {
     this.GetCableRingAssociation = function (filterSelected, regionCode, segementCode, ringId,cableId) {
 
         ajaxReq('Library/GetCableRingAssociation', { filterSelected: filterSelected, regionCode: regionCode, segementCode: segementCode, ringId: ringId, cableId: cableId }, true, function (resp) {
-                $("#RingAssociation").html(resp);
-                $("#RingAssociation").css('background-image', 'none');
+            $("#RingAssociation").html(resp);
+            $("#RingAssociation").css('background-image', 'none');
 
-            }, false, false);
+        }, false, false);
     }
     this.GetSliptCableFiberDetail = function (_cableid, _type) {
         var formURL = 'Library/getFiberDetail';
@@ -20454,10 +20465,10 @@ var Main = function () {
                         app.loadLayerOnEntity();
                     }
                     else{
-                    alert(resp.message);
-                    app.loadLayerOnEntity();
-                    window.location = appRoot + 'Main/DownloadBulkDeleteProcessLogs?';
-                     }
+                        alert(resp.message);
+                        app.loadLayerOnEntity();
+                        window.location = appRoot + 'Main/DownloadBulkDeleteProcessLogs?';
+                    }
                 }
 
             }, true, true);
@@ -21061,7 +21072,7 @@ var Main = function () {
         else {
             ajaxReq('Library/getNearCableDetail', { split_entity_system_id: splitEntitySystem_id, split_entity_type: splitEntitytype, split_cable_system_id: splitcablesystemid, Split_entity_Core: splitEntityCore }, false, function (resp) {
                 if (resp.status == 'OK') {
-                   
+
                     if ($('#cable_one_start_reading').length > 0 && $('#cable_one_end_reading').length > 0) {
                         $('#cable_one_start_reading,#cable_one_end_reading').keyup(function () {
                             app.calculateCableLength('', '' + resp.result.network_status + '', 'cable_one_start_reading', 'cable_one_end_reading', 'cable_one_calculated_length')
@@ -21271,7 +21282,7 @@ var Main = function () {
 
     }
 
-    this.validateCoreAndODFFields = function () {      
+    this.validateCoreAndODFFields = function () {
         let isValid = true;
         // Reset previous red borders before validating
         $("#txtODF1, #txtODF2, #txtRequiredCore").removeClass("error-border");
@@ -21317,66 +21328,66 @@ var Main = function () {
     }
 
     this.checkAvailability = function () {
-       
-       let result = app.validateCoreAndODFFields();
+
+        let result = app.validateCoreAndODFFields();
        if(result) {
-           $("#gridTable").hide();
-        ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val().trim(), ODF2: $("#txtODF2").val().trim(), required_core: $("#txtRequiredCore").val().trim() }, true, function (resp) {
-            if (resp != null && resp != undefined) {
+            $("#gridTable").hide();
+            ajaxReq('Library/checkAvailability', { ODF1: $("#txtODF1").val().trim(), ODF2: $("#txtODF2").val().trim(), required_core: $("#txtRequiredCore").val().trim() }, true, function (resp) {
+                if (resp != null && resp != undefined) {
 
-                if (resp.status) {
-                    $("#btnSubmit").prop("disabled", false);
-                    $("#ddlfiberlink").prop("required", true);
-                    // Clear grid table data                
-                    alert(resp.message);
+                    if (resp.status) {
+                        $("#btnSubmit").prop("disabled", false);
+                        $("#ddlfiberlink").prop("required", true);
+                        // Clear grid table data                
+                        alert(resp.message);
 
-                }
-                else {
-                     
-                    if (resp.source_network_id != null && resp.source_network_id !== '') {
-                        app.ShowCableOnMapbyGeom('Polygon', resp);
-                        $("#btnSubmit").prop("disabled", true);
-                        $("#ddlfiberlink").prop("required", false);
-
-                        alert(resp.message + resp.source_network_id);
-
-                        // **Fetch additional availability data**
-                       
                     }
                     else {
-                        ajaxReq('Library/GetcheckAvailability', {}, true, function (resp) {
-                            if (resp.length > 0) {  // 
-                               
-                                let tbody = $("#gridTable tbody");
-                                tbody.empty(); // Clear previous data
 
-                                $.each(resp, function (index, item) {
-                                    let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-showon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
+                        if (resp.source_network_id != null && resp.source_network_id !== '') {
+                            app.ShowCableOnMapbyGeom('Polygon', resp);
+                            $("#btnSubmit").prop("disabled", true);
+                            $("#ddlfiberlink").prop("required", false);
+
+                            alert(resp.message + resp.source_network_id);
+
+                            // **Fetch additional availability data**
+
+                        }
+                        else {
+                            ajaxReq('Library/GetcheckAvailability', {}, true, function (resp) {
+                                if (resp.length > 0) {  // 
+
+                                    let tbody = $("#gridTable tbody");
+                                    tbody.empty(); // Clear previous data
+
+                                    $.each(resp, function (index, item) {
+                                        let rowAction = '<a href="#" data-value="' + item.cable_id + '" class="icon-showon-map-view" title="' + MultilingualKey.SI_OSP_GBL_GBL_GBL_036 + '">';
 
 
-                                    let row = `<tr>
+                                        let row = `<tr>
                      <td>${rowAction}</td>
                 <td>${item.cable_network_id || '-'}</td>
                 
             </tr>`;
-                                    tbody.append(row);
-                                });
-                                $("#gridTable").show();
-                            } 
+                                        tbody.append(row);
+                                    });
+                                    $("#gridTable").show();
+                                }
                             else 
                             {                           
-                               $("#gridTable").hide();
-                            }
-                        }, true, true);
-                        $("#btnSubmit").prop("disabled", true);
-                        $("#ddlfiberlink").prop("required", false)
-                        alert(resp.message);
+                                    $("#gridTable").hide();
+                                }
+                            }, true, true);
+                            $("#btnSubmit").prop("disabled", true);
+                            $("#ddlfiberlink").prop("required", false)
+                            alert(resp.message);
+                        }
+
                     }
-
                 }
-            }
 
-        }, true, true);
+            }, true, true);
         }
     }
     $(document).on("click", ".icon-showon-map-view", function () {
@@ -21389,28 +21400,28 @@ var Main = function () {
         window.location = appRoot + 'Library/ExportPlanLogicReport';
     }
 
-    this.saveCorePlanLogic = function () {     
+    this.saveCorePlanLogic = function () {
         let result = app.validateCoreAndODFFields();
-        if (result){
-        ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val().trim(), fiber_link_network_id: $("#txtfiberlink").val().trim(), source_network_id: $("#txtODF1").val().trim(), destination_network_id: $("#txtODF2").val().trim(), buffer: 5 }, true, function (resp) {
-            if (resp != null && resp != undefined) {
-                if (resp.status) {
-                    alert(resp.message);
-                    $('#txtRequiredCore').val('');
-                    $('#txtODF1').val('');
-                    $('#txtODF2').val('');
-                    $('#txtfiberlink').val('');
-                    $('#btnSubmit').prop("disabled", true);
-                    $("#closeModalPopup").click();
-                }
-                else {
-                    alert(resp.message);
+        if (result) {
+            ajaxReq('Library/SaveCorePlanLogic', { required_core: $("#txtRequiredCore").val().trim(), fiber_link_network_id: $("#txtfiberlink").val().trim(), source_network_id: $("#txtODF1").val().trim(), destination_network_id: $("#txtODF2").val().trim(), buffer: 5 }, true, function (resp) {
+                if (resp != null && resp != undefined) {
+                    if (resp.status) {
+                        alert(resp.message);
+                        $('#txtRequiredCore').val('');
+                        $('#txtODF1').val('');
+                        $('#txtODF2').val('');
+                        $('#txtfiberlink').val('');
+                        $('#btnSubmit').prop("disabled", true);
+                        $("#closeModalPopup").click();
+                    }
+                    else {
+                        alert(resp.message);
 
+                    }
                 }
-            }
 
-        }, true, true);
-      }
+            }, true, true);
+        }
     }
 
     this.GetlinkPrefixbyLinkType = function (obj) {
@@ -21850,7 +21861,7 @@ var Main = function () {
         $("#divPlanTool").hide();
         if ($("#dvAutoBackBonePlanData").is(":visible")) {
             $("#dvAutoBackBonePlanData").hide('slide', { direction: 'up' }, 500);
-        }        
+        }
         if (si.fadeMap) {
             si.fadeMap.setMap(null);
         }
@@ -21880,8 +21891,8 @@ var Main = function () {
             if (backbonedata.sitePointMarker) {
                 backbonedata.sitePointMarker.setMap(null);
                 backbonedata.sitePointMarker = null;
-              }
-         }  
+            }
+        }
         if ($("#dvAutoPlanData").css('display') == 'none') {
             if (typeof networkdata != "undefined") {
                 networkdata.hideAllNetworkFile();
@@ -21900,7 +21911,7 @@ var Main = function () {
                 }, false, false);
             }
             else {
-                
+
                 if (typeof networkdata !== 'undefined' && networkdata != null) {
                     networkdata.hideAllNetworkFile();
                     $("#openNetworkPlanningData").hide();
@@ -21945,11 +21956,11 @@ var Main = function () {
                 backbonedata.sitePointMarker.setMap(null);
                 backbonedata.sitePointMarker = null;
             }
-        }   
+        }
         app.autoplanid = 0;
         if (typeof networkdata !== 'undefined' && networkdata != null) {
             networkdata.hideAllNetworkFile();
-         }
+        }
 
         if ($("#dvAutoBackBonePlanData").css('display') == 'none') {
             if (typeof backbonedata != "undefined") {
@@ -21969,7 +21980,7 @@ var Main = function () {
                 }, false, false);
             }
             else {
-               
+
                 if (typeof backbonedata !== 'undefined' && backbonedata != null) {
                     backbonedata.hideAllNetworkFile();
                     $("#openNetworkPlanningData").hide();
@@ -23472,9 +23483,9 @@ var Main = function () {
             debugger;
             ajaxReqforFileUpload('Main/UploadImage', data, true, function (resp) {
                 if (resp.status === "OK") {
-                   /* $('#closeModalPopup').trigger("click");*/
+                    /* $('#closeModalPopup').trigger("click");*/
                     app.getElementImages();
-                    fileInput.value = ""; 
+                    fileInput.value = "";
                     alert(resp.message);
                 } else {
                     alert(resp.message);
@@ -23482,7 +23493,7 @@ var Main = function () {
             }, true);
         }
     };
-   
+
     this.uploadSingleFile = function (key) {
         debugger;
         var fileInput = document.getElementById("fileUpload_" + key);
@@ -23857,7 +23868,7 @@ var Main = function () {
             site_id: _site_id
         }, true, function (resp) {
             $("#PRojectAssoctn").html(resp);
-            $("#PRojectAssoctn").css('background-image', 'none');           
+            $("#PRojectAssoctn").css('background-image', 'none');
         }, false, false);
     }
     //##Getimages 
@@ -23970,7 +23981,7 @@ var Main = function () {
 
 
     this.showHistory = function (_systemId, _entityType) {
-         
+
         var formURL = "Audit/GetHistory";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = layerTitle.toUpperCase() + " History";
@@ -23979,7 +23990,7 @@ var Main = function () {
         }, titleText, 'modal-lg');
     }
     this.TopologyPlan = function (_systemId, _entityType) {
-         
+
         var formURL = "Report/SiteTopology";
         var layerTitle = getLayerTltle(_entityType);
         var titleText = " Topology Plan";
@@ -23989,7 +24000,7 @@ var Main = function () {
     }
     this.createSegment = function (_txtGeom,_systemId, _entityType) {
 
-     
+
         var formURL = "Report/CreateSegment";
         var titleText = " Create Segment";
         popup.LoadModalDialog('PARENT', formURL, {
@@ -26745,7 +26756,7 @@ var Main = function () {
             }
         },
         SiteReport: function (geom, modeType, radius, obj) {
-             
+
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 $(obj).addClass('activeToolBar');
@@ -26803,16 +26814,16 @@ var Main = function () {
             }
         },
         ItemSiteAwarding: function (geom, modeType, radius, obj, searchBy, searchText) {
-             
-                                           
+
+
             popup.LoadModalDialog('CHILD', 'Report/SiteBomBoqSummary', {
                 eType: '', refrenceData: modeType, searchBy: searchBy, searchText: searchText
-            }, "Item cost vendor Report", 'modal-xl');  
+            }, "Item cost vendor Report", 'modal-xl');
         },
 
         SiteTopology: function (geom, modeType, radius, obj) {
-            
-             
+
+
             if (obj) {
                 //$('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 //$(obj).addClass('activeToolBar');
@@ -26844,7 +26855,7 @@ var Main = function () {
                 }, 'Topology Plan', 'modal-xl');
             }
         },
-       
+
         AwardSiteToSelectedVendor: function (user_id, vendorCost) {
 
             if (vendorCost == '' || vendorCost == null)
@@ -26903,19 +26914,19 @@ var Main = function () {
             }
         },
         BOMBOQData: function (siteid, pole_span, manhole_span, obj) {
-            
+
             if (obj) {
                 $('#reportToolBar >.iconBaricomoon >a').removeClass('activeToolBar');
                 $(obj).addClass('activeToolBar');
             }
             if (siteid != '' && siteid != null) {
 
-               
+
 
                 ajaxReq('Report/GetSiteBomBOQData', $('form').serialize(), true, function (resp) {
                     $("#BomBoqDetails").html(resp);
                     $('#btnProcessPlan').prop('disabled', false);
-                   
+
                 }, false, true, false);
             }
             else {
@@ -30879,6 +30890,27 @@ var Main = function () {
                 });
         }
     }
+
+    this.ShowOnMapSegmentlayer = function (_regionId, _segmentLayerId) {
+        debugger;
+        app.clearEditObj();
+        removeOldMarkers();
+        let $segmentCheckbox = $('#' + _segmentLayerId);
+        let $regionCheckbox = $('#' + _regionId);
+        $segmentCheckbox.prop('checked', true);
+        let segmentId = $segmentCheckbox.data('segmentid');
+        let regionId = $regionCheckbox.data('segregionid');
+        showProgress();
+        ajaxReq('RegionProvince/GetSegmentGeomDetails', {
+            segmentId: segmentId, regionId: regionId
+        }, true,
+            function (resp) {
+                app.ClearRegionProvinceFromMap();
+                app.fitElementOnMap(resp);
+                hideProgress();
+            });
+    }
+
     this.SaveRegionProvinceBoundary = function (event) {
         showProgress();
         var _finalGeom = new polygonProtoType().getFinalGeom();
@@ -31204,41 +31236,74 @@ var Main = function () {
             });
         }
     }
-    this.ShowNetworkStatusBasedUtilizationOnMap = function (networkStatus) {
+    this.generateUtilizationSummary = function (resp, networkstatus) {
+        if (!resp || !resp.features || !Array.isArray(resp.features)) {
+            console.warn("No features found in response", resp);
+            $("#dvUtilizationContainer").empty();
+            return {};
+        }
+
+        // Step 1: Sum counts for each entity
+        let summaryMap = {};
+
+        resp.features.forEach(f => {
+            const prop = f.properties;
+            if (!prop || !prop.entity_title) return;
+
+            const entity = prop.entity_title.toUpperCase();
+
+            if (!summaryMap[entity]) {
+                summaryMap[entity] = { Low: 0, Moderate: 0, High: 0, Over: 0 };
+            }
+
+            summaryMap[entity].Low += prop.low_count || 0;
+            summaryMap[entity].Moderate += prop.moderate_count || 0;
+            summaryMap[entity].High += prop.high_count || 0;
+            summaryMap[entity].Over += prop.over_count || 0;
+        });
+
+        // Step 2: Clear previous content
+        $("#dvUtilizationContainer").empty();
+
+        Object.keys(summaryMap).forEach(entity => {
+            const counts = summaryMap[entity];
+            var html = `<div class="dvUtilizationShowonmap">
+    <p id= "networkStatus_${entity}">${entity} (${networkstatus}):</p>
+    <div class="checkboxes ${entity}">
+        <label><input type="checkbox" name="LL" id="L_${entity}" class="UtilizedEntity_${entity}" checked /> Low(<span>${counts.Low}</span>)</label>
+        <label><input type="checkbox" name="MM" id="M_${entity}" class="UtilizedEntity_${entity}" checked /> Moderate(<span>${counts.Moderate}</span>)</label>
+        <label><input type="checkbox" name="HH" id="H_${entity}" class="UtilizedEntity_${entity}" checked /> High(<span>${counts.High}</span>)</label>
+        <label><input type="checkbox" name="OO" id="O_${entity}" class="UtilizedEntity_${entity}" checked /> Over(<span>${counts.Over}</span>)</label>
+    </div>
+    </div>`;
+
+            $("#dvUtilizationContainer").append(html);
+
+        });
+
+        return summaryMap;
+    }
+
+
+    this.UtilizationReportShowOnMap = function (networkStatus, utilizationType) {
         debugger;
-      
-            ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
-                network_status: networkStatus
-            }, true, function (resps) {
+        $("#dvUtilizationContainer").empty();
+        ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
+            network_status: networkStatus, utilizationType: utilizationType
+        }, true, function (resps) {
+            debugger;
+            var resp = JSON.parse(resps);
+            var eCheck = resp.features == null ? false : true;
+            if (eCheck) {
+                app.RemoveOldFeature();
+
+                si.UtilizationloadMapNetworkStatusShapes(resp);
                 debugger;
-                var resp = JSON.parse(resps);
-                var eCheck = resp.features == null ? false : true;
-                if (eCheck) {
-                    app.RemoveOldFeature();
-                   
-                    si.UtilizationloadMapNetworkStatusShapes(resp);
-                        $(popup.DE.MinimizeModel).trigger("click");
-                }
-                //else {
-                //    si.map.data.forEach(function (feature) {
-                //        si.map.data.remove(feature);
-                //    });
-                //    var utilData = entitytitle + " (" + networkstatus + "):";
-                //    if (entitytitle != "Duct") {
-                //        $("#dvUtilizationShowonmap").show();
-                //    }
-                //    $("#utlSummaryId").val(summaryid);
-                //    $("#utlnetworkstatus").val(networkstatus);
-                //    $("#utlentitytitle").val(entitytitle);
-                //    $("#dvUtilizationShowonmap_p").html(utilData);
-                //    $("#s_L").html(lowcount);
-                //    $("#s_M").html(moderatecount);
-                //    $("#s_H").html(highcount);
-                //    $("#s_O").html(overcount);
-                //    if (reportminval)
-                //        $(popup.DE.MinimizeModel).trigger("click");
-                //}
-            }, true, true);        
+                si.generateUtilizationSummary(resp, networkStatus);
+                $(popup.DE.MinimizeModel).trigger("click");
+
+            }          
+        }, true, true);
     }
     this.UtilizationloadMapShapes = function UtilizationloadMapShapes(JSONData) {
         si.map.data.addGeoJson(JSONData, {
@@ -31381,12 +31446,12 @@ var Main = function () {
                         si.map.fitBounds(bounds);
                     });
                     //}
-                   break;
-            
+                    break;
+
             }
             return geomstyle;
         });
-        
+
         si.RemoveOldInfoWindow();
         app.infowindow = new google.maps.InfoWindow();
         si.map.data.addListener('click', function (event) {
@@ -31697,18 +31762,48 @@ var Main = function () {
             updateCount();
             window.setInterval(updateCount, 300000);
         }
+        debugger;
         // Filter checkboxes with ID containing 'chk_nLyr_' and are checked
+        // Bind parent-child checkbox behavior for SegmentArea **once**
+        app.bindSegmentLayerCheckboxes();
+
+        // Trigger entity logic for already checked main layer checkboxes
         $('.mainlyr .checkbox-custom:checked').filter(function () {
             return this.id.includes('chk_nLyr_');
         }).each(function () {
             app.TriggerEntityChangeEvent.call(this);
         });
-
         //Refresh Layers
         app.RefreshLayersForSync();
     });
-    this.TriggerEntityChangeEvent = function () {
 
+    this.bindSegmentLayerCheckboxes = function () {
+        // Parent checkbox click
+        debugger;
+        $("#SegmentArea .segementLayer li.liStyle > input[type='checkbox']").on("change", function () {
+            var parentMapAbbr = $(this).data("mapabbr");
+            var isChecked = $(this).is(":checked");
+
+            // Check/uncheck only matching children
+            $(this).closest("li").find("ul input[type='checkbox']").each(function () {
+                if ($(this).data("mapabbr") == parentMapAbbr) {
+                    $(this).prop("checked", isChecked);
+                }
+            });
+        });
+
+        // Child checkbox click: update parent if all children are checked/unchecked
+        $("#SegmentArea .segementLayer li.liStyle ul input[type='checkbox']").on("change", function () {
+            var parentLi = $(this).closest("li.liStyle");
+            var allChildren = parentLi.find("ul input[type='checkbox']");
+            var allChecked = allChildren.length === allChildren.filter(":checked").length;
+
+            parentLi.children("input[type='checkbox']").prop("checked", allChecked);
+        });
+    }
+
+    this.TriggerEntityChangeEvent = function () {
+        debugger;
         if (this.checked) {
             var chkid = this.id;
             var id = $('#' + chkid).attr("data-layerid");
@@ -31734,28 +31829,13 @@ var Main = function () {
 
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
                 if ($("input[type='checkbox'][data-mapabbr='CBL']").is(":checked"))
-                $("[data-layergroup='" + groupType + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', this.checked);
+                    $("[data-layergroup='" + groupType + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', this.checked);
             }
             else {
-                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);              
+                $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
             }
 
-           /*Segment layer check box--Statr--*/
-            var $groupCheckboxes = $(".layers .network li input[type=checkbox].checkbox-custom[data-layergroup='" + groupType + "']");
-            var total = $groupCheckboxes.length;
-            var checked = $groupCheckboxes.filter(":checked").length;
-            // Target chk_nLyrseg_ checkboxes for this group
-            var $targetChk = $("input[type='checkbox'][id^='chk_nLyrseg_'][data-layergroup='" + groupType + "']");
 
-            if (checked === 0 && total > 0) {$targetChk.prop("checked", true); } 
-            else if (checked === total && total > 0) {$targetChk.prop("checked", true);}
-            else if (checked > 0 && total === 0) {$targetChk.prop("checked", false);}
-            else if (checked > 0 && total > 0) { $("#" + chkid).prop("checked", true);}
-            else {
-              //  $("#" + chkid).prop("checked", false);
-                
-            }
-            /*Segment layer check box--End--*/
 
         }
         else {
@@ -31782,33 +31862,19 @@ var Main = function () {
                 == $('.layers .network li input[type=checkbox]').filter('.checkbox-custom').filter("[data-layergroup='" + groupType + "']").length) {
 
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', true);
-                
-                   
+
+
             }
             else {
                 $('input:checkbox#' + groupType).not(":disabled").prop('checked', false);
-                
-                if (lyrName =="CBL")
+
+                if (lyrName == "CBL")
 
                     $("[data-layergroup='" + groupType + "']").filter("[data-networktype!='L']").not(":disabled").prop('checked', false);
-   
-            }
-          
-            /*Segment layer check box--Statr--*/
-            var $groupCheckboxes = $(".layers .network li input[type=checkbox].checkbox-custom[data-layergroup='" + groupType + "']");
-            var total = $groupCheckboxes.length;
-            var checked = $groupCheckboxes.filter(":checked").length;
 
-            var $targetChk = $("input[type='checkbox'][id^='chk_nLyrseg_'][data-layergroup='" + groupType + "']");
-            if (checked === 0 && total > 0) {    $targetChk.prop("checked", false); }
- else if (checked === total && total > 0) { $targetChk.prop("checked", false); }
- else if (checked > 0 && total === 0) { $targetChk.prop("checked", false);} 
- else if (checked > 0 && total > 0) { $("#" + chkid).prop("checked", false); }
- else { 
-     //$("#" + chkid).prop("checked", true);
-     
- }
-            /*Segment layer check box--Statr--*/
+            }
+
+
 
             //var remLyrItem  app.DE.layerManager.includes(lyrName);
 
@@ -32920,7 +32986,7 @@ var Main = function () {
 
     this.SegmentNetworkManual = function (end) {
 
-        
+
         ClearRuler();
         if (directionsDisplay) {
             directionsDisplay.setMap(null);
@@ -32967,11 +33033,11 @@ var Main = function () {
             si.startMarker.addListener('click', function () {
 
                 si.bindManualRoutes($('#directionGeometry').val());
-              //  popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+                //  popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
 
             });
 
-            
+
             si.startMarker.setMap(si.map);
             app.MarkerList.push(si.startMarker);
         }
@@ -32998,7 +33064,7 @@ var Main = function () {
             si.endMarker.addListener('click', function () {
 
                 si.bindManualRoutes($('#directionGeometry').val());
-               // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+                // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
             });
 
             si.endMarker.setMap(si.map);
@@ -33028,7 +33094,7 @@ var Main = function () {
                 if (status == google.maps.DirectionsStatus.OK) {
 
                     var latLngArr = google.maps.geometry.encoding.decodePath(response.routes[0].overview_polyline);
-                    
+
                     directionsDisplay.setOptions({ suppressMarkers: true });
                     directionsDisplay.setDirections(response);
                     directionsDisplay.setMap(si.map);
@@ -33054,7 +33120,7 @@ var Main = function () {
                     latLngArr.splice(0, 0, startPoint);
                     latLngArr.push(EndPoint);
                     console.log('createSegmentCableBetweenMakers');
-                  //  app.ShowAutoPlanLineLength(latLngArr);
+                    //  app.ShowAutoPlanLineLength(latLngArr);
                     //}
 
 
@@ -33079,16 +33145,16 @@ var Main = function () {
         si.startMarker.addListener('dragend', function (startLatlng) {
             app.ResetOffSet();
             app.NetworkStartPoint = startLatlng.latLng.lat() + "," + startLatlng.latLng.lng();
-         
+
             si.bindManualRoutes($('#directionGeometry').val());
-           // app.P2PNetworkManual('');
-           
+            // app.P2PNetworkManual('');
+
         });
 
         si.startMarker.addListener('click', function () {
             debugger;
             si.bindManualRoutes($('#directionGeometry').val());
-           // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
+            // popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
         });
 
         si.startMarker.setMap(si.map);
@@ -33107,11 +33173,11 @@ var Main = function () {
             debugger;
             si.bindManualRoutes($('#directionGeometry').val());
             app.NetworkEndPoint = endLatlng.latLng.lat() + "," + endLatlng.latLng.lng();
-          //  app.P2PNetworkManual('');
+            //  app.P2PNetworkManual('');
             //app.ResetBomDetails();
         });
         si.endMarker.addListener('click', function () {
-       debugger;
+            debugger;
             si.bindManualRoutes($('#directionGeometry').val());
             //popup.LoadModalDialog(app.ParentModel, "main/EntityAlongDirection", { path: "" }, MultilingualKey.SI_OSP_GBL_GBL_FRM_203, 'modal-sm');
         });
@@ -33847,7 +33913,7 @@ var Main = function () {
             si.distanceWidget.set("map", null);
             si.distanceWidget = null;
         }
-        
+
         if (app.StartTmpLine != undefined && app.StartTmpLine != null) { app.StartTmpLine.setMap(null); app.StartTmpLine = null; }
         if (app.EndTmpLine != undefined && app.EndTmpLine != null) { app.EndTmpLine.setMap(null); app.EndTmpLine = null; }
 
@@ -35266,20 +35332,20 @@ var Main = function () {
         }, true, true);
     }
 
-    this.removeRingAssociation = function (ringId, cableId){
+    this.removeRingAssociation = function (ringId, cableId) {
         showConfirm("Are you sure you want to delete Ring Association?", function () {
             ajaxReq('Library/RemoveRingAssociation', { ringId: ringId, cableId: cableId }
                 , true, function (resp) {
                     if (resp.status === true) {
                         alert(resp.message);
                         app.GetCableRingAssociation(false, null, null, null, cableId);
-                    }                    
+                    }
                 }, true, true);
         });
     }
 
-    this.getFilterRingAssociation = function (filterSelected,cableId) {
-       
+    this.getFilterRingAssociation = function (filterSelected, cableId) {
+
         let ddlregionid = $("#ddlregionid option:selected").text();
         let ddlsegment = $("#ddlsegment option:selected").text();
         let ddlringtype = $("#ddlringtype option:selected").text();
@@ -35299,7 +35365,7 @@ var Main = function () {
 
         }
     };
- 
+
 
 
 
@@ -35612,6 +35678,16 @@ function refreshIcon(id) {
     }, 2000);
     $('.lyrRefresh').click();
 }
+function refreshSegmentIcon(id) {
+    let $icon = $('#' + id);
+
+    $icon.addClass('fa-spin');
+
+    setTimeout(() => {
+        $icon.removeClass('fa-spin');
+    }, 1000);
+}
+
 
 /* slide toggle and draggable box jquery deepakB 06-11-23*/
 

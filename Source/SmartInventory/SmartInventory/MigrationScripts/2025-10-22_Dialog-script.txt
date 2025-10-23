@@ -1,0 +1,1166 @@
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_list(p_user_id integer, p_searchby character varying, p_searchtext character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_totalrecords integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+ DECLARE
+    sql TEXT;
+    SqlQueryCnt TEXT;
+   StartSNo    INTEGER;   
+   EndSNo      INTEGER;
+
+BEGIN
+
+RAISE INFO '%', sql;
+sql:= 'SELECT  ROW_NUMBER() OVER (ORDER BY '||CASE WHEN (P_SORTCOLNAME) ='' THEN 'edf.created_on' else P_SORTCOLNAME end||' ' || CASE WHEN (P_SORTTYPE) = '' THEN 'desc' ELSE P_SORTTYPE END||') AS S_No,um.user_name AS user_name, edf.* FROM backbone_plan_details edf
+LEFT JOIN user_master um ON edf.created_by = um.user_id where edf.is_create_plan = true ';
+
+IF (upper(p_searchtext) != '') THEN
+-- change filter to display_name
+	sql:= sql ||'AND upper(plan_name) LIKE upper(''%'||p_searchtext||'%'')';
+END IF;
+
+raise info 'sql %' ,sql;
+
+SqlQueryCnt:= 'SELECT COUNT(1)  FROM ('||sql||') as a';
+ EXECUTE   SqlQueryCnt INTO P_TOTALRECORDS;
+ IF((P_PAGENO) <> 0) THEN
+  
+    StartSNo:=  P_PAGERECORD * (P_PAGENO - 1 ) + 1;
+    EndSNo:= P_PAGENO * P_PAGERECORD;
+    sql:= 'SELECT '||P_TOTALRECORDS||' as totalRecords, *
+                
+		FROM (' || sql || ' order by '|| CASE WHEN (P_SORTCOLNAME) ='' THEN 'edf.created_on' ELSE P_SORTCOLNAME END||' '||CASE WHEN (p_sorttype) ='' THEN 'desc' ELSE p_sorttype END ||') T               
+                WHERE S_No BETWEEN ' || StartSNo || ' AND 100'; 
+                -- WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+                
+     ELSE
+	sql:= 'SELECT '||P_TOTALRECORDS||' as totalRecords, * FROM (' || sql || ' order by '||CASE WHEN (P_SORTCOLNAME) ='' THEN 'edf.created_on' ELSE P_SORTCOLNAME END||' '|| CASE WHEN (p_sorttype) ='' THEN 'desc' ELSE p_sorttype END ||') T';                  
+  END IF; 
+
+
+RAISE INFO '%', sql;
+	
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from ('||sql||') row';
+
+
+END ;
+$function$
+;
+
+-----------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_save_plan(is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_user_id integer, backbone_plan_id integer)
+ RETURNS TABLE(status boolean, message character varying, v_plan_id integer)
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_arow_cable record;
+v_line_geom geometry;
+v_region_province record;
+v_arow_closure record;
+v_arow_prev_closure record;
+v_line_total_length DOUBLE PRECISION;
+p_rfs_type character varying;
+--backbone_plan_id integer;
+v_temp_point_entity record;
+v_geom_str character varying;
+p_cable_type character varying;
+p_skip_last_sc  integer;
+p_skip_last_manhole_pole  integer;
+v_geom geometry;
+    v_result TEXT;
+BEGIN
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+
+create temp table temp_generate_network_code(
+status boolean,
+network_id character varying,
+entity_type character varying,
+sequence_id integer,
+province_id integer,
+network_code character varying,
+parent_entity_type character varying
+) on commit drop;
+
+create temp table temp_point_geom(
+entity_type character varying,
+sp_geometry character varying
+) on commit drop;
+
+
+select system_id into p_skip_last_manhole_pole from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole','Pole') and planned_cable_entity = 'BackBone Cable' order by system_id desc limit 1;
+
+select system_id into p_skip_last_sc  from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('SpliceClosure') and planned_cable_entity = 'BackBone Cable' order by system_id desc limit 1;
+EXECUTE 'ALTER TABLE point_master DISABLE TRIGGER ALL';
+
+----- insert manhole
+INSERT INTO att_details_manhole(manhole_name ,is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,category,backbone_system_id)
+
+SELECT entity_name ,true,'Own',
+longitude,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id,region_id ,province_id,'Manhole' ,system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and sp_geometry is not NULL order by system_id;
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select mh.system_id,'Manhole',mh.longitude,mh.latitude, 'A', ST_GEOMFROMTEXT('POINT('||mh.longitude||' '||mh.latitude||')', 4326),
+now(),'NA','NA',p_user_id,mh.network_id, 'P',mh.network_id,backbone_plan_id,'backbone planning'
+    from att_details_manhole mh
+	left join point_master pm on pm.system_id = mh.system_id and pm.entity_type='Manhole' where pm.system_id is null;
+   
+	 UPDATE att_details_manhole adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Manhole'
+	      AND specification = 'Generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+---------insert sc
+
+INSERT INTO att_details_spliceclosure (is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,category,backbone_system_id)
+
+SELECT true,'Own',
+longitude ,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id,region_id ,province_id ,'SpliceClosure',system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('SpliceClosure') and sp_geometry is not NULL order by system_id;
+
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select mh.system_id,'SpliceClosure',mh.longitude,mh.latitude, 'A', ST_GEOMFROMTEXT('POINT('||mh.longitude||' '||mh.latitude||')', 4326),
+now(),'NA','NA',p_user_id,mh.network_id, 'P',mh.network_id,backbone_plan_id,'backbone planning'
+    from att_details_spliceclosure mh
+	left join point_master pm on pm.system_id = mh.system_id and pm.entity_type='SpliceClosure' where pm.system_id is null;
+
+ 
+	 UPDATE att_details_spliceclosure adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id,
+	    no_of_ports = itm.no_of_port,
+	    no_of_input_port= itm.no_of_input_port,
+	    no_of_output_port = itm.no_of_output_port
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'SpliceClosure'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+-----------insert pole
+
+INSERT INTO att_details_pole(pole_name ,is_visible_on_map,ownership_type,
+longitude, latitude, 
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, 
+project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id,region_id,province_id,pole_type,category,backbone_system_id)
+
+SELECT entity_name ,true,'Own',
+longitude ,latitude ,
+null, 0, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P'
+, 0, 0, 0, 0,'backbone planning',backbone_plan_id::varchar,region_id ,province_id ,'Electrical','Pole',system_id 
+from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Pole') and sp_geometry is not NULL order by system_id;
+
+ 
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_id ,source_ref_type)
+
+select mh.system_id,'Pole',mh.longitude,mh.latitude, 'A', ST_GEOMFROMTEXT('POINT('||mh.longitude||' '||mh.latitude||')', 4326),
+now(),'NA','NA',p_user_id,mh.network_id, 'P',mh.network_id,backbone_plan_id::varchar,'backbone planning' 
+    from att_details_pole mh
+	left join point_master pm on pm.system_id = mh.system_id and pm.entity_type='Pole' where pm.system_id is null;
+
+   
+	 UPDATE att_details_pole adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Pole'
+	      AND specification = 'Generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+----------- insert cable
+INSERT INTO ATT_DETAILS_CABLE(cable_name ,is_visible_on_map,total_core,no_of_tube,no_of_core_per_tube,cable_measured_length,cable_calculated_length,
+	cable_type,specification,category,subcategory1,subcategory2,subcategory3,item_code,	
+	vendor_id,network_status,status,created_by,created_on,cable_category,start_reading,	
+	end_reading,structure_id,utilization,duct_id,trench_id,is_used,source_ref_type,source_ref_id,ownership_type,region_id,province_id,backbone_system_id,a_system_id,b_system_id)
+select entity_name,true,0,0,0,ST_Length(plan.line_sp_geometry,false),
+ST_Length(plan.line_sp_geometry,false),plan.cable_type  ,plan.fiber_type,'Cable', null, null, null,null,
+	0,'P','A',p_user_id,now(),case when plan.planned_cable_entity = 'BackBone Cable' then 'BackBone Cable' else 'Sprout Cable' end,
+	0,0,0,'L',0,0,true,'backbone planning',backbone_plan_id,'OWN',region_id,province_id , plan.system_id,0,0 
+from backbone_plan_network_details plan where plan.plan_id = backbone_plan_id and plan.created_by = p_user_id and plan.entity_type = 'Cable' and plan.line_sp_geometry  is not null order by system_id;
+
+EXECUTE 'ALTER TABLE line_master DISABLE TRIGGER ALL';
+
+INSERT INTO LINE_MASTER(system_id,common_name ,display_name ,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,network_status,is_virtual,source_ref_type,source_ref_id,sp_geometry,status)
+select cbl.system_id,cbl.network_id,cbl.network_id,'Cable','A','','', p_user_id,0 ,'P',false,'backbone planning',backbone_plan_id , np.line_sp_geometry ,'A'
+from ATT_DETAILS_CABLE cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id
+where cbl.system_id not in (select system_id from line_master where entity_type='Cable') and np.entity_type = 'Cable' and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning' and np.line_sp_geometry is not null;
+
+ UPDATE att_details_cable adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id,
+	    total_core = itm.other::integer,
+	    no_of_tube = itm.no_of_tube,
+	    no_of_core_per_tube = itm.no_of_core_per_tube
+from    
+	(select adm.system_id ,itm.* FROM att_details_cable adm
+	join item_template_master itm
+	    on category_reference = 'Cable'
+	      AND '(' || code || ')' || other = adm.specification  
+	      where adm.source_ref_id = backbone_plan_id::varchar
+  AND adm.source_ref_type = 'backbone planning'
+	) itm
+	WHERE adm.system_id = itm.system_id;
+	
+----------- insert trench
+if is_create_trench = true then
+insert into att_details_trench(is_visible_on_map,trench_name,trench_width,trench_height,customer_count,trench_type,no_of_ducts,network_status,status,pin_code,province_id,region_id,construction,activation,accessibility,category,subcategory1,subcategory2,subcategory3,vendor_id,type,
+	brand,model,remarks,created_by,created_on,project_id,planning_id,purpose_id,workorder_id,mcgm_ward,strata_type,
+	is_used,source_ref_type,source_ref_id,ownership_type,backbone_system_id,a_system_id,b_system_id)
+	select true,'',0,0,0,'HDD',0,'P','A','',province_id,region_id,0,0,0,
+	'Trench' ,null,null,null, 0,0,0,0,'',p_user_id,now(),0 ,0,0,0,'','',false,'backbone planning',backbone_plan_id,'OWN',tp.system_id ,0,0
+	from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and tp.line_sp_geometry is not null and created_by = p_user_id;
+	
+	INSERT INTO LINE_MASTER(system_id,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,common_name,network_status,is_virtual,display_name,source_ref_id,source_ref_type,sp_geometry,status)
+	select cbl.system_id,'Trench','A','','', p_user_id,0 ,'','P',false,'',backbone_plan_id,'backbone planning',np.line_sp_geometry,'A' 
+from att_details_trench cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id where cbl.system_id not in (select system_id from line_master where entity_type='Trench') and np.entity_type in ('Manhole') and np.line_sp_geometry is not null and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';	
+
+ UPDATE att_details_trench adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	    FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Trench'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+
+end if;
+
+-------- insert duct
+if is_create_duct = true then
+insert into att_details_duct(is_visible_on_map,duct_name,calculated_length,manual_length,network_status,
+	status,pin_code,province_id,region_id,utilization,no_of_cables,offset_value,construction,activation,accessibility,specification,category,subcategory1,subcategory2,
+	subcategory3,item_code,vendor_id,type,brand,model,remarks,created_by,created_on,project_id,planning_id,purpose_id,workorder_id,inner_dimension,outer_dimension,
+	is_used,source_ref_type,source_ref_id,trench_id,ownership_type,backbone_system_id,a_system_id,b_system_id)
+	select true,'',ST_Length(tp.line_sp_geometry,false),ST_Length(tp.line_sp_geometry,false),'P','A','',province_id,region_id,'L',0,0,0,0,0,'','Duct',null,null,null,'',0,0,0,0,'',p_user_id,now(),0 ,0,0,0,0,0,false,'backbone planning',backbone_plan_id,0,'OWN',tp.system_id ,0,0
+	from backbone_plan_network_details tp where tp.plan_id = backbone_plan_id and entity_type in ('Manhole') and created_by = p_user_id;
+	
+	INSERT INTO LINE_MASTER(system_id,entity_type,approval_flag,creator_remark,approver_remark,created_by,approver_id,common_name,network_status,is_virtual,display_name,source_ref_id,source_ref_type,sp_geometry,status)
+	select cbl.system_id,'Duct','A','','', p_user_id,0 ,'','P',false,'',backbone_plan_id,'backbone planning' ,np.line_sp_geometry ,'A'
+from att_details_duct cbl 
+join backbone_plan_network_details np on np.system_id = cbl.backbone_system_id where cbl.system_id not in (select system_id from line_master where entity_type='Duct') and np.entity_type ='Manhole' and np.line_sp_geometry is not null and source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';	
+
+ UPDATE att_details_duct adm
+	SET 
+	    specification = itm.specification,
+	    item_code = itm.code,
+	    audit_item_master_id = itm.audit_id,
+	    vendor_id = itm.vendor_id
+	    FROM (
+	    SELECT *
+	    FROM item_template_master
+	    WHERE category_reference = 'Duct'
+	      AND specification = 'generic'
+	    LIMIT 1
+	) itm
+	WHERE adm.source_ref_id = backbone_plan_id::varchar and source_ref_type = 'backbone planning';
+end if;
+
+   FOR v_temp_point_entity IN 
+        SELECT province_id 
+        FROM backbone_plan_network_details 
+        WHERE plan_id = backbone_plan_id 
+          AND created_by = p_user_id 
+          AND province_id IS NOT NULL 
+        GROUP BY province_id
+    loop
+
+	INSERT INTO temp_point_geom(entity_type, sp_geometry)
+SELECT 'Manhole', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type = 'Manhole'
+    --  and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS manhole_geom
+
+UNION ALL
+
+SELECT 'Pole', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type = 'Pole'
+      --and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS pole_geom
+
+UNION ALL
+
+SELECT 'Loop', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id and is_loop_required = true and loop_length > 0
+      AND entity_type in ('Manhole','Pole')
+     -- and system_id not in (p_skip_last_manhole_pole)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS loop_geom
+
+ UNION ALL
+
+SELECT 'SpliceClosure', geom_text FROM (
+    SELECT DISTINCT substring(left(ST_AsText(sp_geometry), -1), 7) AS geom_text
+    FROM backbone_plan_network_details
+    WHERE province_id = v_temp_point_entity.province_id
+      AND plan_id = backbone_plan_id
+      AND created_by = p_user_id
+      AND entity_type IN ('SpliceClosure')
+      -- and system_id not in (p_skip_last_sc)
+      AND sp_geometry IS NOT NULL
+    LIMIT 1
+) AS spliceclosure_geom;
+
+	 --- generaTE NETWORK CODE FOR POINT ENTITY   
+	INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id, network_code, parent_entity_type)
+	SELECT f.status, f.message, t.entity_type, f.o_sequence_id, v_temp_point_entity.province_id, f.o_p_network_id, f.o_p_entity_type
+	FROM temp_point_geom t,
+	LATERAL fn_get_clone_network_code(
+	    t.entity_type,
+	    'Point',
+	    t.sp_geometry,
+	    0,
+	    ''
+	) AS f
+	WHERE t.sp_geometry IS NOT NULL;
+
+delete from temp_generate_network_code cc where cc.status = false;
+ 
+-------------------update network id 
+PERFORM fn_backbone_update_network_code('att_details_manhole', 'Manhole',backbone_plan_id::text , 'backbone planning','manhole_name');
+PERFORM fn_backbone_update_network_code('att_details_pole', 'Pole',backbone_plan_id::text, 'backbone planning', 'pole_name');
+PERFORM fn_backbone_update_network_code('att_details_spliceclosure', 'SpliceClosure',backbone_plan_id::text, 'backbone planning', 'spliceclosure_name' );
+
+---- generate network code cable
+
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Cable')
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Cable', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Cable','','',v_geom_str,'OSP') AS f;
+
+PERFORM fn_backbone_update_network_code('att_details_cable', 'Cable', backbone_plan_id::text, 'backbone planning','cable_name');
+
+end if;
+
+--- generate network codes for trench and duct
+if is_create_trench = true then
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Manhole')
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Trench', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Trench','','',v_geom_str,'OSP'::character varying,0,'') as f;
+
+PERFORM fn_backbone_update_network_code('att_details_trench', 'Trench', backbone_plan_id::text, 'backbone planning','trench_name');
+end if;
+end if;
+
+if is_create_duct = true
+then
+SELECT line_sp_geometry 
+INTO v_geom
+FROM backbone_plan_network_details
+WHERE province_id = v_temp_point_entity.province_id
+  AND plan_id = backbone_plan_id
+  AND created_by = p_user_id
+  AND entity_type in ('Manhole') 
+  AND line_sp_geometry  IS NOT NULL
+LIMIT 1;
+
+if v_geom is not null
+then 
+  select substring(left(St_astext(v_geom),-1),12) ::character varying INTO v_geom_str;
+
+ INSERT INTO temp_generate_network_code (status, network_id, entity_type, sequence_id, province_id,network_code,parent_entity_type)
+SELECT true, f.network_code, 'Duct', f.sequence_id::integer, v_temp_point_entity.province_id,f.parent_network_id,f.parent_entity_type
+FROM fn_get_line_network_code('Duct','','',v_geom_str,'OSP'::character varying,0,'') as f;
+
+PERFORM fn_backbone_update_network_code('att_details_duct', 'Duct', backbone_plan_id::text, 'backbone planning','duct_name');
+
+end if;
+end if;
+
+END LOOP;
+
+ 
+   INSERT INTO routing_data_core_plan (id, system_id, source, target, cost, reverse_cost, geom)
+    SELECT 
+  lm.system_id ,lm.system_id,null as source,null as target,
+        ST_Length(lm.sp_geometry::geography) / 1000 AS cost,
+        ST_Length(lm.sp_geometry::geography) / 1000 AS reverse_cost,
+        ST_Force2D(lm.sp_geometry) AS geom
+    FROM line_master lm    
+    WHERE lm.entity_type = 'Cable'
+    AND lm.source_ref_id = backbone_plan_id::varchar and lm.source_ref_type ='backbone planning';
+
+            SELECT pgr_createTopology('routing_data_core_plan', 0.000025, 'geom') INTO v_result;
+            IF v_result <> 'OK' THEN
+                RETURN QUERY SELECT FALSE AS status, 'Error in creating topology for INSERT' AS message;
+            END IF;
+            SELECT pgr_analyzegraph('routing_data_core_plan', 0.000025, 'geom') INTO v_result;
+            IF v_result <> 'OK' THEN
+                RETURN QUERY SELECT FALSE AS status, 'Error in analyzing graph for INSERT' AS message;
+            END IF;
+           
+PERFORM(fn_backbone_get_loop_entity(backbone_plan_id));
+
+PERFORM fn_set_cable_color_info(c.system_id, p_user_id, c.no_of_tube, c.total_core)
+FROM att_details_cable c
+WHERE c.source_ref_id = backbone_plan_id::varchar
+  AND c.source_ref_type = 'backbone planning';
+
+ EXECUTE 'ALTER TABLE line_master ENABLE TRIGGER ALL';
+ EXECUTE 'ALTER TABLE point_master ENABLE TRIGGER ALL';
+
+V_MESSAGE:='BackBone network plan processed successfully!';
+update backbone_plan_details t set status = 'Completed' where t.plan_id = backbone_plan_id and created_by = p_user_id;
+
+RETURN QUERY SELECT V_IS_VALID::boolean AS STATUS, V_MESSAGE::CHARACTER VARYING AS MESSAGE,backbone_plan_id :: integer as v_plan_id ;
+
+end;
+$function$
+;
+
+-----------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_site_list(p_system_id integer DEFAULT NULL::integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+begin
+	
+	if p_system_id is not null then 
+	
+ RETURN QUERY
+    SELECT row_to_json(r)
+    FROM 
+    (SELECT
+    pod.fiber_oh_distance_to_network,
+    pod.fiber_ug_distance_to_network,
+    pod.total_fiber_distance,
+    pod.fiber_distance_to_nearest_site,
+    pod.nearest_site,
+    pod.network_id,
+    pm.system_id,
+    ST_Y(pm.sp_geometry) || ' ' || ST_X(pm.sp_geometry) AS sp_geometry
+FROM
+    att_details_pod pod
+    JOIN point_master pm ON pod.system_id = pm.system_id
+WHERE
+    pm.entity_type = 'POD'
+    AND pod.system_id = p_system_id
+ ) r;
+
+   else
+     
+ RETURN QUERY
+    SELECT row_to_json(r)
+    FROM 
+    (SELECT
+    pod.fiber_oh_distance_to_network,
+    pod.fiber_ug_distance_to_network,
+    pod.total_fiber_distance,
+    pod.fiber_distance_to_nearest_site,
+    pod.nearest_site,
+    pod.network_id,
+    pm.system_id,
+    ST_Y(pm.sp_geometry) || ' ' || ST_X(pm.sp_geometry) AS sp_geometry
+FROM
+    att_details_pod pod
+    JOIN point_master pm ON pod.system_id = pm.system_id
+WHERE
+    pm.entity_type = 'POD'
+    AND pod.fiber_oh_distance_to_network IS NULL
+    AND pod.fiber_ug_distance_to_network IS NULL
+    AND pod.total_fiber_distance IS NULL
+    AND pod.nearest_site IS NULL
+    ) r;
+    
+    end if;
+
+END;
+$function$
+;
+
+----------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_fms_connection12(p_entity_system_id integer, p_entity_type character varying)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    V_AROW RECORD;
+BEGIN
+    FOR V_AROW IN
+        SELECT port_number
+        FROM isp_port_info
+        WHERE parent_system_id = p_entity_system_id
+          AND parent_entity_type = p_entity_type
+          AND port_status_id = 2
+          AND input_output = 'O'
+    LOOP
+        WITH ranked_data AS (
+            SELECT
+                a.source_system_id,
+                a.source_network_id,
+                a.source_port_no,
+                a.source_entity_type,
+                a.source_entity_title,
+                a.destination_system_id,
+                a.destination_network_id,
+                a.destination_port_no,
+                a.destination_entity_type,
+                a.destination_entity_title,
+                NULL::INTEGER AS viya_system_id,
+                NULL:: INTEGER AS via_network_id,
+                V_AROW.port_number AS path_id,
+                NULL AS via_entity_type,
+                p_entity_system_id AS fms_id,
+                CASE WHEN a.source_entity_type = 'Splitter' THEN a.source_system_id ELSE NULL END AS splitter_id,
+                CASE WHEN a.source_entity_type = 'Splitter' THEN a.source_entity_type ELSE NULL END AS entity_type,
+                ROW_NUMBER() OVER (
+                    PARTITION BY a.source_port_no,a.source_SYSTEM_ID, a.destination_port_no,a.destination_SYSTEM_ID
+                    --ORDER BY a.destination_system_id ASC
+                ) AS rn
+            FROM fn_get_fms_connection_path(
+                     '', '', 0, 0, '', '',
+                     p_entity_system_id, V_AROW.port_number, p_entity_type
+                 ) a
+            WHERE a.source_system_id != a.destination_system_id
+              AND a.source_entity_type != a.destination_entity_type
+        )
+        INSERT INTO cpf_temp_result (
+            source_system_id, source_network_id, source_port_no, source_entity_type, source_entity_title,
+            destination_system_id, destination_network_id, destination_port_no, destination_entity_type, destination_entity_title,
+            viya_system_id, via_network_id, path_id, via_entity_type, fms_id, splitter_id, entity_type
+        )
+        SELECT
+            source_system_id, source_network_id, source_port_no, source_entity_type, source_entity_title,
+            destination_system_id, destination_network_id, destination_port_no, destination_entity_type, destination_entity_title,
+            viya_system_id, via_network_id, path_id, via_entity_type, fms_id, splitter_id, entity_type
+        FROM ranked_data
+        WHERE rn = 1;
+       
+UPDATE cpf_temp_result AS c
+SET 
+    b_site_id = t.site_id,
+    b_site_name = t.site_name
+FROM (
+    SELECT 
+        c1.id,
+        pod.site_id,
+        pod.site_name
+    FROM cpf_temp_result AS c1
+    JOIN att_details_fms AS fms 
+        ON fms.network_id = c1.destination_network_id
+    JOIN att_details_pod AS pod 
+        ON pod.network_id = fms.parent_network_id
+    WHERE c1.path_id = v_arow.port_number
+      --AND c1.source_entity_type = 'FMS'
+) AS t
+WHERE source_entity_type = 'FMS' and path_id = v_arow.port_number;
+
+         
+		drop  table cpf_temp;
+    END LOOP;
+END;
+$function$
+;
+
+
+--------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_fms_connection_report_new(p_networkstatues character varying, p_provinceids character varying, p_regionids character varying, p_layer_name character varying, p_searchby character varying, p_searchbytext character varying, p_fromdate character varying, p_todate character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_geom character varying, p_duration_based_column character varying, p_radius double precision, p_userid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+V_AROW RECORD;
+v_entity_port_no character varying;
+v_maxcount integer;
+v_maxpathid integer;
+v_ststem_id integer;
+v_entity_type integer;
+v_maxfms_id integer;
+sql TEXT;
+StartSNo INTEGER; 
+EndSNo INTEGER;
+LowerStart character varying;
+LowerEnd character varying;
+TotalRecords integer; 
+WhereCondition character varying;
+s_report_view_name character varying;
+s_geom_type character varying;
+s_layer_id integer; 
+s_layer_columns text;
+TotalAppliedRecords integer; 
+TotalRejectedRecords integer;
+ r RECORD;
+    ss_report_view_name TEXT;
+    d_report_view_name TEXT;
+    v_report_view_name TEXT;
+    ss_layer_name TEXT;
+    update_sql TEXT;
+s_latitude text;
+d_layer_name TEXT;
+v_layer_name TEXT;
+begin
+	
+	--truncate table cpf_temp_result;
+-- drop table cpf_temp_result;
+	
+create TEMP  table cpf_temp_result
+(
+id serial,
+source_system_id integer,
+source_network_id character varying(500),
+source_port_no integer, 
+source_entity_type character varying(100),
+source_entity_title character varying(100),
+destination_system_id integer,
+destination_network_id character varying(500),
+destination_port_no integer,
+destination_entity_type character varying(100),
+destination_entity_title character varying(100),
+viya_system_id integer,
+via_network_id character varying(500),
+path_id integer,
+via_entity_type character varying(100),
+SOURCE_TUBE_COLOUR_CODE character varying(100),
+DESTINATION_TUBE_COLOUR_CODE character varying(100),
+SOURCE_PORT_COLOUR_CODE character varying(100),
+DESTINATION_PORT_COLOUR_CODE character varying(100),
+SOURCE_TUBE_NAME character varying(100),
+DESTINATION_TUBE_NAME character varying(100),
+fms_id integer,
+splitter_id integer,
+entity_type character varying(100),
+client_id character varying,
+client_link_id character varying,
+client_core_id character varying,
+otdr_length float(8) default (0),
+op_alias character varying,
+a_site_id character varying,
+a_site_name character varying,
+b_site_id character varying,
+b_site_name character varying
+)on commit drop; 
+
+-------------------------------------------------------------------------------------------------------------------
+SELECT LAYER_ID, REPORT_VIEW_NAME, GEOM_TYPE INTO S_LAYER_ID, S_REPORT_VIEW_NAME,S_GEOM_TYPE FROM LAYER_DETAILS WHERE LOWER(LAYER_NAME) = LOWER(P_LAYER_NAME);
+-- SELECT ALL ACTIVE LAYER FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER.. 
+SELECT STRING_AGG(COLUMN_NAME||' as "'||case when COALESCE(res_field_key,'') ='' then DISPLAY_NAME else res_field_key end||'"', ',') INTO S_LAYER_COLUMNS FROM (
+SELECT COLUMN_NAME,res_field_key,DISPLAY_NAME FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE ORDER BY COLUMN_SEQUENCE) A;
+IF ((p_geom) != '') 
+THEN
+if(p_radius>0)
+then
+select substring(left(St_astext(ST_buffer_meters(ST_GeomFromText('POINT('||p_geom||')',4326),p_radius)),-2),10) into p_geom;
+end if;
+RAISE INFO '------------------------------------S_LAYER_COLUMNS%', S_LAYER_COLUMNS;
+sql:= 'SELECT system_id from (select a.system_id from '||S_REPORT_VIEW_NAME||' a 
+inner join '||s_geom_type||'_master m
+on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''') 
+and ST_Intersects(m.sp_geometry, st_geomfromtext(''POLYGON(('||p_geom||'))'',4326)) 
+inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||'  and 1=1 ';
+--inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and a.parent_type in(select layer_title from layer_details where layer_name=''POD'') and 1=1 ';
+RAISE INFO '------------------------------------sql%', sql;
+ELSE
+sql:= 'SELECT ROW_NUMBER() OVER (ORDER BY system_id desc) AS S_No,system_id from (select a.system_id from '||S_REPORT_VIEW_NAME||' a 
+inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and 1=1 ';
+--inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and a.parent_type in(select layer_title from layer_details where layer_name=''POD'') and 1=1 ';
+RAISE INFO '------------------------------------sql1%', sql;
+END IF;
+
+IF ((p_networkStatues) != '' and upper(S_LAYER_COLUMNS) like '%NETWORK_STATUS%') THEN
+sql:= sql ||' AND upper(Cast(a.network_status as TEXT)) in('||p_networkStatues||')';
+END IF;
+IF ((p_RegionIds) != '') THEN
+sql:= sql ||' AND a.region_id IN ('||p_RegionIds||')';
+END IF;
+IF ((P_ProvinceIds) != '') THEN
+sql:= sql ||' AND a.province_id IN ('||P_ProvinceIds||')';
+END IF;
+IF ((P_searchbytext) != '' and (P_searchby) != '') THEN
+if(substring(P_searchbytext from 1 for 1)='"' and substring(P_searchbytext from length(P_searchbytext) for length(P_searchbytext))='"')
+then
+sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) = upper(replace('''||trim(P_searchbytext)||''',''"'','''')) ';
+else
+sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) LIKE upper(replace(''%'||trim(P_searchbytext)||'%'',''"'',''''))';
+end if;
+END IF;
+IF(P_fromDate != '' and P_toDate != '' and coalesce(p_duration_based_column,'')!='') THEN
+sql:= sql ||' AND a.'||p_duration_based_column||'::Date>= to_date('''||p_fromdate||''', ''DD-Mon-YYYY'') and a.'||p_duration_based_column||'::Date<=to_date('''||p_todate||''', ''DD-Mon-YYYY'')';
+END IF;
+sql:= sql ||' )X where system_id in(select parent_system_id from isp_port_info where parent_entity_type=''FMS'' and port_status_id=2 )';
+RAISE INFO 'rrr%', sql;
+--------------------------------------------------------------------------------------------------------------------
+FOR V_AROW IN
+EXECUTE 'SELECT ''FMS'' as entity_type, system_id FROM ('||sql||')a'
+loop
+perform(fn_get_fms_connection12(V_AROW.system_id,V_AROW.entity_type));
+end loop;
+--------------------------------------------------------------------------------------------------
+delete from cpf_temp_result where source_network_id=destination_network_id;
+if exists(select 1 from cpf_temp_result where source_entity_type='FMS')
+then
+	WITH VIA_row AS (
+	SELECT * 
+	FROM cpf_temp_result
+	WHERE source_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+	)
+	-- Update query
+	UPDATE cpf_temp_result 
+	SET 
+	destination_network_id = VIA_row.destination_network_id,
+	destination_system_id = VIA_row.destination_system_id,
+	destination_port_no = VIA_row.destination_port_no,
+	destination_entity_type = VIA_row.destination_entity_type,
+	destination_entity_title = VIA_row.destination_entity_title,
+	viya_system_id = VIA_row.source_system_id,
+	via_network_id = VIA_row.source_network_id,
+	via_entity_type = VIA_row.source_entity_type
+
+	FROM VIA_row
+	WHERE 
+	cpf_temp_result.destination_entity_type = VIA_row.source_entity_type
+	AND cpf_temp_result.destination_system_id = VIA_row.source_system_id
+	AND cpf_temp_result.destination_network_id = VIA_row.source_network_id
+	AND cpf_temp_result.destination_PORT_NO = VIA_row.source_PORT_NO;
+	-- Delete query
+	WITH VIA_row AS (
+	SELECT * 
+	FROM cpf_temp_result 
+	WHERE source_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+	)
+	DELETE FROM cpf_temp_result
+	WHERE SOURCE_SYSTEM_ID IN (SELECT SOURCE_SYSTEM_ID FROM VIA_row);
+else
+
+	WITH VIA_row AS (
+	SELECT * 
+	FROM cpf_temp_result
+	WHERE destination_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+	)
+	-- Update query
+	UPDATE cpf_temp_result 
+	SET 
+	source_network_id = VIA_row.source_network_id,
+	source_system_id = VIA_row.source_system_id,
+	source_port_no = VIA_row.source_port_no,
+	source_entity_type = VIA_row.source_entity_type,
+	source_entity_title = VIA_row.source_entity_title,
+	viya_system_id = VIA_row.destination_system_id,
+	via_network_id = VIA_row.destination_network_id,
+	via_entity_type = VIA_row.destination_entity_type
+
+	FROM VIA_row
+	WHERE 
+	cpf_temp_result.source_entity_type = VIA_row.source_entity_type
+	AND cpf_temp_result.source_system_id = VIA_row.source_system_id
+	AND cpf_temp_result.source_network_id = VIA_row.source_network_id
+	AND cpf_temp_result.source_PORT_NO = VIA_row.source_PORT_NO;
+	-- Delete query
+	WITH VIA_row AS (
+	SELECT * 
+	FROM cpf_temp_result 
+	WHERE destination_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+	)
+	DELETE FROM cpf_temp_result
+	WHERE destination_SYSTEM_ID IN (SELECT destination_SYSTEM_ID FROM VIA_row);
+ 
+end if;
+
+--select count(*) into v_maxcount from cpf_temp_result group by path_id order by count(*) desc limit 1;--header
+select count(*) into v_maxcount from cpf_temp_result group by fms_id,path_id order by count(*) desc limit 1;
+SELECT COUNT(DISTINCT path_id) AS path_count
+FROM cpf_temp_result group by fms_id order by COUNT(DISTINCT path_id) desc limit 1 
+INTO v_maxpathid;---dataloop
+SELECT COUNT(DISTINCT fms_id) AS fms_id_count from cpf_temp_result
+INTO v_maxfms_id;
+------------------------------------------------------------------------------------------------------------------------------------
+UPDATE cpf_temp_result 
+SET SOURCE_TUBE_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.tube_color_code,
+SOURCE_TUBE_NAME =ATT_DETAILS_CABLE_INFO.tube_number,
+SOURCE_PORT_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.core_color_code ,client_id =adfl.customer_id,client_link_id =adfl.link_id,client_core_id=adfl.link_id,otdr_length=adfl.otdr_distance,op_alias=adfl.service_id
+FROM ATT_DETAILS_CABLE_INFO 
+left join att_details_fiber_link adfl on adfl.system_id =ATT_DETAILS_CABLE_INFO.link_system_id 
+WHERE cpf_temp_result.SOURCE_ENTITY_type='Cable'
+and cpf_temp_result.source_system_id=ATT_DETAILS_CABLE_INFO.cable_id
+and cpf_temp_result.source_port_no=ATT_DETAILS_CABLE_INFO.fiber_number;
+
+--select * from ATT_DETAILS_CABLE_INFO limit 20 where cable_id=847
+
+UPDATE cpf_temp_result 
+SET DESTINATION_TUBE_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.tube_color_code,
+DESTINATION_TUBE_NAME =ATT_DETAILS_CABLE_INFO.tube_number,
+DESTINATION_PORT_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.core_color_code ,client_id =adfl.customer_id,client_link_id =adfl.link_id,client_core_id=adfl.link_id,otdr_length=adfl.otdr_distance,op_alias=adfl.service_id
+FROM ATT_DETAILS_CABLE_INFO 
+left join att_details_fiber_link adfl on adfl.system_id =ATT_DETAILS_CABLE_INFO.link_system_id  
+WHERE cpf_temp_result.DESTINATION_ENTITY_type='Cable'
+and cpf_temp_result.DESTINATION_system_id=ATT_DETAILS_CABLE_INFO.cable_id
+and cpf_temp_result.DESTINATION_port_no=ATT_DETAILS_CABLE_INFO.fiber_number;
+
+
+
+for  r in  select  * from cpf_temp_result loop
+
+select report_view_name,layer_name into ss_report_view_name,ss_layer_name from layer_details where lower(layer_name) =lower(r.source_entity_type);
+select report_view_name,layer_name into d_report_view_name,d_layer_name from layer_details where lower(layer_name) =lower(r.destination_entity_type);
+if r.via_entity_type is not null then 
+select report_view_name,layer_name into v_report_view_name,v_layer_name from layer_details where lower(layer_name) =lower(r.via_entity_type);
+end if;
+if lower(ss_layer_name) = 'patchcord'   then 
+ss_layer_name ='patch_cord';
+end if;
+if  lower(d_layer_name) = 'patchcord'  then 
+d_layer_name ='patch_cord';
+end if;
+if   lower(v_layer_name) = 'patchcord' then 
+v_layer_name ='patch_cord';
+end if ;
+
+ss_layer_name:=ss_layer_name||'_name';
+d_layer_name:= d_layer_name||'_name';
+v_layer_name =v_layer_name||'_name';
+s_latitude ='latitude';
+END LOOP;
+
+ /*UPDATE cpf_temp_result t
+SET source_network_id = p.source_network_id
+FROM cpf_temp_result p
+WHERE 
+  --t.client_link_id = p.client_link_id
+   t.source_network_id ILIKE '%CBL%'
+  AND p.source_network_id ILIKE '%POD%';
+
+-- Update destination_network_id if it contains CBL
+UPDATE cpf_temp_result t
+SET destination_network_id = p.destination_network_id
+FROM cpf_temp_result p
+WHERE 
+   t.destination_network_id ILIKE '%CBL%'
+  AND p.destination_network_id ILIKE '%POD%';
+  
+*/
+
+UPDATE cpf_temp_result AS c
+SET 
+    a_site_id = k.site_id,
+    a_site_name = k.site_name
+FROM (
+    SELECT 
+        c.id,
+        pod.site_id,
+        pod.site_name
+    FROM cpf_temp_result c
+    JOIN att_details_fms fms 
+        ON fms.network_id = c.source_network_id and c.source_ENTITY_TYPE = 'FMS'
+       join att_details_pod pod on pod.network_id  = fms.parent_network_id 
+       where c.source_ENTITY_TYPE='FMS' 
+) AS k
+WHERE c.id = k.id;
+
+
+
+return query
+select row_to_json(result) 
+from (select (select array_to_json(array_agg(row_to_json(x)))from (select source_port_no,client_link_id,source_network_id,destination_network_id,a_site_id,a_site_name,b_site_id,b_site_name,op_alias
+from cpf_temp_result  where source_network_id = P_searchbytext and (source_ENTITY_TYPE='FMS' OR DESTINATION_ENTITY_TYPE='FMS') order by source_port_no ) x) as lstConnectionInfo
+)result ;
+
+END; 
+$function$
+;
+
+
+----------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_utilization_show_on_map(p_networkstatues character varying, p_regionids character varying, p_provinceids character varying, p_layer_ids character varying, p_projectcode character varying, p_planningcode character varying, p_workordercode character varying, p_purposecode character varying, p_geom character varying, p_utilizationtype character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_layer record;
+    sql TEXT;
+   p_split_utilizationtype character varying;
+c_utilization character varying;
+
+BEGIN
+    -- Normalize network status
+    p_networkstatues := CASE WHEN upper(p_networkstatues) = 'AS-BUILT' THEN 'AS BUILT' ELSE upper(p_networkstatues) END;
+
+    -- Temp table to accumulate features
+   CREATE TEMP TABLE temp_geojson_features(
+        system_id integer,
+        geom geometry,
+        network_id text,
+        entity_title text,
+        entity_name text,
+        utilization text,
+        low_count integer,
+        moderate_count integer, 
+        high_count integer,
+        over_count integer
+        
+    ) ON COMMIT DROP;
+
+   	       raise info 'sql1%',p_networkstatues;
+
+IF p_utilizationtype IS NULL OR p_utilizationtype = '' THEN
+    p_split_utilizationtype := NULL;
+else
+
+SELECT replace(replace(p_utilizationtype, '''', ''), ',', '') into c_utilization;
+
+    SELECT string_agg(quote_literal(c), ',')
+    INTO p_split_utilizationtype
+    FROM regexp_split_to_table(c_utilization, '') AS c;
+END IF;
+
+IF ((p_geom) != '')
+THEN
+
+  Create temp table temp_entity_inside_geom
+  (
+      system_id integer,
+      entity_type character varying
+  )
+  on commit drop;
+  -- HERE WE ARE FETCHING ALL THE ENTITY WITHIN THE ARAE SELECTED BY USER INTO A TEMP TABLE.
+
+  perform(fn_get_export_report_entity_within_geom(p_layer_ids,p_geom));
+  
+end if;
+
+    -- Loop through selected layers
+    FOR v_layer IN
+        SELECT DISTINCT ld.layer_id, ld.layer_name, ld.REPORT_VIEW_NAME, ld.GEOM_TYPE, ld.LAYER_TITLE
+        FROM layer_details ld
+        WHERE case when p_layer_ids !='' then ld.LAYER_ID = ANY(string_to_array(p_layer_ids, ',')::int[]) else 1=1 end
+          AND ld.is_utilization_enabled = true and ld.isvisible = true
+        ORDER BY ld.layer_id
+    loop
+	    
+	       raise info 'sql1%',v_layer.layer_name;
+
+        -- Build dynamic SQL for geometry filter
+        
+	    IF p_geom != '' THEN
+         IF upper(v_layer.LAYER_NAME) = 'DUCT' THEN
+
+          sql := 'INSERT INTO temp_geojson_features(system_id, geom, network_id, entity_title, entity_name, utilization,low_count,moderate_count,high_count,over_count )
+        SELECT a.system_id, m.sp_geometry, a.network_id, upper(''' || v_layer.LAYER_TITLE || '''), upper(''' || v_layer.LAYER_NAME || '''), a.utilization, 0,0,0,0
+        FROM ' || v_layer.REPORT_VIEW_NAME || ' a
+        INNER JOIN temp_entity_inside_geom tm ON tm.system_id = a.system_id
+        LEFT JOIN ' || v_layer.GEOM_TYPE || '_master m ON a.system_id = m.system_id AND upper(m.entity_type) = upper(''' || v_layer.layer_name || ''') and upper(tm.entity_type) = upper(''' || v_layer.layer_name || ''')
+        WHERE 1=1';
+       
+         else
+         sql := 'INSERT INTO temp_geojson_features(system_id, geom, network_id, entity_title, entity_name, utilization,low_count,moderate_count,high_count,over_count )
+        SELECT a.system_id, m.sp_geometry, a.network_id, upper(''' || v_layer.LAYER_TITLE || '''), upper(''' || v_layer.LAYER_NAME || '''), a.utilization, coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''L'') then 1 else 0 end),0)low_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''M'') then 1 else 0 end),0)moderate_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''H'') then 1 else 0 end),0)high_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''O'') then 1 else 0 end),0)over_count
+        FROM ' || v_layer.REPORT_VIEW_NAME || ' a
+        INNER JOIN temp_entity_inside_geom tm ON tm.system_id = a.system_id
+        LEFT JOIN ' || v_layer.GEOM_TYPE || '_master m ON a.system_id = m.system_id AND upper(m.entity_type) = upper(''' || v_layer.layer_name || ''') and upper(tm.entity_type) = upper(''' || v_layer.layer_name || ''')
+        WHERE 1=1
+';
+   end if;
+        else
+        
+  IF upper(v_layer.LAYER_NAME) = 'DUCT' 
+  THEN
+    sql := 'INSERT INTO temp_geojson_features(system_id, geom, network_id, entity_title, entity_name, utilization,low_count,moderate_count,high_count,over_count)
+            SELECT a.system_id, m.sp_geometry, a.network_id, upper(''' || v_layer.LAYER_TITLE || '''), upper(''' || v_layer.LAYER_NAME || '''), a.utilization,0,0,0,0
+            FROM ' || v_layer.REPORT_VIEW_NAME || ' a
+            LEFT JOIN ' || v_layer.GEOM_TYPE || '_master m ON a.system_id = m.system_id AND upper(m.entity_type) = upper(''' || v_layer.layer_name || ''')
+            WHERE 1=1';
+ELSE
+
+          sql := 'INSERT INTO temp_geojson_features(system_id, geom, network_id, entity_title, entity_name, utilization,low_count,moderate_count,high_count,over_count)
+                        SELECT a.system_id, m.sp_geometry, a.network_id, upper(''' || v_layer.LAYER_TITLE || '''), upper(''' || v_layer.LAYER_NAME || '''), a.utilization, coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''L'') then 1 else 0 end),0)low_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''M'') then 1 else 0 end),0)moderate_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''H'') then 1 else 0 end),0)high_count,
+		coalesce(sum(case when ((a.network_status=''Planned'' or a.network_status=''As Built'') and a.utilization=''O'') then 1 else 0 end),0)over_count
+                        FROM ' || v_layer.REPORT_VIEW_NAME || ' a
+                        LEFT JOIN ' || v_layer.GEOM_TYPE || '_master m ON a.system_id = m.system_id AND upper(m.entity_type) = upper(''' || v_layer.layer_name || ''')
+                        WHERE 1=1 
+';
+                raise info 'sql1%',sql;       
+        END IF;
+        END IF;
+
+        -- Apply filters
+        IF p_regionids != '' THEN sql := sql || ' AND a.region_id IN (' || p_regionids || ')'; END IF;
+        IF p_provinceids != '' THEN sql := sql || ' AND a.province_id IN (' || p_provinceids || ')'; END IF;
+        IF p_networkstatues != '' THEN sql := sql || ' AND upper(a.network_status) IN (''' || p_networkstatues || ''')'; END IF;
+        IF p_projectcode != '' THEN sql := sql || ' AND a.project_id IN (' || p_projectcode || ')'; END IF;
+        IF p_planningcode != '' THEN sql := sql || ' AND a.planning_id IN (' || p_planningcode || ')'; END IF;
+        IF p_workordercode != '' THEN sql := sql || ' AND a.workorder_id IN (' || p_workordercode || ')'; END IF;
+        IF p_purposecode != '' THEN sql := sql || ' AND a.purpose_id IN (' || p_purposecode || ')'; END IF;
+   raise info 'sql%',sql;
+        raise info 'sql22%',sql;
+
+-- UTILIZATION TYPE FILTER
+IF ((p_split_utilizationtype) is not null and lower(v_layer.layer_name) != lower('duct')) THEN
+	sql:= sql ||' AND  a.utilization IN ('||p_split_utilizationtype||')';
+END IF;
+
+  sql = sql || ' GROUP BY a.system_id, m.sp_geometry, a.network_id, a.utilization';
+
+        EXECUTE sql;
+    END LOOP;
+ 
+
+   
+    -- Return a single GeoJSON FeatureCollection
+    RETURN QUERY EXECUTE
+    'SELECT row_to_json(row) AS geojson
+     FROM (
+         SELECT ''FeatureCollection'' AS type,
+                array_to_json(array_agg(f)) AS features
+         FROM (
+             SELECT ''Feature'' AS type,
+                    system_id AS id,
+                    ST_AsGeoJSON(geom, 15, 0)::json AS geometry,
+                    json_build_object(
+                        ''network_id'', network_id,
+                        ''entity_title'', entity_title,
+                        ''entity_name'', entity_name,
+                        ''utilization'', utilization,
+						''low_count'', low_count,
+                         ''moderate_count'', moderate_count,
+                         ''high_count'', high_count,
+                         ''over_count'', over_count
+                    ) AS properties
+             FROM temp_geojson_features
+             WHERE geom IS NOT NULL
+         ) AS f
+     ) AS row';
+END;
+$function$
+;
+
+---------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_segment_regionprovince_details(p_segmentid character varying, p_regionid character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+ DECLARE
+
+BEGIN
+
+
+ 
+RETURN QUERY
+select row_to_json(row) from (
+SELECT 
+    ST_ASTEXT(tr.route_geom) geom,
+    ST_Extent(tr.route_geom)::text geometry_extent
+   FROM top_segment ts
+     JOIN top_routes tr ON ts.route_id = tr.route_id
+     LEFT JOIN top_region tr2 ON tr2.id = ts.region_id
+  WHERE tr.route_geom IS NOT null and ts.id = p_segmentId::integer and tr2.id = p_regionId::integer  group by tr.route_geom
+  ) row;
+
+END ;
+
+$function$
+;

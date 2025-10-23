@@ -13,8 +13,12 @@
                 <div class="plan--name_content">
                     <span class="plan_name-text" id=@item.plan_name>@item.plan_name</span>
                     <span class="fontIDExtnlData importantcolor">@MiscHelper.FormatDateTime(item.created_on.ToString())</span>
+                    <span class="fontIDExtnlData importantcolor" id=@item.created_by>
+                         @item.user_name
+                    </span>
                     <span class="status-text" id=@item.status>
-                        @(item.status == "Completed" ? "Completed" : "In-Progress") </span>
+                        @(item.status == "Completed" ? "Completed" : "In-Progress")
+                    </span>
                 </div>
             </div>
 
