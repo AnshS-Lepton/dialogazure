@@ -386,6 +386,7 @@ namespace Models
 		public string ownership_type { get; set; }
 		public string third_party_vendor_id { get; set; }
 		public string own_vendor_id { get; set; }
+		public string pod_type { get; set; }
 
 		[NotMapped]
 		public string circuit_id { get; set; }
@@ -401,6 +402,8 @@ namespace Models
 		public List<int> selected_route_ids { get; set; }
 		[NotMapped]
 		public List<RouteInfo> lstRouteInfo { get; set; }
+		[NotMapped]
+		public List<DropDownMaster> listPODType { get; set; }
 		[NotMapped]
 		public string gis_design_id { get; set; }
 		public ProjectSpecificView()

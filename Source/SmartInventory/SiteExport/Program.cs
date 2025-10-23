@@ -12,7 +12,6 @@ using BusinessLogics.DaFiFeasibilityAPI;
 using System.ComponentModel;
 using System.IO;
 using BusinessLogics;
-using SmartInventory.Settings;
 
 namespace SiteExport
 {
@@ -37,20 +36,29 @@ namespace SiteExport
             var siteList = new List<NearestSiteDetails>();
             var nearestSiteList = new List<NearestSiteDetails>();
             var nearlinegeom = "";
+            WriteDebugLog("Message mapkey: " + mapkey);
+
             siteList = GetAllFilteredSite();
             foreach (var site in siteList)
             {
                 nearestSiteList = GetNearestSite(site.system_id, site.network_id, buffer, 1);
+                WriteDebugLog("Message site.sp_geometry: " + site.sp_geometry);
+                WriteDebugLog("Message site.network_id: " + site.network_id);
+                //WriteDebugLog("Message nearestSiteList[0].nearest_cable_end_geom: " + nearestSiteList[0].nearest_cable_end_geom);
+
                 if (nearestSiteList != null && nearestSiteList.Count > 0)
                 {
                     try
                     {
                         var route = GoogleDirectionsServiceHelper.GetRouteGeoJsonAndLength(site.sp_geometry, nearestSiteList[0].nearest_cable_end_geom, mapkey);
+                        WriteDebugLog("Message route: 1");
+
                         if (route.Result.LengthInMeters >= 1)
                         {
                             var newbuilt = JsonConvert.DeserializeObject<GeoJsonLineString>(route.Result.GeoJson);
                             string lineGeom = string.Empty;
                             string[] siteGeomParts = site.sp_geometry.Split(' ');
+                            WriteDebugLog("Message route: 2");
 
                             lineGeom = siteGeomParts[1] + " " + siteGeomParts[0] + ",";
                             foreach (var cordinates in newbuilt.coordinates)
@@ -62,15 +70,19 @@ namespace SiteExport
                         }
                         else
                         {
+                            WriteDebugLog("Message route: 3");
+
                             string lineGeom = string.Empty;
                             string[] siteGeomParts = site.sp_geometry.Split(' ');
                             string[] CableEndGeom = nearestSiteList[0].nearest_cable_end_geom.Split(' ');
                             nearlinegeom = siteGeomParts[1] + " " + siteGeomParts[0] + "," + CableEndGeom[1] + " " + CableEndGeom[0];
                         }
+                        WriteDebugLog("Message nearlinegeom: " + nearlinegeom);
+
                     }
                     catch (Exception ex)
                     {
-                        WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
+                        WriteDebugLog("Message UpdateSiteFiberDistance: " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
                     }
                 }
                 // Here you can save the updated nearestSiteList to the database or perform further processing
@@ -139,7 +151,7 @@ namespace SiteExport
                 {
                     connection.Open();
 
-                    using (var command = new NpgsqlCommand("SELECT * FROM fn_get_site_list()", connection))
+                    using (var command = new NpgsqlCommand("SELECT * FROM fn_get_site_list(null::integer)", connection))
                     {
                         using (var reader = command.ExecuteReader())
                         {
@@ -156,7 +168,7 @@ namespace SiteExport
             }
             catch (Exception ex)
             {
-                WriteDebugLog("Message : "+ ex.Message +" " + "StackTrace : " +ex.StackTrace);
+                WriteDebugLog("Message GetAllFilteredSite: " + ex.Message +" " + "StackTrace : " +ex.StackTrace);
             }
             return result;
         }
@@ -191,7 +203,7 @@ namespace SiteExport
             }
             catch (Exception ex)
             {
-                WriteDebugLog("Message : " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
+                WriteDebugLog("Message GetNearestSite: " + ex.Message + " " + "StackTrace : " + ex.StackTrace);
             }
             return result;
         }

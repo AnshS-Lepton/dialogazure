@@ -601,6 +601,7 @@ namespace Models
         [Required]
         public string cable_type { get; set; }
         public string aerial_location { get; set; }
+        [Required]
         public string cable_category { get; set; }
         public string cable_sub_category { get; set; }
         [NotMapped]

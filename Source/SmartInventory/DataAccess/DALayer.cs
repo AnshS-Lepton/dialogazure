@@ -1730,7 +1730,7 @@ namespace DataAccess
             }
             catch (Exception ex) { throw; }
         }
-        public string ShowUtilizationBasedOnNetworkStausOnMap(UtilizationEntitiesSummaryViewFilter objReportFilter,string p_networkStatus)
+        public string ShowUtilizationBasedOnNetworkStausOnMap(UtilizationEntitiesSummaryViewFilter objReportFilter,string p_networkStatus,string utilizationType)
         {
             try
             {
@@ -1746,6 +1746,7 @@ namespace DataAccess
                         p_workordercode = objReportFilter.SelectedWorkOrderIds,
                         p_purposecode = objReportFilter.SelectedPurposeIds,
                         p_geom = objReportFilter.geom,
+                        p_utilizationtype = utilizationType
                     }).FirstOrDefault();
                 return lst;
             }

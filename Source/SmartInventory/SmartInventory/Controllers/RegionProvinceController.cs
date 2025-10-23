@@ -1,6 +1,7 @@
 ﻿using BusinessLogics;
 using GeoAPI.Geometries;
 using Ionic.Zip;
+using iTextSharp.text;
 using Lepton.GISConvertor;
 using Models;
 using Models.Admin;
@@ -27,6 +28,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 using System.Xml.Linq;
 using Utility;
 
@@ -1642,6 +1644,29 @@ namespace SmartInventory.Controllers
                 }
             }
             return obj;
+        }
+
+        [HttpPost]
+        public JsonResult GetSegmentGeomDetails(string segmentId, string regionId)
+        {
+            List<ViewRegionProvinces> vwsegmentGeom = new List<ViewRegionProvinces>();
+            UpdateGeomtaryValue objRegionProvince = new UpdateGeomtaryValue();
+            vwsegmentGeom = new BLRegionProvince().GetSegmentRegionProvince(segmentId, regionId);
+            DataTable dt = new DataTable();
+            dt = MiscHelper.ListToDataTable(vwsegmentGeom);
+            dt.TableName = "SegmentDetails";
+            objRegionProvince.lstUpdateRegionProvince.Add(new UpdateGeomtaryProperties());
+            objRegionProvince.lstUpdateRegionProvince[0].geomtext = dt.Rows[0]["geom"].ToString();
+            if (dt.Rows[0]["geometry_extent"].ToString() != null)
+            {
+                var extent = dt.Rows[0]["geometry_extent"].ToString().TrimStart("BOX(".ToCharArray()).TrimEnd(")".ToCharArray());
+                string[] bounds = extent.Split(',');
+                string[] southWest = bounds[0].Split(' ');
+                string[] northEast = bounds[1].Split(' ');
+                objRegionProvince.lstUpdateRegionProvince[0].southWest = new latlong { Lat = southWest[1], Long = southWest[0] };
+                objRegionProvince.lstUpdateRegionProvince[0].northEast = new latlong { Lat = northEast[1], Long = northEast[0] };
+            }
+            return new JsonResult { Data = objRegionProvince.lstUpdateRegionProvince[0], JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
         }
     }
 }

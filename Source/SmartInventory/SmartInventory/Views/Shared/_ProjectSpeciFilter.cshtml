@@ -180,6 +180,10 @@
                         <fieldset class="the-fieldset">
                             <legend class="the-legend">@lyrPOD.layer_title @Resources.Resources.SI_OSP_POP_NET_FRM_001</legend>
                             <div class="form-group row">
+                                <label class="control-label col-sm-2" for="ddlFrequency">Site Type:</label>
+                                <div class="col-sm-4">
+                                    @Html.DropDownListFor(m => m.pod_type, new SelectList(Model.listPODType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Site Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPODType" })
+                                </div>
                                 <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc"> @lyrPOD.layer_title:</label>
                                 <div class="col-md-4 col-sm-4">
                                     @*@Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD1", @multiple = "multiple" })*@
@@ -189,9 +193,9 @@
 
                                 </div>
                                 @*<label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdSecPODAssc">@Resources.Resources.SI_OSP_ONT_NET_FRM_010 @lyrPOD.layer_title:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.secondary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "ddlSecondaryPOD", @multiple = "multiple" })
-                                </div>*@
+        <div class="col-md-4 col-sm-4">
+            @Html.DropDownListFor(m => m.secondary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", id = "ddlSecondaryPOD", @multiple = "multiple" })
+        </div>*@
                             </div>
                         </fieldset>
 
@@ -211,9 +215,7 @@
 </div>
 
 <script type="text/javascript">
-
-
-    function bindPrimaryPODDropdown(preselectedValues = []) {
+function bindPrimaryPODDropdown(preselectedValues = []) {
     preselectedValues = preselectedValues || [];
 
     var $ddl = $('#ddlPrimaryPOD');
@@ -228,22 +230,24 @@
         });
     }
 
+    var $searchInput = $ddl.siblings('.chosen-container').find('.search-field input');
+
     function performSearch(searchText) {
         if (searchText.length < 3) return;
 
-        if (currentRequest) {
-            currentRequest.abort();
-        }
+        if (currentRequest) currentRequest.abort();
+
+        let PODFilter = $('#ddlPODType option:selected').text();
 
         currentRequest = $.ajax({
             url: "@Url.Content("~/Library/searchSite")",
             type: 'GET',
-            data: { term: searchText },
+            data: { term: searchText, siteType: PODFilter },
             success: function (resp) {
                 if (resp && resp.results && resp.results.length > 0) {
                     const selected = $ddl.val() || [];
-                    $ddl.empty();
-                    // Add only new options (do NOT remove existing ones)
+
+                    // Append new options only if they don't exist
                     $.each(resp.results, function (index, item) {
                         if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
                             $ddl.append($('<option>', {
@@ -257,9 +261,8 @@
                     $ddl.val([...new Set([...selected, ...preselectedValues.map(String)])]);
                     $ddl.trigger("chosen:updated");
 
-                    // Keep typed text in search box
-                    const $searchInput = $ddl.siblings('.chosen-container').find('.search-field input');
-                    $searchInput.val(searchText).focus();
+                    // Keep typed text intact
+                    $searchInput.focus();
                 }
             },
             complete: function () {
@@ -268,8 +271,8 @@
         });
     }
 
-    // Debounced keyup handler
-    $ddl.siblings('.chosen-container').find('.search-field input').on('keyup', function () {
+    // Debounced search while typing
+    $searchInput.on('keyup', function () {
         clearTimeout(typingTimer);
         var searchText = $(this).val();
         typingTimer = setTimeout(function () {
@@ -277,15 +280,16 @@
         }, 400);
     });
 
-    // Optional: load preselected values initially
+    // Load preselected values initially
     if (preselectedValues.length > 0) {
+        let PODFilter = $('#ddlPODType option:selected').text();
+
         $.ajax({
             url: "@Url.Content("~/Library/searchSite")",
             type: 'GET',
-            data: { term: '' },
+            data: { term: '', siteType: PODFilter },
             success: function (resp) {
                 if (resp && resp.results && resp.results.length > 0) {
-                    $ddl.empty();
                     $.each(resp.results, function (index, item) {
                         if ($ddl.find('option[value="' + item.systemId + '"]').length === 0) {
                             $ddl.append($('<option>', {

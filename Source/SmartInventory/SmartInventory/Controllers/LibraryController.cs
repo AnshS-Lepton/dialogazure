@@ -8814,6 +8814,8 @@ namespace SmartInventory.Controllers
             BindOwnershipDetails(objProj);
             BindSectorDropdown(objProj);
             BindPODAssociationDetail(objProj);
+            var objPodDDL = new BLMisc().GetDropDownList(EntityType.POD.ToString());
+            objProj.listPODType = objPodDDL.Where(x => x.dropdown_type == DropDownType.POD_Type.ToString()).ToList();
 
             BLLayer objBLLayer = new BLLayer();
             var usrDetail = (User)Session["userDetail"];
@@ -8825,9 +8827,9 @@ namespace SmartInventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult searchSite(string term)
+        public JsonResult searchSite(string term,string siteType = "")
         {
-            var sitenameList = new BLProject().getSiteList(term);
+            var sitenameList = new BLProject().getSiteList(term, siteType);
 
             var results = sitenameList.Select(s => new
             {

@@ -71,7 +71,10 @@ namespace BusinessLogics
         {
             return DataAccess.DARegionProvince.Instance.ValidateBoundary(system_id, entity_type);
         }
-        
+        public List<ViewRegionProvinces> GetSegmentRegionProvince(string segmentId, string regionId)
+        {
+            return DataAccess.DARegionProvince.Instance.GetSegmentRegionProvince(segmentId, regionId);
+        }
 
     }
 }
