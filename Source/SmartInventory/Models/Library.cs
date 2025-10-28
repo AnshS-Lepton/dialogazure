@@ -3058,12 +3058,11 @@ namespace Models
         public string client_link_id { get; set; }
         public string source_network_id { get; set; }
         public string destination_network_id { get; set; }
-        public string op_alias { get; set; }     
         public string a_site_id { get; set; }     
         public string a_site_name { get; set; }
         public string b_site_id { get; set; }
-        public string b_site_name { get; set; }     
-
+        public string b_site_name { get; set; }
+        public string op_alias { get; set; }
     }
 
     public class ExportEntitiesReport

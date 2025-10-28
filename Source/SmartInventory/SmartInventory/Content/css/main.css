@@ -7455,7 +7455,7 @@ div[dragtitle="Turn on drag zoom mode"], div[title="Turn off drag zoom mode"] {
     bottom: 7%;
     right: 0;
     left: 0;
-    width: 400px; /* adjust width */
+    width: 450px; /* adjust width */
     margin: 0 auto;
     z-index: 1000;
 }

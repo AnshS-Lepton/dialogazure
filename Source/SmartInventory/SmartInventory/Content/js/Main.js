@@ -30895,7 +30895,11 @@ var Main = function () {
         debugger;
         app.clearEditObj();
         removeOldMarkers();
-        let $segmentCheckbox = $('#' + _segmentLayerId);
+        let selector = _segmentLayerId.includes(' ')
+            ? "[id='" + _segmentLayerId + "']"
+            : "#" + _segmentLayerId;
+
+        let $segmentCheckbox = $(selector);
         let $regionCheckbox = $('#' + _regionId);
         $segmentCheckbox.prop('checked', true);
         let segmentId = $segmentCheckbox.data('segmentid');
@@ -31266,6 +31270,7 @@ var Main = function () {
         $("#dvUtilizationContainer").empty();
 
         Object.keys(summaryMap).forEach(entity => {
+            if (entity === "DUCT") return; 
             const counts = summaryMap[entity];
             var html = `<div class="dvUtilizationShowonmap">
     <p id= "networkStatus_${entity}">${entity} (${networkstatus}):</p>
@@ -31284,6 +31289,30 @@ var Main = function () {
         return summaryMap;
     }
 
+    this.UtilizationFilterReportShowOnMap = function (networkStatus, utilizationType) {
+        debugger;
+        ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
+            network_status: networkStatus, utilizationType: utilizationType
+        }, true, function (resps) {
+            debugger;
+            var resp = JSON.parse(resps);
+            var eCheck = resp.features == null ? false : true;
+            if (eCheck) {
+                app.RemoveOldFeature();
+
+                si.UtilizationloadMapNetworkStatusShapes(resp);
+                debugger;
+                //si.generateUtilizationSummary(resp, networkStatus);
+                //$(popup.DE.MinimizeModel).trigger("click");
+
+            }
+            else {
+                si.map.data.forEach(function (feature) {
+                    si.map.data.remove(feature);
+                });
+            }
+        }, true, true);
+    }
 
     this.UtilizationReportShowOnMap = function (networkStatus, utilizationType) {
         debugger;

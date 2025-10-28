@@ -1,0 +1,40 @@
+
+alter table top_segment add column name character varying null;
+
+
+WITH segment_ranked AS (
+    SELECT 
+        name,
+        segment,
+        region,
+        id,
+        ROW_NUMBER() OVER (
+            PARTITION BY segment, region
+            ORDER BY id DESC
+        ) AS rn
+    FROM dialog_fiber_access_ring
+    WHERE "type" = 'Site'
+),
+segment_selected AS (
+    SELECT 
+        segment,
+        tr2.id as region_id,
+        region ,
+        split_part(name, '_', 2)  AS new_name
+    FROM segment_ranked
+    left join top_region tr2 on tr2.region_name  = region 
+    WHERE rn = 1
+) 
+UPDATE top_segment  ts
+SET "name" = ts.segment_code  ||'_'||ss.new_name
+FROM segment_selected ss
+WHERE REGEXP_REPLACE(ts.segment_code, '([A-Za-z]+)([0-9]+)', '\1-\2') = ss.segment
+  AND ts.region_id  = ss.region_id;
+
+
+-------------------------------------------------------------------------------------------------
+
+INSERT INTO public.dropdown_master
+(layer_id, dropdown_type, dropdown_value, dropdown_status, created_by, created_on, modified_by, modified_on, dropdown_key, parent_value, db_column_name, is_action_allowed, is_active, parent_id)
+VALUES(19, 'Cable_Category', 'Sprout Cable', true, 1, now(), NULL, null, 'Sprout Cable', NULL, 'Cable_Category', true, true, 0);
+

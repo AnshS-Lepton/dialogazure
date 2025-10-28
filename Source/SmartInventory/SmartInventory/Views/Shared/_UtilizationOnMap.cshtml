@@ -141,7 +141,9 @@
     });
 
     $("#dvUtilizationContainer").on("click", "input[class^='UtilizedEntity_']", function () {
+        debugger;
         let checkbox = this; // store reference to clicked checkbox
+        let id = $(checkbox).attr("id"); // => "H_FTC"
 
         let entityClass = $(checkbox).attr("class").split(" ").find(c => c.startsWith("UtilizedEntity_"));
         if (!entityClass) return;
@@ -156,11 +158,9 @@
             let prefix = this.id.split("_")[0];
             utilizationType = utilizationType === "" ? "'" + prefix + "'" : utilizationType + "," + "'" + prefix + "'";
         });
-
+        $(id).prop("checked", false);
         // Call async function and disable checkbox only after completion
-        si.UtilizationReportShowOnMap(networkstatus, utilizationType, function () {
-            $(checkbox).prop("disabled", true);
-        });
+        si.UtilizationFilterReportShowOnMap(networkstatus, utilizationType);
     });
 
 
