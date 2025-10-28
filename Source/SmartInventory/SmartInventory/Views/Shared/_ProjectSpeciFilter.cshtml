@@ -184,7 +184,7 @@
                                 <div class="col-sm-4">
                                     @Html.DropDownListFor(m => m.pod_type, new SelectList(Model.listPODType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Site Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPODType" })
                                 </div>
-                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc"> @lyrPOD.layer_title:</label>
+                                <label class="control-label noWhiteSpa col-md-2 col-sm-2" for="RdPriPODAssc"> @lyrPOD.layer_title ID:</label>
                                 <div class="col-md-4 col-sm-4">
                                     @*@Html.DropDownListFor(m => m.primary_pop_system_id, new SelectList(Model.lstPODAssociation.Select(x => new { Value = x.key, Text = x.value }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlPrimaryPOD1", @multiple = "multiple" })*@
 
@@ -238,7 +238,7 @@ function bindPrimaryPODDropdown(preselectedValues = []) {
         if (currentRequest) currentRequest.abort();
 
         let PODFilter = $('#ddlPODType option:selected').text();
-
+        PODFilter = PODFilter == "Select Site Type" ? "" : PODFilter;
         currentRequest = $.ajax({
             url: "@Url.Content("~/Library/searchSite")",
             type: 'GET',
@@ -283,7 +283,7 @@ function bindPrimaryPODDropdown(preselectedValues = []) {
     // Load preselected values initially
     if (preselectedValues.length > 0) {
         let PODFilter = $('#ddlPODType option:selected').text();
-
+        PODFilter = PODFilter == "Select Site Type" ? "" : PODFilter;
         $.ajax({
             url: "@Url.Content("~/Library/searchSite")",
             type: 'GET',
