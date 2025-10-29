@@ -366,22 +366,11 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().GetAllProjectwiseRegion();
         }
-        public List<KeyValueDropDown> GetAllProvinceProjectwise(string project_id)
+        public List<KeyValueDropDown> GetAllProvinceProjectwise(string region_id)
         {
-            return new DAProjectDetails().GetAllProvinceProjectwise(project_id);
+            return new DAProjectDetails().GetAllProvinceProjectwise(region_id);
         }
-        public List<KeyValueDropDown> GetAllWorkorderByPlanning(int planning_id)
-        {
-            return new DAProjectDetails().GetAllWorkorderByPlanning(planning_id);
-        }
-        public string GetRegionName(int workorder_id)
-        {
-            return new DAProjectDetails().GetRegionName(workorder_id);
-        }
-        public string GetProvinceName(int province_id)
-        {
-            return new DAProjectDetails().GetProvinceName(province_id);
-        }
+       
         public List<Dictionary<string, object>> GetProjectwiseFiberDistanceReport(int region_id,int province_id)
         {
             return new DAProjectDetails().GetProjectwiseFiberDistanceReport(region_id, province_id);
@@ -390,9 +379,9 @@ namespace BusinessLogics.Admin
 
     public class BLProjectExportReport
     {
-        public List<ProjectwiseReportRequestLog> GetAllBlockReport(int block_code)
+        public List<ProjectwiseReportRequestLog> GetAllProvinceReport(int region_id)
         {
-            return new DAProjectwiseExportReport().GetAllBlockReport(block_code);
+            return new DAProjectwiseExportReport().GetAllProvinceReport(region_id);
         }
         public ProjectwiseReportRequestLog SaveProjectwiseReportLog(ProjectwiseReportRequestLog projectwiseReportRequestLog)
         {

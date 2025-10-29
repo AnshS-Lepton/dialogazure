@@ -17,12 +17,12 @@
                     <div class="form-group row" style="padding-left: 10px;">
                         <label class="control-label col-sm-1">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
                         <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.project_id, new SelectList(Model.lstRegion.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
+                            @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
            "-Select Region-", new { @class = "chosen-select form-control dd", @id = "ddlRegion", @onchange = "bindProvinces()" })
                         </div>
                         <label class="control-label col-sm-1" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
                         <div class="col-sm-4">
-                            @Html.DropDownListFor(m => m.planning_id, new SelectList(Model.lstProvince.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
+                            @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
            "-Select Province-", new { @class = "chosen-select form-control dd", @id = "ddlProvince" })
                         </div>
                         @* <label class="control-label col-sm-1" for="txtSearchtext">Block :</label>
@@ -93,16 +93,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#btnShowBlockSurveyData').on('click', function (e) {
-            e.preventDefault();
-            var blk_code = $('#ddlBlock').val();
-            if (blk_code <= 0) {
-                alert("Please select the Block");
-                return;
-            }
-            $('#blk_code').val(blk_code);
-            $('#frmProjectwiseReport').submit();
-        });
+
         $('#ddlProvince').on('change', function (e) {
             e.preventDefault();
             $('#frmProjectwiseReport').submit();
@@ -113,10 +104,12 @@
 
         var p_region_id = $('#ddlRegion').val();
         var p_province_id = $('#ddlProvince').val();
+        var p_region_name = $("#ddlRegion option:selected").text();
+        var p_province_name = $("#ddlProvince option:selected").text();
         var $btn = $('#btnProjectwiseReport');
         $btn.prop("disabled", true).text("Generating Project-wise Report...");
 
-        $.post(baseUrl + appRoot + "Report/ProjectwiseReport", { region_id: p_region_id, province_id:p_province_id }, function (data) {
+        $.post(baseUrl + appRoot + "Report/ProjectwiseReport", { region_id: p_region_id, province_id: p_province_id, region_name: p_region_name, province_name: p_province_name }, function (data) {
             if (data.status === "exists") {
                 alert("A report for the selected block is already being generated. Please wait.");
                 $btn.prop("disabled", true).text("Generating Project-wise Report...");
@@ -141,43 +134,19 @@
     });
 
    
-    function exportReportToMail(reportTypeFiles) {
-        if (!Array.isArray(reportTypeFiles)) {
-            reportTypeFiles = [reportTypeFiles];
-        }
-        if (reportTypeFiles.length === 0) {
-            alert("No reports to send.");
-            return;
-        }
-        $.ajax({
-            url: '/SurveyReport/EmailFinalReport',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(reportTypeFiles),
-            success: function (resp) {
-                if (resp.success)
-                    alert("Email sent successfully.");
-                else
-                    alert("Error: "+resp.message);
-            },
-            error: function (resp) {
-                alert("Error: "+resp);
-            }
-        });
-    }
+  
 
     function bindProvinces() {
-        var project_id = $('#ddlRegion').val().toString();
-        if (project_id > 0) {
+        var regionid = $('#ddlRegion').val().toString();
+        if (regionid > 0) {
             $.ajax({
                 type: "POST", url: "Report/BindProvincesData",
-                data: { project_id: project_id }, dataType: "json",
+                data: { region_id: regionid }, dataType: "json",
                 success: function (response) {
                     var dropdown = $('#ddlProvince');
                     dropdown.empty();
                     dropdown.append('<option value="-1">-Select Province-</option>');
-                    $('#ddlBlock').empty();
-                    $('#ddlBlock').append('<option value="-1">-Select Block-</option>');
+                   
                     if (response.status == "OK") {
                         $.each(response.data, function (index, item) {
                             dropdown.append('<option value="' + item.key + '">' + item.value + '</option>');
@@ -189,41 +158,7 @@
         }
     }
    
-    $("#btnMBSheetReport").on("click", function () {
-        debugger;
-        if ($('#ddlBlock').val() <= 0) {
-            alert("Please select the Block");
-            return;
-        }
-        var workorder_id = $('#ddlBlock').val();
-        var $btn = $('#btnMBSheetReport');
-        $btn.prop("disabled", true).text("Generating MB Sheet Report...");
-
-        $.post(baseUrl + appRoot + "SurveyReport/MBSheetReport", { workorder_id: workorder_id }, function (data) {
-            if (data.status === "exists") {
-                alert("A report for the selected block is already being generated. Please wait.");
-                $btn.prop("disabled", true).text("Generating MB Sheet Report...");
-                return;
-            }
-            debugger;
-            if (data.status === "started") {
-                var fileName = data.fileName;
-                var interval = setInterval(function () {
-                    $.get(baseUrl + appRoot + "SurveyReport/CheckBOQReportStatus", { _fileName: fileName, _filePath: data.filePath }, function (statusData) {
-                        if (statusData.status === "completed") {
-                            clearInterval(interval);
-                            $btn.prop("disabled", false).text("Generate");
-                            $('#frmProjectwiseReport').submit();
-                        } else if (statusData.status === "error") {
-                            alert(statusData.error);
-
-                            clearInterval(interval);
-                        }
-                    });
-                }, 3000);
-            }
-        });
-    });
+  
 </script>
 
 <style>

@@ -26,9 +26,9 @@ namespace Models
         public string orderBy { get; set; }
         public int user_id { get; set; }
         public int systemId { get; set; } = 0;
-        public int project_id { get; set; } = 0;
-        public int planning_id { get; set; } = 0;
-        public int workorder_id { get; set; } = 0;
+        public int region_id { get; set; } = 0;
+        public int province_id { get; set; } = 0;
+       
         public List<ProjectwiseReportRequestLog> lstReportLogs { get; set; }
         public List<KeyValueDropDown> lstRegion { get; set; }
         public List<KeyValueDropDown> lstProvince { get; set; }

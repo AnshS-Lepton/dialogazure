@@ -15384,20 +15384,19 @@ foreach (var objEntity in lstExportReportKML)
         }
 
         #region Projectwise report
-        public ActionResult GetprojectwiseReport(ProjectwiseReportFilter objProjectwiseReportFilter, int project_id = 0, int planning_id = 0, int workorder_id = 0)
+        public ActionResult GetprojectwiseReport(ProjectwiseReportFilter objProjectwiseReportFilter, int region_id = 0, int province_id = 0)
         {
             objProjectwiseReportFilter.user_id = Convert.ToInt32(Session["user_id"]);
-            objProjectwiseReportFilter.project_id = project_id;
-            objProjectwiseReportFilter.planning_id = planning_id;
-            objProjectwiseReportFilter.workorder_id = workorder_id != 0 ? workorder_id : 0;
+            objProjectwiseReportFilter.region_id = region_id;
+            objProjectwiseReportFilter.province_id = province_id;
             objProjectwiseReportFilter.lstRegion = new BLProject().GetAllProjectwiseRegion().ToList();
-            if (project_id > 0)
-                objProjectwiseReportFilter.lstProvince = new BLProject().GetAllProvinceProjectwise(project_id.ToString());
+            if (region_id > 0)
+                objProjectwiseReportFilter.lstProvince = new BLProject().GetAllProvinceProjectwise(region_id.ToString());
                 
-                if (planning_id > 0)
+                if (province_id > 0)
             {
              
-                objProjectwiseReportFilter.lstReportLogs = new BLProjectExportReport().GetAllBlockReport(project_id);
+                objProjectwiseReportFilter.lstReportLogs = new BLProjectExportReport().GetAllProvinceReport(region_id);
             }
             else
                 objProjectwiseReportFilter.lstReportLogs = new List<ProjectwiseReportRequestLog>();
@@ -15406,11 +15405,10 @@ foreach (var objEntity in lstExportReportKML)
         }
 
         [HttpPost]
-        public JsonResult ProjectwiseReport(int region_id, int province_id)
+        public JsonResult ProjectwiseReport(int region_id, int province_id,string region_name,string province_name)
         {
-            string regionName = new BLProject().GetRegionName(region_id);
-            string provinceName = new BLProject().GetProvinceName(province_id);
-            string fileName = $"Project_wise_fiber_distance-{regionName}-{provinceName}.xlsx";
+           
+            string fileName = $"Project_wise_fiber_distance-{region_name}-{province_name}.xlsx";
             string tempFolder = Server.MapPath("~/Uploads/ProjectwiseReport/");
             string filePath = Path.Combine(tempFolder, fileName);
 
@@ -15473,26 +15471,11 @@ foreach (var objEntity in lstExportReportKML)
         }
 
         [HttpPost]
-        public JsonResult BindProvincesData(string project_id)
+        public JsonResult BindProvincesData(string region_id)
         {
             try
             {
-                var data = new BLProject().GetAllProvinceProjectwise(project_id);
-
-                return Json(new { status = "OK", data = data });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { status = "ERROR", message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult BindBlockData(int planning_id)
-        {
-            try
-            {
-                var data = new BLProject().GetAllWorkorderByPlanning(planning_id);
+                var data = new BLProject().GetAllProvinceProjectwise(region_id);
 
                 return Json(new { status = "OK", data = data });
             }
