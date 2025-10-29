@@ -1,0 +1,246 @@
+﻿@model Models.ProjectwiseReportFilter
+@{
+    var lstUserModule = (List<string>)Session["ApplicableModuleList"];
+    var hasReportLogs = Model.lstReportLogs != null && Model.lstReportLogs.Any();
+    var ProjectwiseReport = hasReportLogs ? Model.lstReportLogs.FirstOrDefault(x => x.report_type == "Projectwise") : null;
+   
+}
+<!DOCTYPE html>
+<div class="viewReport" id="dvChildModalBody">
+    @using (Ajax.BeginForm("GetprojectwiseReport", "Report",
+        new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvChildModalBody", LoadingElementId = "dvProgress" },
+        new { id = "frmProjectwiseReport", @class = "form-horizontal", autocomplete = "off" }))
+    {
+        <div class="libTabContent">
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <div class="form-group row" style="padding-left: 10px;">
+                        <label class="control-label col-sm-1">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.project_id, new SelectList(Model.lstRegion.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
+           "-Select Region-", new { @class = "chosen-select form-control dd", @id = "ddlRegion", @onchange = "bindProvinces()" })
+                        </div>
+                        <label class="control-label col-sm-1" for="txtSearchtext">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 :</label>
+                        <div class="col-sm-4">
+                            @Html.DropDownListFor(m => m.planning_id, new SelectList(Model.lstProvince.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
+           "-Select Province-", new { @class = "chosen-select form-control dd", @id = "ddlProvince" })
+                        </div>
+                        @* <label class="control-label col-sm-1" for="txtSearchtext">Block :</label>
+                     <div class="col-sm-2">
+                         @Html.DropDownListFor(m => m.workorder_id, new SelectList(Model.lstBlock.Select(x => new { Text = x.value.ToString(), Value = x.key }), "Value", "Text"),
+        "-Select Block-", new { @class = "chosen-select form-control dd", @id = "ddlBlock" })
+                     </div>*@
+                        <button type="submit" class="btn btn-success ml-auto" style="margin: -2px;" id="btnShowBlockSurveyData">@Resources.Resources.SF_GBL_GBL_GBL_GNL_006</button>
+                        &nbsp;
+
+                    </div>
+
+                </div>
+            </div>
+            <hr />
+        </div>
+    }
+    <div class="surveyCardGrid --gap10">
+        <fieldset class="surveyCard"
+                  data-reporttype="ProjectwiseTrigger"
+                  data-filename="@(ProjectwiseReport != null ? ProjectwiseReport.file_name : "")"
+                  data-status="@(ProjectwiseReport != null ? ProjectwiseReport.status : "")">
+            <legend>Project-wise Fiber Distance Details</legend>
+            <div class="surveyCard-header d-flex">
+                <h4>@(ProjectwiseReport != null ? ProjectwiseReport.file_name : "No report available")</h4>
+                @if (ProjectwiseReport != null && ProjectwiseReport.status == "completed")
+                {
+                    <a href="@Url.Action("DownloadFinalReport", "Report", new { fileName = ProjectwiseReport.file_name })" class="d-flex surveyCard-download ml-auto" target="_blank" title="Download">
+                        <i class="fa fa-download"></i>
+                    </a>
+                }
+                else
+                {
+                    <a href="#" class="d-flex surveyCard-download ml-auto" title="Download"}">
+                        <i class="fa fa-download"></i>
+                    </a>
+                }
+            </div>
+            <div class="surveyCard-date">
+                @if (ProjectwiseReport != null && ProjectwiseReport.completed_on != null)
+                {
+                    <span class="surveyCard-label">Generated On</span>
+                    <span class="fw-600">@ProjectwiseReport.completed_on.Value.ToString("dd MMM yyyy h:mm:ss tt")</span>
+                }
+            </div>
+            <div class="surveyCard-button d-flex">
+                @if (ProjectwiseReport != null && ProjectwiseReport.completed_on != null)
+                {
+                   
+                }
+                &nbsp;
+                @if (ProjectwiseReport != null && ProjectwiseReport.status == "inprogress")
+                {
+                    <button id="btnProjectwiseReport" class="btn btn-sm btn-warning ml-auto" disabled>Generating Project-wise Report...</button>
+                }
+                else
+                {
+                    <button id="btnProjectwiseReport" class="btn btn-sm btn-warning ml-auto">Generate</button>
+                }
+            </div>
+        </fieldset>
+        
+     
+
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#btnShowBlockSurveyData').on('click', function (e) {
+            e.preventDefault();
+            var blk_code = $('#ddlBlock').val();
+            if (blk_code <= 0) {
+                alert("Please select the Block");
+                return;
+            }
+            $('#blk_code').val(blk_code);
+            $('#frmProjectwiseReport').submit();
+        });
+        $('#ddlProvince').on('change', function (e) {
+            e.preventDefault();
+            $('#frmProjectwiseReport').submit();
+        });
+       
+    });
+    $("#btnProjectwiseReport").on("click", function () {
+
+        var p_region_id = $('#ddlRegion').val();
+        var p_province_id = $('#ddlProvince').val();
+        var $btn = $('#btnProjectwiseReport');
+        $btn.prop("disabled", true).text("Generating Project-wise Report...");
+
+        $.post(baseUrl + appRoot + "Report/ProjectwiseReport", { region_id: p_region_id, province_id:p_province_id }, function (data) {
+            if (data.status === "exists") {
+                alert("A report for the selected block is already being generated. Please wait.");
+                $btn.prop("disabled", true).text("Generating Project-wise Report...");
+                return;
+            }
+
+            if (data.status === "started") {
+                var fileName = data.fileName;
+                var interval = setInterval(function () {
+                    $.get(baseUrl + appRoot + "Report/CheckReportStatus", { _fileName: fileName }, function (statusData) {
+                        if (statusData.status === "completed") {
+                            clearInterval(interval);
+                            $btn.prop("disabled", false).text("Generate");
+                            $('#frmProjectwiseReport').submit();
+                        } else if (statusData.status === "error") {
+                            clearInterval(interval);
+                        }
+                    });
+                }, 3000);
+            }
+        });
+    });
+
+   
+    function exportReportToMail(reportTypeFiles) {
+        if (!Array.isArray(reportTypeFiles)) {
+            reportTypeFiles = [reportTypeFiles];
+        }
+        if (reportTypeFiles.length === 0) {
+            alert("No reports to send.");
+            return;
+        }
+        $.ajax({
+            url: '/SurveyReport/EmailFinalReport',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(reportTypeFiles),
+            success: function (resp) {
+                if (resp.success)
+                    alert("Email sent successfully.");
+                else
+                    alert("Error: "+resp.message);
+            },
+            error: function (resp) {
+                alert("Error: "+resp);
+            }
+        });
+    }
+
+    function bindProvinces() {
+        var project_id = $('#ddlRegion').val().toString();
+        if (project_id > 0) {
+            $.ajax({
+                type: "POST", url: "Report/BindProvincesData",
+                data: { project_id: project_id }, dataType: "json",
+                success: function (response) {
+                    var dropdown = $('#ddlProvince');
+                    dropdown.empty();
+                    dropdown.append('<option value="-1">-Select Province-</option>');
+                    $('#ddlBlock').empty();
+                    $('#ddlBlock').append('<option value="-1">-Select Block-</option>');
+                    if (response.status == "OK") {
+                        $.each(response.data, function (index, item) {
+                            dropdown.append('<option value="' + item.key + '">' + item.value + '</option>');
+                        });
+                    }
+                },
+                error: {}
+            });
+        }
+    }
+   
+    $("#btnMBSheetReport").on("click", function () {
+        debugger;
+        if ($('#ddlBlock').val() <= 0) {
+            alert("Please select the Block");
+            return;
+        }
+        var workorder_id = $('#ddlBlock').val();
+        var $btn = $('#btnMBSheetReport');
+        $btn.prop("disabled", true).text("Generating MB Sheet Report...");
+
+        $.post(baseUrl + appRoot + "SurveyReport/MBSheetReport", { workorder_id: workorder_id }, function (data) {
+            if (data.status === "exists") {
+                alert("A report for the selected block is already being generated. Please wait.");
+                $btn.prop("disabled", true).text("Generating MB Sheet Report...");
+                return;
+            }
+            debugger;
+            if (data.status === "started") {
+                var fileName = data.fileName;
+                var interval = setInterval(function () {
+                    $.get(baseUrl + appRoot + "SurveyReport/CheckBOQReportStatus", { _fileName: fileName, _filePath: data.filePath }, function (statusData) {
+                        if (statusData.status === "completed") {
+                            clearInterval(interval);
+                            $btn.prop("disabled", false).text("Generate");
+                            $('#frmProjectwiseReport').submit();
+                        } else if (statusData.status === "error") {
+                            alert(statusData.error);
+
+                            clearInterval(interval);
+                        }
+                    });
+                }, 3000);
+            }
+        });
+    });
+</script>
+
+<style>
+    .libTabContent {
+        margin: 15px;
+    }
+
+    .control-label {
+        padding-top: 2px;
+    }
+
+    hr {
+        margin: 0px;
+    }
+
+    .dd {
+        padding: 0px !important;
+    }
+</style>
+

@@ -1,4 +1,5 @@
-﻿using DataAccess.DBHelpers;
+﻿using DataAccess.DBContext;
+using DataAccess.DBHelpers;
 using Models;
 using Models.Admin;
 using Models.API;
@@ -1372,5 +1373,114 @@ namespace DataAccess.Admin
 
         }
 
+
+        public List<KeyValueDropDown> GetAllProjectwiseRegion()
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<KeyValueDropDown>("fn_get_projectwise_regionlist", false);
+                return res;
+            }
+            catch { throw; }
+        }
+        public List<KeyValueDropDown> GetAllProvinceProjectwise(string project_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<KeyValueDropDown>("fn_get_projectwise_province_data", new { p_project_id = project_id }, false);
+                return res;
+            }
+            catch { throw; }
+        }
+
+        public List<KeyValueDropDown> GetAllWorkorderByPlanning(int planning_id)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<KeyValueDropDown>("fn_get_workorder_data", new { p_planning_id = planning_id }, false);
+                return res;
+            }
+            catch { throw; }
+        }
+
+        public string GetRegionName(int region_id)
+        {
+            string workorderName = string.Empty;
+            using (MainContext context = new MainContext())
+            {
+                string query = string.Format(@"select region_name from region_boundary adwm where Id = {0} limit 1", region_id);
+
+                workorderName = context.Database.SqlQuery<string>(query).FirstOrDefault();
+            }
+            return workorderName;
+        }
+        public string GetProvinceName(int province_id)
+        {
+            string workorderCode = "";
+            using (MainContext context = new MainContext())
+            {
+                string query = string.Format(@"select province_name from province_boundary adwm where Id = {0} limit 1", province_id);
+
+                workorderCode = context.Database.SqlQuery<string>(query).FirstOrDefault();
+            }
+            return workorderCode;
+        }
+
+        public List<Dictionary<string, object>> GetProjectwiseFiberDistanceReport(int region_id, int province_id)
+        {
+            try
+            {
+                var lst = repo.ExecuteProcedure<List<Dictionary<string, object>>>("fn_get_projectwise_fiber_distance_report",
+                    new { p_region_id = region_id, p_province_id= province_id }, true);
+
+                return lst[0].ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+    }
+
+    public class DAProjectwiseExportReport : Repository<ProjectwiseReportRequestLog>
+    {
+        public ProjectwiseReportRequestLog SaveProjectwiseReportLog(ProjectwiseReportRequestLog projectwiseReportRequestLog)
+        {
+            try
+            {
+                var objProjectwiseReportLog = repo.Get(x => x.id == projectwiseReportRequestLog.id);
+                if (objProjectwiseReportLog != null)
+                {
+                    repo.Update(projectwiseReportRequestLog);
+                }
+                else
+                {
+                    repo.Insert(projectwiseReportRequestLog);
+                }
+                return projectwiseReportRequestLog;
+
+            }
+            catch (Exception ex)
+            { throw ex; }
+        }
+        public ProjectwiseReportRequestLog GetProjectwiseReportByFileName(string fileName, string status)
+        {
+            return repo.Get(x => x.file_name == fileName && x.status == status);
+        }
+        public ProjectwiseReportRequestLog GetBOQReportByFileName(string fileName)
+        {
+            return repo.Get(x => x.file_name == fileName);
+        }
+        public List<ProjectwiseReportRequestLog> GetAllBlockReport(int block_code)
+        {
+            return repo.GetAll().Where(r => r.block_code == block_code)
+                        .Where(r => r.status != "error")
+                        .GroupBy(r => new { r.report_type, r.file_name, r.status })
+                        .Select(g => g.OrderByDescending(r => r.created_on).FirstOrDefault())
+                        .OrderByDescending(r => r.created_on)
+                        .ToList();
+        }
     }
 }

@@ -10504,3 +10504,56 @@ tfoot tr td a:hover {
 .tool_bar .FiberAllocationReport {
     background-position: -195px -500.1px;
 }
+
+.surveyCardGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+    .surveyCardGrid .p-0 {
+        padding: 0 !important;
+    }
+
+.surveyCard-download {
+    padding: 0.4rem 0.5rem !important;
+    background: #e8e9ff;
+    border-radius: 3px;
+    outline: 1px solid #9fa4fc;
+    color: #337ab7;
+}
+
+.surveyCard-date {
+    margin-top: 0.6rem;
+}
+
+.surveyCard legend {
+    border-bottom: none;
+    width: auto;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+    padding-inline: 0.5rem;
+    font-size: 1.5rem;
+    color: #3535f3;
+}
+
+.surveyCard-button {
+    margin-top: 1.5rem;
+}
+
+    .surveyCard-button .btn-sm {
+        padding: 3px 8px;
+    }
+
+.surveyCard {
+    background: #fbfbfb;
+    border-radius: 4px;
+    border: 1px solid #d9dcdf;
+    padding: 1rem;
+}
+
+    .surveyCard h4 {
+        font-size: 1.4rem;
+        margin: 0;
+    }

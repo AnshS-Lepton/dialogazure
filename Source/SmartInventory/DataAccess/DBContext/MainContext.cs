@@ -678,8 +678,10 @@ namespace DataAccess.DBContext
             modelBuilder.Entity<BackbonePlanNetworkDetails>().ToTable("backbone_plan_network_details", dbschema);
             modelBuilder.Entity<SitePlanList>().ToTable("backbone_plan_nearest_site", dbschema);
             modelBuilder.Entity<BackBonePlanning>().ToTable("backbone_plan_details", dbschema);
+            #region Projectwise Report
+            modelBuilder.Entity<ProjectwiseReportRequestLog>().ToTable("projectwise_report_request_logs", dbschema);
+            #endregion
 
-            
         }
 
     }

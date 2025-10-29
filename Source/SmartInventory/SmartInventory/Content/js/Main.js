@@ -24020,6 +24020,14 @@ var Main = function () {
 
         window.location = appRoot + 'Report/DownloadSegmentReport?fileType=' + _fileType + '&reportType=' + _reportType;
     }
+
+    this.projectwiseReport = function () {
+
+        popup.LoadModalDialog('PARENT', 'Report/GetprojectwiseReport', {}, "Project-wise Fiber Distance Report", 'modal-xxl');
+        
+    }
+
+
     this.ViewLossDetail = function () {
         var value = $('#ddl_waveLength').val();
         var formURL = "Splicing/viewlossdetails";
