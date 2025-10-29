@@ -15382,5 +15382,287 @@ foreach (var objEntity in lstExportReportKML)
 
             return File(filePath, contentType, fileName);
         }
+
+        #region Projectwise report
+        public ActionResult GetprojectwiseReport(ProjectwiseReportFilter objProjectwiseReportFilter, int region_id = 0, int province_id = 0)
+        {
+            objProjectwiseReportFilter.user_id = Convert.ToInt32(Session["user_id"]);
+            objProjectwiseReportFilter.region_id = region_id;
+            objProjectwiseReportFilter.province_id = province_id;
+            objProjectwiseReportFilter.lstRegion = new BLProject().GetAllProjectwiseRegion().ToList();
+            if (region_id > 0)
+                objProjectwiseReportFilter.lstProvince = new BLProject().GetAllProvinceProjectwise(region_id.ToString());
+                
+                if (province_id > 0)
+            {
+             
+                objProjectwiseReportFilter.lstReportLogs = new BLProjectExportReport().GetAllProvinceReport(region_id);
+            }
+            else
+                objProjectwiseReportFilter.lstReportLogs = new List<ProjectwiseReportRequestLog>();
+
+            return PartialView("_ProjectwiseReport", objProjectwiseReportFilter);
+        }
+
+        [HttpPost]
+        public JsonResult ProjectwiseReport(int region_id, int province_id,string region_name,string province_name)
+        {
+           
+            string fileName = $"Project_wise_fiber_distance-{region_name}-{province_name}.xlsx";
+            string tempFolder = Server.MapPath("~/Uploads/ProjectwiseReport/");
+            string filePath = Path.Combine(tempFolder, fileName);
+
+            var existingLog = new BLProjectExportReport().GetprojectReportByFileName(fileName, "inprogress");
+            if (existingLog != null)
+            {
+                return Json(new { status = "exists", message = "Report is already being generated." });
+            }
+
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+            int userId = Convert.ToInt32(Session["user_id"]);
+            var projectReportLog = new ProjectwiseReportRequestLog
+            {
+                report_type = "Projectwise",
+                file_name = fileName,
+                created_by = userId,
+                created_on = DateTime.Now,
+                status = "inprogress",
+                block_code = region_id
+            };
+
+            new BLProjectExportReport().SaveProjectwiseReportLog(projectReportLog);
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    byte[] fileBytes = ExportProjectwiseReportToExcel(region_id, province_id);
+
+                    if (fileBytes != null)
+                    {
+                        string fullPath = Path.Combine(tempFolder, fileName);
+                        System.IO.File.WriteAllBytes(fullPath, fileBytes);
+
+                        updateExportReportLog(fileName, "completed");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    updateExportReportLog(fileName, "error" + ex.Message.ToString());
+                }
+            });
+
+            return Json(new { status = "started", fileName = fileName });
+        }
+
+        public void updateExportReportLog(string _filename, string _status)
+        {
+            var repo = new BLProjectExportReport().GetprojectReportByFileName(_filename, "inprogress");
+            if(_status.Contains("error"))
+            repo.error_description = _status;
+            else
+                repo.status = _status;
+            repo.completed_on = DateTime.Now;
+
+            new BLProjectExportReport().SaveProjectwiseReportLog(repo);
+        }
+
+        [HttpPost]
+        public JsonResult BindProvincesData(string region_id)
+        {
+            try
+            {
+                var data = new BLProject().GetAllProvinceProjectwise(region_id);
+
+                return Json(new { status = "OK", data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "ERROR", message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        public JsonResult CheckReportStatus(string _fileName)
+        {
+            if (_fileName != null)
+            {
+                var repo = new BLProjectExportReport().GetprojectReportByFileName(_fileName, "inprogress");
+                string path = Server.MapPath($"~/Uploads/ProjectwiseReport/{_fileName}");
+                try
+                {
+                    if (System.IO.File.Exists(path) && repo == null)
+                    {
+                        using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                            return Json(new { status = "completed" }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    return Json(new { status = "inprogress" }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { status = "error", error = "Unexpected error occurred." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+            {
+                return Json(new { status = "error", error = "file not found" }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        [HttpGet]
+        public ActionResult DownloadFinalReport(string fileName)
+        {
+            string path = Server.MapPath($"~/Uploads/ProjectwiseReport/{fileName}");
+
+            if (!System.IO.File.Exists(path))
+                return HttpNotFound();
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(path);
+
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+
+        public byte[] ExportProjectwiseReportToExcel(int region_id,int province_id)
+        {
+            var bodyData = new BLProject().GetProjectwiseFiberDistanceReport(region_id, province_id);
+
+            using (var exportData = new MemoryStream())
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Report");
+
+                // === Styles ===
+                var headerStyle = workbook.CreateCellStyle();
+                headerStyle.WrapText = true;
+                headerStyle.ShrinkToFit = true;
+                headerStyle.FillForegroundColor = IndexedColors.PaleBlue.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.VerticalAlignment = VerticalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+                var boldFont = workbook.CreateFont();
+                boldFont.IsBold = true;
+                headerStyle.SetFont(boldFont);
+
+                var dataStyle = workbook.CreateCellStyle();
+                dataStyle.WrapText = true;
+                dataStyle.FillForegroundColor = IndexedColors.LightYellow.Index;
+                dataStyle.FillPattern = FillPattern.SolidForeground;
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+
+                void CreateCellWithStyle(IRow row, int cellIndex, string value, ICellStyle style, bool isMergedRegion = false, CellRangeAddress mergeRange = null)
+                {
+                    var cell = row.CreateCell(cellIndex);
+                    cell.SetCellValue(value);
+                    cell.CellStyle = style;
+                    if (isMergedRegion && mergeRange != null)
+                    {
+                        sheet.AddMergedRegion(mergeRange);
+                        for (int r = mergeRange.FirstRow; r <= mergeRange.LastRow; r++)
+                        {
+                            var currentRow = sheet.GetRow(r) ?? sheet.CreateRow(r);
+                            for (int c = mergeRange.FirstColumn; c <= mergeRange.LastColumn; c++)
+                            {
+                                var currentCell = currentRow.GetCell(c) ?? currentRow.CreateCell(c);
+                                currentCell.CellStyle = style;
+                            }
+                        }
+                    }
+                }
+
+                var row0 = sheet.CreateRow(0);
+                row0.HeightInPoints = 20;
+
+                CreateCellWithStyle(row0, 0, "No.", headerStyle, true, new CellRangeAddress(0, 1, 0, 0));
+                CreateCellWithStyle(row0, 1, "Project code", headerStyle, true, new CellRangeAddress(0, 1, 1, 1));
+                CreateCellWithStyle(row0, 2, "City", headerStyle, true, new CellRangeAddress(0, 1, 2, 2));
+                CreateCellWithStyle(row0, 3, "District", headerStyle, true, new CellRangeAddress(0, 1, 3, 3));
+                CreateCellWithStyle(row0, 4, "Region", headerStyle, true, new CellRangeAddress(0, 1, 4, 4));
+                CreateCellWithStyle(row0, 5, "Catergory", headerStyle, true, new CellRangeAddress(0, 1, 5, 5));
+                CreateCellWithStyle(row0, 6, "Site ID", headerStyle, true, new CellRangeAddress(0, 1, 6, 6));
+                CreateCellWithStyle(row0, 7, "Site Name/Project", headerStyle, true, new CellRangeAddress(0, 1, 7, 7));
+                CreateCellWithStyle(row0, 8, "Site Address", headerStyle, true, new CellRangeAddress(0, 1, 8, 8));
+                CreateCellWithStyle(row0, 9, "OSP Distance", headerStyle, true, new CellRangeAddress(0, 1, 9, 9));
+                CreateCellWithStyle(row0, 10, "IBW Distance", headerStyle, true, new CellRangeAddress(0, 1, 10, 10));
+                CreateCellWithStyle(row0, 11, "Micro Trench Distance", headerStyle, true, new CellRangeAddress(0, 1, 11, 11));
+                CreateCellWithStyle(row0, 12, "Distance without MT", headerStyle, true, new CellRangeAddress(0, 1, 12, 12));
+                CreateCellWithStyle(row0, 13, "Total Distance", headerStyle, true, new CellRangeAddress(0, 1, 13, 13));
+                CreateCellWithStyle(row0, 14, "Network Status", headerStyle, true, new CellRangeAddress(0, 1, 14, 14));
+                CreateCellWithStyle(row0, 15, "Year", headerStyle, true, new CellRangeAddress(0, 1, 15, 15));
+                CreateCellWithStyle(row0, 16, "Month", headerStyle, true, new CellRangeAddress(0, 1, 16, 16));
+                CreateCellWithStyle(row0, 17, "Removed Year", headerStyle, true, new CellRangeAddress(0, 1, 17, 17));
+                CreateCellWithStyle(row0, 18, "Removed Month", headerStyle, true, new CellRangeAddress(0, 1, 18, 18));
+                CreateCellWithStyle(row0, 19, "Sierra Region", headerStyle, true, new CellRangeAddress(0, 1, 19, 19));
+                CreateCellWithStyle(row0, 20, "Sierra Sub office", headerStyle, true, new CellRangeAddress(0, 1, 20, 20));
+                CreateCellWithStyle(row0, 21, "OFN route details", headerStyle, true, new CellRangeAddress(0, 1, 21, 21));
+                CreateCellWithStyle(row0, 22, "As built drawing details", headerStyle, true, new CellRangeAddress(0, 0, 22, 25));
+                var row1 = sheet.CreateRow(1);
+                row1.HeightInPoints = 20;
+                CreateCellWithStyle(row1, 22, "MH", headerStyle, true, new CellRangeAddress(1, 1, 22, 22));
+                CreateCellWithStyle(row1, 23, "Pole", headerStyle, true, new CellRangeAddress(1, 1, 23, 23));
+                CreateCellWithStyle(row1, 24, "Arial Distance", headerStyle, true, new CellRangeAddress(1, 1, 24, 24));
+                CreateCellWithStyle(row1, 25, "UG distance", headerStyle, true, new CellRangeAddress(1, 1, 25, 25));
+
+
+                var keysToExtract = new List<string> { "Project_code", "City", "District", "Region", "Catergory", "site_id", "site_name", "address", "OSP_Distance", "IBW_Distance", "Micro_Trench_Distance", "Distance_without_MT", "Total_Distance", "Network_Status", "Year", "Month", "Removed_Year", "Removed_Month" };
+
+               
+
+           
+                string[] arrIgnoreColumns = { "project_code", "city", "district", "region", "catergory", "site_id", "site_name", "address", "osp_distance", "ibw_distance", "micro_trench_distance", "distance_without_mt", "total_distance", "network_status", "year", "month", "removed_year", "removed_month" };
+                for (int i = 1; i < bodyData.Count; i++)
+                {
+                    var record = bodyData[i];
+                    var recordRow = sheet.CreateRow(i+1);
+                    int cellIndex = 0;
+                    foreach (var key in record.Keys)
+                    {
+                        //if (Array.Exists(arrIgnoreColumns, col => col.Equals(key.ToUpper(), StringComparison.OrdinalIgnoreCase)))
+                        //{
+                        //    continue;
+                        //}
+                        
+                        var value = record[key] != null ? record[key] : "";
+                        if(cellIndex==0)
+                            recordRow.CreateCell(cellIndex).SetCellValue((i).ToString());
+                        
+                        recordRow.CreateCell(cellIndex+1).SetCellValue(value.ToString());
+                        recordRow.GetCell(cellIndex).CellStyle = dataStyle;
+                        cellIndex++;
+                    }
+                }
+
+
+                for (int i = 0; i <= 49; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                    int minWidth = 5000;
+                    int currentWidth = sheet.GetColumnWidth(i);
+                    if (currentWidth < minWidth)
+                    {
+                        sheet.SetColumnWidth(i, minWidth);
+                    }
+                }
+
+                workbook.Write(exportData);
+                return exportData.ToArray();
+              
+            }
+        }
+
+        #endregion
     }
 }

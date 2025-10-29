@@ -362,5 +362,38 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().DeleteProjectById(ticket_id, userId);
         }
+        public List<KeyValueDropDown> GetAllProjectwiseRegion()
+        {
+            return new DAProjectDetails().GetAllProjectwiseRegion();
+        }
+        public List<KeyValueDropDown> GetAllProvinceProjectwise(string region_id)
+        {
+            return new DAProjectDetails().GetAllProvinceProjectwise(region_id);
+        }
+       
+        public List<Dictionary<string, object>> GetProjectwiseFiberDistanceReport(int region_id,int province_id)
+        {
+            return new DAProjectDetails().GetProjectwiseFiberDistanceReport(region_id, province_id);
+        }
+    }
+
+    public class BLProjectExportReport
+    {
+        public List<ProjectwiseReportRequestLog> GetAllProvinceReport(int region_id)
+        {
+            return new DAProjectwiseExportReport().GetAllProvinceReport(region_id);
+        }
+        public ProjectwiseReportRequestLog SaveProjectwiseReportLog(ProjectwiseReportRequestLog projectwiseReportRequestLog)
+        {
+            return new DAProjectwiseExportReport().SaveProjectwiseReportLog(projectwiseReportRequestLog);
+        }
+        public ProjectwiseReportRequestLog GetprojectReportByFileName(string fileName, string status)
+        {
+            return new DAProjectwiseExportReport().GetProjectwiseReportByFileName(fileName, status);
+        }
+        public ProjectwiseReportRequestLog GetBOQReportByFileName(string fileName)
+        {
+            return new DAProjectwiseExportReport().GetBOQReportByFileName(fileName);
+        }
     }
 }

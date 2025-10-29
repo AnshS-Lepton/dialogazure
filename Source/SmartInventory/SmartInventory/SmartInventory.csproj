@@ -22,7 +22,8 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1649,6 +1650,7 @@
     <Content Include="Content\Templates\Bulk\VendorSpecificationColumnMapping.xml" />
     <Content Include="dialog_script-19-11-2024.sql" />
     <Content Include="DLL\System.DirectoryServices.dll" />
+    <Content Include="MigrationScripts\29-10-2025.sql" />
     <Content Include="MigrationScripts\04-07-2025.sql" />
     <Content Include="MigrationScripts\08-07-2025_loop_upload_by_cable.sql" />
     <Content Include="MigrationScripts\23-06-2025.sql" />
@@ -2490,6 +2492,7 @@
     <Content Include="Views\Report\_SiteBomBoqList.cshtml" />
     <Content Include="Views\BackBonePlan\_SiteList.cshtml" />
     <Content Include="Views\BackBonePlan\_SiteHistory.cshtml" />
+    <Content Include="Views\Report\_ProjectwiseReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
