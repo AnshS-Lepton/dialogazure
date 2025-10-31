@@ -7587,29 +7587,30 @@ var Main = function () {
 
 
         $(app.DE.chkAll).change(function () {
-            //  $("input:checkbox").prop('checked', $(this).prop("checked")); // 
-            //;
-            if (this.checked) {
-                //$('.network').find('input[type="checkbox"]').prop("checked", true);
-                //$("input[name='networkALL']:checkbox").prop('checked', true);
+            var isChecked = $(this).is(":checked");
 
-                // $('.network').find('input[type="checkbox"]').filter("[data-networktype!='L']").prop("checked", true);
-                $('.network').find('input[type="checkbox"]').filter("[data-networktype!='L']").not(":disabled").prop("checked", true);
-                $("input[name='networkALL']:checkbox").filter("[data-all!='L']").not(":disabled").prop('checked', true);
+            if (isChecked) {
+                // ✅ Select all checkboxes EXCEPT those inside .segmenttree
+                $('.network').find('input[type="checkbox"]')
+                    .filter("[data-networktype!='L']")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop("checked", true);
 
+                $("input[name='networkALL']:checkbox")
+                    .filter("[data-all!='L']")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop('checked', true);
 
-                $(".checkbox-customgrp").not(":disabled").prop('checked', true)
+                $(".checkbox-customgrp").not(":disabled").prop('checked', true);
             }
             else {
-                $('.network').find('input[type="checkbox"]').prop("checked", false);
+                // ✅ Uncheck everything (you can also exclude segmenttree here if you wish)
+                $('.network').find('input[type="checkbox"]').not(":disabled").prop("checked", false);
                 $("input[name='networkALL']:checkbox").not(":disabled").prop('checked', false);
-                $(".checkbox-customgrp").not(":disabled").prop('checked', false)
-
-
+                $(".checkbox-customgrp").not(":disabled").prop('checked', false);
             }
-
-
-
         });
 
         $(app.DE.checkAllLandBaseLayers).change(function () {
