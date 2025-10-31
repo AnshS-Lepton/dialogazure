@@ -1035,6 +1035,7 @@ namespace Models
         public List<int> lstSegment { get; set; }
 
         public int? route_id { get; set; }
+        public string name { get; set; }
     }
          public class TopSegmentCableMapping
     {

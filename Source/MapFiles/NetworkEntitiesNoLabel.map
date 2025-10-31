@@ -1684,8 +1684,26 @@ LAYER
 		END	
 
 		CLASS
+			NAME 'POD'
+            EXPRESSION ('[pod_type]'  eq 'Core')  			
+			STYLE
+				SYMBOL "icons/Planned/POD.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END			
+		END	
+		CLASS
+			NAME 'POD'
+            EXPRESSION ('[pod_type]'  eq 'Access')  			
+			STYLE
+				SYMBOL "icons/Planned/POD.png" 
+				SIZE 25
+				OFFSET 0 -5				
+			END			
+		END	
+		CLASS
 		NAME 'POD'
-		EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'true')
+		EXPRESSION ('[network_status]'  eq 'P' AND ('[is_agg_site]'  eq 'true' or '[pod_type]'  eq 'Aggregate' ))
 		STYLE
 			SYMBOL "icons/Planned/Podag.png"
 			SIZE 25
@@ -1694,7 +1712,7 @@ LAYER
 	END
 	CLASS
 		NAME 'POD'
-		EXPRESSION ('[network_status]'  eq 'P' AND '[is_agg_site]'  eq 'false')
+		EXPRESSION ('[network_status]'  eq 'P' AND ('[is_agg_site]'  eq 'false' or '[pod_type]'  eq 'Aggregate' ))
 		STYLE
 			SYMBOL "icons/Planned/POD.png"
 			SIZE 25
@@ -1703,7 +1721,7 @@ LAYER
 	END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'true')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND ('[is_agg_site]'  eq 'true' or '[pod_type]'  eq 'Aggregate' ))  			
 			STYLE
 				SYMBOL "icons/AsBuild/Podag.png" 
 				SIZE 21			
@@ -1712,7 +1730,7 @@ LAYER
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'A' AND '[is_agg_site]'  eq 'false')  			
+            EXPRESSION ('[network_status]'  eq 'A' AND ('[is_agg_site]'  eq 'false' or '[pod_type]'  eq 'Aggregate' ))  			
 			STYLE
 				SYMBOL "icons/AsBuild/POD.png" 
 				SIZE 21			
@@ -1721,7 +1739,7 @@ LAYER
 		END
 		CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'true')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND ('[is_agg_site]'  eq 'true' or '[pod_type]'  eq 'Aggregate' ))  			
 			STYLE
 				SYMBOL "icons/Dorment/Podag.png" 
 				SIZE 25
@@ -1731,7 +1749,7 @@ LAYER
 		END	
 CLASS
 			NAME 'POD'
-            EXPRESSION ('[network_status]'  eq 'D' AND '[is_agg_site]'  eq 'false')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND ('[is_agg_site]'  eq 'false' or '[pod_type]'  eq 'Aggregate' ))  			
 			STYLE
 				SYMBOL "icons/Dorment/POD.png" 
 				SIZE 25

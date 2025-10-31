@@ -92,6 +92,7 @@ var Main = function () {
     this.filterRoutevalue = '';
     this.projectcodevalue = '0';
     this.ownership = '0';
+    this.pod_type = ''; 
     this.primary_pod_system_id = '0';
     this.secondary_pod_system_id = '0';
     this.planningcodevalue = '0';
@@ -9347,6 +9348,7 @@ var Main = function () {
         app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
         app.secondary_pod_system_id = $("#ddlSecondaryPOD").val();
         app.pod_system_id = $("#ddlPrimaryPOD").val();
+        app.pod_type = $("#advFilterddlPODType").val();
 
         if (app.pod_system_id != "" && app.pod_system_id != undefined) {
             if (app.filterPODvalue == "") {
@@ -9354,7 +9356,15 @@ var Main = function () {
             }
 
         }
-
+        if (app.pod_type != undefined) {
+            if (app.pod_type != "") {
+                if (app.filterPODvalue == "") {
+                    app.filterPODvalue += " ([pod_type] = '" + app.pod_type + "')";
+                } else {
+                    app.filterPODvalue += "and ([pod_type] = '" + app.pod_type + "')";
+                }
+            }
+        }
         //if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
         //    app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
         //}
@@ -31196,6 +31206,7 @@ var Main = function () {
                 if (eCheck) {
                     app.RemoveOldFeature();
                     //;
+                    $("#dvUtilizationContainer").empty();
                     var utilData = entitytitle + " (" + networkstatus + "):";
                     if (entitytitle != "Duct") {
                         $("#dvUtilizationShowonmap").show();
@@ -31291,6 +31302,7 @@ var Main = function () {
 
     this.UtilizationFilterReportShowOnMap = function (networkStatus, utilizationType) {
         debugger;
+        if (utilizationType != "") {
         ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
             network_status: networkStatus, utilizationType: utilizationType
         }, true, function (resps) {
@@ -31312,6 +31324,11 @@ var Main = function () {
                 });
             }
         }, true, true);
+        }else{
+            si.map.data.forEach(function (feature) {
+                si.map.data.remove(feature);
+            });
+        }
     }
 
     this.UtilizationReportShowOnMap = function (networkStatus, utilizationType) {
