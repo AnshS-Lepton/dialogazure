@@ -23211,7 +23211,7 @@ var Main = function () {
         if (filterType == "DisplayLayer") {
             $("#infoTable tr").hide();
             var checkedlyrs = [];
-            $.each($(si.DE.ulNetworkLayers + " li .mainLyr:checked"), function () {
+            $.each($(si.DE.ulNetworkLayers + " li .mainLyr:checked").not('.segmenttree'), function () {
                 checkedlyrs.push($(this).attr('data-layername').toUpperCase());
             });
             if (drpVal.toLowerCase() != 'all') {
