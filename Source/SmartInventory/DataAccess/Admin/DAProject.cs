@@ -1005,15 +1005,12 @@ namespace DataAccess.Admin
             if (string.IsNullOrEmpty(siteType))
             {
                  sitname = repo.GetAll(m =>
-                    (m.site_id.ToString().Contains(site.ToUpper()) ||
-                    m.site_name.ToUpper().Contains(site.ToUpper()))
-                ).ToList();
+                    (m.site_id.ToString().Contains(site))).ToList();
             }
             else
             {
                 sitname = repo.GetAll(m =>
-                    (m.site_id.ToString().Contains(site.ToUpper()) ||
-                    m.site_name.ToUpper().Contains(site.ToUpper())) &&
+                    (m.site_id.ToString().Contains(site)) &&
                     m.pod_type == siteType).ToList();
             }
             return sitname;

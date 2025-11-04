@@ -92,6 +92,7 @@ var Main = function () {
     this.filterRoutevalue = '';
     this.projectcodevalue = '0';
     this.ownership = '0';
+    this.pod_type = ''; 
     this.primary_pod_system_id = '0';
     this.secondary_pod_system_id = '0';
     this.planningcodevalue = '0';
@@ -7586,29 +7587,30 @@ var Main = function () {
 
 
         $(app.DE.chkAll).change(function () {
-            //  $("input:checkbox").prop('checked', $(this).prop("checked")); // 
-            //;
-            if (this.checked) {
-                //$('.network').find('input[type="checkbox"]').prop("checked", true);
-                //$("input[name='networkALL']:checkbox").prop('checked', true);
+            var isChecked = $(this).is(":checked");
 
-                // $('.network').find('input[type="checkbox"]').filter("[data-networktype!='L']").prop("checked", true);
-                $('.network').find('input[type="checkbox"]').filter("[data-networktype!='L']").not(":disabled").prop("checked", true);
-                $("input[name='networkALL']:checkbox").filter("[data-all!='L']").not(":disabled").prop('checked', true);
+            if (isChecked) {
+                // ✅ Select all checkboxes EXCEPT those inside .segmenttree
+                $('.network').find('input[type="checkbox"]')
+                    .filter("[data-networktype!='L']")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop("checked", true);
 
+                $("input[name='networkALL']:checkbox")
+                    .filter("[data-all!='L']")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop('checked', true);
 
-                $(".checkbox-customgrp").not(":disabled").prop('checked', true)
+                $(".checkbox-customgrp").not(":disabled").prop('checked', true);
             }
             else {
-                $('.network').find('input[type="checkbox"]').prop("checked", false);
+                // ✅ Uncheck everything (you can also exclude segmenttree here if you wish)
+                $('.network').find('input[type="checkbox"]').not(":disabled").prop("checked", false);
                 $("input[name='networkALL']:checkbox").not(":disabled").prop('checked', false);
-                $(".checkbox-customgrp").not(":disabled").prop('checked', false)
-
-
+                $(".checkbox-customgrp").not(":disabled").prop('checked', false);
             }
-
-
-
         });
 
         $(app.DE.checkAllLandBaseLayers).change(function () {
@@ -9347,6 +9349,7 @@ var Main = function () {
         app.primary_pod_system_id = $("#ddlPrimaryPOD").val();
         app.secondary_pod_system_id = $("#ddlSecondaryPOD").val();
         app.pod_system_id = $("#ddlPrimaryPOD").val();
+        app.pod_type = $("#advFilterddlPODType").val();
 
         if (app.pod_system_id != "" && app.pod_system_id != undefined) {
             if (app.filterPODvalue == "") {
@@ -9354,7 +9357,15 @@ var Main = function () {
             }
 
         }
-
+        if (app.pod_type != undefined) {
+            if (app.pod_type != "") {
+                if (app.filterPODvalue == "") {
+                    app.filterPODvalue += " ([pod_type] = '" + app.pod_type + "')";
+                } else {
+                    app.filterPODvalue += "and ([pod_type] = '" + app.pod_type + "')";
+                }
+            }
+        }
         //if (app.primary_pod_system_id != "" && app.primary_pod_system_id != undefined) {
         //    app.filterPODvalue += " ([primary_pod_system_id] =" + app.primary_pod_system_id + ")";
         //}
@@ -23200,7 +23211,7 @@ var Main = function () {
         if (filterType == "DisplayLayer") {
             $("#infoTable tr").hide();
             var checkedlyrs = [];
-            $.each($(si.DE.ulNetworkLayers + " li .mainLyr:checked"), function () {
+            $.each($(si.DE.ulNetworkLayers + " li .mainLyr:checked").not('.segmenttree'), function () {
                 checkedlyrs.push($(this).attr('data-layername').toUpperCase());
             });
             if (drpVal.toLowerCase() != 'all') {
@@ -31204,6 +31215,7 @@ var Main = function () {
                 if (eCheck) {
                     app.RemoveOldFeature();
                     //;
+                    $("#dvUtilizationContainer").empty();
                     var utilData = entitytitle + " (" + networkstatus + "):";
                     if (entitytitle != "Duct") {
                         $("#dvUtilizationShowonmap").show();
@@ -31299,6 +31311,7 @@ var Main = function () {
 
     this.UtilizationFilterReportShowOnMap = function (networkStatus, utilizationType) {
         debugger;
+        if (utilizationType != "") {
         ajaxReq('Report/ShowUtilizationOnMapBasedOnNetworkStatus', {
             network_status: networkStatus, utilizationType: utilizationType
         }, true, function (resps) {
@@ -31320,6 +31333,11 @@ var Main = function () {
                 });
             }
         }, true, true);
+        }else{
+            si.map.data.forEach(function (feature) {
+                si.map.data.remove(feature);
+            });
+        }
     }
 
     this.UtilizationReportShowOnMap = function (networkStatus, utilizationType) {

@@ -400,6 +400,10 @@
 
         var SelectedPurposeIds = '@Model.objReportFilters.SelectedPurposeIds';
         $("#ddlPurposeCode").val(SelectedPurposeIds.split(',')).trigger("chosen:updated");
+
+        $('#closeModalPopup').on('click', function () {
+            $("#dvUtilizationContainer").empty();
+        });
     });
 
     $('#btnUtilizationClear').on("click", function () {
