@@ -177,7 +177,7 @@
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
                 return false;
             }
-            else if ($('#ddlLayerColumns option:selected').text() == '-Select-' && $('#txtSearchText').val() != "") {
+            else if ($('#ddlLayerColumns option:selected').text() == '-- Select --' && $('#txtSearchText').val() != "") {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
                 return false;
             }
@@ -185,7 +185,7 @@
             let provinces = $('#ddlProvinces').val() || [];
 
             if (regions.length === 0 && provinces.length === 0 && $('#txtSearchText').val() == "" && $('#ddlLayerColumns option:selected').val() =="") {
-                alert("Please select at least one Network ID to generate report.");
+                alert("Please select at least one Network ID/Site ID to generate report.");
                 return false;
             } 
             //else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "" ) {

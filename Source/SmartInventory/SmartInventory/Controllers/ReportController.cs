@@ -5911,6 +5911,106 @@ namespace SmartInventory.Controllers
             }
 
         }
+        //public void GetShapeFile(DataSet ds, string fileNameValue)
+        //{
+        //    string entity = string.Empty;
+        //    string shapeFilePath = System.Web.HttpContext.Current.Request.PhysicalApplicationPath + @"public\Attachments\SI_Shape_" + Guid.NewGuid().ToString().Substring(0, 8);//Environment.GetEnvironmentVariable("USERPROFILE") + @"\" + "Downloads" + @"\SI_Shape_" + Guid.NewGuid().ToString().Substring(0, 8);
+        //                                                                                                                                                                        //string entity = objExportEntitiesReport.objReportFilters.layerName;
+        //    if (Directory.Exists(shapeFilePath).Equals(false))
+        //        Directory.CreateDirectory(shapeFilePath);
+        //    for (int j = 0; j < ds.Tables.Count; j++)
+        //    {
+        //        DataTable dtReport = ds.Tables[j];
+        //        entity = dtReport.TableName;
+        //        if (dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).ToList().Count > 0)
+        //        {
+        //            dtReport = dtReport.AsEnumerable().Where(x => x.Field<string>("geom") != null).CopyToDataTable();
+        //        }
+        //        else
+        //            dtReport.Clear();
+        //        if (dtReport.Rows.Count > 0)
+        //        {
+        //            var features = new List<Feature>();
+        //            string columnName = string.Empty, columnNameList = string.Empty;
+
+        //            foreach (DataRow row in dtReport.Rows)
+        //            {
+        //                //add shape attribute and value
+        //                var geomFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        //                var wktReader = new WKTReader(geomFactory);
+        //                var geometry = wktReader.Read(row["geom"].ToString());
+        //                var attributesTable = new AttributesTable();
+        //                columnNameList = string.Empty;
+        //                foreach (DataColumn column in dtReport.Columns)
+        //                {
+        //                    if (!column.ColumnName.Equals("sp_geometry") && !column.ColumnName.Equals("geom"))
+        //                    {
+        //                        columnName = column.ColumnName.Length > 10 ? column.ColumnName.Substring(0, 10) : column.ColumnName; //column name allow only 11 charaters
+        //                        if (columnNameList.Contains("," + columnName + ","))
+        //                        {
+        //                            int i = 1;
+        //                            while (true)
+        //                            {
+        //                                columnName = column.ColumnName.Substring(0, 9) + i.ToString();
+        //                                if (!columnNameList.Contains(columnName))
+        //                                {
+        //                                    break;
+        //                                }
+        //                                i++;
+        //                            }
+        //                        }
+        //                        columnNameList = columnNameList + "," + columnName + ",";
+        //                        attributesTable.AddAttribute(columnName, row[column.ColumnName].ToString());
+        //                    }
+        //                }
+        //                features.Add(new Feature(geometry, attributesTable));
+        //            }
+
+        //            var shapeFileName = shapeFilePath + "\\" + entity;
+        //            var shapeFilePrjName = Path.Combine(shapeFilePath, entity + ".prj");
+
+        //            // Create the shapefile
+        //            var outGeomFactory = GeometryFactory.Default;
+        //            var writer = new ShapefileDataWriter(shapeFileName, outGeomFactory);
+        //            var outDbaseHeader = ShapefileDataWriter.GetHeader(features[0], features.Count);
+        //            writer.Header = outDbaseHeader;
+        //            writer.Write(features);
+
+        //            // Create the projection file
+        //            using (var streamWriter = new StreamWriter(shapeFilePrjName))
+        //            {
+        //                streamWriter.Write(GeographicCoordinateSystem.WGS84.WKT);
+        //            }
+
+        //        }
+        //        dtReport.Clear();
+        //    }
+
+        //    string zipshapePath = shapeFilePath + ".zip";//result.Replace("success:", "");
+        //                                                 //zip the shape file
+        //    using (var zip = new ZipFile())
+        //    {
+        //        //zip.UseZip64WhenSaving = Zip64Option.Always;
+        //        //zip.CompressionMethod = CompressionMethod.BZip2;
+        //        zip.AddDirectory(shapeFilePath);
+        //        zip.Save(zipshapePath);
+        //    }
+        //    if (System.IO.File.Exists(zipshapePath))
+        //    {
+        //        string fileName = Path.GetFileName(zipshapePath);
+        //        Directory.Delete(shapeFilePath, true);
+        //    }
+        //    FileInfo file = new FileInfo(zipshapePath);
+        //    Response.Clear();
+        //    Response.AddHeader("Content-Disposition", "attachment; filename=" + fileNameValue + "_" + DateTimeHelper.Now.ToString("ddMMyyyy") + " - " + DateTimeHelper.Now.ToString("HHmmss") + ".zip");
+        //    Response.AddHeader("Content-Length", file.Length.ToString());
+        //    Response.ContentType = "application/zip";
+        //    Response.WriteFile(file.FullName);
+        //    Response.Flush();
+        //    Response.End();
+        //    System.IO.File.Delete(zipshapePath);
+        //}
+
         public void GetShapeFile(DataSet ds, string fileNameValue)
         {
             string entity = string.Empty;
@@ -6010,6 +6110,7 @@ namespace SmartInventory.Controllers
             Response.End();
             System.IO.File.Delete(zipshapePath);
         }
+
         public void GetShapeFileNew(DataSet ds, string fileNameValue, string ftpfilePath, string ftpUserName, string ftpPassword, ref string tempFileName)
         {
             string entity = string.Empty;

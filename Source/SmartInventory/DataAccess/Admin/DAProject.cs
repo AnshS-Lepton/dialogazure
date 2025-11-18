@@ -998,18 +998,18 @@ namespace DataAccess.Admin
             return sitname;
         }
 
-        public List<PODMaster> getSiteList(string site,string siteType)
+        public List<PODMaster> getSiteList(string site, string siteType)
         {
             List<PODMaster> sitname = new List<PODMaster>();
             if (string.IsNullOrEmpty(siteType))
             {
-                 sitname = repo.GetAll(m =>
-                    (m.site_id.ToString().Contains(site))).ToList();
+                sitname = repo.GetAll(m =>
+                   (m.site_id.ToString().ToLower().Contains(site.ToLower()))).ToList();
             }
             else
             {
                 sitname = repo.GetAll(m =>
-                    (m.site_id.ToString().Contains(site)) &&
+                    (m.site_id.ToString().ToLower().Contains(site.ToLower())) &&
                     m.pod_type == siteType).ToList();
             }
             return sitname;
