@@ -7606,10 +7606,20 @@ var Main = function () {
                 $(".checkbox-customgrp").not(":disabled").prop('checked', true);
             }
             else {
-                // ✅ Uncheck everything (you can also exclude segmenttree here if you wish)
-                $('.network').find('input[type="checkbox"]').not(":disabled").prop("checked", false);
-                $("input[name='networkALL']:checkbox").not(":disabled").prop('checked', false);
-                $(".checkbox-customgrp").not(":disabled").prop('checked', false);
+                $('.network').find('input[type="checkbox"]')
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop("checked", false);
+
+                $("input[name='networkALL']:checkbox")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop('checked', false);
+
+                $(".checkbox-customgrp")
+                    .not(":disabled")
+                    .not('.mainLyr.checkbox-custom.treeview.segmenttree')
+                    .prop('checked', false);
             }
         });
 
@@ -8902,7 +8912,8 @@ var Main = function () {
 
         if (Pid != 'L') {
             if (cb.checked) {
-                $(".layers .network .checkbox-custom").prop("checked", true);
+                $(".layers .network .checkbox-custom").not('.mainLyr.checkbox-custom.treeview.segmenttree').prop("checked", true);
+                //$(".layers .network .checkbox-custom").prop("checked", true);
                 $(".checkbox-customgrp").not(":disabled").prop("checked", true);
                 $(".chknetwork-" + Pid).not(":disabled").prop('checked', true);
 
@@ -8915,7 +8926,7 @@ var Main = function () {
 
         if (Pid == 'L') {
             if (cb.checked) {
-                $(".layers .network .checkbox-custom").prop("checked", true);
+                $(".layers .network .checkbox-custom").not('.mainLyr.checkbox-custom.treeview.segmenttree').prop("checked", true);
                 $(".checkbox-customgrp").not(":disabled").prop("checked", true);
                 $(".chknetwork-" + Pid).not(":disabled").prop('checked', true);
                 $(".checkAll-" + Pid).not(":disabled").prop('checked', true);
@@ -8940,7 +8951,7 @@ var Main = function () {
 
         } else if (Pid == 'L' && $('.checkbox-custom1:checkbox:unchecked').filter("[data-all!='L']").length == $('.checkbox-custom1').filter("[data-all!='L']").length) {
             if (cb.checked) {
-                $(".layers .network .checkbox-custom").prop("checked", true);
+                $(".layers .network .checkbox-custom").not('.mainLyr.checkbox-custom.treeview.segmenttree').prop("checked", true);
                 $(".checkbox-customgrp").prop("checked", true);
                 $(".chknetwork-" + Pid).not(":disabled").prop('checked', true);
                 if ($('.checkbox-custom1:checkbox:unchecked').filter("[data-all!='L']").length == $('.checkbox-custom1').filter("[data-all!='L']").length) {
@@ -30910,29 +30921,45 @@ var Main = function () {
         }
     }
 
-    this.ShowOnMapSegmentlayer = function (_regionId, _segmentLayerId) {
+     this.ShowOnMapSegmentlayer = function (_regionId, _segmentLayerId) {
         debugger;
         app.clearEditObj();
         removeOldMarkers();
+
+        // Handle space in ID
         let selector = _segmentLayerId.includes(' ')
             ? "[id='" + _segmentLayerId + "']"
             : "#" + _segmentLayerId;
 
         let $segmentCheckbox = $(selector);
         let $regionCheckbox = $('#' + _regionId);
+
         $segmentCheckbox.prop('checked', true);
+
+        // Get IDs
         let segmentId = $segmentCheckbox.data('segmentid');
         let regionId = $regionCheckbox.data('segregionid');
+
+        let parentGroup = $segmentCheckbox.data('parent-group'); // same as data-parent-group in markup
+        let $childCheckboxes = $("input.segmenttree[data-parent-group='" + parentGroup + "']");
+
+        let allChecked = $childCheckboxes.length > 0 &&
+            $childCheckboxes.length === $childCheckboxes.filter(":checked").length;
+
+        if (allChecked) {
+            $regionCheckbox.prop('checked', true);
+        }
+
         showProgress();
         ajaxReq('RegionProvince/GetSegmentGeomDetails', {
-            segmentId: segmentId, regionId: regionId
-        }, true,
-            function (resp) {
-                app.ClearRegionProvinceFromMap();
-                app.fitElementOnMap(resp);
-                hideProgress();
-            });
-    }
+            segmentId: segmentId,
+            regionId: regionId
+        }, true, function (resp) {
+            app.ClearRegionProvinceFromMap();
+            app.fitElementOnMap(resp);
+            hideProgress();
+        });
+    };
 
     this.SaveRegionProvinceBoundary = function (event) {
         showProgress();
