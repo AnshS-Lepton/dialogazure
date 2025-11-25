@@ -160,6 +160,7 @@ namespace Models
         public string is_middle_point { get; set; }
         public double fraction { get; set; }
         public double loop_length { get; set; }
+        public string entity_name { get; set; }
         [NotMapped]
         public int entity_count { get; set; }
         [NotMapped]

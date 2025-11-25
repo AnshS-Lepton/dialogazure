@@ -310,7 +310,7 @@ namespace BusinessLogics.Admin
         {
             return new DAPodMaster().getExistingSegmentDetails(regionId, agg1_site_id, agg2_site_id, route, user_id);
         }
-        public List<PODMaster> updateSiteDetails(List<PODMaster> PODMaster)
+        public List<SiteImportLog> updateSiteDetails(List<PODMaster> PODMaster)
         {
             return new DASiteDetails().UpdateSiteDetails(PODMaster);
         }

@@ -213,10 +213,10 @@ namespace SmartInventory.Controllers
                 int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
                 if (user_id != 0)
                 {
-                    if (objPlan.is_loop_required == true && objPlan.is_loop_update == false)
-                    {
-                        new BLtemp_auto_network_plan().UpdateLoopLengthByPlanId(objPlan.temp_plan_id,objPlan.loop_length);
-                    }
+                    //if (objPlan.is_loop_required == true && objPlan.is_loop_update == false)
+                    //{
+                    //    new BLtemp_auto_network_plan().UpdateLoopLengthByPlanId(objPlan.temp_plan_id,objPlan.loop_length);
+                    //}
                     objPlan.created_by = user_id;
                     //objPlan = new BLPlan().SaveNetworkPlanning(objPlan);
 

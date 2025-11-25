@@ -98,6 +98,45 @@ namespace SmartInventory.Controllers
                 return Json(new { strReturn = objResp[0].message, msg = "false" }, JsonRequestBehavior.AllowGet);
             }
         }
+        public ActionResult DeleteSproutPlanById(int planId,string networkId)
+        {
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            var objResp = new BLPlan().DeleteSproutPlanById(planId, user_id, networkId);           
+            if (objResp[0].status)
+            {
+                return Json(new { strReturn = objResp[0].message, msg = "OK" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { strReturn = objResp[0].message, msg = "false" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult ConvertToAsbuiltNetwork(int planId)
+        {
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            var objResp = new BLPlan().ConvertToAsbultBackboneNetwork(planId, user_id);
+            if (objResp[0].status)
+            {
+                return Json(new { message = objResp[0].message, status = "OK" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { message = objResp[0].message, status = "false" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult ConvertToPlannedNetwork(int planId)
+        {
+            int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            var objResp = new BLPlan().ConvertToPlannedBackboneNetwork(planId, user_id);
+            if (objResp[0].status)
+            {
+                return Json(new { message = objResp[0].message, status = "OK" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { message = objResp[0].message, status = "false" }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         public PartialViewResult GetBackbonePlanHistoryData(ModelBackbonePlanningDetails objfiledetail)
         {

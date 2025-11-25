@@ -38,7 +38,14 @@
                     @grid.GetHtml(
                         tableStyle: "stickyTh",
                         htmlAttributes: new { id = "tblNearestSiteGrid" },
-                        columns: grid.Columns(                           
+                        columns: grid.Columns(
+                                                        grid.Column(
+                                header: "Select",
+                                format: @<text>
+                                        <input type="checkbox" name="select_site" id="@item.id-line-geom" value="@item.network_id" class="row-checkbox" checked onchange="backbonedata.bindNearestSites()" />
+                                </text>,
+canSort: false
+),
 grid.Column("site_id", "Site Id", format: @<text><span data-site-id="@item.site_id">@item.site_id</span></text>),
 grid.Column("site_name", "Site Name", format: @<text><span data-site-name="@item.site_name">@item.site_name</span></text>),
 grid.Column("network_id", "Network Id", format: @<text>@item.network_id</text>),
@@ -51,6 +58,7 @@ grid.Column("sprout_route_length", "Route Length", format: @<text> <span id="rou
                     @Html.Hidden("col", grid.SortColumn)
                 </div>
             </div>
+            <div id="dvPlanId" style="display:none;">@Model.plan_id</div>
         }
         else
         {
@@ -60,3 +68,44 @@ grid.Column("sprout_route_length", "Route Length", format: @<text> <span id="rou
         }
     
 </div>
+<script>
+    $(document).ready(function () {
+        $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' disabled />");
+
+        // Individual checkbox click
+        $(document).on('change', '.row-checkbox', function () {
+            let checkboxEl = this;
+            const isChecked = $(this).is(':checked');
+            let planId = $('#dvPlanId').text();
+            let networkId = $(this).val(); 
+            debugger;
+            if (!isChecked) {
+          
+                    debugger;
+                backbonedata.deleteSproutSitePlan(planId, networkId, checkboxEl);
+                    
+                } else {
+                    $(this).prop("checked", true); 
+                    return;
+                }
+            updateSelectAllCheckbox();
+        });
+
+        $(document).on('change', '.sprout-dropdown', function () {
+            const $row = $(this).closest('tr');
+            if ($row.find('.row-checkbox').is(':checked')) {
+                backbonedata.bindNearestSites();
+            }
+        });
+
+        updateSelectAllCheckbox();
+    });
+
+    function updateSelectAllCheckbox() {
+        const totalCheckboxes = $(".row-checkbox").length;
+        const checkedCount = $(".row-checkbox:checked").length;
+        const allChecked = totalCheckboxes > 0 && checkedCount === totalCheckboxes;
+
+        $("#chkSelectAll").prop("checked", allChecked);
+    }
+</script>

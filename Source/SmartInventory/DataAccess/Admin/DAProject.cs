@@ -1098,9 +1098,10 @@ namespace DataAccess.Admin
     }
     public class DASiteDetails : Repository<PODMaster>
     {
-        public List<PODMaster> UpdateSiteDetails(List<PODMaster> pODMasterList)
+        public List<SiteImportLog> UpdateSiteDetails(List<PODMaster> pODMasterList)
         {
             List<PODMaster> updatedRecords = new List<PODMaster>();
+            List<SiteImportLog> siteImportLog = new List<SiteImportLog>();
 
             try
             {
@@ -1111,29 +1112,54 @@ namespace DataAccess.Admin
 
                     if (existingRecord != null)
                     {
-                        // Update fields
-                        existingRecord.site_name = pod.site_name;
-                        existingRecord.maximum_cost = pod.maximum_cost;
-                        existingRecord.project_category = pod.project_category;
-                        existingRecord.priority = pod.priority;
-                        existingRecord.cable_plan_cores = pod.cable_plan_cores;
-                        existingRecord.fiber_link_type_linkid_prefix = pod.fiber_link_type_linkid_prefix;
-                        existingRecord.comment = pod.comment;
-                        existingRecord.plan_cost = pod.plan_cost;
-                        existingRecord.fiber_distance = pod.fiber_distance;
-                        existingRecord.fiber_link_type = pod.fiber_link_type;
-                        existingRecord.fiber_link_code = pod.fiber_link_code;
-                        existingRecord.is_site_imported = true;
-                        //// newly added fields
-                        //existingRecord.destination_site_id = pod.destination_site_id;
-                        //existingRecord.destination_port_type = pod.destination_port_type;
-                        //existingRecord.no_of_cores = pod.no_of_cores;
-                        //existingRecord.project_id_dialog = pod.project_id_dialog;
-                       
-                        // Update in DB
-                        repo.Update(existingRecord);
+                        if (existingRecord.site_name.Trim() != pod.site_name.Trim())
+                        {
+                            siteImportLog.Add(
+                                      new SiteImportLog
+                                     {
+                                       site_id = pod.site_id,
+                                       site_name = pod.site_name,
+                                       error_msg = "Site name mismatch with existing record"
+                                      }
+                           );
+                        }
+                        else
+                        {
+                            // Update fields
+                            existingRecord.site_name = pod.site_name;
+                            existingRecord.maximum_cost = pod.maximum_cost;
+                            existingRecord.project_category = pod.project_category;
+                            existingRecord.priority = pod.priority;
+                            existingRecord.cable_plan_cores = pod.cable_plan_cores;
+                            existingRecord.fiber_link_type_linkid_prefix = pod.fiber_link_type_linkid_prefix;
+                            existingRecord.comment = pod.comment;
+                            existingRecord.plan_cost = pod.plan_cost;
+                            existingRecord.fiber_distance = pod.fiber_distance;
+                            existingRecord.fiber_link_type = pod.fiber_link_type;
+                            existingRecord.fiber_link_code = pod.fiber_link_code;
+                            existingRecord.is_site_imported = true;
+                            //// newly added fields
+                            //existingRecord.destination_site_id = pod.destination_site_id;
+                            //existingRecord.destination_port_type = pod.destination_port_type;
+                            //existingRecord.no_of_cores = pod.no_of_cores;
+                            //existingRecord.project_id_dialog = pod.project_id_dialog;
 
-                        updatedRecords.Add(pod);
+                            // Update in DB
+                            repo.Update(existingRecord);
+
+                            updatedRecords.Add(pod);
+                        }
+                    }
+                    else
+                    {
+                        siteImportLog.Add(
+                            new SiteImportLog
+                            {
+                                site_id = pod.site_id,
+                                site_name = pod.site_name,
+                                error_msg = "Site ID does not exist"
+                            }
+                        );
                     }
                 }
             }
@@ -1144,7 +1170,7 @@ namespace DataAccess.Admin
                 throw;
             }
 
-            return updatedRecords;
+            return siteImportLog;
         }
 
         public PODMaster UpdateSiteProjectAdditionDetails(PODMaster PODMaster)
