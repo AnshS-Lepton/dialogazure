@@ -105,7 +105,7 @@ namespace SmartInventory.Controllers
 				//if (objUserDetails.manager_id == Convert.ToInt32(Session["user_id"]))
 				if (manager_id > 0)
 				{
-					if(objTicketMaster.project_ids.Length > 1) { 
+					if(!string.IsNullOrEmpty(objTicketMaster.project_ids)) { 
                     string projectIds = objTicketMaster.project_ids ?? "";
                     string[] arrProjectIds = projectIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 

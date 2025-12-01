@@ -78,14 +78,14 @@
                          grid.Column(
                                 header: "Action",
                                 format: @<text>
-                                        <input type="checkbox" title="select Imported Site"
+                                        <input type="checkbox" title="select Imported Site" style="margin-right: 3px;margin-left: 3px;"
                                                name="select_site"
                                                id="@item.project_id"
                                                value="@item.project_id"
                                                class="row-checkbox dvsiteAward"
                                                data-geom="@item.site_geom" />
-                                        <i id="Edit_@item.project_id" title="Edit Project"  value="@item.project_id" onclick ="si.projectDetails('@item.project_id');" class="fa fa-edit"></i>
-                                        <i id="Delete_@item.project_id" title="Delete Project" value="@item.project_id" class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" onclick ="si.deleteProjectDetails(@item.id);"></i>
+                                        <i id="Edit_@item.project_id" title="Edit Project" style="margin-right: 3px;margin-left: 5px;" value="@item.project_id" onclick ="si.projectDetails('@item.project_id');" class="fa fa-edit"></i>
+                                        <i id="Delete_@item.project_id" title="Delete Project" style="margin-right: 3px;margin-left: 3px;" value="@item.project_id" class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" onclick ="si.deleteProjectDetails(@item.id);"></i>
                                 </text>,
              canSort: false
              ),

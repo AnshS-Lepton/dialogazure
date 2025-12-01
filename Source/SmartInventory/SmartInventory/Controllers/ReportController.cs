@@ -15363,7 +15363,7 @@ foreach (var objEntity in lstExportReportKML)
            
             var site=  new BLProject().updateSiteDetails(siteList);
             new BLProject().SaveSiteProjectDetails(siteList, userId);
-            var receivers = new string[] { "dinesh.kumar1@leptonsoftware.com" };
+            /*var receivers = new string[] { "dinesh.kumar1@leptonsoftware.com" };
             var listEmail = new List<EmailSettingsModel>
              {
                    new EmailSettingsModel
@@ -15377,6 +15377,7 @@ foreach (var objEntity in lstExportReportKML)
             string mailSentMsg = "";
 
             commonUtil.SendSiteAwardEmail(receivers,"Good Bye", "Site Import Notification",out mailSentMsg, listEmail);
+            */
             return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
         }
 
