@@ -1,7 +1,7 @@
 ﻿@model Models.NetworkTicket
 @helper pageMessage()
 {
-{ Html.RenderPartial("_PageMessage", Model.pageMsg); }
+    { Html.RenderPartial("_PageMessage", Model.pageMsg); }
 
 }
 <style>
@@ -16,140 +16,141 @@
     OnSuccess = "OnSuccess",
     HttpMethod = "POST"
 },
-                                    new { id = "frmAddTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
+  new { id = "frmAddTicket", enctype = "multipart/form-data", autocomplete = "off", @class = "form-horizontal" }))
 {
+    @Html.HiddenFor(m => m.project_ids, new { @id = "hdnprojectIds" })
     <div id="dvNetworkTicket" class="libDetail">
         <div id="CreateTicket" class="tab-pane fade in active show">
-                <div class="space-pad">
-                    <fieldset class="the-fieldset">
-                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_151</legend>
-                        <div class="form-group row">
-                           
-                             <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_133 <i class="clsMandatory">*</i>:</label>
-                            @Html.HiddenFor(m => m.ticket_id, new { @id = "hdnTicketId" })
-                            <div class="col-md-4 @(Model.ticket_id > 0? "dvdisabled" : "")" id="dvTicketType">
-                                @*//@Html.HiddenFor(m => m.ticket_type_id, new { @id = "hdntkttypid" })*@
-                                    @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlTicketTypes" })
-                            </div>
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_134 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4" id="dvReferenceType">
-                                @Html.DropDownListFor(x => x.reference_type, new SelectList(Model.lstReferenceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlRefType" })
-                            </div>
+            <div class="space-pad">
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_151</legend>
+                    <div class="form-group row">
 
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_133 <i class="clsMandatory">*</i>:</label>
+                        @Html.HiddenFor(m => m.ticket_id, new { @id = "hdnTicketId" })
+                        <div class="col-md-4 @(Model.ticket_id > 0? "dvdisabled" : "")" id="dvTicketType">
+                            @*//@Html.HiddenFor(m => m.ticket_type_id, new { @id = "hdntkttypid" })*@
+                            @Html.DropDownListFor(x => x.ticket_type_id, new SelectList(Model.lstTicketTypeMaster.Select(x => new { Value = x.id, Text = x.ticket_type }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlTicketTypes" })
                         </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_031 :</label>
-                            <div class="col-md-4" id="dvRefTicketId">
-                                @Html.TextBoxFor(m => m.reference_ticket_id, new { @id = "txtRefTicketId", @title = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, maxlength = 50 })
-                            </div>
-                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_152:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(x => x.reference_description, new { @id = "txtRemarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = @Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500 })
-                            </div>
-
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_134 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4" id="dvReferenceType">
+                            @Html.DropDownListFor(x => x.reference_type, new SelectList(Model.lstReferenceType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlRefType" })
                         </div>
-                    </fieldset>
 
-                    <fieldset class="the-fieldset">
-                        <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_155</legend>
-                        @if (string.IsNullOrEmpty(Model.geom) && Model.ticket_id == 0)
-                        {
-                            <div class="form-group row">
-                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
-                                <div class="col-md-4">
-                                    @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion" })
-                                </div>
-                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
-                                <div class="col-md-4">
-                                    @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince" })
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            @Html.HiddenFor(m => m.region_id, new { @id = "hdnregionid" })
-                            @Html.HiddenFor(m => m.province_id, new { @id = "hdnprovinceid" })
-                            @Html.HiddenFor(m => m.geom, new { @id = "hdngeom" })
-                            <div class="form-group row">
-                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
-                                <div class="col-md-4">
-                                    @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion", @disabled = "disabled" })
-                                </div>
-                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
-                                <div class="col-md-4">
-                                    @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince", @disabled = "disabled" })
-                                </div>
-                            </div>
-                        }
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_FRM_031 :</label>
+                        <div class="col-md-4" id="dvRefTicketId">
+                            @Html.TextBoxFor(m => m.reference_ticket_id, new { @id = "txtRefTicketId", @title = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_FRM_031, maxlength = 50 })
+                        </div>
+                        <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_GBL_152:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(x => x.reference_description, new { @id = "txtRemarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = @Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500 })
+                        </div>
+
+                    </div>
+                </fieldset>
+
+                <fieldset class="the-fieldset">
+                    <legend class="the-legend">@Resources.Resources.SI_OSP_GBL_NET_GBL_155</legend>
+                    @if (string.IsNullOrEmpty(Model.geom) && Model.ticket_id == 0)
+                    {
                         <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_153 :</label>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
                             <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.network_id, new { @id = "txtNetworkTicketID", @title = Resources.Resources.SI_OSP_GBL_NET_GBL_153, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_GBL_153, maxlength = 50, @readonly = true })
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion" })
                             </div>
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_ISP_UNT_NET_FRM_002 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4">
-                                @Html.TextBoxFor(m => m.name, new { @id = "txtName", @title = Resources.Resources.SI_ISP_UNT_NET_FRM_002, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_ISP_UNT_NET_FRM_002, maxlength = 50 })
+                                @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince" })
                             </div>
                         </div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.region_id, new { @id = "hdnregionid" })
+                        @Html.HiddenFor(m => m.province_id, new { @id = "hdnprovinceid" })
+                        @Html.HiddenFor(m => m.geom, new { @id = "hdngeom" })
                         <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_369 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_065 :</label>
                             <div class="col-md-4">
-                                @Html.DropDownListFor(x => x.assigned_to, new SelectList(Model.lstUserName.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlassignedto" })
-
+                                @Html.DropDownListFor(m => m.region_id, new SelectList(Model.lstRegion.Select(x => new { Value = x.regionId, Text = x.regionName }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @onchange = "si.onChangeRegions();", @id = "ddlRegion", @disabled = "disabled" })
                             </div>
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_141 <i class="clsMandatory">*</i>:</label>
+                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_066 <i class="clsMandatory">*</i>:</label>
                             <div class="col-md-4">
-                                @if (Model.ticket_id > 0)
-                                {
-                                    @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY" })
-                                 }
-                                  else
-                                {
-                                  @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @Value = @DateTime.Now.ToString("dd-MMM-yyyy") })
-                                }
-                                <img id="img_permit_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
-
+                                @Html.DropDownListFor(m => m.province_id, new SelectList(Model.lstProvince.Select(x => new { Value = x.provinceId.ToString(), Text = x.provinceName.ToString() }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlProvince", @disabled = "disabled" })
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_154 <i class="clsMandatory">*</i>:</label>
-                            <div class="col-md-4">
-                                @Html.DropDownListFor(m => m.for_network_type, new List<SelectListItem>
-                               { new SelectListItem { Text = "As-Built", Value = "A"},
-                                new SelectListItem { Text = "Planned", Value = "P"},
-
-                                }, "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlNetworkType" })
-
-                            </div>
-                            <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                            <div class="col-md-4">
-                                @Html.TextBoxFor(x => x.remarks, new { @id = "txtremarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500, @resize = "none" })
-                            </div>
+                    }
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_153 :</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.network_id, new { @id = "txtNetworkTicketID", @title = Resources.Resources.SI_OSP_GBL_NET_GBL_153, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_GBL_153, maxlength = 50, @readonly = true })
                         </div>
-                        @if (Model.lstUserModule.Contains("PAT"))
-                        {
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_ISP_UNT_NET_FRM_002 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(m => m.name, new { @id = "txtName", @title = Resources.Resources.SI_ISP_UNT_NET_FRM_002, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_ISP_UNT_NET_FRM_002, maxlength = 50 })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_369 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(x => x.assigned_to, new SelectList(Model.lstUserName.Select(x => new { Value = x.user_id, Text = x.user_name }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control", @id = "ddlassignedto" })
+
+                        </div>
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_141 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @if (Model.ticket_id > 0)
+                            {
+                                @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.target_date, "{0:dd-MMM-yyyy}", new { @class = "form-control clsReadOnly", @readonly = true, placeholder = "DD-MMM-YYYY", @Value = @DateTime.Now.ToString("dd-MMM-yyyy") })
+                            }
+                            <img id="img_permit_date" class="assign-calen" src="~/Content/images/calendar.png" style="margin-top:1px;" />
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_GBL_154 <i class="clsMandatory">*</i>:</label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(m => m.for_network_type, new List<SelectListItem>
+                           { new SelectListItem { Text = "As-Built", Value = "A"},
+                            new SelectListItem { Text = "Planned", Value = "P"},
+
+                            }, "-Select-", new { @class = "chosen-select form-control validation", @id = "ddlNetworkType" })
+
+                        </div>
+                        <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(x => x.remarks, new { @id = "txtremarks", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_006, maxlength = 500, @resize = "none" })
+                        </div>
+                    </div>
+                    @if (Model.lstUserModule.Contains("PAT"))
+                    {
                         <div class="form-group row">
                             @if (Model.lstUserModule.Contains("PROJ"))
                             {
                                 <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074 :</label>
-                                 <div class="col-md-4">
+                                <div class="col-md-4">
                                      @Html.TextBoxFor(x => x.project_code, new { @id = "txtproject_code", @title =Resources.Resources.SI_OSP_GBL_GBL_GBL_074, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, maxlength = 50, @resize = "none" })
-                                 </div>
+                                </div>
                             }
                             <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_436:</label>
                             <div class="col-md-4">
                                 @Html.TextBoxFor(x => x.account_code, new { @id = "txtaccount_code", @title = Resources.Resources.SI_OSP_GBL_NET_FRM_436, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_NET_FRM_436, maxlength = 50, @resize = "none" })
                             </div>
                         </div>
-                        }
-                    </fieldset>
-                </div>
+                    }
+                </fieldset>
+            </div>
         </div>
         <div class="ModalFooter d-flex">
             @if (Model.ticket_id > 0)
             {
                 <button type="button" id="btnCancle" class="btn btn-default ml-auto" onclick="OnChildCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button>
-                <button type="submit" id="btnUpdateTicket" class="btn btn-success ml-10" onclick="return isFormValid()"                       
+                <button type="submit" id="btnUpdateTicket" class="btn btn-success ml-10" onclick="return isFormValid()"
                     @foreach (var item in Model.lstTicketTypeMaster)
                     {
                         if (item.id == Model.ticket_type_id)
@@ -170,7 +171,7 @@
                     @Resources.Resources.GBL_GBL_GBL_GBL_GBL_003
                 </button>
 
-              }
+            }
             else
             {
                 <button type="button" id="btnCancle" class="btn btn-warning ml-auto" onclick="OnCancle();"> @Resources.Resources.GBL_GBL_GBL_GBL_GBL_006</button><button type="submit" id="btnCreateTicket" class="btn btn-success ml-10"  onclick="return isFormValid()"
@@ -188,7 +189,7 @@
                                    }
                                }
                            
-                       }
+            }
                    }
                    else {
                        {@:disabled="disabled" title="Unauthorized Access"
@@ -198,7 +199,7 @@
             }
         </div>
     </div>
-    }
+}
 <script>
     $(document).ready(function () {
 
@@ -262,6 +263,9 @@
             $("#closeModalPopup").trigger("click");
     }
     function isFormValid() {
+        let projectId = $('#dvsiteAwardProjectId').val();
+        $('#hdnprojectIds').val(projectId);
+
         if ($("#ddlRefType").val() != "GIS"&& $("#ddlRefType").val() != "" && $("#txtRefTicketId").val() == "") {
             $('#txtRefTicketId').css('border-color', 'red');
             return false;
@@ -306,9 +310,9 @@
         ajaxReq('NetworkTicket/GetCreateTicketPermissionByGeom', { ticketType: ticketType, entityType: entityType, systemID: systemID }, false, function (resp) {
             if (resp.status == "FAILED") {
                 msg = resp.message;
-            } 
+            }
             }, true, true);
-        return msg; 
+        return msg;
     }
     function btnReset() {
 

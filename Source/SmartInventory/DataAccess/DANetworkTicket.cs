@@ -82,8 +82,8 @@ namespace DataAccess
                     p_geom = objNetworkTicket.geom,
                     p_reference_ticket_id = objNetworkTicket.reference_ticket_id,
                     p_project_code = objNetworkTicket.project_code,
-                    p_account_code = objNetworkTicket.account_code
-
+                    p_account_code = objNetworkTicket.account_code,
+                    p_project_id = objNetworkTicket.site_project_id
                 });
 				return result.Last(); ;
 

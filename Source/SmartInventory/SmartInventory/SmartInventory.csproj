@@ -22,8 +22,7 @@
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2493,6 +2492,7 @@
     <Content Include="Views\BackBonePlan\_SiteList.cshtml" />
     <Content Include="Views\BackBonePlan\_SiteHistory.cshtml" />
     <Content Include="Views\Report\_ProjectwiseReport.cshtml" />
+    <Content Include="Views\SiteAwarding\_ShowSiteAwardDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2566,6 +2566,7 @@
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RingDetailsController.cs" />
     <Compile Include="Controllers\RosterManagementController.cs" />
+    <Compile Include="Controllers\SiteAwardingController.cs" />
     <Compile Include="Controllers\SplicingController.cs" />
     <Compile Include="Controllers\SpxI49FtzController.cs" />
     <Compile Include="Controllers\SurveyAreaController.cs" />

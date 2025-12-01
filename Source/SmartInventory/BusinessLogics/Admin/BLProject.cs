@@ -362,6 +362,10 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().DeleteProjectById(ticket_id, userId);
         }
+        public bool ValidateSiteWithinPolygon(string projectId, string geom)
+        {
+            return new DAProjectDetails().ValidateSiteWithinPolygon(projectId, geom);
+        }
         public List<KeyValueDropDown> GetAllProjectwiseRegion()
         {
             return new DAProjectDetails().GetAllProjectwiseRegion();
@@ -375,6 +379,14 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().GetProjectwiseFiberDistanceReport(region_id, province_id);
         }
+        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage,int pageSize)
+        {
+            return new DAProjectDetails().GetSiteAwardingProjectDetails(currentPage, pageSize);
+        }
+        public siteprojectdetails GetProjectDetailsByProjectId(string projectId)
+        {
+            return new DAProjectDetails().GetProjectDetailsByProjectId(projectId);
+        }      
     }
 
     public class BLProjectExportReport

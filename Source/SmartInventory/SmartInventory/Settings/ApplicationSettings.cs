@@ -268,6 +268,11 @@ namespace SmartInventory.Settings
         public static int BackboneRouteThreshold = 0;
         public static string SmartOpsURL = "";
         public static int isSmartOpsEnabled = 0;
+        public static string WH24ClientId = "";
+        public static string WH24ClientSecret = "";
+        public static string WH24grantType = "";
+        public static string WH24URL = "";
+        public static string WH24AuthBaseURL = "";
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -944,6 +949,26 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "isSmartOpsEnabled")
                 {
                     isSmartOpsEnabled = Convert.ToInt32(objSetting.value);
+                }
+                if (objSetting.key == "WH24grantType")
+                {
+                    WH24grantType = objSetting.value;
+                }
+                if (objSetting.key == "WH24ClientSecret")
+                {
+                    WH24ClientSecret = objSetting.value;
+                }
+                if (objSetting.key == "WH24ClientId")
+                {
+                    WH24ClientId = objSetting.value;
+                }
+                if (objSetting.key == "WH24URL")
+                {
+                    WH24URL = objSetting.value;
+                }
+                if (objSetting.key == "WH24AuthBaseURL")
+                {
+                    WH24AuthBaseURL = objSetting.value;
                 }
             }
             IsLicenseExpAlrtAllowed = globalSettings

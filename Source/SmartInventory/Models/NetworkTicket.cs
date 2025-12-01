@@ -63,6 +63,12 @@ namespace Models
         public int ticket_type_roleid_match { get; set; }
         [NotMapped]
         public List<TicketTypeMaster> lstTicketTypeMaster { get; set; }
+        [NotMapped]
+        public string project_ids { get; set; }
+        public string site_project_id { get; set; }
+        public string site_id { get; set; }
+        public string site_name { get; set; }
+
 
     }
     public class NetworkTicketRef

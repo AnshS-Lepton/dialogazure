@@ -237,7 +237,21 @@ grid.Column("remarks", Resources.Resources.SI_OSP_GBL_GBL_GBL_006, format: (item
 grid.Column("created_by_text", Resources.Resources.SI_OSP_GBL_GBL_GBL_056, format: @<text> @item.created_by_text </text>),
 grid.Column("created_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_055, format: @<text> @item.created_on </text>),
 grid.Column("modified_by_text", Resources.Resources.SI_OSP_GBL_GBL_GBL_058, format: @<text> @item.modified_by_text </text>),
-grid.Column("modified_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_057, format: @<text> @item.modified_on </text>)
+grid.Column("modified_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_057, format: @<text> @item.modified_on </text>),
+grid.Column("site_id", "Site ID", format: @<text> @item.site_id </text>),
+grid.Column("site_name", "Site Name", format: @<text> @item.site_name </text>),
+grid.Column("site_owner", "Site Owner", format: @<text> @item.site_owner </text>),
+grid.Column("maximum_cost", "Maximum Cost", format: @<text> @item.maximum_cost </text>),
+grid.Column("location_address", "Location Address", format: @<text> @item.location_address </text>),
+grid.Column("latitude", "Cordinates Latitude", format: @<text> @item.latitude </text>),
+grid.Column("longitude", "Cordinates Longitude", format: @<text> @item.longitude </text>),
+grid.Column("ds_cmc_area", "DS/CMC Area", format: @<text> @item.ds_cmc_area </text>),
+grid.Column("project_category", "Project Category", format: @<text> @item.project_category </text>),
+grid.Column("priority", "Priority", format: @<text> @item.priority </text>),
+grid.Column("cable_plan_cores", "Cable Plan Cores", format: @<text> @item.cable_plan_cores </text>),
+grid.Column("fiber_link_type_link_id_prefix", "Fiber Link Type(Link ID Prefix)", format: @<text> @item.fiber_link_type_link_id_prefix </text>),
+grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
+
 ))
 
                             @Html.Hidden("dir", grid.SortDirection)
