@@ -26817,8 +26817,25 @@ var Main = function () {
             }
         },
         ExportSiteReport: function (_fileType, _reportType) {
+            
+            if ((_reportType.toUpperCase() == "NEAREST" && (_fileType.toUpperCase() == "KMZ" || _fileType.toUpperCase() == "KML"))) {
 
-            window.location = appRoot + 'Report/DownloadSiteReport?fileType=' + _fileType + '&reportType=' + _reportType;
+                ajaxReq('Report/CheckSiteReport', {}, true, function (resp) {
+
+                    if (resp.status === "FAILED") {
+                        alert(resp.message);
+                        return false;
+                    }
+
+                    // SUCCESS → download file
+                    window.location = appRoot + 'Report/DownloadSiteReport?fileType=' + _fileType + '&reportType=' + _reportType;
+
+                }, true, true, true);
+            }
+            else {
+                window.location = appRoot + 'Report/DownloadSiteReport?fileType=' + _fileType + '&reportType=' + _reportType;
+            }
+
         },
         SiteAwarding: function (geom, modeType, radius, obj) {
             if (obj) {

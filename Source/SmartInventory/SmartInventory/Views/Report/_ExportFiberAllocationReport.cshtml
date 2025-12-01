@@ -170,9 +170,12 @@
         //addDefaultSortingIcons('tblExportReport');
         //si.setDateTimeCalendar_ExportEntities("txtDateFrom", "txtDateTo", "imgFromDate", "imgToDate", false);
 
-        $("#btnShowReportData").on("click", function () {
-       
+        $("#btnShowReportData").on("click", function (e) {
+
+            e.preventDefault(); // STOP form submit until all validations finish
+
             $('#hdnfileType').val('Excel');
+
             if ($('#ddlLayerColumns option:selected').text() != '-- Select --' && $('#txtSearchText').val() == "") {
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_006);
                 return false;
@@ -181,41 +184,48 @@
                 alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_007);
                 return false;
             }
+
             let regions = $('#ddlRegions').val() || [];
             let provinces = $('#ddlProvinces').val() || [];
 
-            if (regions.length === 0 && provinces.length === 0 && $('#txtSearchText').val() == "" && $('#ddlLayerColumns option:selected').val() =="") {
+            if (regions.length === 0 && provinces.length === 0 &&
+                $('#txtSearchText').val() == "" &&
+                $('#ddlLayerColumns option:selected').val() == "") {
+
                 alert("Please select at least one Network ID/Site ID to generate report.");
                 return false;
-            } 
-            //else if ($('#ddlLayerDurationBasedColumns').val() == '' && $('#txtSearchText').val() == "" ) {
-            //     alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_012);
-            //    return false;
-            //}
-            //else if ($('#customedate').val() == '0' && $('#txtSearchText').val() == "" ) {
-            //    alert("Please Select Duration!");
-            //    return false;
-            //}
-            //else if ($("#txtDateFrom").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_010);
-            //    return false;
-            //}
-
-            //else if ($("#txtDateTo").val() == "" && $("#customedate").val() != 9 && $('#txtSearchText').val() == "") {
-            //    alert(MultilingualKey.SI_OSP_GBL_JQ_RPT_011);
-            //    return false;
-            //}
-
-            //else if ($('#ddlLayerDurationBasedColumns').val() != '' && $("#txtDateFrom").val() != "" && $("#txtDateTo").val() != "") {
-            //    var startDate = new Date($('#txtDateFrom').val());
-            //    var endDate = new Date($('#txtDateTo').val());
-            //    var configuredDay = 365;
-            //    return si.GetDaysDifference(startDate, endDate, configuredDay);
-            //}
-            else {
-                si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
             }
+
+            // 🔍 Validate FMS / Search text
+            if ($('#txtSearchText').val() != "" &&
+                $('#ddlLayerColumns option:selected').text() != '-- Select --') {
+
+                let SearchText = $('#txtSearchText').val();
+                let searchBy = $('#ddlLayerColumns option:selected').text();
+
+                // Make AJAX synchronous
+                $.ajax({
+                    url: 'Report/CheckFMSExists',
+                    type: 'POST',
+                    data: { SearchbyText: SearchText, ColumnName: searchBy },
+                    async: false,  
+                    success: function (resp) {
+                        if (resp.status.toLowerCase() == "false") {
+                            alert(resp.message);
+                            validationFailed = true;
+                        } else {
+                            validationFailed = false;
+                        }
+                    }
+                });
+
+                if (validationFailed) return false;
+            }
+
+            // If everything is valid → submit the form manually
+            $("#frmFiberAllocationExportEntities").submit();
         });
+
 
         $("#btnDownloadReportPdf").on("click", function () {
             debugger;
@@ -252,9 +262,9 @@
             //    var configuredDay = 365;
             //    return si.GetDaysDifference(startDate, endDate, configuredDay);
             //}
-            else {
-                si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
-            }
+            //else {
+            //    si.ExportFiberAllocationReport(purpose, entityids, TotalPlannedCount, TotalAsBuiltCount, TotalDormantCount, reportType);//return true;
+            //}
         });
 
     });

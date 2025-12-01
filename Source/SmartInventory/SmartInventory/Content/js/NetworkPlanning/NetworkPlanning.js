@@ -392,7 +392,7 @@ var NetworkPlanning = function () {
 
     this.createAutoPlanNetwork = function () {
         debugger;
-        if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
+        /*if (app.selectedPlanningPath != null && app.selectedPlanningPath.length == undefined) {
 
             for (let j = 0; j < app.selectedPlanningPath.legs.length; j++) {
                 for (var k = 0; k < app.selectedPlanningPath.legs[j].steps.length; k++) {
@@ -443,7 +443,7 @@ var NetworkPlanning = function () {
                 }
             }
         }
-
+        */
 
 
         ajaxReq('Plan/SaveProcess', $('form').serialize(), true, function (resp) {

@@ -5864,6 +5864,12 @@ namespace Models
         public string total_cost { get; set; }
       //  public List<siteBufferGeometry> backbonelinegeom { get; set; }
     }
+    public class SiteImportLog
+    {
+        public string site_id { get; set; }
+        public string site_name { get; set; }
+        public string error_msg { get; set; }
+    }
 
 }
 
