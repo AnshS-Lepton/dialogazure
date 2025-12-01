@@ -13513,11 +13513,12 @@ namespace SmartInventory.Controllers
         //    siteprojectdetails.lstProjectdetails= new BLProject().GetProjectDetailsById(siteId);
         //    return PartialView("_UpdateProjectDetails", siteprojectdetails);
         //}
-        public PartialViewResult EditProject(int siteId)
+        public PartialViewResult EditProject(string projectId)
         {
-            var projectList = new BLProject().GetProjectsuteDetailsById(siteId);
+            //var projectList = new BLProject().GetProjectsuteDetailsById(siteId);
+            var projectList = new BLProject().GetProjectDetailsByProjectId(projectId);
            
-            siteprojectdetails lstsite = projectList.FirstOrDefault();
+            siteprojectdetails lstsite = projectList;
             
             return PartialView("_UpdateProjectDetails", lstsite);
         }
@@ -13558,6 +13559,22 @@ namespace SmartInventory.Controllers
             {
                 objResp.status = ResponseStatus.FAILED.ToString();
                 objResp.message = BLConvertMLanguage.MultilingualMessageConvert(result.message);
+            }
+            return Json(objResp, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult ValidateSiteWithinPolygon(string projectId, string latlongArr)
+        {
+            JsonResponse<string> objResp = new JsonResponse<string>();
+
+            var status = new BLProject().ValidateSiteWithinPolygon(projectId, latlongArr);
+            if (status == true)
+            {
+                objResp.status = ResponseStatus.OK.ToString();
+            }
+            else
+            {
+                objResp.status = ResponseStatus.FAILED.ToString();
+                objResp.message = "Selected sites are not fully contained within the polygon. Please redraw the polygon to include all sites.";
             }
             return Json(objResp, JsonRequestBehavior.AllowGet);
         }

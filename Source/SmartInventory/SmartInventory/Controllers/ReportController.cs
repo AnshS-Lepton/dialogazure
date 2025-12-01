@@ -15356,12 +15356,27 @@ foreach (var objEntity in lstExportReportKML)
 
                 fiber_link_type = row["Fiber Link Type"]?.ToString()?.Trim(),
                 fiber_link_code = row["Fiber Link Code"]?.ToString()?.Trim(),
-                created_on = now
+                created_on = now,
+                status = "Pending Assignment"
             }).ToList();
 
            
-           var site=  new BLProject().updateSiteDetails(siteList);
+            var site=  new BLProject().updateSiteDetails(siteList);
             new BLProject().SaveSiteProjectDetails(siteList, userId);
+            var receivers = new string[] { "dinesh.kumar1@leptonsoftware.com" };
+            var listEmail = new List<EmailSettingsModel>
+             {
+                   new EmailSettingsModel
+                    {
+                      email_address = "nikhil.arora@leptonsoftware.com",
+                      email_password = "ostl ofqi xckw zwhq",
+                      smtp_host = "smtp.gmail.com",
+                      port = 587
+                   }
+            };
+            string mailSentMsg = "";
+
+            commonUtil.SendSiteAwardEmail(receivers,"Good Bye", "Site Import Notification",out mailSentMsg, listEmail);
             return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
         }
 

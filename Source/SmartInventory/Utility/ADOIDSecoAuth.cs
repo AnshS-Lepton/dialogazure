@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 using System.DirectoryServices;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace Utility
 {
@@ -367,8 +369,85 @@ namespace Utility
             }
         }
 
-        
-       
+        public string GetAuthToken(string clientId, string clientSecret, string grantType, string BaseUrl)
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            using (var client = new HttpClient())
+            {
+                // Set headers exactly
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json")
+                );
+
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+                );
+
+                var formData = new List<KeyValuePair<string, string>>
+    {
+        new KeyValuePair<string, string>("client_id", clientId),
+        new KeyValuePair<string, string>("client_secret", clientSecret),
+        new KeyValuePair<string, string>("grant_type", "client_credentials")
+    };
+
+                var content = new FormUrlEncodedContent(formData);
+
+                var response = client.PostAsync("https://dialog.workhub24.com/api/auth/token", content).Result;
+
+                string resp = response.Content.ReadAsStringAsync().Result;
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Token API failed: {response.StatusCode} → {resp}");
+
+                return resp;
+            }
+
+        }
+
+        public string CallWH24API(string clientId, string clientSecret, string grantType,string authUrl, string url)
+        {
+            using (var client = new HttpClient())
+            {
+                string tokenJson = GetAuthToken(clientId, clientSecret, grantType, authUrl);
+
+                dynamic obj = Newtonsoft.Json.JsonConvert.DeserializeObject(tokenJson);
+                string token = obj.access_token;
+
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json")
+                );
+                
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+                );
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var requestBody = new
+                {
+                    title = "Test Title"
+                };
+
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // STEP 4: POST request
+                //var url = "https://dialog.workhub24.com/api/workflows/G66I72NENBAI24D3BHRZCU6PYSHPQ57U/we7ccab4204/cards";
+
+                HttpResponseMessage response = client.PostAsync(url, content).Result;
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Workflow API failed: " + response.StatusCode);
+
+                return response.Content.ReadAsStringAsync().Result;
+            }
+        }
+
+
+
     }
     public class SecoApiResponse
     {

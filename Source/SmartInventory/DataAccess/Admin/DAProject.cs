@@ -4,6 +4,7 @@ using Models;
 using Models.Admin;
 using Models.API;
 using Models.WFM;
+using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
@@ -1250,6 +1251,31 @@ namespace DataAccess.Admin
             var sitname = repo.GetAll().ToList();
             return sitname;
         }
+       
+        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage, int pageSize)
+        {
+            var jsonResult = repo.ExecuteProcedure<string>(
+                "fn_get_imported_site_project_details",
+                new { p_page_no = currentPage, p_page_size = pageSize }
+            );
+
+            if (string.IsNullOrEmpty(jsonResult[0]))
+                return new siteprojectdetailsFilter { objReportFilters = new List<siteprojectdetails>() };
+
+            // Deserialize JSON
+            var data = JsonConvert.DeserializeObject<dynamic>(jsonResult[0]);
+
+            var result = new siteprojectdetailsFilter
+            {
+                totalRecord = data.totalRecord,
+                currentPage = currentPage,
+                pageSize = pageSize,
+                objReportFilters = JsonConvert.DeserializeObject<List<siteprojectdetails>>(data.records.ToString())
+            };
+
+            return result;
+        }
+
 
         public List<PROJECTDetails> GetProjectByDetails(string site_id)
         {
@@ -1262,6 +1288,11 @@ namespace DataAccess.Admin
         public siteprojectdetails GetProjectDetailsById(int id)
         {
             var sitenameList = repo.GetAll().Where(x => x.id == id).FirstOrDefault();
+            return sitenameList;
+        }
+        public siteprojectdetails GetProjectDetailsByProjectId(string projectId)
+        {
+            var sitenameList = repo.Get(x => x.project_id == projectId);
             return sitenameList;
         }
         public List<siteprojectdetails> GetProjectSiteDetailsById(int id)
@@ -1361,6 +1392,21 @@ namespace DataAccess.Admin
             try
             {
                 return repo.ExecuteProcedure<DbMessage>("delete_site_project_detail", new { p_id = id, p_userId = userId }).FirstOrDefault();
+            }
+            catch(Exception ex) {
+                ErrorLogHelper logHelper = new ErrorLogHelper();
+                logHelper.ApiLogWriter("DeleteProjectById()", "Library Controller", ex.Message.ToString(), ex);
+                throw;  
+            }
+
+        }
+         public bool ValidateSiteWithinPolygon(string projectId ,string geom)
+         { 
+            try
+            {
+                var results = repo.ExecuteProcedure<bool>("fn_validate_sites_withinpolygon", new { p_project_id = projectId, p_geom = geom }).FirstOrDefault();
+               
+                return results;
             }
             catch(Exception ex) {
                 ErrorLogHelper logHelper = new ErrorLogHelper();

@@ -1,0 +1,211 @@
+﻿@model Models.siteprojectdetailsFilter
+
+<style>
+    .btn {
+        font-weight: bold !important;
+        line-height: 1.42857143 !important;
+    }
+    .FlowDivs {
+        right: 82px;
+        width: 240px;
+        height: auto;
+        background-color: #fcfcfc;
+        position: absolute;
+        text-align: left;
+        display: none;
+        top: 50px;
+        box-shadow: 0 10px 20px 0 rgb(82 63 105 / 20%);
+        border: 1px solid #e5e5e5;
+        padding: 8px;
+    }
+    .downloadUploadBox {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+    }
+</style>
+<div id="dvViewSiteAwarding">
+    @{
+        var grid = new WebGrid(
+            rowsPerPage: Model.pageSize,
+            canSort: false,
+            ajaxUpdateContainerId: "dvViewSiteAwarding",
+            ajaxUpdateCallback: "onGridHeaderClick('tblSiteAwarding');",
+            pageFieldName: "currentPage"   
+        );
+
+        grid.Bind(Model.objReportFilters, autoSortAndPage: false, rowCount: Model.totalRecord);
+
+        if (Model.totalRecord > 0)
+        {
+            grid.PageIndex = Model.currentPage - 1;
+        }
+    }
+
+    @if (Model.objReportFilters.Count > 0)
+    {
+        <div id="dvViewROWExportData" class="space-pad">
+            <div class="d-flex mb-15">
+                <div class="div_totalRecord">
+                    <b>@Resources.Resources.SI_OSP_GBL_GBL_GBL_035:&nbsp;<span>@Model.totalRecord</span></b>
+                </div>
+                <button type="button" class="exp--btn ml-10 ml-auto" id="btnExports">
+                    Site Import
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <button type="button" id="btnSaveSites" class="btn btn-primary  ml-10" onclick="selectSiteBoundary();"> Select Site Boundary </button>
+
+                <div class="FlowDivs">
+                    <div class="downloadUploadBox">
+                        <input type="file" id="updExcel" accept=".xls,.xlsx">
+                        <div class="d-flex --gap05">
+                            <button id="uploadExcelFile" type="button" class="btn btn-default">
+                                Upload
+                            </button>
+                            <button id="downloadTemplate" type="button" class="btn btn-primary">
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                @grid.GetHtml(
+                    tableStyle: "grid",
+                    htmlAttributes: new { id = "tblSiteAwarding" },
+                    columns: grid.Columns(
+                         grid.Column(
+                                header: "Action",
+                                format: @<text>
+                                        <input type="checkbox" title="select Imported Site"
+                                               name="select_site"
+                                               id="@item.project_id"
+                                               value="@item.project_id"
+                                               class="row-checkbox dvsiteAward"
+                                               data-geom="@item.site_geom" />
+                                        <i id="Edit_@item.project_id" title="Edit Project"  value="@item.project_id" onclick ="si.projectDetails('@item.project_id');" class="fa fa-edit"></i>
+                                        <i id="Delete_@item.project_id" title="Delete Project" value="@item.project_id" class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" onclick ="si.deleteProjectDetails(@item.id);"></i>
+                                </text>,
+             canSort: false
+             ),
+             grid.Column("site_id", header: "Site ID"),
+             grid.Column("site_name", header: "Site Name"),
+             grid.Column("created_on", header: "Import Date",
+             format: (item) => item.created_on != null ? string.Format("{0:dd-MMM-yyyy}", item.created_on) : ""
+             ),
+             grid.Column("project_id", header: "Project ID"),
+             grid.Column("status", header: "Status")
+             )
+               )
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="divNoRecordFound" class="nr-found filtersBg text-center">
+            <span>@Resources.Resources.SI_OSP_GBL_GBL_RPT_001</span>
+        </div>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        document.getElementById("uploadExcelFile").addEventListener("click", function () {
+            debugger;
+            const fileInput = document.getElementById("updExcel");
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Use your reusable AJAX file upload function
+            ajaxReqforFileUpload('Report/UploadSiteFiles', formData, true, function (result) {
+                if (result.success) {
+                    alert(result.message);
+
+                    $("#updExcel").val("");
+                    $('#btnShowReportData').trigger("click");
+                    //popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
+                    //    eType: ''
+                    //}, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
+                } else {
+                    alert("Import failed: " + (result.message || "Unknown error"));
+                }
+            });
+        });
+
+         $("#downloadTemplate").on("click", function () {
+          debugger;
+          var appRoot = '@Url.Content("~")';
+          var applicationUrl = window.location.origin + appRoot;
+           window.location.href = applicationUrl + '/Content/Templates/Site/ImportSite.xlsx';
+
+         });
+
+        $('#btnExports').on('click', function () {
+            $('.FlowDivs').slideToggle();
+
+        });
+
+        function initializeCheckboxLogic() {
+            debugger;
+            $(document).off('change', '#chkSelectAll').on('change', '#chkSelectAll', function () {
+                debugger;
+                $(".row-checkbox").prop("checked", this.checked);
+                updateSiteGeoms();
+            });
+
+            $(document).off('change', '.row-checkbox').on('change', '.row-checkbox', function () {
+                debugger;
+                if (!this.checked) {
+                    $("#chkSelectAll").prop("checked", false);
+                } else if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                    $("#chkSelectAll").prop("checked", true);
+                }
+                updateSiteGeoms();
+            });
+        }
+
+        initializeCheckboxLogic();
+    });
+
+    function updateSiteGeoms() {
+        debugger;
+        si.siteGeoms = []; // Clear array
+
+        $(".row-checkbox:checked").each(function () {
+
+            let geomStr = $(this).data("geom");
+
+            if (geomStr) {
+                let parts = geomStr.split(",");
+                let lat = parseFloat(parts[0]);
+                let lon = parseFloat(parts[1]);
+
+                si.siteGeoms.push({ lat: lat, lng: lon });
+            }
+        });
+    }
+
+
+    function selectSiteBoundary() {
+        debugger;
+        if (si.gMapObj.shapeObj)
+            si.gMapObj.shapeObj.setMap(null);
+        if ($(".row-checkbox:checked").length > 0) {
+            $(popup.DE.MinimizeModel).trigger('click');
+            si.Networkticket.initiateDrawingsNetworkTicket(this, 'Polygon');
+        } else {
+            alert('Please select at least one site.')
+        }
+    }
+</script>
+
+

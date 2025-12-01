@@ -306,6 +306,7 @@ var Main = function () {
     this.backboneself = undefined;
     this.LayerLoadingStatusMap = new Map();
     this.pod_system_id='';
+    this.siteGeoms = [];
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -21666,7 +21667,10 @@ var Main = function () {
         }
         popup.LoadModalDialog('PARENT', 'FiberLink/ShowFiberLinkDetails', {}, MultilingualKey.SI_GBL_GBL_NET_FRM_038, 'modal-xl');
     }
-
+    this.showSiteAwardDetails = function () {
+       
+        popup.LoadModalDialog('PARENT', 'SiteAwarding/ShowSiteAwardDetails', {},"Site Awarding", 'modal-xl');
+    }
     this.showRingDetails =function () {
         $(app.DE.InfoDiv).hide();
         $(app.DE.SplicingDiv).hide();
@@ -27075,10 +27079,32 @@ var Main = function () {
             si.gMapObj.purposeType = "NetworkTicket";
             si.gMapObj.shapeArr = [];
 
+            // 5️⃣ Move/zoom to selected site geometries
+            if (si.siteGeoms && si.siteGeoms.length > 0) {
+                if (si.siteGeoms.length === 1) {
+                    si.map.setCenter(si.siteGeoms[0]);
+                    si.map.setZoom(18);
+                } else {
+                    let bounds = new google.maps.LatLngBounds();
+                    si.siteGeoms.forEach(pt => {
+                        if (pt && !isNaN(pt.lat) && !isNaN(pt.lng)) {
+                            bounds.extend(new google.maps.LatLng(pt.lat, pt.lng));
+                        }
+                    });
+                    if (!bounds.isEmpty()) {
+                        si.map.fitBounds(bounds);
+                    }
+                }
+            }
             google.maps.event.addListener(si.map, 'click', app.Networkticket.handleShapeNetworkTicketEvents);
         },
         handleShapeNetworkTicketEvents: function (eventParam) {
+           let selectedProjectId = $(".dvsiteAward:checked").map(function () {
+                    return $(this).val();
+             }).get().join(",");
 
+            $('#dvsiteAwardProjectId').val(selectedProjectId);
+            
             if (si.gMapObj.shapeObj)
                 si.gMapObj.shapeObj.setMap(null);
             switch (si.gMapObj.shapeType) {
@@ -27177,6 +27203,7 @@ var Main = function () {
             si.gMapObj.shapeObj.setMap(si.map);
         },
         shapeClickInfoNetworkTicket: function () {
+            debugger;
             switch (si.gMapObj.shapeType) {
                 case 'Polygon':
                     app.Networkticket.showNetworkTicketDetail(si.gMapObj.shapeObj.getPath().getArray(), 'polygon', si.gMapObj.purposeType);
@@ -27184,17 +27211,32 @@ var Main = function () {
             }
         },
         showNetworkTicketDetail: function (latLongArr, selectionType, purposeType) {
+            debugger;
+            let projectIds = $('#dvsiteAwardProjectId').val();
             var longLatArr = '';
             if (latLongArr.length > 0) {
                 for (i = 0; i < latLongArr.length; i++) {
                     longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[i].lng() + ' ' + latLongArr[i].lat();
                 }
                 longLatArr += (longLatArr == '' ? '' : ',') + latLongArr[0].lng() + ' ' + latLongArr[0].lat();
-                si.Networkticket.AddNetworkTicket(longLatArr, selectionType);
+
+                if (!projectIds) {
+                    si.Networkticket.AddNetworkTicket(longLatArr, selectionType);
+                }
+               else{
+                app.checkSiteExistsWithinPolygon(projectIds, longLatArr, function (isValid) {
+                    if (isValid) {
+                        // Only execute if sites are valid
+                        si.Networkticket.AddNetworkTicket(longLatArr, selectionType);
+                    }
+                });
+                }
             }
         },
         AddNetworkTicket: function (geom, modeType, radius, obj, systemID, entityType) {
             app.addRemoveActiveClass('');
+            
+
             if (obj) {
                 $('#NetTicket .iconBaricomoon').find(".activeToolBar").removeClass('activeToolBar');
             }
@@ -27202,7 +27244,7 @@ var Main = function () {
         },
         ////AddNetworkTicket: function (geom, modeType, radius, obj) {
         ////    
-        ////    if (obj) {
+        ////    if (obj) {db
         ////        $('#NetTicket .iconBaricomoon').find(".activeToolBar").removeClass('activeToolBar');
 
         ////    }
@@ -35421,6 +35463,39 @@ var Main = function () {
         }
     };
 
+    this.projectDetails = function (projectId) {
+            showConfirm('Are you sure to edit project details?', function () {
+                debugger;
+                popup.LoadModalDialog('CHILD', 'Library/EditProject', { projectId: projectId }, 'Project Details', 'modal-xl');
+            });
+        }
+     this.deleteProjectDetails = function(id) {
+        showConfirm('Are you sure to delete project?', function () {
+            ajaxReq('Library/DeleteProject', { id: id, }, true, function (resp) {
+                app.showSiteAwardDetails();
+                alert('Record deleted successfully');
+
+            }, false, false)
+        });
+
+    }
+    this.checkSiteExistsWithinPolygon = function (projectId, latlongArr, callback) {
+        ajaxReq('Library/ValidateSiteWithinPolygon',
+            { projectId: projectId, latlongArr: latlongArr },
+            true,
+            function (resp) {
+                debugger;
+                if (resp.status == "FAILED") { // Validation failed
+                    alert(resp.message);
+                    if (callback) callback(false);
+                } else {
+                    if (callback) callback(true);
+                }
+            },
+            false,
+            false
+        );
+    }
 
 
 

@@ -5773,6 +5773,16 @@ namespace Models
         public string FiberLinkCode { get; set; }
         public int uploaded_by { get; set; }
     }
+
+    public class siteprojectdetailsFilter
+    {
+        public List<siteprojectdetails> objReportFilters { get; set; }
+        public int currentPage { get; set; }
+        public string sort { get; set; }
+        public string sortdir { get; set; }
+          public int pageSize { get; set; }
+        public int totalRecord { get; set; }
+    }
     public class siteprojectdetails
     {
         [Key]
@@ -5818,6 +5828,9 @@ namespace Models
         public int currentPage { get; set; }
         public int? created_by { get; set; }
         public DateTime? created_on { get; set; }
+        public string status { get; set; }
+        [NotMapped]
+        public string site_geom { get; set; }       
 
     }
     public class DropdownMaster

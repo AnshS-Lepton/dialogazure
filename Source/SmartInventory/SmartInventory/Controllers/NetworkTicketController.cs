@@ -99,14 +99,51 @@ namespace SmartInventory.Controllers
 			if (TryValidateModel(objTicketMaster))
 			{
 				BLUser objBLuser = new BLUser();
-				User objUserDetails = objBLuser.getUserDetails(objTicketMaster.assigned_to);
+				User ManagerDetails = objBLuser.getUserDetails(Convert.ToInt32(Session["user_id"]));
+                User objUserDetails = objBLuser.getUserDetails(objTicketMaster.assigned_to);
 				var manager_id = new BLUserManagerMapping().GetManagerMapping(objTicketMaster.assigned_to).Where(x => x.manager_id == Convert.ToInt32(Session["user_id"])).Select(x => x.manager_id).FirstOrDefault();
 				//if (objUserDetails.manager_id == Convert.ToInt32(Session["user_id"]))
 				if (manager_id > 0)
 				{
-					objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
-					if (!string.IsNullOrEmpty(objTicketMaster.pageMsg.message))
+					if(objTicketMaster.project_ids.Length > 1) { 
+                    string projectIds = objTicketMaster.project_ids ?? "";
+                    string[] arrProjectIds = projectIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+						foreach (string pId in arrProjectIds)
+						{
+							objTicketMaster.site_project_id = pId;
+							objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+							/*var receivers = new string[] { MiscHelper.EncodeTo64(objUserDetails.user_email) };
+							 var listEmail = new List<EmailSettingsModel>
+							  {
+									new EmailSettingsModel
+									 {
+									   email_address = MiscHelper.EncodeTo64(ManagerDetails.user_email),
+									   email_password = "ostl ofqi xckw zwhq",
+									   smtp_host = "smtp.gmail.com",
+									   port = 587
+									}
+							 };
+							 string mailSentMsg = "";
+
+							 commonUtil.SendSiteAwardEmail(receivers, "The Network Ticket is assigned by", "Network Ticket Notifiation", out mailSentMsg, listEmail);
+							*/
+							string WH24AuthBaseURL = ApplicationSettings.WH24AuthBaseURL;
+							string WH24URL = ApplicationSettings.WH24URL;
+							string WH24ClientId = ApplicationSettings.WH24ClientId;
+							string WH24ClientSecret = ApplicationSettings.WH24ClientSecret;
+							string WH24grantType = ApplicationSettings.WH24grantType;
+
+							ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
+							aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
+						}
+					}
+					else
 					{
+                        objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                    }
+                    if (!string.IsNullOrEmpty(objTicketMaster.pageMsg.message))
+					    {
 						if (objTicketMaster.pageMsg.message == "Save")
 						{
 							objTicketMaster.pageMsg.message = Resources.Resources.SI_OSP_GBL_GBL_GBL_153;

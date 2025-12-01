@@ -485,7 +485,7 @@ namespace Utility
             }
             return ismailsent;
         }
-        public static bool SendEmailAsHtmlBody(string[] receivers, string subject, string message, List<HttpPostedFileBase> files, out string mailSentMsg, List<EmailSettingsModel> listEmail, List<string> filelist = null,string EmailEvent="")
+        public static bool SendEmailAsHtmlBody(string[] receivers, string subject, string message, List<HttpPostedFileBase> files, out string mailSentMsg, List<EmailSettingsModel> listEmail, List<string> filelist = null, string EmailEvent = "")
         {
             mailSentMsg = "";
             bool ismailsent = false;
@@ -542,7 +542,7 @@ namespace Utility
                                 mail.IsBodyHtml = true;
 
                                 smtp.Send(mail);
-                                CaptureErrorInFile("EmailEvent :"+EmailEvent+" Subject:" + subject + ":Sender:" + objEmailSetting.email_address + ":receiver:" + receiver + ":Port:" + objEmailSetting.port.ToString() + ":smtp_host:" + objEmailSetting.smtp_host, "", "");
+                                CaptureErrorInFile("EmailEvent :" + EmailEvent + " Subject:" + subject + ":Sender:" + objEmailSetting.email_address + ":receiver:" + receiver + ":Port:" + objEmailSetting.port.ToString() + ":smtp_host:" + objEmailSetting.smtp_host, "", "");
                             }
                         }
                     }
@@ -672,7 +672,7 @@ namespace Utility
             return message;
         }
 
-        public static void SendEventBasedEmail(List<EventEmailTemplateDetail> objEventEmailTemplateDetail, Dictionary<string, string> objKeyValueList, List<HttpPostedFileBase> objHttpPostedFileBase, List<EmailSettingsModel> lstEmailSettings, List<string> objFileList = null, string ProjectName = "",string EmailEvent = "")
+        public static void SendEventBasedEmail(List<EventEmailTemplateDetail> objEventEmailTemplateDetail, Dictionary<string, string> objKeyValueList, List<HttpPostedFileBase> objHttpPostedFileBase, List<EmailSettingsModel> lstEmailSettings, List<string> objFileList = null, string ProjectName = "", string EmailEvent = "")
         {
             try
             {
@@ -686,11 +686,11 @@ namespace Utility
                 }
                 bool IsSent = true;
 
-                IsSent = commonUtil.SendEmailAsHtmlBody(objEventEmailTemplateDetail[0].recipient_list.Split(','), subject, emailBody, objHttpPostedFileBase, out mailSentMessage, lstEmailSettings, objFileList,EmailEvent);
+                IsSent = commonUtil.SendEmailAsHtmlBody(objEventEmailTemplateDetail[0].recipient_list.Split(','), subject, emailBody, objHttpPostedFileBase, out mailSentMessage, lstEmailSettings, objFileList, EmailEvent);
             }
             catch (Exception ex)
             {
-                string message = "EmailEvent : "+EmailEvent + " : "+ ex.Message;
+                string message = "EmailEvent : " + EmailEvent + " : " + ex.Message;
                 string innerException = ex.InnerException != null ? ex.InnerException.Message + "." + (ex.InnerException.InnerException != null ? ex.InnerException.InnerException.ToString() : "") : string.Empty;
                 string stackTrace = ex.StackTrace;
                 commonUtil.CaptureErrorInFile(message, innerException, stackTrace);
@@ -765,12 +765,72 @@ namespace Utility
             }
             return ismailsent;
         }
+        public static bool SendSiteAwardEmail(string[] receivers, string message,string subject, out string mailSentMsg, List<EmailSettingsModel> listEmail)
+        {
+            mailSentMsg = "";
+            bool isMailSent = false;
+            try
+            {
+                foreach (var emailSetting in listEmail)
+                {
+                    using (var smtp = new SmtpClient())
+                    {
+                        smtp.Host = emailSetting.smtp_host;
+                        smtp.Port = emailSetting.port;
+                        smtp.EnableSsl = true; 
+                        smtp.Timeout = 100000;
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential(
+                            emailSetting.email_address,
+                            emailSetting.email_password
+                        );
+
+                        using (var mail = new MailMessage())
+                        {
+                            mail.From = new MailAddress(emailSetting.email_address);
+
+                            foreach (var receiver in receivers)
+                            {
+                                if (!string.IsNullOrWhiteSpace(receiver))
+                                    mail.To.Add(receiver);
+                            }
+
+                            mail.BodyEncoding = Encoding.UTF8;
+                            mail.Subject = subject;
+
+                            mail.Body = @"
+                                        <html>
+                                        <body style='font-family:Arial, sans-serif; color:#333;'>
+                                            <p>Dear Development Team,</p>
+                                            <p>We are pleased to inform you that the <strong>site import process</strong> has been completed successfully.</p>
+                                            <p>This is an automated notification confirming the successful completion of the import.</p>
+                                        </body>
+                                        </html>";
+
+                            mail.IsBodyHtml = true;
+                            smtp.Send(mail);
+                        }
+                    }
+                }
+
+                mailSentMsg = "Email sent successfully.";
+                isMailSent = true;
+            }
+            catch (Exception ex)
+            {
+                mailSentMsg = $"Failed to send email. Error: {ex.Message}";
+                isMailSent = false;
+            }
+
+            return isMailSent;
+        }
 
         public static void CaptureErrorInFile(string message, string innerexception, string stacktrace)
         {
             var filename = "EmailErrorLog" + "_" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
             string directory = HostingEnvironment.MapPath(System.Configuration.ConfigurationManager.AppSettings["logFolderPath"].ToString());
-//            string directory = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["logFolderPath"]);
+            //            string directory = System.Web.HttpContext.Current.Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["logFolderPath"]);
             string logFilePath = directory + filename;
             // Get the current date and time for the log message
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -778,8 +838,8 @@ namespace Utility
             StringBuilder objErrorMessage = new StringBuilder();
             if (!String.IsNullOrEmpty(message))
                 objErrorMessage.Append($"[{timestamp}] : Message :" + message + "\r\n");
-            if(!String.IsNullOrEmpty(innerexception))
-            objErrorMessage.Append($"[{timestamp}] : InnerException :" + innerexception + "\r\n");
+            if (!String.IsNullOrEmpty(innerexception))
+                objErrorMessage.Append($"[{timestamp}] : InnerException :" + innerexception + "\r\n");
             if (!String.IsNullOrEmpty(stacktrace))
                 objErrorMessage.Append($"[{timestamp}] : StackTrace :" + stacktrace);
             string logMessage = $"[{timestamp}] : Message :" + message;
@@ -891,5 +951,5 @@ namespace Utility
 
 
     }
-   
+
 }
