@@ -5818,6 +5818,7 @@ namespace Models
         public int currentPage { get; set; }
         public int? created_by { get; set; }
         public DateTime? created_on { get; set; }
+        public string status { get; set; }
 
     }
     public class DropdownMaster

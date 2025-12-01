@@ -1232,7 +1232,8 @@ namespace DataAccess.Admin
                         fiber_link_type_link_id_prefix = pod.fiber_link_type_linkid_prefix,
                         comment = pod.comment,
                         created_by = userId,
-                        created_on = pod.created_on != default(DateTime) ? pod.created_on : DateTime.Now
+                        created_on = pod.created_on != default(DateTime) ? pod.created_on : DateTime.Now,
+                        status = "Pending Assignment"
                     };
 
                     repo.Insert(newRecord);
