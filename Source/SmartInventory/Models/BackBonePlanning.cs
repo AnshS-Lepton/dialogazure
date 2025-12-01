@@ -77,7 +77,7 @@ namespace Models
         public string backbone_geometry { get; set; }
         //public string startpoint_network_id { get; set; }
        // public string endpoint_network_id { get; set; }
-        [Required]
+        // [Required]
         public double? threshold { get; set; }
         [NotMapped]
         public bool isSelectedSite { get; set; } = false;

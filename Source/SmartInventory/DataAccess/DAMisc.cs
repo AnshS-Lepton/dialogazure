@@ -2430,6 +2430,29 @@ namespace DataAccess
                 return objExisiting;
             }
             catch { throw; }
+        } 
+        public FMSMaster GetFMSRecordbyNetworkid(string networkId)
+        {
+            FMSMaster fMSMaster = new FMSMaster();
+            try
+            {
+                fMSMaster = repo.GetById(m => m.network_id == networkId);
+                if (fMSMaster == null)
+                {
+                    return null;
+                }
+            }
+            catch { throw; }
+            return fMSMaster;
+        }  
+        public List<FMSMaster> GetFMSRecordbyfmsName(string fmsName)
+        {
+            try
+            {
+                var objExisiting = repo.GetAll(m => m.fms_name == fmsName).ToList();
+                return objExisiting;
+            }
+            catch { throw; }
         }
     }
     public class DAFormInputSettings : Repository<FormInputSettings>
@@ -2671,6 +2694,42 @@ namespace DataAccess
             try
             {
                 var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_delete_plan", new { p_plan_id = plan_id, p_user_id = user_id });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        } 
+        public List<DbMessageForPlan> DeleteSproutPlanById(int planId, int userId, string networkId)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_delete_sprout_site_network", new { p_plan_id = planId, p_user_id = userId, p_site_network_id = networkId });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public List<DbMessageForPlan> ConvertToAsbultBackboneNetwork(int planId, int userId)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_convert_to_asbuilt_network", new { p_plan_id = planId, p_user_id = userId });
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public List<DbMessageForPlan> ConvertToPlannedBackboneNetwork(int planId, int userId)
+        {
+            try
+            {
+                var res = repo.ExecuteProcedure<DbMessageForPlan>("fn_backbone_convert_to_planned_network", new { p_plan_id = planId, p_user_id = userId });
                 return res;
             }
             catch (Exception ex)

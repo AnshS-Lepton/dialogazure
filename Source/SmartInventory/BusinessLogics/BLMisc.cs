@@ -32,6 +32,14 @@ namespace BusinessLogics
         {
             return new FMSDAMisce().Getnetworkid(Convert.ToInt32(systemid)).ToString();
         }
+        public FMSMaster GetFMSRecordbyNetworkid(string networkId)
+        {
+            return new FMSDAMisce().GetFMSRecordbyNetworkid(networkId);
+        }
+        public List<FMSMaster> GetFMSRecordbyfmsName(string fmsName)
+        {
+            return new FMSDAMisce().GetFMSRecordbyfmsName(fmsName);
+        }
         public List<ViewEntityNotifications> GetEntityNotificationList(EntityNotificationsFilter objEntityNotiFilter)
         {
             return new DAMiscNoti().GetEntityNotificationList(objEntityNotiFilter);
@@ -1227,7 +1235,18 @@ namespace BusinessLogics
             return new DAPlan().DeleteBackbonePlanByPlanId(plan_id, user_id);
         }
 
-
+        public List<DbMessageForPlan> DeleteSproutPlanById(int plan_id, int user_id, string networkId)
+        {
+            return new DAPlan().DeleteSproutPlanById(plan_id, user_id, networkId);
+        }
+        public List<DbMessageForPlan> ConvertToAsbultBackboneNetwork(int plan_id, int user_id)
+        {
+            return new DAPlan().ConvertToAsbultBackboneNetwork(plan_id, user_id);
+        }
+        public List<DbMessageForPlan> ConvertToPlannedBackboneNetwork(int plan_id, int user_id)
+        {
+            return new DAPlan().ConvertToPlannedBackboneNetwork(plan_id, user_id);
+        }
 
         public List<PlanBom> GetTempCableLengthGemo(NetworkPlanning model, int user_id)
         {

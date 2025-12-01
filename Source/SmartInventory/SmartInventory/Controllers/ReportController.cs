@@ -8710,6 +8710,30 @@ namespace SmartInventory.Controllers
 
 
         }
+        public ActionResult CheckFMSExists(string SearchbyText, string ColumnName)
+        {
+            if (!string.IsNullOrEmpty(SearchbyText))
+            {
+                if (ColumnName.ToLower() == "network id")
+                {
+                    var fmsResult = new BLMisc().GetFMSRecordbyNetworkid(SearchbyText);
+                    if (fmsResult == null)
+                    {
+                        return Json(new { message = "Please enter the valid Network ID.", status = "false" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                if (ColumnName.ToLower() == "fms_name")
+                {
+                    var IsExists = new BLMisc().GetFMSRecordbyfmsName(SearchbyText);
+                    if (IsExists.Count == 0)
+                    {
+                        return Json(new { message = "Please enter the correct ODF name.", status = "false" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            return Json(new { status = "OK" }, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult ExportFiberAllocationReport(ExportEntitiesReport objExportEntitiesReport, int page = 1, string sort = "", string sortdir = "")
         {
             if (objExportEntitiesReport.objReportFilters.IsISP)
@@ -13774,14 +13798,16 @@ namespace SmartInventory.Controllers
         }
         public void DownloadSiteReportIntoKML()
         {
-            if (Session["ExportReportFilter"] != null) 
+            if (Session["ExportReportFilter"] != null)
             {
                 StringBuilder sbLine = new StringBuilder();
                 StringBuilder sbPoint = new StringBuilder();
                 StringBuilder sbPolygon = new StringBuilder();
+
                 sbLine.Append("<Folder>");
                 sbPoint.Append("<Folder>");
                 sbPolygon.Append("<Folder>");
+
                 try
                 {
                     BLLayer objBLLayer = new BLLayer();
@@ -13795,11 +13821,14 @@ namespace SmartInventory.Controllers
                         {
                             sbPoint.Append("<Placemark><name>" + new XText(objEntity.entity_title) + "</name>");
                             sbPoint.Append("<description>" + objEntity.entity_name + "</description>");
-                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl><Point><coordinates>");
+                            sbPoint.Append("<styleUrl>#downArrowIcon</styleUrl>");
+                            sbPoint.Append("<Point><coordinates>");
+
                             if (!string.IsNullOrEmpty(objEntity.geom))
                             {
-                                sbPoint.Append(objEntity.geom);
+                                sbPoint.Append(ConvertWKTPointToKML(objEntity.geom));   // FIXED HERE
                             }
+
                             sbPoint.Append("</coordinates></Point></Placemark>");
                         }
                     }
@@ -13808,17 +13837,22 @@ namespace SmartInventory.Controllers
                     sbPoint.Append("</Folder>");
                     sbPolygon.Append("</Folder>");
 
-                    string finalKMLString = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" +
-                                "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">" +
-                               "<Document>  <!-- Begin Style Definitions -->" +
-                                "<Style id =\"feasibility_id\"><LineStyle><color>" + "#FF0000FF" + "</color><width>4</width></LineStyle></Style>" +
-                                "<Style id=\"downArrowIcon\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href></Icon></IconStyle></Style>" +
-                                "<Style id=\"downArrowIcon\"><IconStyle><hotSpot x=\"20\" y=\"2\" xunits=\"pixels\" yunits=\"pixels\"/></IconStyle></Style>" +
-                                sbPoint.ToString() + sbLine.ToString() + "</Document></kml>";
+                    string finalKMLString =
+                        "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                        "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">" +
+                        "<Document>" +
+                        "<Style id=\"feasibility_id\"><LineStyle><color>#FF0000FF</color><width>4</width></LineStyle></Style>" +
+                        "<Style id=\"downArrowIcon\"><IconStyle><Icon>" +
+                        "<href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href>" +
+                        "</Icon></IconStyle></Style>" +
+                        sbPoint.ToString() +
+                        sbLine.ToString() +
+                        sbPolygon.ToString() +
+                        "</Document></kml>";
 
                     string attachment = "attachment; filename=export_" + lstExportReportKML[0].entity_title + ".kml";
                     Response.ClearContent();
-                    Response.ContentType = "application/xml";
+                    Response.ContentType = "application/vnd.google-earth.kml+xml";
                     Response.AddHeader("content-disposition", attachment);
                     Response.Write(finalKMLString);
                     Response.End();
@@ -13826,10 +13860,26 @@ namespace SmartInventory.Controllers
                 catch (Exception ex)
                 {
                     ErrorLogHelper.WriteErrorLog("DownloadSiteReportIntoKML()", "Report", ex);
-                    throw ex;
+                    throw;
                 }
             }
         }
+
+        private string ConvertWKTPointToKML(string wkt)
+        {
+            // Example WKT: POINT(81.8145434321138 7.432050102720438)
+            if (string.IsNullOrEmpty(wkt)) return "";
+
+            wkt = wkt.Replace("POINT(", "").Replace(")", "").Trim();
+            var parts = wkt.Split(' ');
+
+            if (parts.Length != 2)
+                return "";
+
+            // KML format: lon,lat
+            return parts[0] + "," + parts[1];
+        }
+
         public void DownloadSiteReportIntoNearestKML()
         {
             if (Session["ExportReportFilter"] != null)
@@ -13909,6 +13959,21 @@ foreach (var objEntity in lstExportReportKML)
                 }
             }
         }
+        public ActionResult CheckSiteReport()
+        {
+            List<ExportReportKML> lstExportReportKML = new List<ExportReportKML>();
+            ExportReportFilter objReportFilter = (ExportReportFilter)Session["ExportReportFilter"]; 
+            lstExportReportKML = new BLSite().GetExportReportDataNearestKML(objReportFilter);
+            if (lstExportReportKML.Count == 0)
+            {
+                return Json(new { status = "FAILED", message = "Fiber distance record not found. Unable to process the fiber distance because no route to the nearest site was available." });
+            }
+            else
+            {
+                return Json(new { status = "SUCCESS" });
+            }
+        }
+
 
         public void DownloadSiteReportIntoNearestKMZ()
         {
@@ -15459,11 +15524,36 @@ foreach (var objEntity in lstExportReportKML)
                 fiber_link_code = row["Fiber Link Code"]?.ToString()?.Trim(),
                 created_on = now
             }).ToList();
+            List<SiteImportLog> siteImportLogs = new List<SiteImportLog>();
+            siteImportLogs =  new BLProject().updateSiteDetails(siteList);
+            if(siteImportLogs.Count > 0)
+            {
+                string fName = "SiteImportLog" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+                DataTable dtReport = MiscHelper.ListToDataTable<SiteImportLog>(siteImportLogs);
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {                 
+                   if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
+                   if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
+                   if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns["error_msg"].ColumnName = "Error Message"; }
+                    
+                }
 
-           
-           var site=  new BLProject().updateSiteDetails(siteList);
+                Session["ExportSiteLog"] = dtReport;
+
+                return Json(new { success = true, message = $"Site imported partially successfully.", fName = fName });
+            }
             new BLProject().SaveSiteProjectDetails(siteList, userId);
             return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
+        }
+        public void ExportSiteImportLog(string fName)
+        {
+            DataTable dtReport = HttpContext.Session["ExportSiteLog"] as DataTable;
+            if (dtReport == null)
+            {
+                return;
+            }
+
+            ExportData(dtReport, fName);
         }
 
         public string AppendTimeStamp(string fileName)
