@@ -128,8 +128,12 @@
             // Use your reusable AJAX file upload function
             ajaxReqforFileUpload('Report/UploadSiteFiles', formData, true, function (result) {
                 if (result.success) {
+                    debugger;
                     alert(result.message);
+                    if (result.fName) {
 
+                        window.location = appRoot + 'Report/ExportSiteImportLog?fName=' + result.fName;
+                    }
                     $("#updExcel").val("");
                     $('#btnShowReportData').trigger("click");
                     //popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {

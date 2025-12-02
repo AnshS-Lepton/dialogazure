@@ -128,14 +128,15 @@ namespace SmartInventory.Controllers
 
 							 commonUtil.SendSiteAwardEmail(receivers, "The Network Ticket is assigned by", "Network Ticket Notifiation", out mailSentMsg, listEmail);
 							*/
-							string WH24AuthBaseURL = ApplicationSettings.WH24AuthBaseURL;
-							string WH24URL = ApplicationSettings.WH24URL;
-							string WH24ClientId = ApplicationSettings.WH24ClientId;
-							string WH24ClientSecret = ApplicationSettings.WH24ClientSecret;
-							string WH24grantType = ApplicationSettings.WH24grantType;
+							//string WH24AuthBaseURL = ApplicationSettings.WH24AuthBaseURL;
+							//string WH24URL = ApplicationSettings.WH24URL;
+							//string WH24ClientId = ApplicationSettings.WH24ClientId;
+							//string WH24ClientSecret = ApplicationSettings.WH24ClientSecret;
+							//string WH24grantType = ApplicationSettings.WH24grantType;
 
-							ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
-							aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
+							//ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
+							//aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
+						
 						}
 					}
 					else

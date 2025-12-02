@@ -315,14 +315,14 @@ namespace SmartInventory.Controllers
        
         public PartialViewResult GetLoopManage(int tempPlanid, double looplength, bool is_loop_updated)
         {
-       
+            int userId = Convert.ToInt32(((User)Session["userDetail"]).user_id);
             string IsLoopRecAscOrdering = Session["SiteId"].ToString();
-            List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid, IsLoopRecAscOrdering);
-            if (IsLoopRecAscOrdering.Contains("--DESC"))
-            {
-                IsLoopRecAscOrdering = IsLoopRecAscOrdering.Split(new[] { "--DESC" }, StringSplitOptions.None)[0];
-            }
-            list.ForEach(x => x.site_id = IsLoopRecAscOrdering);
+            List<temp_auto_network_plan> list = new BLtemp_auto_network_plan().GetTempNetwork(tempPlanid, IsLoopRecAscOrdering, userId);
+            //if (IsLoopRecAscOrdering.Contains("--DESC"))
+            //{
+            //    IsLoopRecAscOrdering = IsLoopRecAscOrdering.Split(new[] { "--DESC" }, StringSplitOptions.None)[0];
+            //}
+            //list.ForEach(x => x.site_id = IsLoopRecAscOrdering);
 
             //if (!is_loop_updated) { 
             //list.ForEach(x => x.loop_length = looplength);

@@ -1099,7 +1099,7 @@ namespace DataAccess.Admin
     }
     public class DASiteDetails : Repository<PODMaster>
     {
-        public List<SiteImportLog> UpdateSiteDetails(List<PODMaster> pODMasterList)
+        public List<SiteImportLog> UpdateSiteDetails(List<PODMaster> pODMasterList,int userId)
         {
             List<PODMaster> updatedRecords = new List<PODMaster>();
             List<SiteImportLog> siteImportLog = new List<SiteImportLog>();
@@ -1163,6 +1163,8 @@ namespace DataAccess.Admin
                         );
                     }
                 }
+                new DAProjectDetails().SaveSiteProjectDetails(updatedRecords, userId);
+
             }
             catch (Exception ex)
             {

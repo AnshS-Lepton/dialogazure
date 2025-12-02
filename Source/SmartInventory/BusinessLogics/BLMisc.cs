@@ -1110,9 +1110,9 @@ namespace BusinessLogics
 
     public class BLtemp_auto_network_plan
     {
-        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id,string SiteId)
+        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id,string SiteId,int userId)
         {
-            return new DAtemp_auto_network_plan().GetTempNetwork(temp_plan_id, SiteId);
+            return new DAtemp_auto_network_plan().GetTempNetwork(temp_plan_id, SiteId,userId);
         } 
 
         public void UpdateLoopLengthByPlanId(int temp_plan_id, double looplength)

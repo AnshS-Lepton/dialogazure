@@ -1,0 +1,1805 @@
+CREATE OR REPLACE FUNCTION public.fn_nwt_get_ticket_details(p_searchby character varying, p_searchtext character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_userid integer, p_searchfrom timestamp without time zone, p_searchto timestamp without time zone, p_ticket_type_id integer, p_region_id integer, p_province_id integer, p_ticket_status_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+sql TEXT;
+NWstatus TEXT;
+StartSNo INTEGER;
+EndSNo INTEGER;
+TotalRecords integer;
+v_user_role_id integer;
+v_is_admin_rights_enabled boolean;
+BEGIN
+
+p_searchby:=replace(replace(p_searchby,'(',''),')','');
+
+select role_id,is_admin_rights_enabled into v_user_role_id,v_is_admin_rights_enabled from user_master where user_id=p_userid;
+
+-- DYNAMIC QUERY
+raise info'role_id:-% ',v_user_role_id;
+sql:= 'SELECT ROW_NUMBER() OVER (ORDER BY '|| CASE WHEN (p_sortcolname) = '' THEN 'nt.ticket_id' ELSE 'nt.'||p_sortcolname END || ' ' ||CASE WHEN (p_sorttype) ='' THEN 'desc' else p_sorttype end||') AS S_No
+,nt.*,ttrm.id,ttrm.ticket_type_id,ttrm.role_id,ttrm.is_create,ttrm.is_edit,ttrm.is_view,ttrm.is_approve,ttrm.ticket_type, lp.site_id, lp.site_name, lp.site_owner, lp.maximum_cost, lp.location_address, lp.latitude, lp.longitude, lp.project_category, lp.priority, lp.cable_plan_cores, lp.fiber_link_type_link_id_prefix, lp.comment,lp.ds_cmc_area from vw_att_details_networktickets nt
+inner join ticket_type_role_mapping ttrm on nt.ticket_type_id=ttrm.ticket_type_id and ttrm.role_id ='||v_user_role_id||' and ttrm.is_view=true
+inner join user_permission_area upa on nt.province_id=upa.province_id and upa.user_id='||p_userid||'
+left join site_project_details lp on nt.site_project_id = lp.project_id
+WHERE 1=1';
+
+raise info'sql:-% ',sql;
+NWstatus:= 'SELECT tsm.name::character varying as ticket_status,count(nt.ticket_status_id) as ticket_count,tsm.color_code,tsm.opacity from
+vw_att_details_networktickets nt right join
+ticket_status_master tsm on tsm.id=nt.ticket_status_id
+inner join user_permission_area upa on nt.province_id=upa.province_id and upa.user_id='||p_userid||'
+';
+
+
+IF(p_region_id >0 )THEN
+sql:= sql ||'and nt.region_id='||p_region_id||'';
+NWstatus:= NWstatus ||'and nt.region_id='||p_region_id||'';
+END IF;
+IF(p_province_id >0 )THEN
+sql:= sql ||'and nt.province_id='||p_province_id||'';
+NWstatus:= NWstatus ||'and nt.province_id='||p_province_id||'';
+END IF;
+IF(p_ticket_status_id >0 )THEN
+sql:= sql ||'and nt.ticket_status_id='||p_ticket_status_id||'';
+NWstatus:= NWstatus ||'and nt.ticket_status_id='||p_ticket_status_id||'';
+END IF;
+
+IF(p_ticket_type_id >0 )THEN
+sql:= sql ||'and nt.ticket_type_id='||p_ticket_type_id||'';
+NWstatus:= NWstatus ||'and nt.ticket_type_id='||p_ticket_type_id||'';
+END IF;
+raise info'v_user_role_id :-% ',v_user_role_id;
+
+IF(v_user_role_id >0 )THEN
+sql:= sql ||' and case when ('||v_user_role_id||' =1 or '||v_is_admin_rights_enabled||'=true) then 1=1 else 1=1 end AND (nt.assigned_to='||p_userid||' OR cast(nt.created_by as integer) in (select user_id from user_master where manager_id in ('||p_userid||') or user_id in ('||p_userid||')))';
+
+NWstatus:= NWstatus ||' and case when ('||v_user_role_id||' =1 or '||v_is_admin_rights_enabled||'=true) then 1=1 else nt.ticket_type_id in (select ticket_type_id from ticket_type_role_mapping where role_id= '||v_user_role_id||' and is_view=true) end';
+END IF;
+
+raise info'sqltest% ',sql;
+
+IF ((p_searchtext) != '' and (p_searchby) != '') THEN
+sql:= sql ||' AND lower('||p_searchby||'::text) LIKE lower(''%'||TRIM(p_searchtext)||'%'')';
+NWstatus:= NWstatus ||' AND lower(nt.'||p_searchby||'::text) LIKE lower(''%'||TRIM(p_searchtext)||'%'')';
+END IF;
+
+IF(p_searchfrom IS NOT NULL and p_searchto IS NOT NULL) THEN
+sql:= sql ||' AND nt.created_on::Date>= to_date('''||p_searchfrom||''', ''YYYY-MM-DD'') and nt.created_on::Date<=to_date('''||p_searchto||''', ''YYYY-MM-DD'')';
+NWstatus:= NWstatus ||' AND nt.created_on::Date>= to_date('''||p_searchfrom||''', ''YYYY-MM-DD'') and nt.created_on::Date<=to_date('''||p_searchto||''', ''YYYY-MM-DD'')';
+END IF;
+raise info'sql-record:-% ',sql;
+-- GET TOTAL RECORD COUNT
+EXECUTE 'SELECT COUNT(1) FROM ('||sql||') as a' INTO TotalRecords;
+
+--GET PAGE WISE RECORD (FOR PARTICULAR PAGE)
+IF((p_pageno) <> 0) THEN
+StartSNo:= p_pagerecord * (p_pageno - 1 ) + 1;
+EndSNo:= p_pageno * p_pagerecord;
+sql:= 'SELECT '||TotalRecords||' as totalRecords, *
+FROM (' || sql || ' ) T
+WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo;
+
+ELSE
+sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ' ) T ';
+END IF;
+
+RAISE INFO 'lstNWStatus:-%', NWstatus;
+RAISE INFO 'lstNWDetails:-%', sql;
+
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from (
+select(
+select array_to_json(array_agg(row_to_json(x)))
+from (
+'||NWstatus||' where tsm.module=''Network_Ticket'' and is_active=true group by tsm.name,nt.ticket_status_id,tsm.color_code,tsm.action_seq,tsm.opacity order by tsm.action_seq
+) x
+) as lstNWStatus,
+(
+select array_to_json(array_agg(row_to_json(x)))
+from('||sql||')x
+
+) as lstNWDetails
+) row';
+
+END ;
+$function$
+;
+
+-- Permissions
+-------------------------------------------------------------------------------------------------------------
+
+-- public.vw_att_details_networktickets source
+
+CREATE OR REPLACE VIEW public.vw_att_details_networktickets
+AS SELECT adnt.ticket_id,
+    adnt.ticket_type_id,
+    ttm.ticket_type,
+    adnt.reference_type,
+    adnt.region_id,
+    rb.region_name,
+    adnt.province_id,
+    pb.province_name,
+    adnt.network_id,
+    adnt.name,
+    adnt.assigned_to,
+    um.user_name AS assigned_to_text,
+    to_char(adnt.target_date::timestamp with time zone, 'DD-Mon-YYYY'::text) AS target_date,
+    tsm.name AS ticket_status,
+    tsm.id AS ticket_status_id,
+    tsm.color_code AS ticket_status_color_code,
+    fn_get_network_status(adnt.for_network_type) AS for_network_type,
+    adnt.remarks,
+    adnt.reference_description,
+    umm.user_name AS created_by_text,
+    fn_get_date(adnt.created_on)::text AS created_on,
+    umm1.user_name AS modified_by_text,
+    fn_get_date(adnt.modified_on)::text AS modified_on,
+    adnt.reference_ticket_id,
+    adnt.ticket_id AS system_id,
+    adnt.for_network_type AS status,
+    adnt.created_by,
+    ttm.color_code AS ticket_type_color_code,
+    adnt.project_code,
+    adnt.account_code,
+    adnt.is_new_entity,
+    adnt.for_network_type AS short_network_type,
+    adnt.origin_from,
+    adnt.origin_ref_id,
+    adnt.origin_ref_code,
+    adnt.origin_ref_description,
+    adnt.request_ref_id,
+    adnt.requested_by,
+    adnt.request_approved_by,
+    adnt.gis_design_id,
+    umm.manager_id,
+    pm.project_code AS projectcode,
+    pm.project_name,
+    adpm.planning_name,
+    adpm.planning_code,
+    adwm.workorder_name,
+    adwm.workorder_code,
+    addpm.purpose_name,
+    addpm.purpose_code,
+    adnt.site_id,
+    adnt.site_name,
+    adnt.site_project_id
+   FROM att_details_networktickets adnt
+     JOIN ticket_type_master ttm ON ttm.id = adnt.ticket_type_id
+     LEFT JOIN region_boundary rb ON rb.id = adnt.region_id
+     LEFT JOIN province_boundary pb ON pb.id = adnt.province_id
+     LEFT JOIN user_master umm1 ON umm1.user_id = adnt.modified_by
+     JOIN user_master um ON um.user_id = adnt.assigned_to
+     JOIN ticket_status_master tsm ON tsm.id = adnt.ticket_status_id
+     JOIN user_master umm ON umm.user_id = adnt.created_by
+     LEFT JOIN att_details_project_master pm ON pm.system_id = adnt.project_id
+     LEFT JOIN att_details_planning_master adpm ON adpm.system_id = adnt.planning_id
+     LEFT JOIN att_details_workorder_master adwm ON adwm.system_id = adnt.workorder_id
+     LEFT JOIN att_details_purpose_master addpm ON addpm.system_id = adnt.purpose_id;
+
+-- Permissions
+---------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.fn_network_planning_get_loop_list(p_plan_id integer, p_user_id integer, p_sort character varying)
+RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+declare
+is_a_endpoint_entity_exists bool;
+is_b_endpoint_entity_exists bool;
+BEGIN
+
+SELECT count(*)>0 into is_a_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_plan_id and tp.fraction = 0
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+ SELECT count(*)>0 into is_b_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_plan_id and tp.fraction = 1
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+RETURN QUERY
+    SELECT row_to_json(t)
+    FROM (
+        SELECT entity_name,loop_length,system_id,entity_type,fraction,is_middle_point,latitude,longitude,plan_id
+        FROM temp_auto_network_plan tp
+        WHERE plan_id = p_plan_id
+           and (case when is_a_endpoint_entity_exists
+              then fraction > 0
+  			ELSE TRUE END ) AND ( CASE
+		   WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		   ELSE TRUE end )
+             ORDER BY regexp_replace(entity_name, '\D','','g')::int ASC
+    ) t;
+
+   
+END;
+$function$
+;
+
+---------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_network_planning_get_plan_bom_list(p_plan_name character varying, p_plan_mode character varying, p_cable_type character varying, is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_cable_length double precision, p_distance double precision, p_user_id integer, p_temp_plan_id integer, p_is_loop_require boolean, p_is_loop_update boolean, p_loop_length double precision, p_polepecvendor character varying, p_manholepecvendor character varying, p_scspecvendor character varying, p_loop_span double precision)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+sql text;
+v_line_total_length DOUBLE PRECISION;
+v_point_entity character varying;
+v_line_geom geometry;
+v_total_point_entity integer;
+v_is_osp_tp boolean;
+v_total_line integer;
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_cable_length double precision;
+v_end_entity_count integer;
+v_middle_entity_count integer; 
+v_arrow_point record;
+v_loop_length double precision;
+v_outer_query text;
+v_temp_planid integer;
+p_site_id character varying;
+is_a_endpoint_entity_exists bool;
+is_b_endpoint_entity_exists bool;
+BEGIN
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+sql:='';
+v_total_line:=0;
+v_temp_planid:=0;
+
+p_scspecvendor = case when p_scspecvendor is null then '' else p_scspecvendor end;
+p_manholepecvendor = case when p_manholepecvendor is null then '' else p_manholepecvendor end;
+
+if(p_line_geom is null or p_line_geom = '') 
+then 
+
+SELECT substring(st_astext(line_sp_geometry), 12, length(st_astext(line_sp_geometry)) - 12) INTO p_line_geom from temp_auto_network_plan where plan_id = p_temp_plan_id and line_sp_geometry is not null
+limit 1;
+
+end if;
+
+p_polepecvendor = case when p_polepecvendor is null then '' else p_polepecvendor end;
+
+if(p_is_loop_update)
+then
+v_temp_planid:= p_temp_plan_id;
+select coalesce(sum(loop_length)::double precision,0)  from temp_auto_network_plan where plan_id=p_temp_plan_id into v_loop_length;
+
+select count(plan_id)into v_total_point_entity from temp_auto_network_plan where plan_id=v_temp_planid and loop_length >0;
+
+sql:=sql || 'select '||v_loop_length||' as length_qty,''Loop''::character varying as entity_type,geom_type,cost_per_unit,service_cost_per_unit
+		from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+	raise info 'ssdfasdfql=%',sql;	
+else
+
+if(upper(p_cable_type)=upper('overhead'))
+then
+	v_point_entity:='Pole';
+	else
+	v_point_entity:='Manhole';
+end if;
+
+ 
+ raise info 'p_site_id =%',p_site_id;
+	
+select is_osp_tp into v_is_osp_tp from vw_termination_point_master where tp_layer_id=(select layer_id from layer_details where layer_name='SpliceClosure')and layer_id=(select layer_id from layer_details where layer_name='Cable');
+
+  select validation.status,validation.message from  fn_network_planning_validate(p_plan_mode,p_cable_type,is_create_trench,
+  is_create_duct,v_is_osp_tp,p_cable_length,v_point_entity,p_user_id,0,p_line_geom) as validation into V_IS_VALID,V_MESSAGE;
+
+ IF(V_IS_VALID)
+THEN
+
+-- creating points entity according to line geom;
+select * from fn_temp_network_planning(p_plan_mode,p_cable_type,is_create_trench,is_create_duct,p_line_geom,p_cable_length,p_distance,p_user_id,p_plan_name,'', '', '', 0, '', 0, '',p_temp_plan_id)into v_arrow_point;
+
+v_temp_planid:=v_arrow_point.temp_plan_id;
+
+
+-- count of middle entity
+select count(plan_id)into v_middle_entity_count from temp_auto_network_plan where plan_id=v_arrow_point.temp_plan_id and is_middle_point='true';
+
+-- end entity
+select count(plan_id) into v_end_entity_count from temp_auto_network_plan where plan_id=v_arrow_point.temp_plan_id and is_middle_point='false';
+
+-- total count of point entity
+v_total_point_entity:=v_middle_entity_count+v_end_entity_count;
+
+ select ST_GeomFromText('LINESTRING('||p_line_geom||')',4326) into v_line_geom;
+ select round(st_length(v_line_geom,false)::numeric, 6)::double precision into v_line_total_length;
+
+-- get counts of cable 
+ if(v_line_total_length<p_cable_length)
+ then
+ 	v_total_line:=1;
+ else
+ 	select CEIL(v_line_total_length/p_cable_length)::integer into v_total_line;		
+ end if;
+
+-- for cable
+sql := 'select '||v_line_total_length||' as length_qty,* from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+
+if(is_create_trench) 
+then 
+	sql:=sql || ' union select '||v_line_total_length||' as length_qty,* from 
+	fn_network_planning_audit_template_detail(''trench'','||p_user_id||')';
+end if;
+
+if(is_create_duct) 
+then 
+	sql:=sql || ' union select '||v_line_total_length||' as length_qty,* from fn_network_planning_audit_template_detail(''duct'','||p_user_id||')';
+end if;
+ 
+
+if(upper(p_plan_mode)=upper('auto'))
+then
+	--sql:=sql || ' union select '||v_total_point_entity||' as length_qty,* from fn_network_planning_audit_template_detail('''||v_point_entity||''','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';	
+sql := sql || ' UNION SELECT ' || v_total_point_entity || ' AS length_qty, * 
+FROM fn_network_planning_audit_template_detail('
+|| quote_literal(v_point_entity) || ',' 
+|| p_user_id || ',' 
+|| quote_literal(p_polepecvendor) || ',' 
+|| quote_literal(p_manholepecvendor) || ',' 
+|| quote_literal(p_scspecvendor) || ')';
+
+else
+	--sql:=sql || ' union select '||v_total_point_entity||' as length_qty,* from fn_network_planning_audit_template_detail('''||v_point_entity||''','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';
+sql := sql || ' UNION SELECT ' || v_total_point_entity || ' AS length_qty, * 
+FROM fn_network_planning_audit_template_detail('
+|| quote_literal(v_point_entity) || ',' 
+|| p_user_id || ',' 
+|| quote_literal(p_polepecvendor) || ',' 
+|| quote_literal(p_manholepecvendor) || ',' 
+|| quote_literal(p_scspecvendor) || ')';
+
+raise info 'inner query11 =%',sql;
+end if;
+
+if(v_is_osp_tp)
+then 
+	sql:=sql || ' union select '||v_end_entity_count||' as length_qty,* from fn_network_planning_audit_template_detail(''spliceclosure'','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';
+end if;
+--- perform (fn_auto_network_plan_draft_update_loop_network(p_line_geom, p_temp_plan_id, p_user_id, p_loop_span, p_loop_length));
+
+if(p_is_loop_require)
+	then 	
+		/*if(p_is_loop_update)
+		then 
+		 select coalesce(sum(loop_length)::double precision,0)  from temp_auto_network_plan where plan_id=p_temp_plan_id into v_loop_length;
+		else
+			v_loop_length := v_total_point_entity * p_loop_length;
+		end if;*/
+
+ /*select coalesce(sum(loop_length)::double precision,0)  from temp_auto_network_plan where plan_id=p_temp_plan_id into v_loop_length;
+	
+		sql:=sql || ' union select '||v_loop_length||' as length_qty,''Loop'' as entity_type,geom_type,cost_per_unit,service_cost_per_unit
+		from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+*/
+	end if;
+end if;
+
+
+end if;
+
+raise info 'inner query =%',sql;
+
+ SELECT count(*)>0 into is_a_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = v_temp_planid and tp.fraction = 0
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+ SELECT count(*)>0 into is_b_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = v_temp_planid and tp.fraction = 1
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+        -- First try with start point
+        SELECT pod.site_id
+        INTO p_site_id
+        FROM point_master pm
+        JOIN att_details_pod pod ON pod.system_id = pm.system_id 
+        WHERE pm.entity_type = 'POD'
+          AND ST_Within(
+                pm.sp_geometry,
+                st_buffer_meters(
+                    ST_StartPoint(
+                        ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+                    ), 3)
+            )
+        LIMIT 1;
+       
+      p_site_id = case when p_site_id is not null then p_site_id|| '--DESC' else '' end;
+         -- Update Manhole names (forward order)
+        UPDATE temp_auto_network_plan t
+        SET entity_name = 
+            CASE
+                WHEN p_site_id IS null or p_site_id ='' THEN 'MH-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-MH-' || LPAD(x.seq::text, 2, '0')
+            END
+        FROM (
+           SELECT system_id,
+          ROW_NUMBER() OVER (ORDER BY system_id desc) AS seq
+		FROM temp_auto_network_plan
+		WHERE entity_type = 'Manhole'
+		  AND plan_id = v_temp_planid
+		  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+             
+        ) x
+        WHERE t.system_id = x.system_id
+          AND t.plan_id = v_temp_planid;
+
+        -- Update Pole names (forward order)
+        UPDATE temp_auto_network_plan t
+        SET entity_name = 
+            CASE
+                WHEN p_site_id IS null or p_site_id ='' THEN 'PL-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-PL-' || LPAD(x.seq::text, 2, '0')
+            END
+        FROM (
+            SELECT system_id,
+                   ROW_NUMBER() OVER (ORDER BY system_id desc) AS seq
+            FROM temp_auto_network_plan
+            WHERE entity_type = 'Pole'
+              AND plan_id = v_temp_planid
+              AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+        ) x
+        WHERE t.system_id = x.system_id
+          AND t.plan_id = v_temp_planid;
+
+        -- If not found, try with end point
+        IF p_site_id IS null or p_site_id = '' THEN
+            SELECT pod.site_id 
+            INTO p_site_id
+            FROM point_master pm
+            JOIN att_details_pod pod ON pod.system_id = pm.system_id 
+            WHERE pm.entity_type = 'POD'
+              AND ST_Within(
+                    pm.sp_geometry,
+                    st_buffer_meters(
+                        ST_EndPoint(
+                            ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+          ), 3) )
+            LIMIT 1;
+           
+       
+
+         IF p_site_id is Not NULL then
+                  
+
+            -- Update Manhole names (reverse order)
+            UPDATE temp_auto_network_plan t
+            SET entity_name =  CASE
+                WHEN p_site_id IS NULL  or p_site_id ='' THEN 'MH-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-MH-' || LPAD(x.seq::text, 2, '0')
+            END
+            FROM (
+                SELECT system_id,
+                       ROW_NUMBER() OVER (ORDER BY system_id ) AS seq
+                FROM temp_auto_network_plan 
+                WHERE entity_type = 'Manhole'
+                  AND plan_id = v_temp_planid
+                  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+            ) x
+            WHERE t.system_id = x.system_id
+              AND t.plan_id = v_temp_planid;
+
+            -- Update Pole names (reverse order)
+            UPDATE temp_auto_network_plan t
+            SET entity_name =  CASE
+                WHEN p_site_id IS NULL or p_site_id ='' THEN 'PL-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-PL-' || LPAD(x.seq::text, 2, '0') 
+            END
+            FROM (
+                SELECT system_id,
+                       ROW_NUMBER() OVER (ORDER BY system_id) AS seq
+                FROM temp_auto_network_plan
+                WHERE entity_type = 'Pole'
+                  AND plan_id = v_temp_planid
+                  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+            ) x
+            WHERE t.system_id = x.system_id
+              AND t.plan_id = v_temp_planid;
+             
+             p_site_id = p_site_id|| '--ASC';
+        END IF;
+   END IF;
+ 
+  perform (fn_auto_network_plan_draft_update_loop_network(p_line_geom, v_temp_planid, p_user_id, p_loop_span, p_loop_length));
+ 
+ if(p_is_loop_require)
+	then 
+  select coalesce(sum(loop_length)::double precision,0) ,count(*)  from temp_auto_network_plan where plan_id=v_temp_planid AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      ) into v_loop_length,v_total_point_entity;
+	
+		sql:=sql || ' union select '||v_loop_length||' as length_qty,''Loop'' as entity_type,geom_type,cost_per_unit,service_cost_per_unit
+		from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+end if;
+	
+v_outer_query:= 'select '||V_IS_VALID||'::boolean AS is_template_extis,'||v_temp_planid||' as temp_plan_id,
+ case when upper(entity_type)=''CABLE'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+when upper(entity_type)=''DUCT'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+when upper(entity_type)=''TRENCH'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+ when upper(entity_type)=''LOOP'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_point_entity||')::character varying else length_qty ::character varying end as length_qty,
+(round((length_qty)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((length_qty)::numeric, 2))as amount,entity_type,geom_type,cost_per_unit,service_cost_per_unit from ('||sql||')e';
+
+ raise info 'inner query fin=al =%',v_outer_query;
+  
+IF (V_IS_VALID) THEN
+    RETURN QUERY
+    EXECUTE 'select row_to_json(row) 
+             from (select *,'|| quote_literal(coalesce(p_site_id, '')) ||' as site_id 
+                   from ('||v_outer_query||')t order by geom_type) row';
+ELSE
+    RETURN QUERY
+    EXECUTE 'select row_to_json(row) 
+             from (select '||V_IS_VALID||'::boolean AS is_template_extis, 
+                          '||quote_literal(V_MESSAGE)||'::character varying AS msg, 
+                          '||quote_literal(coalesce(p_site_id, ''))||'::character varying as site_id) row';
+END IF;
+
+            
+ END
+$function$
+;
+
+-- Permissions
+
+------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_network_planning_save_auto_planning(p_plan_mode character varying, p_cable_type character varying, is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_cable_length double precision, p_distance double precision, p_user_id integer, p_plan_name character varying, p_startpoint character varying, p_endpoint character varying, p_end_point_type character varying, p_end_point_buffer double precision, p_edit_path character varying, p_end_point_entity_id integer, p_end_point_entity_type character varying, p_temp_plan_id integer, p_is_loop_required boolean, p_loop_length double precision, p_polespecvendor character varying, p_manholespecvendor character varying, p_scspecvendor character varying)
+ RETURNS TABLE(status boolean, message character varying, plan_id integer)
+ LANGUAGE plpgsql
+AS $function$
+
+DECLARE
+
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_arow record;
+v_system_id integer;
+v_entity_type character varying;
+v_arow_network_id record;
+v_arow_parent_details record;
+v_arow_cable record;
+v_arow_box record;
+v_layer_table character varying;
+v_arow_splitter record;
+sql text;
+v_arow_wcr record;
+v_arow_layer_details record;
+v_layer_wcr_mapping character varying;
+v_new_wcr_mapping record;
+v_current_system_id integer;
+v_line_geom geometry;
+v_region_province record;
+v_arow_closure record;
+v_counter integer;
+v_arow_prev_closure record;
+v_arow_prev_cable record;
+-- v_other_end_geom geometry;
+v_prev_qty_length double precision;
+V_TOTAL_CALC_LENGTH DOUBLE PRECISION;
+v_line_total_length DOUBLE PRECISION;
+v_total_line integer;
+p_rfs_type character varying;
+v_manhole_item_id integer;
+v_arow_manhole record;
+v_sub_line_geom geometry;
+v_sub_line_start_point geometry;
+v_sub_line_end_point geometry;
+v_sub_line character varying;
+v_arow_prev_manhole record;
+v_arow_trench record;
+v_arow_duct record;
+v_arow_fms record;
+v_arow_pod record;
+v_arow_first_closure record;
+v_point_entity character varying;
+v_is_osp_tp BOOLEAN;
+p_plan_id integer;
+v_audit_item_master_id_sc integer;
+v_audit_item_master_id_point_entity integer;
+v_audit_item_master_id_cable integer;
+v_audit_item_master_id_duct integer;
+v_audit_item_master_id_trench integer;
+v_layer_ids character varying;
+--v_arow_first_manhole record;
+v_temp_point_entity record;
+--------
+v_current_point_geom geometry;
+v_start_point character varying;
+v_end_point character varying;
+v_loop_length double precision;
+v_point_entity_type character varying;
+v_a_display_value CHARACTER VARYING;
+v_inner_query text;
+v_arow_end_manhole record;
+v_arow_middle_manhole record;
+v_total_record_temp integer;
+v_counter_2 integer;
+v_pole_spec_vendor TEXT[];
+v_manhole_spec_vendor TEXT[];
+v_sc_spec_vendor TEXT[];
+is_endpoint_entity_exists boolean;
+is_a_endpoint_entity_exists boolean;
+is_b_endpoint_entity_exists boolean;
+BEGIN
+v_counter_2=0;
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+v_counter:=0;
+sql:='';
+v_prev_qty_length:=0;
+p_rfs_type:='A-RFS';
+p_plan_id=0;
+
+CREATE temp TABLE temp_connection
+(
+source_system_id integer,
+source_network_id character varying(100),
+source_entity_type character varying(100),
+source_port_no integer,
+destination_system_id integer,
+destination_network_id character varying(100),
+destination_entity_type character varying(100),
+destination_port_no integer,
+is_source_cable_a_end boolean NOT NULL DEFAULT false,
+is_destination_cable_a_end boolean NOT NULL DEFAULT false,
+equipment_system_id integer,
+equipment_network_id character varying(100),
+equipment_entity_type character varying(100),
+created_by integer,
+splicing_source character varying(100)
+) on commit drop;
+
+IF(coalesce(p_line_geom,'')='' )
+then
+V_IS_VALID=FALSE;
+V_MESSAGE:='Line Geom can not be blank !';
+end if;
+
+IF(V_IS_VALID)
+THEN
+select is_osp_tp into v_is_osp_tp from vw_termination_point_master where tp_layer_id=(select layer_id from layer_details where layer_name='SpliceClosure')and layer_id=(select layer_id from layer_details where layer_name='Cable');
+
+select ST_GeomFromText('LINESTRING('||p_line_geom||')',4326) into v_line_geom;
+select st_length(v_line_geom,false)::double precision into v_line_total_length;
+
+    v_pole_spec_vendor := string_to_array(p_polespecvendor, ',');
+    v_manhole_spec_vendor := string_to_array(p_manholespecvendor, ',');
+    v_sc_spec_vendor := string_to_array(p_scspecvendor, ',');
+  
+if(upper(p_cable_type)=upper('overhead'))then
+v_point_entity:='Pole';
+else
+v_point_entity:='Manhole';
+end if;
+
+select validation.status,validation.message from fn_network_planning_validate(p_plan_mode,p_cable_type,is_create_trench,is_create_duct,v_is_osp_tp,p_cable_length,v_point_entity,p_user_id,p_end_point_buffer,p_line_geom) as validation into V_IS_VALID,V_MESSAGE;
+
+end if;
+
+IF(V_IS_VALID)
+THEN
+
+------------ Get all entity audit_item_master_id =================================================
+
+select (select (select * from fn_get_template_detail(p_user_id,'SpliceClosure',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_sc ;
+select (select (select * from fn_get_template_detail(p_user_id,v_point_entity,''))->>'audit_item_master_id')::integer into v_audit_item_master_id_point_entity ;
+select (select (select * from fn_get_template_detail(p_user_id,'cable',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_cable ;
+select (select (select * from fn_get_template_detail(p_user_id,'duct',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_duct ;
+select (select (select * from fn_get_template_detail(p_user_id,'trench',''))->>'audit_item_master_id')::integer into v_audit_item_master_id_trench;
+
+----------------========================layerList--------------=================================
+select array_to_string(array_agg(layer_id), ',') into v_layer_ids from layer_details
+where
+(true =true and upper(layer_name) =upper('cable'))
+or (is_create_trench =true and upper(layer_name) =upper('trench'))
+or (is_create_duct =true and upper(layer_name) =upper('duct'))
+or (v_is_osp_tp =true and upper(layer_name) =upper('SpliceClosure'))
+or (p_is_loop_required =true and upper(layer_name) =upper('Loop'))
+or (true =true and upper(layer_name) =upper(''||v_point_entity||''));
+
+------------------------- save plan ==================================================================================
+INSERT INTO public.att_details_network_plan
+(planid,layer_id,plan_name, start_point, end_point, cable_type, is_create_trench, is_create_duct, pole_manhole_distance, cable_length, created_by,
+created_on,planning_mode,
+end_point_type,end_point_buffer,end_point_entity,edit_path,is_loop_required,loop_length)
+VALUES(p_temp_plan_id,v_layer_ids,p_plan_name, p_startpoint, p_endpoint,p_cable_type,is_create_trench, is_create_duct, p_distance, p_cable_length, p_user_id, now(),p_plan_mode,
+p_end_point_type,p_end_point_buffer,p_end_point_entity_id,p_edit_path,p_is_loop_required,p_loop_length)
+RETURNING planid into p_plan_id;
+
+ SELECT count(*)>0 into is_a_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_temp_plan_id and tp.fraction = 0
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+ SELECT count(*)>0 into is_b_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_temp_plan_id and tp.fraction = 1
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+--select count(1) from temp_auto_network_plan
+
+FOR v_temp_point_entity IN select * from temp_auto_network_plan tp where tp.plan_id=p_temp_plan_id order by system_id
+LOOP
+ 
+is_endpoint_entity_exists :=
+    CASE
+        WHEN v_temp_point_entity.fraction = 0 THEN is_a_endpoint_entity_exists
+        WHEN v_temp_point_entity.fraction = 1 THEN is_b_endpoint_entity_exists
+        ELSE false
+    END;
+
+if(is_endpoint_entity_exists = true and v_temp_point_entity.fraction = 0) 
+then 
+ v_arow_closure = null;
+
+ SELECT pm.system_id ,pm.common_name as network_id,pm.entity_type, pm.longitude ,pm.latitude  into v_arow_closure FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+  WHERE tp.plan_id = p_temp_plan_id and tp.fraction = v_temp_point_entity.fraction and tp.fraction in (0,1)
+  ORDER BY tp.system_id LIMIT 1),4326),2)) limit 1;
+ 
+ v_arow_prev_closure=v_arow_closure;
+ v_arow_manhole = v_arow_closure;
+
+end if;
+
+v_counter:=v_counter+1;
+
+v_current_point_geom=case when v_temp_point_entity.fraction in (0,1) then v_temp_point_entity.sp_geometry else ST_LineInterpolatePoint(v_line_geom, v_temp_point_entity.fraction) end;
+
+select count(1) from temp_auto_network_plan tp where tp.plan_id=p_temp_plan_id and is_middle_point =false into v_total_record_temp;
+
+v_loop_length := v_temp_point_entity.loop_length;
+v_point_entity_type := v_temp_point_entity.entity_type;
+select * into v_region_province from fn_getregionprovince(substring(left(St_astext(v_current_point_geom),-1),7),'Point');
+
+update temp_auto_network_plan set province_id =v_region_province.province_id,region_id=v_region_province.region_id,created_by=p_user_id where system_id=v_temp_point_entity.system_id;
+
+-- if we need to create entity in middle then only middle entity is created
+if(v_temp_point_entity.is_middle_point=true)
+then
+
+SELECT * into v_arow_network_id FROM fn_get_clone_network_code( v_point_entity, 'Point', substring(left(St_astext(v_current_point_geom),-1),7),0,'')
+as clone order by clone.status desc limit 1;
+
+raise info '%is_endpoint_entity_exists',is_endpoint_entity_exists;
+if(is_endpoint_entity_exists = false) then 
+
+if(upper(v_point_entity)=upper('Manhole'))
+then
+raise info '%v_counter_1',v_counter_2;
+
+INSERT INTO att_details_manhole(is_visible_on_map,audit_item_master_id,ownership_type,network_id, manhole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,
+item_code, vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+,project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',v_arow_network_id.message,case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name  else v_arow_network_id.message end,
+st_x(v_current_point_geom),st_y(v_current_point_geom),
+v_region_province.province_id,v_region_province.region_id, specification, category_reference,  subcategory_1, subcategory_2, subcategory_3,
+code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',v_arow_network_id.o_p_system_id,
+v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id, 0, 0, 0, 0,'planning',p_plan_id
+FROM item_template_master where id = v_manhole_spec_vendor[1]::integer and vendor_id = v_manhole_spec_vendor[3]::integer and code= v_manhole_spec_vendor[2]::varchar limit 1 RETURNING system_id,network_id,latitude,longitude into v_arow_middle_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name)
+values(v_arow_middle_manhole.system_id, v_point_entity,st_x(v_current_point_geom)::double precision, st_y(v_current_point_geom)::double precision,
+'A', ST_GEOMFROMTEXT('POINT('||st_x(v_current_point_geom)||' '||st_y(v_current_point_geom)||')',4326),now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name  else fn_get_display_name(v_arow_middle_manhole.system_id, v_point_entity) end
+);
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id,'Manhole'::character varying ,v_region_province.province_id,0,false));
+
+else
+raise info '%v_counter_2',v_counter_2;
+
+INSERT INTO att_details_pole(is_visible_on_map,audit_item_master_id,ownership_type,pole_type,network_id, pole_name,
+longitude, latitude, province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,item_code,
+vendor_id, type, brand, model, construction, activation,accessibility, status,
+created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type, sequence_id
+, project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',specify_type,v_arow_network_id.message,
+case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else v_arow_network_id.message end,
+st_x(v_current_point_geom),st_y(v_current_point_geom),
+v_region_province.province_id,v_region_province.region_id, specification, category_reference,  subcategory_1, subcategory_2, subcategory_3,
+code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',
+v_arow_network_id.o_p_system_id,v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id,
+0, 0, 0, 0 ,'planning',p_plan_id
+FROM item_template_master where id = v_pole_spec_vendor[1]::integer and vendor_id = v_pole_spec_vendor[3]::integer and code = v_pole_spec_vendor[2]::varchar limit 1 RETURNING system_id,network_id,latitude,longitude into v_arow_middle_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_middle_manhole.system_id, v_point_entity,st_x(v_current_point_geom)::double precision, st_y(v_current_point_geom)::double precision,
+'A', ST_GEOMFROMTEXT('POINT('||st_x(v_current_point_geom)||' '||st_y(v_current_point_geom)||')',4326) ,now(),'Created', '' ,p_user_id,v_arow_middle_manhole.network_id, 'P',
+case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else fn_get_display_name(v_arow_middle_manhole.system_id, v_point_entity) end,'planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_middle_manhole.system_id,'Pole'::character varying ,v_region_province.province_id,0,false));
+end if;
+end if;
+
+else
+raise info '%v_counter_3',v_counter_2;
+
+raise info '%is_endpoint_entity_exists',is_endpoint_entity_exists;
+
+SELECT * into v_arow_network_id FROM fn_get_clone_network_code( v_point_entity, 'Point', substring(left(St_astext(v_current_point_geom),-1),7),0,'')
+as clone order by clone.status desc limit 1;
+raise info '%v_counter_4',v_counter_2;
+
+if( is_endpoint_entity_exists = false)
+then 
+
+raise info '%v_counter_5',v_counter_2;
+
+if(upper(v_point_entity)=upper('Manhole'))
+then
+raise info '%v_counter_6',v_counter_2;
+
+INSERT INTO att_details_manhole(is_visible_on_map,audit_item_master_id,ownership_type,network_id, manhole_name, longitude, latitude,
+province_id,region_id,specification, category, subcategory1, subcategory2, subcategory3,item_code, vendor_id, type, brand,
+model, construction, activation,accessibility, status,created_by, created_on,network_status,parent_system_id, parent_network_id,
+parent_entity_type, sequence_id,project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',v_arow_network_id.message,case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else v_arow_network_id.message end,st_x(v_current_point_geom),
+st_y(v_current_point_geom),v_region_province.province_id,v_region_province.region_id, specification, category_reference,  subcategory_1, subcategory_2, subcategory_3,code,vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',v_arow_network_id.o_p_system_id,
+v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id, 0, 0, 0, 0,'planning',p_plan_id
+FROM item_template_master where id = v_manhole_spec_vendor[1]::integer and vendor_id = v_manhole_spec_vendor[3]::integer and code = v_manhole_spec_vendor[2]::varchar limit 1 RETURNING system_id,network_id,latitude,longitude into v_arow_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_manhole.system_id, v_point_entity,st_x(v_current_point_geom)::double precision, st_y(v_current_point_geom)::double precision,
+'A', ST_GEOMFROMTEXT('POINT('||st_x(v_current_point_geom)||' '||st_y(v_current_point_geom)||')',4326),now(),'Created', '' ,p_user_id,v_arow_manhole.network_id,
+'P',case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else fn_get_display_name(v_arow_manhole.system_id, v_point_entity) end,'planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_manhole.system_id,'Manhole'::character varying ,v_region_province.province_id,0,false));
+
+else
+
+raise info '%v_counter_7',v_counter_2;
+
+INSERT INTO att_details_pole(is_visible_on_map,audit_item_master_id,ownership_type,pole_type,network_id, pole_name, longitude,
+latitude, province_id,
+region_id,specification, category, subcategory1, subcategory2, subcategory3,item_code, vendor_id, type, brand, model, construction,
+activation,accessibility, status,created_by, created_on,network_status, parent_system_id, parent_network_id, parent_entity_type,
+sequence_id, project_id, planning_id, purpose_id, workorder_id,source_ref_type,source_ref_id)
+
+SELECT true,v_audit_item_master_id_point_entity,'Own',specify_type,v_arow_network_id.message,
+case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else v_arow_network_id.message end,
+st_x(v_current_point_geom),st_y(v_current_point_geom),v_region_province.province_id,v_region_province.region_id, specification, category_reference,
+ subcategory_1, subcategory_2, subcategory_3,code, vendor_id, 0, 0, 0, 0, 0,0, 'A',p_user_id, now(),'P',
+v_arow_network_id.o_p_system_id,v_arow_network_id.o_p_network_id,v_arow_network_id.o_p_entity_type,v_arow_network_id.o_sequence_id, 0,
+0, 0, 0,'planning',p_plan_id FROM item_template_master where id = v_pole_spec_vendor[1]::integer and vendor_id = v_pole_spec_vendor[3]::integer and code = v_pole_spec_vendor[2]::varchar limit 1 RETURNING system_id,network_id,latitude,longitude
+into v_arow_manhole;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+creator_remark,approver_remark,created_by,common_name, network_status,display_name,source_ref_type,source_ref_id)
+values(v_arow_manhole.system_id, v_point_entity,st_x(v_current_point_geom)::double precision, st_y(v_current_point_geom)::double precision,
+'A', ST_GEOMFROMTEXT('POINT('||st_x(v_current_point_geom)||' '||st_y(v_current_point_geom)||')',4326) ,now(),'Created', '' ,p_user_id,v_arow_manhole.network_id,
+'P',case when v_temp_point_entity.entity_name is not null then v_temp_point_entity.entity_name else fn_get_display_name(v_arow_manhole.system_id, v_point_entity) end ,'planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_manhole.system_id,'Pole'::character varying, v_region_province.province_id,0,false));
+end if;
+
+--------- if need to create spliceclosure then we run this
+if(v_is_osp_tp) then
+raise info '%v_counter_8',v_counter_2;
+
+select * into v_arow_network_id from fn_get_network_code('SpliceClosure','Point',0,'',substring(left(St_astext(v_current_point_geom),-1),7));
+
+insert into att_details_spliceclosure(is_visible_on_map,audit_item_master_id,ownership_type,network_id,spliceclosure_name,latitude,
+longitude,province_id,region_id,
+specification,category,subcategory1,subcategory2,subcategory3,item_code,vendor_id,
+type,brand,model,construction,activation,accessibility,status,created_by,created_on,network_status,parent_system_id,
+parent_network_id,parent_entity_type,sequence_id,no_of_ports,project_id,planning_id,purpose_id,workorder_id,structure_id,
+no_of_input_port,no_of_output_port,is_used,is_virtual,source_ref_type,source_ref_id)
+
+select true,audit_id ,'OWN',v_arow_network_id.network_code,v_arow_network_id.network_code,st_y(v_current_point_geom),
+st_x(v_current_point_geom),v_region_province.province_id,v_region_province.region_id,
+specification, category_reference, subcategory_1, subcategory_2, subcategory_3,code, vendor_id, 0,0,0,0,0,0,'A',p_user_id,now(),
+'P',v_arow_network_id.parent_system_id,v_arow_network_id.parent_network_id,v_arow_network_id.parent_entity_type,
+v_arow_network_id.sequence_id,no_of_port,0,0,0,0,0,no_of_input_port,no_of_output_port,true,false,'planning',p_plan_id
+from item_template_master where id = v_sc_spec_vendor[1]::integer and vendor_id = v_sc_spec_vendor[3]::integer and code = v_sc_spec_vendor[2] ::varchar limit 1
+RETURNING system_id,network_id,latitude,longitude,no_of_ports,no_of_input_port,no_of_output_port into v_arow_closure;
+
+INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,creator_remark,approver_remark,
+created_by,common_name, network_status,no_of_ports,display_name,source_ref_type,source_ref_id)
+values(v_arow_closure.system_id, 'SpliceClosure',st_x(v_current_point_geom),st_y(v_current_point_geom),'A',
+ST_GEOMFROMTEXT('POINT('||st_x(v_current_point_geom)||' '||st_y(v_current_point_geom)||')',4326),now(),'Created', ''
+,p_user_id,v_arow_network_id.network_code, 'P',v_arow_closure.no_of_ports::character varying,
+fn_get_display_name(v_arow_closure.system_id, 'SpliceClosure'),'planning',p_plan_id);
+
+perform (fn_geojson_update_entity_attribute(v_arow_closure.system_id,'SpliceClosure'::character varying ,v_region_province.province_id,0,false));
+
+perform(fn_bulk_insert_port_info(v_arow_closure.no_of_ports,v_arow_closure.no_of_ports,'SpliceClosure',
+v_arow_closure.system_id,v_arow_closure.network_id,p_user_id));
+
+insert into associate_entity_info(associated_entity_type,associated_system_id,associated_network_id,entity_network_id,entity_system_id,
+entity_type,created_on,created_by,associated_display_name,entity_display_name)
+values('SpliceClosure',v_arow_closure.system_id,v_arow_closure.network_id,v_arow_manhole.network_id,v_arow_manhole.system_id,v_point_entity,now(),p_user_id,
+fn_get_display_name(v_arow_closure.system_id,'SpliceClosure'),fn_get_display_name(v_arow_manhole.system_id,v_point_entity));
+
+end if;
+end if;
+
+-- update values in temp table related to loop
+raise info '%v_counter_9',v_counter_2;
+
+if(v_counter >1 and v_temp_point_entity.is_middle_point=false)
+
+then
+raise info '%v_counter_10',v_counter_2;
+IF(v_temp_point_entity.FRACTION = 1) then 
+v_arow_closure.longitude = v_temp_point_entity.longitude;
+v_arow_closure.latitude = v_temp_point_entity.latitude;
+v_arow_manhole.longitude = v_temp_point_entity.longitude;
+v_arow_manhole.latitude = v_temp_point_entity.latitude;
+
+end if;
+
+select ST_GeomFromText('POINT('||v_arow_prev_closure.longitude||' '||v_arow_prev_closure.latitude||')',4326) into v_sub_line_start_point;
+select ST_GeomFromText('POINT('||v_arow_closure.longitude||' '||v_arow_closure.latitude||')',4326) into v_sub_line_end_point;
+select ST_LineSubstring(v_line_geom, ST_LineLocatePoint(v_line_geom, v_sub_line_start_point),
+ST_LineLocatePoint(v_line_geom, v_sub_line_end_point)) into v_sub_line_geom;
+select substring(left(st_astext(v_sub_line_geom),-1),12) into v_sub_line;
+
+raise info '%v_sub_line',v_sub_line;
+raise info '%v_sub_line1',v_arow_prev_closure.longitude||' '||v_arow_prev_closure.latitude;
+raise info '%v_sub_line2',v_arow_closure.longitude||' '||v_arow_closure.latitude;
+
+raise info '%v_arow_prev_manhole',v_arow_prev_manhole.longitude||' '||v_arow_closure.latitude;
+
+if(is_create_trench)
+then
+select * into v_arow_trench from fn_network_planning_auto_create_trench(v_arow_prev_manhole.system_id,
+'Manhole'::character varying,v_arow_prev_manhole.network_id,
+v_arow_manhole.system_id,'Manhole'::character varying,v_arow_manhole.network_id,v_sub_line,
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,p_plan_id,v_audit_item_master_id_trench)
+as x(system_id integer,network_id character varying);
+
+perform (fn_geojson_update_entity_attribute(v_arow_trench.system_id,'Trench'::character varying ,v_region_province.province_id,0,false));
+
+--- update trench id in temp table related to point_entity
+update temp_auto_network_plan tp set trench_id=v_arow_trench.SYSTEM_ID,trench_network_id=v_arow_trench.network_id
+where tp.system_id <= v_temp_point_entity.system_id and trench_id=0 and tp.plan_id=p_temp_plan_id;
+end if;
+
+if(is_create_duct)then
+
+if(is_create_trench)then
+
+select * into v_arow_duct from fn_network_planning_auto_create_duct(v_arow_prev_manhole.system_id,
+'Manhole'::character varying,v_arow_prev_manhole.network_id,
+v_arow_manhole.system_id,'Manhole'::character varying,v_arow_manhole.network_id,v_sub_line,
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,p_plan_id,
+v_audit_item_master_id_duct,v_arow_trench.system_id,v_arow_trench.network_id)
+as x(system_id integer,network_id character varying);
+
+perform (fn_geojson_update_entity_attribute(v_arow_duct.system_id,'Duct'::character varying ,v_region_province.province_id,0,false));
+
+else
+
+select * into v_arow_duct from fn_network_planning_auto_create_duct(v_arow_prev_manhole.system_id,
+'Manhole'::character varying,v_arow_prev_manhole.network_id,
+v_arow_manhole.system_id,'Manhole'::character varying,v_arow_manhole.network_id,v_sub_line,
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,p_plan_id,
+v_audit_item_master_id_duct,0,'')
+as x(system_id integer,network_id character varying);
+
+perform (fn_geojson_update_entity_attribute(v_arow_duct.system_id,'Duct'::character varying ,v_region_province.province_id,0,false));
+
+end if;
+
+--- update duct id in temp table related to point_entity
+update temp_auto_network_plan tp set duct_id=v_arow_duct.SYSTEM_ID,duct_network_id=v_arow_duct.network_id
+where tp.system_id <= v_temp_point_entity.system_id and duct_id=0 and tp.plan_id=p_temp_plan_id;
+end if;
+
+v_counter_2=v_counter_2+1;
+
+--CREATE THE CABLE acco to duct
+
+if(is_create_duct)
+then
+
+select * into v_arow_cable from fn_network_planning_auto_create_cable(v_arow_prev_closure.system_id,
+'SpliceClosure'::character varying,v_arow_prev_closure.network_id,
+v_arow_closure.system_id,'SpliceClosure'::character varying,v_arow_closure.network_id,v_sub_line,
+--(v_arow_htb.longitude||' '||v_arow_htb.latitude||','||v_arow_closure.longitude||' '||v_arow_closure.latitude),
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,500,v_audit_item_master_id_cable,p_plan_id,
+p_cable_type,v_arow_duct.system_id,v_arow_duct.network_id)
+as x(system_id integer,network_id character varying,no_of_tube integer,total_core integer);
+
+perform (fn_geojson_update_entity_attribute(v_arow_cable.system_id,'Cable'::character varying ,v_region_province.province_id,0,false));
+
+raise info '%v_counter_11',v_counter_2;
+if(v_counter_2 = 1)
+then
+
+if(is_endpoint_entity_exists = true) 
+then 
+if(v_temp_point_entity.fraction = 0) 
+then 
+ v_arow_closure = null;
+
+ SELECT pm.system_id ,pm.common_name as network_id,pm.entity_type, pm.longitude ,pm.latitude  into v_arow_closure FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+  WHERE tp.plan_id = p_temp_plan_id and tp.fraction = v_temp_point_entity.fraction and tp.fraction in (0,1)
+  ORDER BY tp.system_id LIMIT 1),4326),2)) limit 1;
+ 
+ v_arow_prev_closure=v_arow_closure;
+ v_arow_manhole = v_arow_closure;
+
+/* elseif( v_temp_point_entity.fraction = 1) 
+THEN
+v_arow_closure = null;
+
+ SELECT pm.system_id ,pm.common_name as network_id,pm.entity_type, pm.longitude ,pm.latitude  into v_arow_closure FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+  WHERE tp.plan_id = p_temp_plan_id and tp.fraction = v_temp_point_entity.fraction and tp.fraction in (0,1)
+  ORDER BY tp.system_id LIMIT 1),4326),2)) limit 1;
+ 
+ --v_arow_prev_closure=v_arow_closure;
+ v_arow_manhole = v_arow_closure;
+ */
+end if;
+else
+raise info '%v_counter_12',v_counter_2;
+
+v_arow_prev_cable=v_arow_cable;
+v_arow_prev_closure=v_arow_closure;
+v_arow_prev_manhole=v_arow_manhole;
+end if;
+
+else
+
+/*if(v_arow_prev_cable is not null)
+then
+insert into temp_connection(source_system_id,source_network_id,source_entity_type,source_port_no,destination_system_id,destination_network_id,
+destination_entity_type,destination_port_no,is_source_cable_a_end,is_destination_cable_a_end,created_by,splicing_source,
+equipment_system_id,equipment_network_id,equipment_entity_type)
+values(v_arow_prev_cable.system_id,v_arow_prev_cable.network_id,'Cable',1,v_arow_cable.system_id,v_arow_cable.network_id,'Cable',1,false,true,
+p_user_id,'PROVISIONNING',
+v_arow_prev_closure.system_id, v_arow_prev_closure.network_id,'SpliceClosure');
+end if;
+*/
+raise info '%v_counter_13',v_counter_2;
+
+v_arow_prev_cable=v_arow_cable;
+v_arow_prev_closure=v_arow_closure;
+v_arow_prev_manhole=v_arow_manhole;
+
+end if;
+else
+raise info '%v_counter_14',v_counter_2;
+
+select * into v_arow_cable from fn_network_planning_auto_create_cable(v_arow_prev_closure.system_id,
+'SpliceClosure'::character varying,v_arow_prev_closure.network_id,
+v_arow_closure.system_id,'SpliceClosure'::character varying,v_arow_closure.network_id,v_sub_line,
+--(v_arow_htb.longitude||' '||v_arow_htb.latitude||','||v_arow_closure.longitude||' '||v_arow_closure.latitude),
+0,v_region_province.region_id,v_region_province.province_id,p_user_id,p_rfs_type,500,v_audit_item_master_id_cable,p_plan_id,
+p_cable_type,0,'')
+as x(system_id integer,network_id character varying,no_of_tube integer,total_core integer);
+
+perform (fn_geojson_update_entity_attribute(v_arow_cable.system_id,'Cable'::character varying ,v_region_province.province_id,0,false));
+
+if(v_counter_2 = 1)
+then
+raise info '%v_counter_15',v_counter_2;
+
+if(is_endpoint_entity_exists = true) 
+then 
+if(v_temp_point_entity.fraction = 0) 
+then 
+ v_arow_closure = null;
+
+ SELECT pm.system_id ,pm.common_name as network_id,pm.entity_type, pm.longitude ,pm.latitude  into v_arow_closure FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+  WHERE tp.plan_id = p_temp_plan_id and tp.fraction = v_temp_point_entity.fraction and tp.fraction in (0,1)
+  ORDER BY tp.system_id LIMIT 1),4326),2)) limit 1;
+ 
+ v_arow_prev_closure=v_arow_closure;
+ v_arow_manhole = v_arow_closure;
+/*
+elseif( v_temp_point_entity.fraction = 1) 
+THEN
+v_arow_closure = null;
+
+ SELECT pm.system_id ,pm.common_name as network_id,pm.entity_type, pm.longitude ,pm.latitude  into v_arow_closure FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+  WHERE tp.plan_id = p_temp_plan_id and tp.fraction = v_temp_point_entity.fraction and tp.fraction in (0,1)
+  ORDER BY tp.system_id LIMIT 1),4326),2)) limit 1;
+ 
+ --v_arow_prev_closure=v_arow_closure;
+ v_arow_manhole = v_arow_closure;
+ */
+end if;
+ 
+raise info '%v_counter_16',v_counter_2;
+
+ else
+ raise info '%v_counter_17',v_counter_2;
+
+--v_arow_prev_cable=v_arow_cable;
+v_arow_prev_closure=v_arow_closure;
+v_arow_prev_manhole=v_arow_manhole;
+
+end if;
+
+raise info 'v_arow_prev_cable%',v_arow_prev_cable;
+else
+/*
+if(v_arow_prev_cable is not null)
+then
+insert into temp_connection(source_system_id,source_network_id,source_entity_type,source_port_no,destination_system_id,destination_network_id,
+destination_entity_type,destination_port_no,is_source_cable_a_end,is_destination_cable_a_end,created_by,splicing_source,
+equipment_system_id,equipment_network_id,equipment_entity_type)
+values(v_arow_prev_cable.system_id,v_arow_prev_cable.network_id,'Cable',1,v_arow_cable.system_id,v_arow_cable.network_id,'Cable',1,false,true,
+p_user_id,'PROVISIONNING',
+v_arow_prev_closure.system_id, v_arow_prev_closure.network_id,'SpliceClosure');
+end if;
+*/
+raise info '%v_counter_18',v_counter_2;
+
+--v_arow_prev_cable=v_arow_cable;
+v_arow_prev_closure=v_arow_closure;
+v_arow_prev_manhole=v_arow_manhole;
+raise info '%v_counter_19',v_counter_2;
+
+end if;
+end if;
+
+PERFORM(fn_network_planning_associate_end_entity(false,'',v_arow_prev_manhole.system_id,v_point_entity,v_arow_prev_manhole.network_id
+,v_arow_manhole.system_id,v_point_entity,v_arow_manhole.network_id,'Cable',v_arow_cable.system_id,v_arow_cable.network_id,p_user_id,p_temp_plan_id));
+--
+
+PERFORM(fn_isp_create_OSP_Cable(v_arow_cable.SYSTEM_ID));
+
+--- update cable id in temp table related to point_entity
+update temp_auto_network_plan tp set cable_id=v_arow_cable.SYSTEM_ID,cable_network_id=v_arow_cable.network_id
+where tp.system_id <= v_temp_point_entity.system_id and cable_id=0 and tp.plan_id=p_temp_plan_id;
+--and loop_length !=0;
+
+end if;
+
+end if;
+raise info '%v_counter_20',v_counter_2;
+
+if(v_temp_point_entity.is_middle_point=true and is_endpoint_entity_exists = false)
+then
+
+raise info '%v_counter_21',v_counter_2;
+
+select display_name into v_a_display_value from point_master where system_id=v_arow_middle_manhole.system_id and upper(entity_type)=upper(v_point_entity);
+
+update temp_auto_network_plan set entity_type=v_point_entity,
+entity_network_id=v_arow_middle_manhole.network_id,entity_system_id=v_arow_middle_manhole.system_id,display_name=v_a_display_value
+where system_id=v_temp_point_entity.system_id and v_temp_point_entity.is_middle_point=true;
+else
+select display_name into v_a_display_value from point_master where system_id=v_arow_manhole.system_id and upper(entity_type)=upper(v_point_entity);
+
+update temp_auto_network_plan set entity_type=v_point_entity,
+entity_network_id=v_arow_manhole.network_id,entity_system_id=v_arow_manhole.system_id,display_name=v_a_display_value
+where system_id=v_temp_point_entity.system_id and v_temp_point_entity.is_middle_point=false;
+end if;
+
+if(v_counter >1 and v_temp_point_entity.is_middle_point=false)
+then
+
+PERFORM(fn_network_planning_loop_entity(v_arow_cable.SYSTEM_ID,p_line_geom,is_a_endpoint_entity_exists,is_b_endpoint_entity_exists));
+end if;
+raise info '%v_counter_17',v_counter_2;
+
+v_arow_prev_closure=v_arow_closure;
+v_arow_prev_manhole=v_arow_manhole;
+end loop;
+
+---------------------------associate cables to middle point entity like pole and manhole
+if exists(select 1 from temp_auto_network_plan tp where tp.plan_id=p_temp_plan_id and is_middle_point=true) then
+PERFORM(fn_network_planning_associate_end_entity(true,'Cable',0,'','',0,'','','Cable',0,'',p_user_id,p_temp_plan_id));
+end if;
+
+-- ---------------------------associate cables to middle point entity like pole and manhole
+if(is_create_duct)
+then
+
+-- if middle entity exist then middle entity associate
+if exists(select 1 from temp_auto_network_plan tp where tp.plan_id=p_temp_plan_id and is_middle_point=true) then
+
+PERFORM(fn_network_planning_associate_end_entity(true,'Duct',0,'','',0,'','','Cable',0,'',p_user_id,p_temp_plan_id));
+end if;
+
+end if;
+
+-- ---------------------------associate cables to middle point entity like pole and manhole
+if(is_create_trench)
+then
+
+if exists(select 1 from temp_auto_network_plan tp where tp.plan_id=p_temp_plan_id and is_middle_point=true) then
+
+PERFORM(fn_network_planning_associate_end_entity(true,'Trench',0,'','',0,'','','Cable',0,'',p_user_id,p_temp_plan_id));
+end if;
+
+end if;
+
+end if;
+
+-- delete the temp_auto_network_plan
+
+-- delete from temp_auto_network_plan t where t.plan_id=p_temp_plan_id;
+
+/*IF((SELECT COUNT(1) FROM temp_connection)>0)
+THEN
+perform(fn_auto_provisioning_save_connections());
+
+END IF;
+*/
+--CUSTOMER AND SPLITTER MAPPING
+IF(V_IS_VALID)
+THEN
+V_MESSAGE:='Network plan processed successfully!';
+END IF;
+
+RETURN QUERY SELECT V_IS_VALID::boolean AS STATUS, V_MESSAGE::CHARACTER VARYING AS MESSAGE, p_plan_id:: integer as plan_id;
+
+END
+$function$
+;
+
+-- Permissions
+
+------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_network_planning_loop_entity(p_cable_id integer, p_line_geom character varying, a_end_cable_loop boolean, b_end_cable_loop boolean)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+v_current_point_geom geometry;
+v_temp_point_entity record;
+v_loop_network_id record;
+v_line_geom geometry;
+v_arow_loop record;
+BEGIN
+
+select ST_GeomFromText('LINESTRING('||p_line_geom||')',4326) into v_line_geom;
+
+FOR  v_temp_point_entity IN select * from temp_auto_network_plan tp where  tp.cable_id=p_cable_id and loop_length >0 and (case when a_end_cable_loop
+				then fraction > 0
+            ELSE TRUE END )
+	  AND ( CASE
+		   WHEN b_end_cable_loop THEN fraction < 1
+		   ELSE TRUE END
+		)
+		 order by system_id
+LOOP
+	v_current_point_geom=ST_LineInterpolatePoint(v_line_geom, v_temp_point_entity.fraction);
+	
+	select * into v_loop_network_id  from fn_get_network_code('Loop','Point',0,'',substring(left(St_astext(v_current_point_geom),-1),7));
+
+	INSERT INTO public.att_details_loop(
+	network_id, loop_length, associated_system_id, associated_network_id, 
+	associated_entity_type, cable_system_id, created_by, created_on, 
+	network_status, start_reading, end_reading, 
+	parent_system_id, sequence_id, province_id, region_id, parent_network_id, 
+	parent_entity_type, status, 
+	is_visible_on_map, source_ref_type, source_ref_id, 
+	source_ref_description, latitude, longitude, is_new_entity)
+	select v_loop_network_id.network_code,loop_length,entity_system_id,entity_network_id,
+	entity_type,cable_id,created_by,now(),
+	'P',0,0,v_loop_network_id.parent_system_id, v_loop_network_id.sequence_id,province_id, region_id,v_loop_network_id.parent_network_id,
+	v_loop_network_id.parent_entity_type,
+	'A',true,'planning', plan_id,'',latitude,longitude,true
+	from temp_auto_network_plan tp where system_id=v_temp_point_entity.system_id
+	RETURNING system_id,network_id,latitude,longitude,created_by into v_arow_loop; 
+
+	INSERT INTO point_master(system_id,entity_type,longitude,latitude,approval_flag,sp_geometry,approval_date,
+	creator_remark,approver_remark,created_by,common_name, network_status,display_name)
+	values(v_arow_loop.system_id, 'Loop',st_x(v_current_point_geom)::double precision, st_y(v_current_point_geom)::double precision,
+	'A',v_current_point_geom,now(),'Created', '' ,v_arow_loop.created_by,v_arow_loop.network_id,
+	'P',fn_get_display_name(v_arow_loop.system_id, 'Loop'));
+
+end loop;
+
+		       
+END
+$function$
+;
+
+-- Permissions
+
+--------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_network_planning_get_loop_list(p_plan_id integer, p_user_id integer, p_sort character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+declare
+is_a_endpoint_entity_exists bool;
+is_b_endpoint_entity_exists bool;
+BEGIN
+
+SELECT count(*)>0 into is_a_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure', 'BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_plan_id and tp.fraction = 0
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+ SELECT count(*)>0 into is_b_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB','Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = p_plan_id and tp.fraction = 1
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+RETURN QUERY
+    SELECT row_to_json(t)
+    FROM (
+        SELECT entity_name,loop_length,system_id,entity_type,fraction,is_middle_point,latitude,longitude,plan_id
+        FROM temp_auto_network_plan tp
+        WHERE plan_id = p_plan_id
+           and (case when is_a_endpoint_entity_exists
+              then fraction > 0
+  			ELSE TRUE END ) AND ( CASE
+		   WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		   ELSE TRUE end )
+             ORDER BY regexp_replace(entity_name, '\D','','g')::int ASC
+    ) t;
+
+   
+END;
+$function$
+;
+
+---------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_plan_bom(p_plan_id integer, p_user_id integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+sql TEXT := '';
+v_loop_length double precision;
+v_calculated_loop_length double precision;
+v_loop_entity_count integer;
+k_specification character  varying;
+k_code character  varying;
+is_create_loop boolean;
+begin
+	
+select count(1)>0 into is_create_loop  from backbone_plan_network_details bpnd where  plan_id = p_plan_id and is_loop_required = true;
+
+SELECT  substring(fiber_type FROM '\(([^)]+)\)'), split_part(fiber_type, ')', 2) into k_code, k_specification   
+FROM backbone_plan_network_details
+WHERE plan_id = p_plan_id
+  AND entity_type = 'Manhole'
+LIMIT 1;
+
+    -- Cable
+    sql :=  'SELECT
+     entity_type,
+     geom_type,
+     SUM(cost_per_unit)         AS cost_per_unit,
+     SUM(service_cost_per_unit) AS service_cost_per_unit,
+     ROUND(SUM(measured_length)::numeric, 2) || ''(m)/'' || SUM(length_qty)::int AS length_qty,
+     SUM(amount) AS amount
+ FROM (
+     SELECT
+         ''BackBone Cable''                              AS entity_type,
+         ''Line''                                        AS geom_type,
+         COALESCE(item.cost_per_unit,        0)          AS cost_per_unit,
+         COALESCE(item.service_cost_per_unit,0)          AS service_cost_per_unit,
+         COUNT(att.system_id)                            AS length_qty,
+         SUM(att.cable_measured_length)                  AS measured_length,
+         -- total for this cable slice
+         (SUM(att.cable_measured_length) * COALESCE(item.service_cost_per_unit,0) +
+          COALESCE(item.cost_per_unit,0)  * SUM(att.cable_measured_length)) AS amount
+       FROM att_details_cable  att
+       join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Cable''
+       JOIN item_template_master item
+         ON item.audit_id = att.audit_item_master_id
+      WHERE att.source_ref_id      = ' || quote_literal(p_plan_id) || '
+        AND att.source_ref_type    = ''backbone planning''
+        AND item.category_reference = ''Cable'' and sprout_site_id is null
+      GROUP BY item.cost_per_unit,
+               item.service_cost_per_unit,
+               att.specification,
+               att.item_code, lm.sp_geometry
+ ) sub
+ GROUP BY entity_type, geom_type';
+
+ IF EXISTS (SELECT 1 FROM att_details_cable WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id ::varchar and sprout_site_id is not null) THEN
+      sql := sql || '
+       UNION 
+      SELECT
+      entity_type,
+     geom_type,
+     SUM(cost_per_unit)         AS cost_per_unit,
+     SUM(service_cost_per_unit) AS service_cost_per_unit,
+     ROUND(SUM(measured_length)::numeric, 2) || ''(m)/'' || SUM(length_qty)::int AS length_qty,
+     SUM(amount) AS amount
+ FROM (
+     SELECT
+         ''Sprout Cable''                                AS entity_type,
+         ''Line''                                        AS geom_type,
+         COALESCE(item.cost_per_unit,        0)          AS cost_per_unit,
+         COALESCE(item.service_cost_per_unit,0)          AS service_cost_per_unit,
+         COUNT(att.system_id)                            AS length_qty,
+         SUM(att.cable_measured_length)                  AS measured_length,
+         -- total for this cable slice
+         (SUM(att.cable_measured_length) * COALESCE(item.service_cost_per_unit,0) +
+          COALESCE(item.cost_per_unit,0)  * SUM(att.cable_measured_length)) AS amount
+       FROM att_details_cable  att
+       join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Cable''
+       JOIN item_template_master item
+         ON item.audit_id = att.audit_item_master_id
+      WHERE att.source_ref_id      = ' || quote_literal(p_plan_id) || '
+        AND att.source_ref_type    = ''backbone planning''
+        AND item.category_reference = ''Cable'' and sprout_site_id is not null
+      GROUP BY item.cost_per_unit,
+               item.service_cost_per_unit,
+               att.specification,
+               att.item_code, lm.sp_geometry
+ ) sub
+ GROUP BY entity_type, geom_type';
+END IF;
+-- Pole
+IF EXISTS (SELECT 1 FROM att_details_pole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id ::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Pole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(1) AS length_qty
+            FROM att_details_pole att
+            join point_master pm on pm.system_id = att.system_id
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Pole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+
+    -- Manhole
+    IF EXISTS (SELECT 1 FROM att_details_manhole WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''Manhole'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                item.cost_per_unit AS cost_per_unit,
+                item.service_cost_per_unit AS service_cost_per_unit,
+                COUNT(1) AS length_qty
+            FROM att_details_manhole att
+            join point_master pm on pm.system_id = att.system_id
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''Manhole'' and item.specification = ''Generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+
+    -- SpliceClosure
+    IF EXISTS (SELECT 1 FROM att_details_spliceclosure WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) THEN
+        sql := sql || '
+        UNION 
+        SELECT entity_type::character varying, geom_type, cost_per_unit, service_cost_per_unit, 
+               length_qty::character varying,
+               (cost_per_unit * length_qty + service_cost_per_unit * length_qty) AS amount 
+        FROM (
+            SELECT 
+                (SELECT layer_title FROM layer_details WHERE layer_name ILIKE ''SpliceClosure'')::character varying AS entity_type,
+                ''Point''::character varying AS geom_type,
+                COALESCE(item.cost_per_unit, 0) AS cost_per_unit,
+                COALESCE(item.service_cost_per_unit, 0) AS service_cost_per_unit,
+                COUNT(att.system_id) AS length_qty
+            FROM att_details_spliceclosure att
+            LEFT JOIN vendor_master vm ON att.vendor_id = vm.id
+            LEFT JOIN item_template_master item ON item.category_reference = ''SpliceClosure'' and item.specification = ''generic''
+            WHERE att.source_ref_type = ''backbone planning''
+              AND att.source_ref_id = ' || quote_literal(p_plan_id) || '
+            GROUP BY item.cost_per_unit, item.service_cost_per_unit, att.specification, att.item_code, vm.name
+        ) e';
+    END IF;
+ if is_create_loop = true then   
+sql:=sql ||' UNION SELECT 
+    ''Loop'', 
+    ''Point'', 
+    0 AS cost_per_unit, 
+    0 AS service_cost_per_unit,
+    (loop_data.loop_length || ''(m)/''||  loop_data.loop_count) ::character varying  AS length_qty,
+    0 AS amount
+FROM (
+    SELECT sum(loop_length) as loop_length ,count(1) as loop_count from att_details_loop  where source_ref_type = ''backbone planning'' and source_ref_id='''||p_plan_id||''' 
+        
+) AS loop_data';
+end if;
+
+if exists (SELECT 1 FROM att_details_trench WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar) 
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty ,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount
+	 from (
+	select (select layer_title from layer_details where layer_name ilike ''trench'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty, st_length(lm.sp_geometry,false) as measured_length 
+from att_details_trench att 
+join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Trench''
+LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where att.source_ref_type = ''backbone planning'' and att.source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME) e';
+end if;
+
+if exists (SELECT 1 FROM att_details_duct WHERE source_ref_type = 'backbone planning' AND source_ref_id = p_plan_id::varchar)
+then 
+	sql:=sql || ' union select entity_type::character varying,geom_type,cost_per_unit,service_cost_per_unit,round((measured_length)::numeric, 2) || ''(m)/''|| length_qty ::character varying as length_qty,
+	(round((measured_length)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((measured_length)::numeric, 2))as amount
+	 from 
+(select (select layer_title from layer_details where layer_name ilike ''duct'')::character varying as entity_type,''Line''::character varying as geom_type,COALESCE(COST_PER_UNIT,0)as COST_PER_UNIT,COALESCE(SERVICE_COST_PER_UNIT,0) as SERVICE_COST_PER_UNIT,count(att.system_id)as length_qty,sum(calculated_length) as measured_length
+from att_details_duct att 
+join line_master lm on lm.system_id = att.system_id and lm.entity_type =''Duct''
+LEFT JOIN VENDOR_MASTER VM ON ATT.VENDOR_ID = VM.ID
+LEFT JOIN AUDIT_ITEM_TEMPLATE_MASTER ITEM ON ITEM.AUDIT_ID=ATT.AUDIT_ITEM_MASTER_ID where att.source_ref_type = ''backbone planning'' and att.source_ref_id='''||p_plan_id||'''  GROUP BY
+	 ITEM.COST_PER_UNIT,ITEM.SERVICE_COST_PER_UNIT,ATT.SPECIFICATION,ATT.ITEM_CODE,VM.NAME) e';
+end if;
+
+    -- Debug SQL
+    RAISE INFO 'Final SQL: %', sql;
+
+    -- Execute the full dynamic query and return as JSON
+    RETURN QUERY EXECUTE '
+        SELECT row_to_json(row) 
+        FROM (
+            SELECT * FROM (' || sql || ') t 
+            ORDER BY geom_type
+        ) row';
+
+END;
+$function$
+;
+
+-- Permissions
+----------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_site_get_export_report_nearest_data_kml(p_networkstatues character varying, p_provinceids character varying, p_regionids character varying, p_layer_name character varying, p_searchby character varying, p_searchbytext character varying, p_fromdate character varying, p_todate character varying, p_geom character varying, p_duration_based_column character varying, p_radius double precision, p_userid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+
+
+   DECLARE
+   sql TEXT;
+   StartSNo    INTEGER;   
+   EndSNo      INTEGER;
+   LowerStart  character varying;
+   LowerEnd  character varying;
+   TotalRecords integer; 
+   WhereCondition character varying;
+   s_report_view_name character varying;
+   s_geom_type character varying;
+s_layer_id integer; 
+s_layer_columns text;
+TotalAppliedRecords integer; 
+TotalRejectedRecords integer;
+BEGIN
+
+LowerStart:='';
+LowerEnd:='';
+WhereCondition:='';
+
+drop table if exists temp_site_pit;
+  create temp table temp_site_pit(
+  system_id integer,
+  entity_type character varying,
+  network_id character varying,
+  entity_title character varying,
+  geom character varying,
+  geom_type character varying,
+  nearest_site_geometry character varying
+  ) on commit drop;
+
+-- GET LAYER ID AND REPORT VIEW NAME--
+SELECT LAYER_ID, REPORT_VIEW_NAME, GEOM_TYPE INTO S_LAYER_ID, S_REPORT_VIEW_NAME,S_GEOM_TYPE FROM LAYER_DETAILS WHERE LOWER(LAYER_NAME) = LOWER(P_LAYER_NAME);
+
+-- SELECT ALL ACTIVE LAYER FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..	
+SELECT STRING_AGG(COLUMN_NAME||' as "'||DISPLAY_NAME||'"', ',') INTO S_LAYER_COLUMNS FROM (
+SELECT  COLUMN_NAME,DISPLAY_NAME  FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE ORDER BY COLUMN_SEQUENCE) A;
+
+-- DYNAMIC QUERY
+IF ((p_geom) != '') THEN
+
+	if(p_radius>0)
+	then
+		select substring(left(St_astext(ST_buffer_meters(ST_GeomFromText('POINT('||p_geom||')',4326),p_radius)),-2),10)  into p_geom;
+	end if;
+	
+	sql:= 'select a.system_id, '''||p_layer_name||''' as entity_type,ST_ASTEXT(sp_geometry) as geom, a.network_id,''Point'' as geom_type,a.site_id as entity_title, ST_ASTEXT(nearest_site_geometry) as nearest_site_geometry from att_details_pod a 
+	inner join '||s_geom_type||'_master m on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''') and ST_Intersects(m.sp_geometry, st_geomfromtext(''POINT(('||p_geom||'))'',4326)) 
+	inner join user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and a.total_fiber_distance > 0 and  1=1 ';	
+
+ELSE
+
+	sql:= ' select a.system_id,''Site'' as entity_type,ST_ASTEXT(sp_geometry) as geom, a.network_id,''Point'' as geom_type, COALESCE(a.site_id, a.network_id)  as entity_title, ST_ASTEXT(nearest_site_geometry) as nearest_site_geometry from att_details_pod a 
+		inner join '||s_geom_type||'_master m on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''')
+		inner join user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and  a.total_fiber_distance > 0  ';
+		
+END IF;
+
+IF ((p_networkStatues) != '' and upper(S_LAYER_COLUMNS) like '%NETWORK_STATUS%') THEN
+	sql:= sql ||' AND upper(Cast(a.network_status as TEXT)) in('||p_networkStatues||')';
+END IF;
+
+IF ((p_RegionIds) != '') THEN
+	sql:= sql ||' AND a.region_id IN ('||p_RegionIds||')';
+END IF;
+
+IF ((P_ProvinceIds) != '') THEN
+	sql:= sql ||' AND a.province_id IN ('||P_ProvinceIds||')';
+END IF;
+
+IF ((P_searchbytext) != '' and (P_searchby) != '') 
+THEN
+	if(substring(P_searchbytext from 1 for 1)='"' and  substring(P_searchbytext from length(P_searchbytext) for length(P_searchbytext))='"')
+	then
+		sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) = upper(replace('''||trim(P_searchbytext)||''',''"'','''')) ';
+	else
+		sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) LIKE upper(replace(''%'||trim(P_searchbytext)||'%'',''"'',''''))';
+	end if;
+END IF;
+
+IF(P_fromDate != '' and P_toDate != '' and coalesce(p_duration_based_column,'')!='') THEN
+sql:= sql ||' AND a.'||p_duration_based_column||'::Date>= to_date('''||p_fromdate||''', ''DD-Mon-YYYY'') and a.'||p_duration_based_column||'::Date<=to_date('''||p_todate||''', ''DD-Mon-YYYY'')';
+
+END IF;
+RAISE INFO 'QUERY1 %', sql;
+
+execute 'insert into temp_site_pit(system_id,entity_type,network_id,entity_title,geom,geom_type,nearest_site_geometry) select system_id,entity_type::character varying,network_id::character varying,entity_title::character varying,geom::character varying,geom_type::character varying, nearest_site_geometry::character varying from ('||sql||')x';
+
+RAISE INFO 'QUERY %', sql;
+	
+RETURN QUERY
+EXECUTE 'select row_to_json(row) from (select * from temp_site_pit ) row';
+
+END ;
+$function$
+;
+
+
+
+--------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_imported_site_project_details(
+    p_page_no integer,
+    p_page_size integer
+)
+RETURNS json
+LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_result JSON;
+BEGIN
+    SELECT json_build_object(
+        'totalRecord',
+            (SELECT COUNT(*)
+             FROM site_project_details ps
+             JOIN att_details_pod pod ON pod.site_id = ps.site_id),
+
+        'records',
+            json_agg(row_to_json(r))
+    )
+    INTO v_result
+    FROM (
+        SELECT *
+        FROM (
+            SELECT 
+                ps.id,
+                ps.site_id,
+                ps.site_name,
+                ps.created_on,
+                ps.project_id,
+                ps.status,
+                pod.latitude || ',' || pod.longitude AS site_geom
+            FROM site_project_details ps
+            JOIN att_details_pod pod ON pod.site_id = ps.site_id
+            ORDER BY ps.site_id, ps.created_on DESC  -- now correct!
+        ) t
+        ORDER BY created_on DESC
+        LIMIT p_page_size OFFSET (p_page_no - 1) * p_page_size
+    ) r;
+
+    RETURN v_result;
+END;
+$function$;
