@@ -3066,15 +3066,19 @@ namespace DataAccess
                 throw;
             }
         }
-        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id,string SiteId)
+        public List<temp_auto_network_plan> GetTempNetwork(int temp_plan_id,string SiteId,int userId)
         {
             try
             {
-                if (SiteId.Contains("--DESC"))
+                var res = repo.ExecuteProcedure<temp_auto_network_plan>("fn_network_planning_get_loop_list", new
                 {
-                    return repo.GetAll(x => x.plan_id == temp_plan_id).OrderByDescending(x => x.system_id).ToList();
-                } 
-                return repo.GetAll(x => x.plan_id == temp_plan_id).OrderBy(x => x.system_id).ToList();
+                    p_plan_id = temp_plan_id,
+                    p_user_id = userId,
+                    p_sort = SiteId
+
+                }, true).ToList();
+
+                return res;
             }
             catch (Exception)
             {

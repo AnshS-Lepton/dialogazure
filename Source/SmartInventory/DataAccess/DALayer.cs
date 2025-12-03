@@ -118,7 +118,7 @@ namespace DataAccess
         {
             DataTable dt = new DataTable();
             List<DropDownMaster> lst = new List<DropDownMaster>();
-            dt = repo.GetDataTable("select name as segment_code,region_id,ts.id as segment_id from top_segment ts where agg1_site_id is not null and agg2_site_id  is not null and route_id is not null");
+            dt = repo.GetDataTable("select name as segment_code,region_id,ts.id as segment_id from top_segment ts where route_id is not null");
             foreach (DataRow row in dt.Rows)
             {
                 DropDownMaster obj = new DropDownMaster();

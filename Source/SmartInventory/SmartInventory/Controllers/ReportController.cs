@@ -15526,8 +15526,18 @@ foreach (var objEntity in lstExportReportKML)
                 status = "Pending Assignment"
             }).ToList();
             List<SiteImportLog> siteImportLogs = new List<SiteImportLog>();
-            siteImportLogs =  new BLProject().updateSiteDetails(siteList);
-            if(siteImportLogs.Count > 0)
+            siteImportLogs =  new BLProject().updateSiteDetails(siteList, userId);
+
+            string WH24AuthBaseURL = ApplicationSettings.WH24AuthBaseURL;
+            string WH24URL = ApplicationSettings.WH24URL;
+            string WH24ClientId = ApplicationSettings.WH24ClientId;
+            string WH24ClientSecret = ApplicationSettings.WH24ClientSecret;
+            string WH24grantType = ApplicationSettings.WH24grantType;
+
+            ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
+            aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
+
+            if (siteImportLogs.Count > 0)
             {
                 string fName = "SiteImportLog" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
                 DataTable dtReport = MiscHelper.ListToDataTable<SiteImportLog>(siteImportLogs);
@@ -15543,7 +15553,7 @@ foreach (var objEntity in lstExportReportKML)
 
                 return Json(new { success = true, message = $"Site imported partially successfully.", fName = fName });
             }
-            new BLProject().SaveSiteProjectDetails(siteList, userId);
+            //new BLProject().SaveSiteProjectDetails(siteList, userId);
             /*var receivers = new string[] { "dinesh.kumar1@leptonsoftware.com" };
             var listEmail = new List<EmailSettingsModel>
              {
@@ -15560,6 +15570,7 @@ foreach (var objEntity in lstExportReportKML)
             commonUtil.SendSiteAwardEmail(receivers,"Good Bye", "Site Import Notification",out mailSentMsg, listEmail);
            
              */
+            
             return Json(new { success = true, message = $"{siteList.Count} Site imported successfully." });
         }
         public void ExportSiteImportLog(string fName)
