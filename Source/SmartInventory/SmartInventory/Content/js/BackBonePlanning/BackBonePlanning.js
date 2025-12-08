@@ -357,47 +357,61 @@ var BackbonePlanning = function () {
             }, false, true, false);
         });
     }
-    this.deleteSproutSitePlan = function (planId, networkId, checkboxEl) {
-        debugger;
-        showConfirm("Do you really want to delete this sprout Network?", function () {
-        ajaxReq('BackBonePlan/DeleteSproutPlanById', { planId: planId, networkId: networkId  }, true, function (resp) {
-                if (resp.msg.toLowerCase() == "ok") {
-                    alert(resp.strReturn);
-                    $(checkboxEl).closest("tr").remove();
-                }
-                else {
-                    alert(resp.strReturn);
-                }
-         }, false, true, false);   
-        },
+    this.deleteSproutSitePlan = function (planId, networkId) {
 
-            // CANCEL CLICKED → revert checkbox
+        showConfirm("Do you really want to delete this sprout Network?", function () {
+            debugger;
+
+            ajaxReq('BackBonePlan/DeleteSproutPlanById',
+                { planId: planId, networkId: networkId }, true,
+                function (resp) {
+
+                    // locate the latest checkbox row dynamically
+                    let $row = $("input.row-checkbox[value='" + networkId + "']").closest("tr");
+
+                    if (resp.msg.toLowerCase() == "ok") {
+                        alert(resp.strReturn);
+                        $('.lyrRefresh').trigger("click");
+                        $row.remove();
+                    }
+                    else {
+                        alert(resp.strReturn);
+                        // revert checkbox
+                        $row.find(".row-checkbox").prop("checked", true);
+                    }
+
+                }, false, true, false);
+        },
             function () {
-                $(checkboxEl).prop("checked", true);
+                // CANCEL CLICKED → restore checked state
+                $("input.row-checkbox[value='" + networkId + "']").prop("checked", true);
             }
         );
     }
+
     this.convertToAsbuiltNetwork = function (planId) {
         debugger;
         ajaxReq('BackBonePlan/ConvertToAsbuiltNetwork', { planId: planId }, true, function (resp) {
-                if (resp.status.toLowerCase() == "ok") {
-                    alert(resp.message);
-                }
-                else {
-                    alert(resp.message);
-                }
-         }, false, true, false); 
+            if (resp.status.toLowerCase() == "ok") {
+                alert(resp.message);
+                $('.lyrRefresh').trigger("click");
+            }
+            else {
+                alert(resp.message);
+            }
+        }, false, true, false);
     }
     this.convertToPlannedNetwork = function (planId) {
         debugger;
         ajaxReq('BackBonePlan/ConvertToPlannedNetwork', { planId: planId }, true, function (resp) {
-                if (resp.status.toLowerCase() == "ok") {
-                    alert(resp.message);
-                }
-                else {
-                    alert(resp.message);
-                }
-         }, false, true, false); 
+            if (resp.status.toLowerCase() == "ok") {
+                alert(resp.message);
+                $('.lyrRefresh').trigger("click");
+            }
+            else {
+                alert(resp.message);
+            }
+        }, false, true, false);
     }
 
     this.createAutoMarker = function (mrkrLatlng, imageUrl, label, draggable = true) {
