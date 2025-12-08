@@ -73,6 +73,8 @@ grid.Column("sprout_route_length", "Route Length", format: @<text> <span id="rou
         $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' disabled />");
 
         // Individual checkbox click
+        $(document).off('change', '.row-checkbox');
+
         $(document).on('change', '.row-checkbox', function () {
             let checkboxEl = this;
             const isChecked = $(this).is(':checked');
