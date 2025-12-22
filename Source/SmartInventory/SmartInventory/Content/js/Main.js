@@ -307,6 +307,7 @@ var Main = function () {
     this.LayerLoadingStatusMap = new Map();
     this.pod_system_id='';
     this.siteGeoms = [];
+    this.arrowMarkers = [];
     this.DE = {
         "frmAddHTB": "#frmAddHTB",
         "libDetail": ".libDetail",
@@ -11313,10 +11314,10 @@ var Main = function () {
             strokeWeight: 2,
             zIndex: 1,
             path: _path,
-            map: si.map  // Ensure it's added to the map
+            map: si.map
         });
 
-        // Function to compute the geographic midpoint
+        // Compute the geographic midpoint of the polyline
         function getMidpoint(path) {
             let totalDistance = 0;
             let distances = [];
@@ -11343,23 +11344,51 @@ var Main = function () {
                     );
                 }
             }
-            return path[Math.floor(path.length / 2)]; // Fallback
+            return path[Math.floor(path.length / 2)];
         }
 
-        // Calculate the accurate midpoint of the polyline
+
         var midLatLng = getMidpoint(_path);
-        // Create a Fixed Tooltip (InfoWindow)
-        //css code is written in main.js file
-        infoWindow = new google.maps.InfoWindow({
-            content: `<div style="color: black;  padding-top: 9px;  font-size: 10px; font-weight: bold;">
-        (${total_core}F)(${cable_measured_length} m)(${core_number})
-               </div>`,
+
+        // Create InfoWindow
+        var infoWindow = new google.maps.InfoWindow({
+            content: `<div class="infowin" style="color: black; padding-top: 9px; font-size: 10px; font-weight: bold;">
+                    (${total_core}F)(${cable_measured_length} m)(${core_number})
+                  </div>`,
             position: midLatLng
         });
 
-        // Open the tooltip immediately so it stays fixed
-        infoWindow.open(si.map);
-        app.previousInfoWindow.push(infoWindow);
+        // Close any previously opened InfoWindows
+        if (app.previousInfoWindow && app.previousInfoWindow.length > 0) {
+            app.previousInfoWindow.forEach(w => w.close());
+        }
+        app.previousInfoWindow = [];
+
+        // Track manual close
+        var isClosedManually = false;
+        google.maps.event.addListener(infoWindow, 'closeclick', function () {
+            isClosedManually = true;
+        });
+
+        // Show initially if zoom > 13
+        if (si.map.getZoom() > 13) {
+            infoWindow.open(si.map);
+            app.previousInfoWindow.push(infoWindow);
+        }
+
+        // Zoom listener: auto show/hide only if not closed manually
+        var zoomListener = google.maps.event.addListener(si.map, "zoom_changed", function () {
+            if (isClosedManually) return; // Do nothing if user closed manually
+
+            if (si.map.getZoom() > 13) {
+                if (!infoWindow.getMap()) {
+                    infoWindow.open(si.map);
+                }
+            } else {
+                infoWindow.close();
+            }
+        });
+
         ShowLineLength(_path);
         return tmpLine;
     };
@@ -17709,7 +17738,7 @@ var Main = function () {
         $('#SplicingDiv').hide();
         app.clearEditObj();
         splicing.ClearSplicingRelatedObjs();
-        resetActiveClassFromMenuItem(); // remove active tool bar class from all icons
+        resetActiveClassFromMenuItem(); // remove active tool bar class from all icons        
     }
 
     //this.EnableTerminationPoint = function () {
@@ -18416,7 +18445,7 @@ var Main = function () {
                 ddlsegment.append('<option value="">--Select--</option>');
                 ddlsegment.trigger("chosen:updated");
             }
-        }, false, false);
+        }, true, false);
 
     }
     this.getAllSitelistItem = function (ring_a_site_id = null, ring_b_site_id = null) {
@@ -27107,21 +27136,32 @@ var Main = function () {
             si.gMapObj.purposeType = "NetworkTicket";
             si.gMapObj.shapeArr = [];
 
-            // 5️⃣ Move/zoom to selected site geometries
+            // Clear existing markers
+            si.arrowMarkers.forEach(m => m.setMap(null));
+            si.arrowMarkers = [];
+
+            // 5️⃣ Move/zoom to selected site geometries AND show arrows
             if (si.siteGeoms && si.siteGeoms.length > 0) {
+
+                let bounds = new google.maps.LatLngBounds();
+
+                si.siteGeoms.forEach(pt => {
+                    if (pt && !isNaN(pt.lat) && !isNaN(pt.lng)) {
+
+                        let latLng = { lat: pt.lat, lng: pt.lng };
+                        let marker = app.createAutoMarker(latLng, 'Content/images/dwnArrow.png', 'end');
+                        marker.setMap(si.map);
+                        si.arrowMarkers.push(marker);
+                        bounds.extend(latLng);
+                    }
+                });
+
+                // Zoom logic
                 if (si.siteGeoms.length === 1) {
                     si.map.setCenter(si.siteGeoms[0]);
-                    si.map.setZoom(18);
-                } else {
-                    let bounds = new google.maps.LatLngBounds();
-                    si.siteGeoms.forEach(pt => {
-                        if (pt && !isNaN(pt.lat) && !isNaN(pt.lng)) {
-                            bounds.extend(new google.maps.LatLng(pt.lat, pt.lng));
-                        }
-                    });
-                    if (!bounds.isEmpty()) {
-                        si.map.fitBounds(bounds);
-                    }
+                    si.map.setZoom(18); // zoom for single site
+                } else if (!bounds.isEmpty()) {
+                    si.map.fitBounds(bounds); // fit map to all markers
                 }
             }
             google.maps.event.addListener(si.map, 'click', app.Networkticket.handleShapeNetworkTicketEvents);
@@ -27251,9 +27291,18 @@ var Main = function () {
                 if (!projectIds) {
                     si.Networkticket.AddNetworkTicket(longLatArr, selectionType);
                 }
-               else{
+               else
+               {
+
                 app.checkSiteExistsWithinPolygon(projectIds, longLatArr, function (isValid) {
                     if (isValid) {
+                        // Remove all markers from map
+                        if (si.arrowMarkers && si.arrowMarkers.length > 0) {
+                            si.arrowMarkers.forEach(function (marker) {
+                                marker.setMap(null); // removes from map
+                            });
+                            si.arrowMarkers = []; // clear array
+                        }
                         // Only execute if sites are valid
                         si.Networkticket.AddNetworkTicket(longLatArr, selectionType);
                     }
@@ -35516,8 +35565,11 @@ var Main = function () {
      this.deleteProjectDetails = function(id) {
         showConfirm('Are you sure to delete project?', function () {
             ajaxReq('Library/DeleteProject', { id: id, }, true, function (resp) {
-                app.showSiteAwardDetails();
-                alert('Record deleted successfully');
+                if (resp.status == "OK"){
+                    alert(resp.message);
+                    app.showSiteAwardDetails();
+                }
+                alert(resp.message);
 
             }, false, false)
         });

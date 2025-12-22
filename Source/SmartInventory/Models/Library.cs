@@ -560,7 +560,10 @@ namespace Models
         public string cable_plan_cores { get; set; }
         public string fiber_link_type_linkid_prefix { get; set; }
         public bool is_site_imported { get; set; }
-        
+        public double asbuit_ibw_distance { get; set; }
+        public double asbuit_osp_distance { get; set; }
+        public double asbuit_ibw_osp_total_distance { get; set; }
+
         public PODMaster()
         {
 

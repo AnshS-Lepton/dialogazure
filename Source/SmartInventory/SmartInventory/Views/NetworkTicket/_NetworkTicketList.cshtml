@@ -2,9 +2,10 @@
 
 
 @{
+    var objUser = (Models.User)Session["userDetail"];
     var objNWTicketDetails = (Models.NetworkTicket)Session["NWTicketDetails"];
     WebGrid grid = new WebGrid(rowsPerPage: Model.pageSize, canSort: true, ajaxUpdateContainerId: "VwTicketGrid",
-ajaxUpdateCallback: "onGridHeaderClick('tblNetworkTicketManagerGrid');GridColor();");
+    ajaxUpdateCallback: "onGridHeaderClick('tblNetworkTicketManagerGrid');GridColor();");
     grid.Bind(Model.lstNetworkTicket, autoSortAndPage: false, rowCount: Model.totalRecord);
     if (Model.totalRecord > 0)
     {
@@ -200,21 +201,21 @@ ajaxUpdateCallback: "onGridHeaderClick('tblNetworkTicketManagerGrid');GridColor(
                                     @*<a id="btnAction" class="pad-0">*@
 
                                     <button class="fa fa-fw fa-edit i-icons-style i-icons-ptpb" id="iconEdit" onclick="editNetworkTicket(@item.ticket_id);" tabindex="5"
-                                            @if (item.is_edit == "True") { { @: title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"
+                                            @if (item.is_edit == "true") { { @: title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"
                                             } } else { { @: disabled title="Unauthorized Access"
                                             } }></button>
                                     <i class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" id="DeleteTicket" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket(@item.ticket_id);"></i>
-                                
 
-                                @*</a>*@
-                            }
-                            else
-                            {
 
-                                <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
-                                <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name','@item.ticket_status')"></i>
-                            }
-                                </div>
+                                    @*</a>*@
+                                }
+                                else
+                                {
+
+                                    <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
+                                    <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name','@item.ticket_status')"></i>
+                                }
+                            </div>
 
                         </text>, canSort: false),
 grid.Column("ticket_status", Resources.Resources.SI_OSP_GBL_NET_RPT_026, format: @<text><lable class="clsTSts" colorcode="@item.ticket_status_color_code">@item.ticket_status</lable></text>),
@@ -241,7 +242,6 @@ grid.Column("modified_on", Resources.Resources.SI_OSP_GBL_GBL_GBL_057, format: @
 grid.Column("site_id", "Site ID", format: @<text> @item.site_id </text>),
 grid.Column("site_name", "Site Name", format: @<text> @item.site_name </text>),
 grid.Column("site_owner", "Site Owner", format: @<text> @item.site_owner </text>),
-grid.Column("maximum_cost", "Maximum Cost", format: @<text> @item.maximum_cost </text>),
 grid.Column("location_address", "Location Address", format: @<text> @item.location_address </text>),
 grid.Column("latitude", "Cordinates Latitude", format: @<text> @item.latitude </text>),
 grid.Column("longitude", "Cordinates Longitude", format: @<text> @item.longitude </text>),
@@ -250,9 +250,10 @@ grid.Column("project_category", "Project Category", format: @<text> @item.projec
 grid.Column("priority", "Priority", format: @<text> @item.priority </text>),
 grid.Column("cable_plan_cores", "Cable Plan Cores", format: @<text> @item.cable_plan_cores </text>),
 grid.Column("fiber_link_type_link_id_prefix", "Fiber Link Type(Link ID Prefix)", format: @<text> @item.fiber_link_type_link_id_prefix </text>),
-grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
-
-))
+grid.Column("comment", "Comment", format: @<text> @item.comment </text>),
+grid.Column("maximum_cost", "Maximum Cost",
+format: @<text>@item.maximum_cost</text>)
+) )
 
                             @Html.Hidden("dir", grid.SortDirection)
 
@@ -435,7 +436,14 @@ grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
         $("#frmTicket").submit(function () {
             $("#dvEntitydetailsProgress").show();
         });
-
+          if ('@objUser.user_type' === 'Vendor') {
+          $('#tblNetworkTicketManagerGrid th:contains("Maximum Cost")').each(function () {
+              var index = $(this).index();
+              $('#tblNetworkTicketManagerGrid tr').each(function () {
+                  $(this).find('th,td').eq(index).hide();
+              });
+          });
+         }
     });
     $("#closeModalPopup").on("click", function () { $("#closeShowNetowkOnMap").trigger("click"); });
 
@@ -624,7 +632,7 @@ grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
             $("#NwEntityDetails").trigger("click");
             $("#NwEntityDetails").removeClass("disabled");
             $("#dvEntitydetailsProgress").hide();
-                
+
 
         }, false, false)
     };
@@ -648,7 +656,7 @@ grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
             $(this).text(getFormattedNumber($(this).text().trim()));
         });
     }
-  
+
     function setNWTicketDetailSession(ticket_id, network_id, ticket_status, fndTypeid, user_role_id, ticket_type, assigned_to, _regionId, _provinceId, _ticketName) {
         visibleNetworkLayer = true;
         $("#dvProgress").show();
@@ -657,14 +665,14 @@ grid.Column("comment", "Comment", format: @<text> @item.comment </text>)
         }, true, function (resp) {
             if (resp.status == "OK") {
                 $("#closeModalPopup").trigger("click");
-                $("#NWticketAction").show();                
+                $("#NWticketAction").show();
                 $("#ticketWork_id").text("Ticket ID: " + network_id + "");
                 TicketNetworkId = network_id;
                 si.Networkticket.RedirectNetworkOnMap(ticket_id, network_id, _regionId, _provinceId, _ticketName);
                 $("#dvProgress").hide();
             }
             else {
-                $("#ticketWork_id").text(''); 
+                $("#ticketWork_id").text('');
                 TicketNetworkId = '';
                 $("#NWticketAction").hide();
                 $("#dvProgress").hide();

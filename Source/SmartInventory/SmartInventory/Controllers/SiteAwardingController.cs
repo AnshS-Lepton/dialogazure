@@ -11,11 +11,11 @@ namespace SmartInventory.Controllers
 {
     public class SiteAwardingController : Controller
     {
-        public ActionResult ShowSiteAwardDetails(int currentPage = 1, int pageSize = 10)
+        public ActionResult ShowSiteAwardDetails(int currentPage = 1, int pageSize = 10, string col = "", string dir = "ASC")
         {
             var siteprojectdetails = new siteprojectdetailsFilter();
 
-            siteprojectdetails = new BLProject().GetSiteAwardingProjectDetails(currentPage, pageSize);
+            siteprojectdetails = new BLProject().GetSiteAwardingProjectDetails(currentPage, pageSize, col, dir);
             return PartialView("_ShowSiteAwardDetails", siteprojectdetails);
         }
        

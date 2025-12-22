@@ -135,6 +135,9 @@ namespace DataAccess
                     objPOD.project_category = objPODMaster.project_category;
                     objPOD.cable_plan_cores = objPODMaster.cable_plan_cores;
                     objPOD.comment = objPODMaster.comment;
+                    objPOD.asbuit_osp_distance = objPODMaster.asbuit_osp_distance;
+                    objPOD.asbuit_ibw_distance = objPODMaster.asbuit_ibw_distance;
+                    objPOD.asbuit_ibw_osp_total_distance = objPODMaster.asbuit_ibw_osp_total_distance;
                     //site 
                     var result = repo.Update(objPOD);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.POD.ToString(), result.province_id, 1);

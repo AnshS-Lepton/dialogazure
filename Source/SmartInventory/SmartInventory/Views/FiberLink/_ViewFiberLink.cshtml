@@ -300,6 +300,8 @@
         if (corner) {
             corner.remove();
         }
+        $('.gm-style-iw-tc').hide();
+        $('.infowin').closest('.gm-style-iw').remove();
         if (si.previousInfoWindow && si.previousInfoWindow.length > 0) {
             si.previousInfoWindow.forEach(function (infoWindowss) {
                 infoWindowss.close();

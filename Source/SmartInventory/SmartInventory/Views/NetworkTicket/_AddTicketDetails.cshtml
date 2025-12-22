@@ -132,10 +132,20 @@
                         <div class="form-group row">
                             @if (Model.lstUserModule.Contains("PROJ"))
                             {
-                                <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074 :</label>
-                                <div class="col-md-4">
-                                     @Html.TextBoxFor(x => x.project_code, new { @id = "txtproject_code", @title =Resources.Resources.SI_OSP_GBL_GBL_GBL_074, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, maxlength = 50, @resize = "none" })
-                                </div>
+                                if (!string.IsNullOrEmpty(Model.project_code))
+                                {
+                                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074 :</label>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(x => x.project_code, new { @id = "txtproject_code", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, maxlength = 50, @resize = "none", @readonly = true })
+                                    </div>
+                                }
+                                else
+                                {
+                                    <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_GBL_GBL_074 :</label>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(x => x.project_code, new { @id = "txtproject_code", @title = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, @tabindex = "4", @class = "input-sm form-control", @placeholder = Resources.Resources.SI_OSP_GBL_GBL_GBL_074, maxlength = 50, @resize = "none" })
+                                    </div>
+                                }
                             }
                             <label class="control-label col-sm-2" for="entities">@Resources.Resources.SI_OSP_GBL_NET_FRM_436:</label>
                             <div class="col-md-4">
