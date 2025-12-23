@@ -1,5 +1,6 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
+using Newtonsoft.Json;
 using NPOI.Util;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,10 @@ namespace DataAccess
             try
             {
 
-                return repo.ExecuteProcedure<SplicingEntity>("fn_splicing_get_entity", new { longitude = longitude, latitude = latitude, p_buffer_radius = bufferRadius, p_role_id = roleId }, true).ToList();
-
+                var jsonResult = repo.ExecuteProcedure<string>("fn_splicing_get_entity", new { longitude = longitude, latitude = latitude, p_buffer_radius = bufferRadius, p_role_id = roleId }, false).ToList();
+                if (jsonResult == null || !jsonResult.Any())
+                    return new List<SplicingEntity>();
+                    return jsonResult.Select(j => JsonConvert.DeserializeObject<SplicingEntity>(j)).ToList();           
             }
             catch
             {

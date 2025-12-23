@@ -1013,7 +1013,8 @@ var BackbonePlanning = function () {
             .join('&');
     }
 
-    this.loopValidation = function () {       
+    this.loopValidation = function () {
+     
         var backboneCableLength = parseFloat($('#cablelength').val());
         var cableDrumLength = parseFloat($('#cabledrumLength').val());
         var loop_length = parseFloat($('#loopLength').val());
@@ -1022,7 +1023,11 @@ var BackbonePlanning = function () {
         var pole_distance = parseFloat($('#poleSpan').val());
         var manhole_distance = parseFloat($('#manholeSpan').val());
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
-      
+        if (backboneCableLength > cableDrumLength) {
+            alert("Cable drum length must be equal to the backbone route length.");
+            return false;
+        }
+
         if ((isNaN(loop_length) || loop_length === 0) && is_loop_required == "True") {
             $('#loopLength').addClass('form-control input-validation-error');
             return false;
@@ -1033,7 +1038,7 @@ var BackbonePlanning = function () {
         }
         if (backboneCableLength < cableDrumLength) {
             $('#cabledrumLength').addClass('form-control input-validation-error');
-            alert("Cable Drum length cannot be greater than Backbone Route Length!");
+            alert("Cable drum length must be equal to the backbone route length.");
             return false;
         }       
         if (loop_length >= cableDrumLength) {
@@ -1056,11 +1061,11 @@ var BackbonePlanning = function () {
             $('#poleSpan').addClass('form-control input-validation-error');
             return false;
         }
-        if (threshold >= cableDrumLength) {
-            alert("Sprout threshold value cannot be greater and equal than Cable Drum Length!");
-            $('#sproutThreshold').addClass('form-control input-validation-error');
-            return false;
-        }     
+        //if (threshold >= cableDrumLength) {
+        //    alert("Sprout threshold value cannot be greater and equal than Cable Drum Length!");
+        //    $('#sproutThreshold').addClass('form-control input-validation-error');
+        //    return false;
+        //}     
         
         return true;
     }

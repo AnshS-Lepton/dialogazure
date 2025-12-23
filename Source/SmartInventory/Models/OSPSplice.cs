@@ -445,7 +445,13 @@ namespace Models
         public string layer_title { get; set; }
         public string layer_abbr { get; set; }
         public string layer_display_abbr { get; set; }
+        public GeoJSONGeometry geometry { get; set; }
 
+    }
+    public class GeoJSONGeometry
+    {
+        public string type { get; set; }
+        public object coordinates { get; set; }
     }
     public class CPESplicingEntity
     {

@@ -1223,12 +1223,12 @@ namespace DataAccess.Admin
                         project_id = GetNextProjectId(),
                         site_id = pod.site_id,
                         site_name = pod.site_name,
-                        //site_owner = pod.site_owner,
+                        site_owner = pod.owner_name,
                         maximum_cost = pod.maximum_cost,
-                        //location_address = pod.location_address,
+                        location_address = pod.address,
                         //ds_cmc_area = pod.ds_cmc_area,
-                        //coordinates_latitude = pod.coordinates_latitude,
-                        //coordinates_longitude = pod.coordinates_longitude,
+                        //latitude = pod.latitude,
+                        //longitude = pod.longitude,
                         project_category = pod.project_category,
                         priority = pod.priority,
                         cable_plan_cores = pod.cable_plan_cores,
@@ -1281,11 +1281,11 @@ namespace DataAccess.Admin
             return sitname;
         }
        
-        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage, int pageSize)
+        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage, int pageSize,string sort_col, string sort_dir)
         {
             var jsonResult = repo.ExecuteProcedure<string>(
                 "fn_get_imported_site_project_details",
-                new { p_page_no = currentPage, p_page_size = pageSize }
+                new { p_page_no = currentPage, p_page_size = pageSize , p_sort_col  = sort_col, p_sort_dir = sort_dir }
             );
 
             if (string.IsNullOrEmpty(jsonResult[0]))
@@ -1383,7 +1383,7 @@ namespace DataAccess.Admin
                     p_id = siteprojectdetails.id, 
                     p_userId = userId,
                     p_site_name = siteprojectdetails.site_name,
-                p_project_category = siteprojectdetails.project_category,
+                    p_project_category = siteprojectdetails.project_category,
                     p_cable_plan_cores = siteprojectdetails.cable_plan_cores,
                     p_comment = siteprojectdetails.comment,
                     p_site_owner = siteprojectdetails.site_owner,
@@ -1420,7 +1420,8 @@ namespace DataAccess.Admin
         {
             try
             {
-                return repo.ExecuteProcedure<DbMessage>("delete_site_project_detail", new { p_id = id, p_userId = userId }).FirstOrDefault();
+               var response = repo.ExecuteProcedure<DbMessage>("fn_delete_site_project_detail", new { p_id = id, p_userId = userId }).FirstOrDefault();
+                return response;
             }
             catch(Exception ex) {
                 ErrorLogHelper logHelper = new ErrorLogHelper();

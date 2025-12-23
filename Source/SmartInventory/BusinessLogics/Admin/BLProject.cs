@@ -379,9 +379,9 @@ namespace BusinessLogics.Admin
         {
             return new DAProjectDetails().GetProjectwiseFiberDistanceReport(region_id, province_id);
         }
-        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage,int pageSize)
+        public siteprojectdetailsFilter GetSiteAwardingProjectDetails(int currentPage,int pageSize,string sort_col,string sort_dir)
         {
-            return new DAProjectDetails().GetSiteAwardingProjectDetails(currentPage, pageSize);
+            return new DAProjectDetails().GetSiteAwardingProjectDetails(currentPage, pageSize, sort_col, sort_dir);
         }
         public siteprojectdetails GetProjectDetailsByProjectId(string projectId)
         {

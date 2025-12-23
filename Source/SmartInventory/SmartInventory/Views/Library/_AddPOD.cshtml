@@ -339,19 +339,19 @@
                     <fieldset class="the-fieldset">
                         <legend class="the-legend">@layerDetail.layer_title @Resources.Resources.SF_GBL_GBL_NET_FRM_051</legend>
                         @*<div class="form-group">
-                    <label class="control-label col-sm-2" for="txtPODCode">
-                        POD Code
-                        @if (Model.networkIdType == NetworkIdType.M.ToString())
-                        {
-                            <i class="clsMandatory">*</i>
-                        }
-                        :
-                    </label>
-                    <div class="col-sm-9" style="width: 81%;">
-                        <div id="txtMaskedNetworkId"></div>
+            <label class="control-label col-sm-2" for="txtPODCode">
+                POD Code
+                @if (Model.networkIdType == NetworkIdType.M.ToString())
+                {
+                    <i class="clsMandatory">*</i>
+                }
+                :
+            </label>
+            <div class="col-sm-9" style="width: 81%;">
+                <div id="txtMaskedNetworkId"></div>
 
-                    </div>
-                </div>*@
+            </div>
+        </div>*@
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtPODCode">
                                 @Resources.Resources.SI_OSP_GBL_GBL_GBL_001
@@ -385,13 +385,13 @@
                                 @*@Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })*@
 
                                 @*@if (Model.system_id > 0)
-                        {
-                        @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
-                        }
-                        else
-                        {
-                        @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
-                        }*@
+                {
+                @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control clsReadOnly", @readonly = true, @id = "txtPODName", @maxlength = "50" })
+                }
+                else
+                {
+                @Html.TextBoxFor(m => m.pod_name, new { @class = "form-control", @id = "txtPODName", @maxlength = "50" })
+                }*@
                             </div>
                         </div>
                         <div class="form-group row">
@@ -441,9 +441,9 @@
                         <div>@AdditionalFields()</div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                    <div class="col-sm-45">
-                        @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                    </div>*@
+            <div class="col-sm-45">
+                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+            </div>*@
                             <label class="control-label col-sm-2">
                                 @layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023 :
                             </label>
@@ -462,13 +462,25 @@
                                 </label>
 
                             </div>
-
-
-                            @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                    <div class="col-sm-45">
-                        @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-                    </div>*@
                         </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">Asbuit IBW Distance:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.asbuit_ibw_distance, new { @class = "form-control  numbers-only", @id = "txtAsbuiltIBWDistance", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
+                            <label class="control-label col-sm-2" for="txtPinCode">Asbuit OSP Distance:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.asbuit_osp_distance, new { @class = "form-control numbers-only", @id = "txtAsbuiltOSPDistance", @onkeypress = "return ValidateNumberDecimal(this,event,8,2);" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2" for="txtRegionName">Total Distance:</label>
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(m => m.asbuit_ibw_osp_total_distance, new { @class = "form-control clsReadOnly", @id = "txtTotalDistance", @readonly = true })
+                            </div>
+                           
+                        </div>                       
+
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_ISP_GBL_GBL_GBL_015:</label>
                             <div class="col-sm-10">
@@ -596,6 +608,9 @@
 
         //-----------End---------------//
         $('.ModalFooter [title!=""]').tooltip({ title: '', html: true, placement: "top" });
+        $("#txtAsbuiltIBWDistance, #txtAsbuiltOSPDistance").on("input", function () {
+            calculateTotal();
+        });
     });
 
     $("input.numbers-only").on("paste", function () {
@@ -643,6 +658,22 @@
 
 
     }
+
+    function calculateTotal() {
+        debugger;
+        var ibw = parseFloat($("#txtAsbuiltIBWDistance").val()) || 0;
+        var osp = parseFloat($("#txtAsbuiltOSPDistance").val()) || 0;
+
+        var total = ibw + osp;
+
+        // If both values are empty OR total is 0 → show 0 instead of 0.00
+        if (total === 0) {
+            $("#txtTotalDistance").val("0");
+        } else {
+            $("#txtTotalDistance").val(total.toFixed(2)); // show 2 decimals when > 0
+        }
+    }   
+
     function validateFields() {
         debugger;
         var siteId = $('#txtSiteId').val();

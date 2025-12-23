@@ -14946,6 +14946,7 @@ foreach (var objEntity in lstExportReportKML)
                 topologySegment.agg2_site_id = Agg2SystemId.ToString();
                 topologySegment.description = description;
                 topologySegment.route_id = route_id;
+                topologySegment.name = segmentcode;
 
 
                 // var topology_get_segment_cables= new BLProject().Gettopologysegmentcables(Agg1SystemId, Agg2SystemId, Convert.ToInt32(Session["user_id"])).ToList();
@@ -15537,6 +15538,23 @@ foreach (var objEntity in lstExportReportKML)
             ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
             aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
 
+            if(siteImportLogs.Count == siteList.Count )
+            {
+                string fName = "SiteImportLog" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
+                DataTable dtReport = MiscHelper.ListToDataTable<SiteImportLog>(siteImportLogs);
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    if (dtReport.Columns.Contains("site_id")) { dtReport.Columns["site_id"].ColumnName = "Site Id"; }
+                    if (dtReport.Columns.Contains("site_name")) { dtReport.Columns["site_name"].ColumnName = "Site Name"; }
+                    if (dtReport.Columns.Contains("error_msg")) { dtReport.Columns["error_msg"].ColumnName = "Error Message"; }
+
+                }
+
+                Session["ExportSiteLog"] = dtReport;
+
+                return Json(new { success = true, message = $"Site import failed. Please check the downloaded log for details.", fName = fName });
+            }
+
             if (siteImportLogs.Count > 0)
             {
                 string fName = "SiteImportLog" + DateTimeHelper.Now.ToString("ddMMyyyy") + "-" + DateTimeHelper.Now.ToString("HHmmss");
@@ -15551,7 +15569,7 @@ foreach (var objEntity in lstExportReportKML)
 
                 Session["ExportSiteLog"] = dtReport;
 
-                return Json(new { success = true, message = $"Site imported partially successfully.", fName = fName });
+                return Json(new { success = true, message = $"Site imported partially successfully. Please check the downloaded log for the sites with errors.", fName = fName });
             }
             //new BLProject().SaveSiteProjectDetails(siteList, userId);
             /*var receivers = new string[] { "dinesh.kumar1@leptonsoftware.com" };
@@ -15804,63 +15822,58 @@ foreach (var objEntity in lstExportReportKML)
 
                 var row0 = sheet.CreateRow(0);
                 row0.HeightInPoints = 20;
-
+                // Row 0 - Main Headers
                 CreateCellWithStyle(row0, 0, "No.", headerStyle, true, new CellRangeAddress(0, 1, 0, 0));
                 CreateCellWithStyle(row0, 1, "Project code", headerStyle, true, new CellRangeAddress(0, 1, 1, 1));
                 CreateCellWithStyle(row0, 2, "City", headerStyle, true, new CellRangeAddress(0, 1, 2, 2));
                 CreateCellWithStyle(row0, 3, "District", headerStyle, true, new CellRangeAddress(0, 1, 3, 3));
                 CreateCellWithStyle(row0, 4, "Region", headerStyle, true, new CellRangeAddress(0, 1, 4, 4));
-                CreateCellWithStyle(row0, 5, "Catergory", headerStyle, true, new CellRangeAddress(0, 1, 5, 5));
+                CreateCellWithStyle(row0, 5, "Category", headerStyle, true, new CellRangeAddress(0, 1, 5, 5));
                 CreateCellWithStyle(row0, 6, "Site ID", headerStyle, true, new CellRangeAddress(0, 1, 6, 6));
                 CreateCellWithStyle(row0, 7, "Site Name/Project", headerStyle, true, new CellRangeAddress(0, 1, 7, 7));
                 CreateCellWithStyle(row0, 8, "Site Address", headerStyle, true, new CellRangeAddress(0, 1, 8, 8));
-                CreateCellWithStyle(row0, 9, "OSP Distance", headerStyle, true, new CellRangeAddress(0, 1, 9, 9));
-                CreateCellWithStyle(row0, 10, "IBW Distance", headerStyle, true, new CellRangeAddress(0, 1, 10, 10));
+                CreateCellWithStyle(row0, 9, "GIS Length", headerStyle, true, new CellRangeAddress(0, 1, 9, 9));
+                CreateCellWithStyle(row0, 10, "Calculated Length", headerStyle, true, new CellRangeAddress(0, 1, 10, 10));
                 CreateCellWithStyle(row0, 11, "Micro Trench Distance", headerStyle, true, new CellRangeAddress(0, 1, 11, 11));
-                CreateCellWithStyle(row0, 12, "Distance without MT", headerStyle, true, new CellRangeAddress(0, 1, 12, 12));
-                CreateCellWithStyle(row0, 13, "Total Distance", headerStyle, true, new CellRangeAddress(0, 1, 13, 13));
-                CreateCellWithStyle(row0, 14, "Network Status", headerStyle, true, new CellRangeAddress(0, 1, 14, 14));
-                CreateCellWithStyle(row0, 15, "Year", headerStyle, true, new CellRangeAddress(0, 1, 15, 15));
-                CreateCellWithStyle(row0, 16, "Month", headerStyle, true, new CellRangeAddress(0, 1, 16, 16));
-                CreateCellWithStyle(row0, 17, "Removed Year", headerStyle, true, new CellRangeAddress(0, 1, 17, 17));
-                CreateCellWithStyle(row0, 18, "Removed Month", headerStyle, true, new CellRangeAddress(0, 1, 18, 18));
-                CreateCellWithStyle(row0, 19, "Sierra Region", headerStyle, true, new CellRangeAddress(0, 1, 19, 19));
-                CreateCellWithStyle(row0, 20, "Sierra Sub office", headerStyle, true, new CellRangeAddress(0, 1, 20, 20));
-                CreateCellWithStyle(row0, 21, "OFN route details", headerStyle, true, new CellRangeAddress(0, 1, 21, 21));
-                CreateCellWithStyle(row0, 22, "As built drawing details", headerStyle, true, new CellRangeAddress(0, 0, 22, 25));
+                CreateCellWithStyle(row0, 12, "Asbuilt IBW Distance", headerStyle, true, new CellRangeAddress(0, 1, 12, 12));
+                CreateCellWithStyle(row0, 13, "Asbuilt OSP Distance", headerStyle, true, new CellRangeAddress(0, 1, 13, 13));
+                CreateCellWithStyle(row0, 14, "Total Distance", headerStyle, true, new CellRangeAddress(0, 1, 14, 14));
+                CreateCellWithStyle(row0, 15, "Network Status", headerStyle, true, new CellRangeAddress(0, 1, 15, 15));
+                CreateCellWithStyle(row0, 16, "Site Asbuilt Date", headerStyle, true, new CellRangeAddress(0, 1, 16, 16));
+                CreateCellWithStyle(row0, 17, "Site Dormant Date", headerStyle, true, new CellRangeAddress(0, 1, 17, 17));
+
+                // Merged header for As Built Drawing Details
+                CreateCellWithStyle(row0, 18, "As built drawing details", headerStyle, true, new CellRangeAddress(0, 0, 18, 21));
+
+                // Row 1 - Subheaders for As Built Drawing Details
                 var row1 = sheet.CreateRow(1);
                 row1.HeightInPoints = 20;
-                CreateCellWithStyle(row1, 22, "MH", headerStyle, true, new CellRangeAddress(1, 1, 22, 22));
-                CreateCellWithStyle(row1, 23, "Pole", headerStyle, true, new CellRangeAddress(1, 1, 23, 23));
-                CreateCellWithStyle(row1, 24, "Arial Distance", headerStyle, true, new CellRangeAddress(1, 1, 24, 24));
-                CreateCellWithStyle(row1, 25, "UG distance", headerStyle, true, new CellRangeAddress(1, 1, 25, 25));
+                CreateCellWithStyle(row1, 18, "Manhole", headerStyle, true, new CellRangeAddress(1, 1, 18, 18));
+                CreateCellWithStyle(row1, 19, "Pole", headerStyle, true, new CellRangeAddress(1, 1, 19, 19));
+                CreateCellWithStyle(row1, 20, "Arial Distance", headerStyle, true, new CellRangeAddress(1, 1, 20, 20));
+                CreateCellWithStyle(row1, 21, "UG distance", headerStyle, true, new CellRangeAddress(1, 1, 21, 21));
 
 
-                var keysToExtract = new List<string> { "Project_code", "City", "District", "Region", "Catergory", "site_id", "site_name", "address", "OSP_Distance", "IBW_Distance", "Micro_Trench_Distance", "Distance_without_MT", "Total_Distance", "Network_Status", "Year", "Month", "Removed_Year", "Removed_Month" };
-
-               
-
-           
-                string[] arrIgnoreColumns = { "project_code", "city", "district", "region", "catergory", "site_id", "site_name", "address", "osp_distance", "ibw_distance", "micro_trench_distance", "distance_without_mt", "total_distance", "network_status", "year", "month", "removed_year", "removed_month" };
+                var keysToExtract = new List<string> { "Project_code", "City", "District", "Region", "Catergory", "site_id", "site_name", "address", "gis_length", "calculated_length", "micro_trench_distance", "Asbuilt_IBW_Distance", "Asbuilt_OSP_Distance", "Total_Distance", "Network_Status", "site_asbuilt_date", "site_dormant_date"};
+       
+                string[] arrIgnoreColumns = { "project_code", "city", "district", "region", "catergory", "site_id", "site_name", "address", "gis_length", "calculated_length", "micro_trench_distance","asbuilt_ibw_distance", "asbuilt_osp_distance", "total_distance","network_status", "site_asbuilt_date", "site_dormant_date" };
                 for (int i = 1; i < bodyData.Count; i++)
                 {
                     var record = bodyData[i];
-                    var recordRow = sheet.CreateRow(i+1);
+                    var recordRow = sheet.CreateRow(i + 1);
                     int cellIndex = 0;
+
+                    // S.No column
+                    var snoCell = recordRow.CreateCell(cellIndex++);
+                    snoCell.SetCellValue(i.ToString());
+                    snoCell.CellStyle = dataStyle;
+
                     foreach (var key in record.Keys)
                     {
-                        //if (Array.Exists(arrIgnoreColumns, col => col.Equals(key.ToUpper(), StringComparison.OrdinalIgnoreCase)))
-                        //{
-                        //    continue;
-                        //}
-                        
-                        var value = record[key] != null ? record[key] : "";
-                        if(cellIndex==0)
-                            recordRow.CreateCell(cellIndex).SetCellValue((i).ToString());
-                        
-                        recordRow.CreateCell(cellIndex+1).SetCellValue(value.ToString());
-                        recordRow.GetCell(cellIndex).CellStyle = dataStyle;
-                        cellIndex++;
+                        var cell = recordRow.CreateCell(cellIndex++);
+                        var value = record[key] != null ? record[key].ToString() : "";
+                        cell.SetCellValue(value);
+                        cell.CellStyle = dataStyle; // apply style to the correct cell
                     }
                 }
 
