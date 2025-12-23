@@ -238,8 +238,16 @@ namespace Models
         public string reference_ticket_id { get; set; }
         public string source { get; set; }
         public string ticket_type_color_code { get; set; }
+        public Boolean ticket_acknowledgement_status { get; set; }
     }
-    public class NWTicket_List_Status
+    public class NWTAcknowledgement
+    {
+        [Required(ErrorMessage = "Ticket ID is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Ticket ID must be a valid positive integer")]
+        public int ticket_id { get; set; }
+        public PageMessage pageMsg { get; set; }
+    }
+        public class NWTicket_List_Status
     {
         public List<NetworkTicketStatus> lstNWStatus { get; set; }
         public List<NetworkTicketList> lstNWDetails { get; set; }

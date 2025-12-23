@@ -146,6 +146,15 @@ namespace DataAccess
             catch { throw; }
 
         }
+        public DbMessage UpdateAcknowledgement(NWTAcknowledgement ack)
+        {
+            try
+            {
+                return repo.ExecuteProcedure<DbMessage>("fn_update_nwt_tkt_acknowledgement", new { p_ticket_id = ack.ticket_id }).FirstOrDefault();
+            }
+            catch { throw; }
+
+        }
         public NetworkTicket GetNetworkTicketById(int ticket_id)
         {
             try

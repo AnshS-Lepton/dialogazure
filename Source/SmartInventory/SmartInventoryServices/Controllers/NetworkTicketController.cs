@@ -67,6 +67,42 @@ namespace SmartInventoryServices.Controllers
             }
             return response;
         }
+        [HttpPost]
+        public ApiResponse<NWTAcknowledgement> UpdateAcknowledgement(ReqInput data)
+        {
+            var response = new ApiResponse<NWTAcknowledgement>();
+            if (ModelState.IsValid)
+            {    
+                try
+                {
+                    NWTAcknowledgement ack = ReqHelper.GetRequestData<NWTAcknowledgement>(data);
+                    var resultNW = new BLNetworkTicket().UpdateAcknowledgement(ack);
+                    if (resultNW.status)
+                    {
+                        response.error_message = resultNW.message;
+                        response.status = ResponseStatus.OK.ToString();
+                    }
+                    else
+                    {
+                        response.status = StatusCodes.FAILED.ToString();
+                        response.error_message = resultNW.message;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogHelper logHelper = new ErrorLogHelper();
+                    logHelper.ApiLogWriter("GetTicketType()", "NetworkTicket Controller", data.data, ex);
+                    response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                    response.error_message = "Error While Get NetworkTicket Details!";
+                }
+            }
+            else 
+            {
+                response.status = StatusCodes.UNKNOWN_ERROR.ToString();
+                response.error_message = "Error While Get NetworkTicket Details!";
+            }
+            return response;
+        }
 
         [HttpPost]
        

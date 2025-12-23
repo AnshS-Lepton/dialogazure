@@ -49,6 +49,10 @@ namespace BusinessLogics
         {
             return new DANetworkTicket().DeleteNetworkTicketById(ticket_id, userId);
         }
+        public DbMessage UpdateAcknowledgement(NWTAcknowledgement ack)
+        {
+            return new DANetworkTicket().UpdateAcknowledgement(ack);
+        }
         public NWEntityInfo GetNetworkTicketEntityDetails(NetworkTicketFilter objNetworkTicketFilters)
         {
             return new DANetworkTicket().GetNetworkTicketEntityDetails(objNetworkTicketFilters);
