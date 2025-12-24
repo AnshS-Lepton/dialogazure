@@ -20905,7 +20905,7 @@ var Main = function () {
     }
     this.getNewDuctDetails = function () {
         $('#btnSplitduct').prop('disabled', '');
-        var splitductsystemid = $("input[name='Duct']:checked").attr('s_id');
+        var splitductsystemid = $("input.Duct_address[name='Duct']:checked").attr('s_id');
         $('#split_duct_system_id').val(splitductsystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
         var splitEntitytype = $('#split_entity_type').val();
@@ -21019,7 +21019,8 @@ var Main = function () {
     //start ycode
     this.getNewTrenchDetails = function () {
         $('#btnSplittrench').prop('disabled', '');
-        var splittrenchsystemid = $("input[name='Trench']:checked").attr('s_id');
+        // var splittrenchsystemid = $("input[name='Trench']:checked").attr('s_id');
+        var splittrenchsystemid = $("input.Trench_address[name='Trench']:checked").attr('s_id');
         $('#split_trench_system_id').val(splittrenchsystemid);
         var splitEnityNetworkId = $('#split_entity_networkId').val();
         var splitEntitytype = $('#split_entity_type').val();
