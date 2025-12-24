@@ -1023,6 +1023,13 @@ var BackbonePlanning = function () {
         var pole_distance = parseFloat($('#poleSpan').val());
         var manhole_distance = parseFloat($('#manholeSpan').val());
         var is_loop_required = $("input[name='is_loop_required']:checked").val();
+        // sync the length of backbone cable 
+        ajaxReq('Plan/GetNetworkPlanningLineLength', { geom: $('#geometry').val() }, true, function (resp) {
+            distance = resp.result;
+            $('#cablelength').val(parseFloat(distance.toFixed(2)));
+            $('#cabledrumLength').val(parseFloat(distance.toFixed(2)));
+        }, true, false, true);
+
         if (backboneCableLength > cableDrumLength) {
             alert("Cable drum length must be equal to the backbone route length.");
             return false;
@@ -1400,6 +1407,7 @@ var BackbonePlanning = function () {
         ajaxReq('Plan/GetNetworkPlanningLineLength', { geom: $('#geometry').val() }, true, function (resp) {
             distance = resp.result;
             $('#cablelength').val(parseFloat(distance.toFixed(2)));
+            $('#cabledrumLength').val(parseFloat(distance.toFixed(2)));
         }, true, false, true);
 
     }
