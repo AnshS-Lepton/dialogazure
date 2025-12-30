@@ -11,7 +11,7 @@ namespace SmartInventory.Controllers
 {
     public class SiteAwardingController : Controller
     {
-        public ActionResult ShowSiteAwardDetails(int currentPage = 1, int pageSize = 10, string col = "", string dir = "ASC")
+        public ActionResult ShowSiteAwardDetails(int currentPage = 1, int pageSize = 10, string col = "", string dir = "DESC")
         {
             var siteprojectdetails = new siteprojectdetailsFilter();
 

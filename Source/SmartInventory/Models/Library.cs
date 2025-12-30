@@ -5799,10 +5799,10 @@ namespace Models
         public int? maximum_cost { get; set; } // Change to decimal? if you ensure it's numeric
         public string location_address { get; set; }
         public string ds_cmc_area { get; set; }
-        [NotMapped]
-        public double latitude { get; set; }
-        [NotMapped]
-        public double longitude { get; set; }
+        //[NotMapped]
+        public string latitude { get; set; }
+        //[NotMapped]
+        public string longitude { get; set; }
         public string project_category { get; set; }
         public int? priority { get; set; }
         public string cable_plan_cores { get; set; }
@@ -5834,6 +5834,7 @@ namespace Models
         public string status { get; set; }
         [NotMapped]
         public string site_geom { get; set; }       
+        public string network_id { get; set; }       
 
     }
     public class DropdownMaster

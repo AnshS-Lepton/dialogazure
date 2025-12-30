@@ -1669,7 +1669,7 @@ var NetworkPlanning = function () {
     };
 
     this.loopDetails = function () {
-
+        
         var temp_plan_id = $('#temp_plan_id').val();
         alert('Loop Updated Successfully!');
         /* $('#temp_plan_id').val(temp_plan_id);*/
@@ -1684,7 +1684,7 @@ var NetworkPlanning = function () {
                 $('#tblRecurringCharges').find('#Loop > .cost_per_unit').text(cost_per_unit);
                 $('#tblRecurringCharges').find('#Loop > .service_cost_per_unit').text(service_cost_per_unit);
                 $('#tblRecurringCharges').find('#Loop > .amount').text(amount);
-                $('#closeModalPopup').trigger("click");
+                //$('#closeModalPopup').trigger("click");
             }
         }, true, false);
     }

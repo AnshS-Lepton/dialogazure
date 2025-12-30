@@ -142,6 +142,7 @@ grid.Column("status", header: "Status")
                     }
                     $("#updExcel").val("");
                     $('#btnShowReportData').trigger("click");
+                    si.showSiteAwardDetails();
                     //popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
                     //    eType: ''
                     //}, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
@@ -168,7 +169,7 @@ grid.Column("status", header: "Status")
           debugger;
           var appRoot = '@Url.Content("~")';
           var applicationUrl = window.location.origin + appRoot;
-           window.location.href = applicationUrl + '/Content/Templates/Site/ImportSite.xlsx';
+          window.location.href = applicationUrl + '/Content/Templates/Site/ImportSite.xlsx';
 
          });
 

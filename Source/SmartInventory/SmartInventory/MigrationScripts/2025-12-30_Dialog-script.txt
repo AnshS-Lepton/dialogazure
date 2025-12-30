@@ -1,0 +1,1055 @@
+CREATE OR REPLACE FUNCTION public.fn_splicing_get_entity_report(p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_system_id integer, p_entity_type character varying)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+v_arow record;
+v_arow_next record;
+v_arow_child record;
+v_arow_next2 record;
+v_is_virtual_entity boolean;
+V_IS_MIDDLEWARE_ENTITY boolean;
+ sql TEXT;
+   StartSNo    INTEGER;    
+   EndSNo      INTEGER;
+   TotalRecords integer; 
+BEGIN
+
+SELECT IS_VIRTUAL_PORT_ALLOWED,IS_MIDDLEWARE_ENTITY
+INTO V_IS_VIRTUAL_ENTITY,V_IS_MIDDLEWARE_ENTITY FROM LAYER_DETAILS WHERE UPPER(LAYER_NAME)=UPPER(P_ENTITY_TYPE);
+
+
+create temp table temp_connections
+(
+connection_id integer,
+source_system_id integer,
+source_network_id character varying(100),
+source_entity_type character varying(100),
+source_entity_sub_type character varying,
+source_entity_title character varying(100),
+source_port_no integer,
+source_display_name character varying,
+destination_system_id integer,
+destination_network_id character varying(100),
+destination_entity_type character varying(100),
+destination_entity_sub_type character varying,
+destination_entity_title character varying(100),
+destination_port_no integer,
+destination_display_name character varying,
+source_port_display_name character varying,
+destination_port_display_name character varying,
+source_tube_no integer,
+destination_tube_no integer,
+source_tray_system_id integer,
+destination_tray_system_id integer,
+IS_CABLE_A_END BOOLEAN NOT NULL DEFAULT FALSE,
+IS_PROCESSED BOOLEAN NOT NULL DEFAULT FALSE
+) on commit drop;
+
+create temp table temp_final_connections
+(
+source_display_name character varying,
+source_entity_title character varying(100),
+source_port_no character varying,
+destination_entity_title character varying(100),
+destination_port_no character varying,
+destination_display_name character varying,
+tray_name character varying,
+via_entity_display_name character varying,
+via_entity_Type character varying,
+via_port_no character varying,
+using_entity_type character varying,
+using_entity_display_name character varying,
+using_port_in character varying,
+using_port_out character varying,
+source_tube_no character varying,
+destination_tube_no character varying
+) on commit drop;
+
+insert into temp_connections(connection_id, source_system_id,source_network_id,source_entity_type,
+source_entity_sub_type,source_port_no,source_display_name,source_entity_title,
+destination_system_id,destination_network_id,destination_entity_type,destination_entity_sub_type,
+destination_port_no,destination_display_name,destination_entity_title,source_port_display_name
+,destination_port_display_name,source_tray_system_id,destination_tray_system_id,IS_CABLE_A_END)
+
+select connection_id, source_system_id,source_network_id,source_entity_type,source_entity_sub_type,source_port_no,source_display_name,
+case when upper(ls.layer_name)='EQUIPMENT' then coalesce(ssubtype.layer_title,con.source_entity_sub_type)
+else ls.layer_title end as source_entity_title,
+destination_system_id,destination_network_id,destination_entity_type,destination_entity_sub_type,
+destination_port_no,destination_display_name,
+case when upper(ld.layer_name)='EQUIPMENT' then coalesce(dsubtype.layer_title,con.destination_entity_sub_type)
+else ld.layer_title end as destination_entity_title,
+fn_get_port_text(con.source_system_id,(case when upper(con.source_entity_type)='EQUIPMENT' then ssubtype.is_virtual_port_allowed
+else ls.is_virtual_port_allowed end),con.source_port_no,con.source_entity_type),
+fn_get_port_text(con.destination_system_id,(case when upper(con.destination_entity_type)='EQUIPMENT'
+then dsubtype.is_virtual_port_allowed else ld.is_virtual_port_allowed end),con.destination_port_no,con.destination_entity_type)
+,con.source_tray_system_id,con.destination_tray_system_id,CON.IS_CABLE_A_END
+from connection_info con
+left join layer_details ls on upper(ls.layer_name)=upper(con.source_entity_type)
+left join layer_details ld on upper(ld.layer_name)=upper(con.destination_entity_type)
+left join layer_details ssubtype
+on upper(con.source_entity_sub_type)=upper(ssubtype.layer_name) and (ssubtype.isvisible=true or ssubtype.is_visible_in_ne_library=true)
+and ssubtype.is_middleware_entity=true
+left join layer_details dsubtype
+on upper(con.destination_entity_sub_type)=upper(dsubtype.layer_name)
+and (dsubtype.isvisible=true or dsubtype.is_visible_in_ne_library=true)
+and dsubtype.is_middleware_entity=true
+where ((upper(source_entity_type)=upper(p_entity_type) and source_system_id=p_system_id)
+or (upper(destination_entity_type)=upper(p_entity_type) and destination_system_id=p_system_id));
+
+update temp_connections t set source_tube_no=c.tube_number from att_details_cable_info c
+where c.cable_id=t.source_system_id and upper(t.source_entity_type)=upper('CABLE') and t.source_port_no=c.fiber_number;
+
+update temp_connections t set destination_tube_no=c.tube_number from att_details_cable_info c
+where c.cable_id=t.destination_system_id and upper(t.destination_entity_type)=upper('CABLE') and t.destination_port_no=c.fiber_number;
+
+IF(V_IS_MIDDLEWARE_ENTITY)
+THEN
+FOR V_AROW IN SELECT * FROM TEMP_CONNECTIONS WHERE IS_PROCESSED=FALSE
+LOOP
+	IF UPPER(V_AROW.DESTINATION_ENTITY_TYPE)='CABLE' --AND
+	--NOT EXISTS(SELECT 1 FROM ATT_DETAILS_MODEL WHERE UPPER(NETWORK_ID)=UPPER(V_AROW.SOURCE_NETWORK_ID))
+	THEN
+		INSERT INTO TEMP_FINAL_CONNECTIONS(SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,SOURCE_ENTITY_TITLE,DESTINATION_PORT_NO,
+		DESTINATION_DISPLAY_NAME,DESTINATION_ENTITY_TITLE,DESTINATION_TUBE_NO)
+		VALUES(V_AROW.SOURCE_PORT_DISPLAY_NAME,V_AROW.SOURCE_DISPLAY_NAME,
+		V_AROW.SOURCE_ENTITY_TITLE,V_AROW.DESTINATION_PORT_DISPLAY_NAME,
+		V_AROW.DESTINATION_DISPLAY_NAME,V_AROW.DESTINATION_ENTITY_TITLE,
+		V_AROW.DESTINATION_TUBE_NO);
+		UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW.CONNECTION_ID;
+	ELSIF UPPER(V_AROW.SOURCE_ENTITY_TYPE)='CABLE' --AND
+	--NOT EXISTS(SELECT 1 FROM ATT_DETAILS_MODEL WHERE UPPER(NETWORK_ID)=UPPER(V_AROW.DESTINATION_NETWORK_ID))
+	THEN
+		INSERT INTO TEMP_FINAL_CONNECTIONS(SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,SOURCE_ENTITY_TITLE,
+		DESTINATION_ENTITY_TITLE,DESTINATION_DISPLAY_NAME,DESTINATION_PORT_NO,DESTINATION_TUBE_NO)
+		VALUES(V_AROW.DESTINATION_DISPLAY_NAME,V_AROW.DESTINATION_ENTITY_TITLE,
+		V_AROW.DESTINATION_PORT_DISPLAY_NAME,
+		V_AROW.SOURCE_ENTITY_TITLE,V_AROW.SOURCE_DISPLAY_NAME,V_AROW.SOURCE_PORT_DISPLAY_NAME ,
+		V_AROW.SOURCE_TUBE_NO);
+		UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW.CONNECTION_ID;
+	END IF;
+	END LOOP;
+ELSE
+
+FOR V_AROW IN SELECT * FROM TEMP_CONNECTIONS WHERE IS_PROCESSED=FALSE AND UPPER(SOURCE_ENTITY_TYPE)='CABLE'
+or UPPER(SOURCE_ENTITY_TYPE)='PATCHCORD'
+LOOP
+
+SELECT * INTO V_AROW_NEXT FROM TEMP_CONNECTIONS WHERE SOURCE_SYSTEM_ID=V_AROW.DESTINATION_SYSTEM_ID
+AND UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW.DESTINATION_ENTITY_TYPE) AND SOURCE_PORT_NO=V_AROW.DESTINATION_PORT_NO;
+
+UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW.CONNECTION_ID;
+UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW_NEXT.CONNECTION_ID;
+
+IF(UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE)='CABLE')
+THEN
+INSERT INTO TEMP_FINAL_CONNECTIONS(SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,SOURCE_ENTITY_TITLE,DESTINATION_PORT_NO,
+			DESTINATION_DISPLAY_NAME,DESTINATION_ENTITY_TITLE,TRAY_NAME,VIA_ENTITY_DISPLAY_NAME,
+			VIA_ENTITY_TYPE,SOURCE_TUBE_NO,DESTINATION_TUBE_NO)
+			VALUES(V_AROW.SOURCE_PORT_DISPLAY_NAME,V_AROW.SOURCE_DISPLAY_NAME,
+			V_AROW.SOURCE_ENTITY_TITLE,V_AROW_NEXT.DESTINATION_PORT_DISPLAY_NAME,
+			V_AROW_NEXT.DESTINATION_DISPLAY_NAME,V_AROW_NEXT.DESTINATION_ENTITY_TITLE,
+			FN_GET_DISPLAY_NAME((CASE WHEN V_AROW.SOURCE_TRAY_SYSTEM_ID>0 THEN V_AROW.SOURCE_TRAY_SYSTEM_ID ELSE V_AROW.DESTINATION_TRAY_SYSTEM_ID END),'SPLICETRAY'),
+			V_AROW_NEXT.SOURCE_DISPLAY_NAME,V_AROW_NEXT.SOURCE_ENTITY_TYPE,
+			V_AROW.SOURCE_TUBE_NO,V_AROW_NEXT.DESTINATION_TUBE_NO);
+ELSIF(UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE) IN ('SPLITTER','ONT','HTB'))
+THEN
+	FOR V_AROW_CHILD IN SELECT * FROM TEMP_CONNECTIONS
+	WHERE
+	CASE
+	WHEN V_IS_VIRTUAL_ENTITY
+	THEN
+	SOURCE_SYSTEM_ID=V_AROW_NEXT.DESTINATION_SYSTEM_ID
+	AND UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE)
+	WHEN UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE)='HTB'
+	THEN
+	SOURCE_SYSTEM_ID=V_AROW_NEXT.DESTINATION_SYSTEM_ID
+	AND UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE)
+	AND SOURCE_PORT_NO=V_AROW_NEXT.DESTINATION_PORT_NO
+	ELSE
+	SOURCE_SYSTEM_ID=V_AROW.DESTINATION_SYSTEM_ID
+	AND UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW.DESTINATION_ENTITY_TYPE)
+	AND SOURCE_PORT_NO=V_AROW.DESTINATION_PORT_NO
+	END
+
+LOOP
+	SELECT * INTO V_AROW_NEXT2 FROM TEMP_CONNECTIONS
+	WHERE SOURCE_SYSTEM_ID=V_AROW_CHILD.DESTINATION_SYSTEM_ID
+	AND UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE)
+	AND SOURCE_PORT_NO=V_AROW_CHILD.DESTINATION_PORT_NO;
+
+	IF(UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE)='PATCHCORD')
+	THEN
+
+	SELECT CONNECTION_ID, SOURCE_SYSTEM_ID,SOURCE_NETWORK_ID,SOURCE_ENTITY_TYPE,SOURCE_ENTITY_SUB_TYPE,SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,
+	LS.LAYER_TITLE AS SOURCE_ENTITY_TITLE,
+	DESTINATION_SYSTEM_ID,DESTINATION_NETWORK_ID,DESTINATION_ENTITY_TYPE,DESTINATION_ENTITY_SUB_TYPE,
+	DESTINATION_PORT_NO,DESTINATION_DISPLAY_NAME,
+	LD.LAYER_TITLE AS DESTINATION_ENTITY_TITLE,
+	FN_GET_PORT_TEXT(CON.SOURCE_SYSTEM_ID,LS.IS_VIRTUAL_PORT_ALLOWED,CON.SOURCE_PORT_NO,CON.SOURCE_ENTITY_TYPE) as source_port_display_name,
+	FN_GET_PORT_TEXT(CON.DESTINATION_SYSTEM_ID,LD.IS_VIRTUAL_PORT_ALLOWED,CON.DESTINATION_PORT_NO,CON.DESTINATION_ENTITY_TYPE) as destination_port_display_name
+	,CON.SOURCE_TRAY_SYSTEM_ID,CON.DESTINATION_TRAY_SYSTEM_ID,CON.IS_CABLE_A_END,null as SOURCE_TUBE_NO,null as DESTINATION_TUBE_NO INTO V_AROW_NEXT2
+	FROM CONNECTION_INFO CON
+	LEFT JOIN LAYER_DETAILS LS ON UPPER(LS.LAYER_NAME)=UPPER(CON.SOURCE_ENTITY_TYPE)
+	LEFT JOIN LAYER_DETAILS LD ON UPPER(LD.LAYER_NAME)=UPPER(CON.DESTINATION_ENTITY_TYPE)
+	WHERE UPPER(SOURCE_ENTITY_TYPE)=UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE) AND SOURCE_SYSTEM_ID=V_AROW_CHILD.DESTINATION_SYSTEM_ID
+	AND SOURCE_PORT_NO=V_AROW_CHILD.DESTINATION_PORT_NO;
+	
+	
+	END IF;
+
+	UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW_CHILD.CONNECTION_ID;
+	UPDATE TEMP_CONNECTIONS SET IS_PROCESSED=TRUE WHERE CONNECTION_ID=V_AROW_NEXT2.CONNECTION_ID;
+
+	IF(V_IS_VIRTUAL_ENTITY)
+	THEN
+	INSERT INTO TEMP_FINAL_CONNECTIONS(SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,
+						SOURCE_ENTITY_TITLE,DESTINATION_PORT_NO,
+						DESTINATION_DISPLAY_NAME,DESTINATION_ENTITY_TITLE,TRAY_NAME,VIA_ENTITY_DISPLAY_NAME,
+						VIA_ENTITY_TYPE,VIA_PORT_NO,USING_ENTITY_TYPE,USING_ENTITY_DISPLAY_NAME,
+						USING_PORT_IN,USING_PORT_OUT,SOURCE_TUBE_NO,DESTINATION_TUBE_NO)
+						VALUES(V_AROW.SOURCE_PORT_DISPLAY_NAME,V_AROW.SOURCE_DISPLAY_NAME,
+						V_AROW.SOURCE_ENTITY_TITLE,V_AROW_NEXT2.DESTINATION_PORT_DISPLAY_NAME,
+						V_AROW_NEXT2.DESTINATION_DISPLAY_NAME,
+						V_AROW_NEXT2.DESTINATION_ENTITY_TITLE,
+						FN_GET_DISPLAY_NAME((CASE WHEN V_AROW.SOURCE_TRAY_SYSTEM_ID>0 THEN V_AROW.SOURCE_TRAY_SYSTEM_ID ELSE V_AROW.DESTINATION_TRAY_SYSTEM_ID END),'SPLICETRAY'),
+						V_AROW_NEXT2.SOURCE_DISPLAY_NAME,V_AROW_NEXT2.SOURCE_ENTITY_TYPE,V_AROW_NEXT2.SOURCE_PORT_DISPLAY_NAME,
+						V_AROW_NEXT.DESTINATION_ENTITY_TYPE,V_AROW_NEXT.DESTINATION_DISPLAY_NAME,
+						V_AROW_NEXT.DESTINATION_PORT_DISPLAY_NAME,
+						V_AROW_CHILD.SOURCE_PORT_DISPLAY_NAME,
+						V_AROW.SOURCE_TUBE_NO,V_AROW_NEXT2.DESTINATION_TUBE_NO);
+	ELSIF(UPPER(V_AROW_NEXT.DESTINATION_ENTITY_TYPE)='HTB')
+	THEN
+	INSERT INTO TEMP_FINAL_CONNECTIONS(SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,
+	SOURCE_ENTITY_TITLE,DESTINATION_PORT_NO,
+	DESTINATION_DISPLAY_NAME,DESTINATION_ENTITY_TITLE,TRAY_NAME,VIA_ENTITY_DISPLAY_NAME,
+	VIA_ENTITY_TYPE,VIA_PORT_NO,USING_ENTITY_TYPE,USING_ENTITY_DISPLAY_NAME,
+	USING_PORT_IN,USING_PORT_OUT,SOURCE_TUBE_NO,DESTINATION_TUBE_NO)
+	VALUES(V_AROW.SOURCE_PORT_DISPLAY_NAME,V_AROW.SOURCE_DISPLAY_NAME,
+	V_AROW.SOURCE_ENTITY_TITLE,
+	CASE WHEN UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE)='CABLE'
+	THEN V_AROW_CHILD.DESTINATION_PORT_DISPLAY_NAME ELSE V_AROW_NEXT2.DESTINATION_PORT_DISPLAY_NAME END,
+	CASE WHEN UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE)='CABLE'
+	THEN V_AROW_CHILD.DESTINATION_DISPLAY_NAME ELSE V_AROW_NEXT2.DESTINATION_DISPLAY_NAME END,
+	CASE WHEN UPPER(V_AROW_CHILD.DESTINATION_ENTITY_TYPE)='CABLE'
+	THEN V_AROW_CHILD.DESTINATION_ENTITY_TITLE ELSE V_AROW_NEXT2.DESTINATION_ENTITY_TITLE END,
+	FN_GET_DISPLAY_NAME(V_AROW.SOURCE_TRAY_SYSTEM_ID,'SPLICETRAY'),
+	V_AROW_NEXT2.SOURCE_DISPLAY_NAME,V_AROW_NEXT2.SOURCE_ENTITY_TYPE,V_AROW_NEXT2.SOURCE_PORT_DISPLAY_NAME,
+	V_AROW_NEXT.DESTINATION_ENTITY_TYPE,V_AROW_NEXT.DESTINATION_DISPLAY_NAME,
+	V_AROW.DESTINATION_PORT_DISPLAY_NAME,
+	V_AROW_CHILD.SOURCE_PORT_DISPLAY_NAME,
+	V_AROW.SOURCE_TUBE_NO,V_AROW_NEXT2.DESTINATION_TUBE_NO);
+	ELSE
+
+	INSERT INTO TEMP_FINAL_CONNECTIONS(
+	SOURCE_PORT_NO,SOURCE_DISPLAY_NAME,SOURCE_ENTITY_TITLE,
+	DESTINATION_PORT_NO,DESTINATION_DISPLAY_NAME,DESTINATION_ENTITY_TITLE,
+	USING_ENTITY_TYPE,USING_ENTITY_DISPLAY_NAME,
+	USING_PORT_IN,USING_PORT_OUT,SOURCE_TUBE_NO,DESTINATION_TUBE_NO)
+	VALUES(V_AROW.SOURCE_PORT_DISPLAY_NAME,V_AROW.SOURCE_DISPLAY_NAME,V_AROW.SOURCE_ENTITY_TITLE, V_AROW_NEXT2.DESTINATION_PORT_DISPLAY_NAME,
+	V_AROW_NEXT2.DESTINATION_DISPLAY_NAME,
+	V_AROW_NEXT2.DESTINATION_ENTITY_TITLE,
+	V_AROW_CHILD.SOURCE_ENTITY_TYPE,
+	V_AROW_CHILD.SOURCE_DISPLAY_NAME,
+	V_AROW_CHILD.SOURCE_PORT_DISPLAY_NAME,
+	V_AROW_NEXT2.SOURCE_PORT_DISPLAY_NAME,
+	V_AROW.SOURCE_TUBE_NO,V_AROW_NEXT2.DESTINATION_TUBE_NO);
+
+	END IF;
+	END LOOP;
+END IF;
+END LOOP;
+END IF;
+ --RETURN QUERY SELECT ROW_TO_JSON(ROW) FROM(
+ sql='SELECT ROW_NUMBER() OVER (ORDER BY VIA.LAYER_ID DESC) AS S_No,
+  CON.SOURCE_DISPLAY_NAME AS SOURCE,CON.SOURCE_ENTITY_TITLE AS SOURCE_ENTITY_TYPE,CON.SOURCE_TUBE_NO,CON.SOURCE_PORT_NO,CON.TRAY_NAME,
+ CON.VIA_ENTITY_DISPLAY_NAME AS VIA_ENTITY,VIA.LAYER_TITLE AS VIA_ENTITY_TYPE,CON.VIA_PORT_NO,
+ CON.USING_ENTITY_DISPLAY_NAME AS USING_ENTITY,USNG.LAYER_TITLE AS USING_ENTITY_TYPE,CON.USING_PORT_IN,CON.USING_PORT_OUT,
+ CON.DESTINATION_DISPLAY_NAME AS DESTINATION,CON.DESTINATION_ENTITY_TITLE AS DESTINATION_ENTITY_TYPE,CON.DESTINATION_TUBE_NO,CON.DESTINATION_PORT_NO
+ FROM TEMP_FINAL_CONNECTIONS CON
+ LEFT JOIN LAYER_DETAILS VIA ON UPPER(CON.VIA_ENTITY_TYPE)=UPPER(VIA.LAYER_NAME)
+ LEFT JOIN LAYER_DETAILS USNG ON UPPER(CON.USING_ENTITY_TYPE)=UPPER(USNG.LAYER_NAME) ORDER BY CON.SOURCE_TUBE_NO,CON.SOURCE_PORT_NO';
+-- ) ROW;
+ EXECUTE   'SELECT COUNT(1)  FROM ('||sql||') as TR' INTO TotalRecords;
+ IF((P_PAGENO) <> 0) THEN
+	StartSNo:=  P_PAGERECORD * (P_PAGENO - 1 ) + 1;
+	EndSNo:= P_PAGENO * P_PAGERECORD;
+	sql:= 'SELECT '||TotalRecords||' as totalRecords, *
+                FROM (' || sql || ' ) T 
+                WHERE S_No BETWEEN ' || StartSNo || ' AND ' || EndSNo; 
+
+ ELSE
+         sql:= 'SELECT '||TotalRecords||' as totalRecords, * FROM (' || sql || ' ) T';                  
+ END IF; 
+RAISE INFO 'queryS_%', sql;
+RETURN QUERY
+EXECUTE 'select row_to_json(ROW) from ('||sql||') ROW';
+END ;
+$function$
+;
+
+-- Permissions
+-------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_fms_connection_report_new(p_networkstatues character varying, p_provinceids character varying, p_regionids character varying, p_layer_name character varying, p_searchby character varying, p_searchbytext character varying, p_fromdate character varying, p_todate character varying, p_pageno integer, p_pagerecord integer, p_sortcolname character varying, p_sorttype character varying, p_geom character varying, p_duration_based_column character varying, p_radius double precision, p_userid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+V_AROW RECORD;
+v_entity_port_no character varying;
+v_maxcount integer;
+v_maxpathid integer;
+v_ststem_id integer;
+v_entity_type integer;
+v_maxfms_id integer;
+sql TEXT;
+StartSNo INTEGER;
+EndSNo INTEGER;
+LowerStart character varying;
+LowerEnd character varying;
+TotalRecords integer;
+WhereCondition character varying;
+s_report_view_name character varying;
+s_geom_type character varying;
+s_layer_id integer;
+s_layer_columns text;
+TotalAppliedRecords integer;
+TotalRejectedRecords integer;
+r RECORD;
+ss_report_view_name TEXT;
+d_report_view_name TEXT;
+v_report_view_name TEXT;
+ss_layer_name TEXT;
+update_sql TEXT;
+s_latitude text;
+d_layer_name TEXT;
+v_layer_name TEXT;
+begin
+
+truncate table cpf_temp_result;
+-- drop table cpf_temp_result;
+/*
+create TEMP table cpf_temp_result
+(
+id serial,
+source_system_id integer,
+source_network_id character varying(500),
+source_port_no integer,
+source_entity_type character varying(100),
+source_entity_title character varying(100),
+destination_system_id integer,
+destination_network_id character varying(500),
+destination_port_no integer,
+destination_entity_type character varying(100),
+destination_entity_title character varying(100),
+viya_system_id integer,
+via_network_id character varying(500),
+path_id integer,
+via_entity_type character varying(100),
+SOURCE_TUBE_COLOUR_CODE character varying(100),
+DESTINATION_TUBE_COLOUR_CODE character varying(100),
+SOURCE_PORT_COLOUR_CODE character varying(100),
+DESTINATION_PORT_COLOUR_CODE character varying(100),
+SOURCE_TUBE_NAME character varying(100),
+DESTINATION_TUBE_NAME character varying(100),
+fms_id integer,
+splitter_id integer,
+entity_type character varying(100),
+client_id character varying,
+client_link_id character varying,
+client_core_id character varying,
+otdr_length float(8) default (0),
+op_alias character varying,
+a_site_id character varying,
+a_site_name character varying,
+b_site_id character varying,
+b_site_name character varying
+)on commit drop;
+*/
+-------------------------------------------------------------------------------------------------------------------
+SELECT LAYER_ID, REPORT_VIEW_NAME, GEOM_TYPE INTO S_LAYER_ID, S_REPORT_VIEW_NAME,S_GEOM_TYPE FROM LAYER_DETAILS WHERE LOWER(LAYER_NAME) = LOWER(P_LAYER_NAME);
+-- SELECT ALL ACTIVE LAYER FIELDS FROM LAYER COLUMN SETTINGS IN DEFINED ORDER..
+SELECT STRING_AGG(COLUMN_NAME||' as "'||case when COALESCE(res_field_key,'') ='' then DISPLAY_NAME else res_field_key end||'"', ',') INTO S_LAYER_COLUMNS FROM (
+SELECT COLUMN_NAME,res_field_key,DISPLAY_NAME FROM LAYER_COLUMNS_SETTINGS WHERE LAYER_ID=S_LAYER_ID AND UPPER(SETTING_TYPE)='REPORT' AND IS_ACTIVE=TRUE ORDER BY COLUMN_SEQUENCE) A;
+IF ((p_geom) != '')
+THEN
+if(p_radius>0)
+then
+select substring(left(St_astext(ST_buffer_meters(ST_GeomFromText('POINT('||p_geom||')',4326),p_radius)),-2),10) into p_geom;
+end if;
+RAISE INFO '------------------------------------S_LAYER_COLUMNS%', S_LAYER_COLUMNS;
+sql:= 'SELECT system_id from (select a.system_id from '||S_REPORT_VIEW_NAME||' a
+inner join '||s_geom_type||'_master m
+on a.system_id=m.system_id and upper(m.entity_type)=upper('''||p_layer_name||''')
+and ST_Intersects(m.sp_geometry, st_geomfromtext(''POLYGON(('||p_geom||'))'',4326))
+inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and 1=1 ';
+--inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and a.parent_type in(select layer_title from layer_details where layer_name=''POD'') and 1=1 ';
+RAISE INFO '------------------------------------sql%', sql;
+ELSE
+sql:= 'SELECT ROW_NUMBER() OVER (ORDER BY system_id desc) AS S_No,system_id from (select a.system_id from '||S_REPORT_VIEW_NAME||' a
+inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and 1=1 ';
+--inner join vw_user_permission_area pa on pa.province_id = a.province_id where pa.user_id = '||p_userid||' and a.parent_type in(select layer_title from layer_details where layer_name=''POD'') and 1=1 ';
+RAISE INFO '------------------------------------sql1%', sql;
+END IF;
+
+IF ((p_networkStatues) != '' and upper(S_LAYER_COLUMNS) like '%NETWORK_STATUS%') THEN
+sql:= sql ||' AND upper(Cast(a.network_status as TEXT)) in('||p_networkStatues||')';
+END IF;
+IF ((p_RegionIds) != '') THEN
+sql:= sql ||' AND a.region_id IN ('||p_RegionIds||')';
+END IF;
+IF ((P_ProvinceIds) != '') THEN
+sql:= sql ||' AND a.province_id IN ('||P_ProvinceIds||')';
+END IF;
+IF ((P_searchbytext) != '' and (P_searchby) != '') THEN
+if(substring(P_searchbytext from 1 for 1)='"' and substring(P_searchbytext from length(P_searchbytext) for length(P_searchbytext))='"')
+then
+sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) = upper(replace('''||trim(P_searchbytext)||''',''"'','''')) ';
+else
+sql:= sql ||' AND upper(Cast(a.'||P_searchby||' as TEXT)) LIKE upper(replace(''%'||trim(P_searchbytext)||'%'',''"'',''''))';
+end if;
+END IF;
+IF(P_fromDate != '' and P_toDate != '' and coalesce(p_duration_based_column,'')!='') THEN
+sql:= sql ||' AND a.'||p_duration_based_column||'::Date>= to_date('''||p_fromdate||''', ''DD-Mon-YYYY'') and a.'||p_duration_based_column||'::Date<=to_date('''||p_todate||''', ''DD-Mon-YYYY'')';
+END IF;
+sql:= sql ||' )X where system_id in(select parent_system_id from isp_port_info where parent_entity_type=''FMS'' and port_status_id=2 )';
+RAISE INFO 'rrr%', sql;
+--------------------------------------------------------------------------------------------------------------------
+FOR V_AROW IN
+EXECUTE 'SELECT ''FMS'' as entity_type, system_id FROM ('||sql||')a'
+loop
+perform(fn_get_fms_connection12(V_AROW.system_id,V_AROW.entity_type));
+end loop;
+--------------------------------------------------------------------------------------------------
+delete from cpf_temp_result where source_network_id=destination_network_id;
+if exists(select 1 from cpf_temp_result where source_entity_type='FMS')
+then
+WITH VIA_row AS (
+SELECT *
+FROM cpf_temp_result
+WHERE source_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+)
+-- Update query
+UPDATE cpf_temp_result
+SET
+destination_network_id = VIA_row.destination_network_id,
+destination_system_id = VIA_row.destination_system_id,
+destination_port_no = VIA_row.destination_port_no,
+destination_entity_type = VIA_row.destination_entity_type,
+destination_entity_title = VIA_row.destination_entity_title,
+viya_system_id = VIA_row.source_system_id,
+via_network_id = VIA_row.source_network_id,
+via_entity_type = VIA_row.source_entity_type
+
+FROM VIA_row
+WHERE
+cpf_temp_result.destination_entity_type = VIA_row.source_entity_type
+AND cpf_temp_result.destination_system_id = VIA_row.source_system_id
+AND cpf_temp_result.destination_network_id = VIA_row.source_network_id
+AND cpf_temp_result.destination_PORT_NO = VIA_row.source_PORT_NO;
+-- Delete query
+WITH VIA_row AS (
+SELECT *
+FROM cpf_temp_result
+WHERE source_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+)
+DELETE FROM cpf_temp_result
+WHERE SOURCE_SYSTEM_ID IN (SELECT SOURCE_SYSTEM_ID FROM VIA_row);
+else
+
+WITH VIA_row AS (
+SELECT *
+FROM cpf_temp_result
+WHERE destination_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+)
+-- Update query
+UPDATE cpf_temp_result
+SET
+source_network_id = VIA_row.source_network_id,
+source_system_id = VIA_row.source_system_id,
+source_port_no = VIA_row.source_port_no,
+source_entity_type = VIA_row.source_entity_type,
+source_entity_title = VIA_row.source_entity_title,
+viya_system_id = VIA_row.destination_system_id,
+via_network_id = VIA_row.destination_network_id,
+via_entity_type = VIA_row.destination_entity_type
+
+FROM VIA_row
+WHERE
+cpf_temp_result.source_entity_type = VIA_row.source_entity_type
+AND cpf_temp_result.source_system_id = VIA_row.source_system_id
+AND cpf_temp_result.source_network_id = VIA_row.source_network_id
+AND cpf_temp_result.source_PORT_NO = VIA_row.source_PORT_NO;
+-- Delete query
+WITH VIA_row AS (
+SELECT *
+FROM cpf_temp_result
+WHERE destination_entity_type IN ('SpliceClosure','BDB','FDB','ADB')
+)
+DELETE FROM cpf_temp_result
+WHERE destination_SYSTEM_ID IN (SELECT destination_SYSTEM_ID FROM VIA_row);
+
+end if;
+
+--select count(*) into v_maxcount from cpf_temp_result group by path_id order by count(*) desc limit 1;--header
+select count(*) into v_maxcount from cpf_temp_result group by fms_id,path_id order by count(*) desc limit 1;
+SELECT COUNT(DISTINCT path_id) AS path_count
+FROM cpf_temp_result group by fms_id order by COUNT(DISTINCT path_id) desc limit 1
+INTO v_maxpathid;---dataloop
+SELECT COUNT(DISTINCT fms_id) AS fms_id_count from cpf_temp_result
+INTO v_maxfms_id;
+------------------------------------------------------------------------------------------------------------------------------------
+UPDATE cpf_temp_result
+SET SOURCE_TUBE_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.tube_color_code,
+SOURCE_TUBE_NAME =ATT_DETAILS_CABLE_INFO.tube_number,
+SOURCE_PORT_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.core_color_code ,client_id =adfl.customer_id,client_link_id =adfl.link_id,client_core_id=adfl.link_id,otdr_length=adfl.otdr_distance,op_alias=adfl.service_id
+FROM ATT_DETAILS_CABLE_INFO
+left join att_details_fiber_link adfl on adfl.system_id =ATT_DETAILS_CABLE_INFO.link_system_id
+WHERE cpf_temp_result.SOURCE_ENTITY_type='Cable'
+and cpf_temp_result.source_system_id=ATT_DETAILS_CABLE_INFO.cable_id
+and cpf_temp_result.source_port_no=ATT_DETAILS_CABLE_INFO.fiber_number;
+
+--select * from ATT_DETAILS_CABLE_INFO limit 20 where cable_id=847
+
+UPDATE cpf_temp_result
+SET DESTINATION_TUBE_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.tube_color_code,
+DESTINATION_TUBE_NAME =ATT_DETAILS_CABLE_INFO.tube_number,
+DESTINATION_PORT_COLOUR_CODE=ATT_DETAILS_CABLE_INFO.core_color_code ,client_id =adfl.customer_id,client_link_id =adfl.link_id,client_core_id=adfl.link_id,otdr_length=adfl.otdr_distance,op_alias=adfl.service_id
+FROM ATT_DETAILS_CABLE_INFO
+left join att_details_fiber_link adfl on adfl.system_id =ATT_DETAILS_CABLE_INFO.link_system_id
+WHERE cpf_temp_result.DESTINATION_ENTITY_type='Cable'
+and cpf_temp_result.DESTINATION_system_id=ATT_DETAILS_CABLE_INFO.cable_id
+and cpf_temp_result.DESTINATION_port_no=ATT_DETAILS_CABLE_INFO.fiber_number;
+
+
+
+for r in select * from cpf_temp_result loop
+
+select report_view_name,layer_name into ss_report_view_name,ss_layer_name from layer_details where lower(layer_name) =lower(r.source_entity_type);
+select report_view_name,layer_name into d_report_view_name,d_layer_name from layer_details where lower(layer_name) =lower(r.destination_entity_type);
+if r.via_entity_type is not null then
+select report_view_name,layer_name into v_report_view_name,v_layer_name from layer_details where lower(layer_name) =lower(r.via_entity_type);
+end if;
+if lower(ss_layer_name) = 'patchcord' then
+ss_layer_name ='patch_cord';
+end if;
+if lower(d_layer_name) = 'patchcord' then
+d_layer_name ='patch_cord';
+end if;
+if lower(v_layer_name) = 'patchcord' then
+v_layer_name ='patch_cord';
+end if ;
+
+ss_layer_name:=ss_layer_name||'_name';
+d_layer_name:= d_layer_name||'_name';
+v_layer_name =v_layer_name||'_name';
+s_latitude ='latitude';
+END LOOP;
+
+/*UPDATE cpf_temp_result t
+SET source_network_id = p.source_network_id
+FROM cpf_temp_result p
+WHERE
+--t.client_link_id = p.client_link_id
+t.source_network_id ILIKE '%CBL%'
+AND p.source_network_id ILIKE '%POD%';
+
+-- Update destination_network_id if it contains CBL
+UPDATE cpf_temp_result t
+SET destination_network_id = p.destination_network_id
+FROM cpf_temp_result p
+WHERE
+t.destination_network_id ILIKE '%CBL%'
+AND p.destination_network_id ILIKE '%POD%';
+
+*/
+
+UPDATE cpf_temp_result AS c
+SET
+a_site_id = k.site_id,
+a_site_name = k.site_name
+FROM (
+SELECT
+c.id,
+pod.site_id,
+pod.site_name
+FROM cpf_temp_result c
+JOIN att_details_fms fms
+ON fms.network_id = c.source_network_id and c.source_ENTITY_TYPE = 'FMS'
+join att_details_pod pod on pod.network_id = fms.parent_network_id
+where c.source_ENTITY_TYPE='FMS'
+) AS k
+WHERE c.id = k.id;
+
+
+
+return query
+select row_to_json(result)
+from (select (select array_to_json(array_agg(row_to_json(x)))from (select source_port_no,client_link_id,source_network_id,destination_network_id,a_site_id,a_site_name,b_site_id,b_site_name,op_alias
+from cpf_temp_result where CASE
+ WHEN p_searchby = 'fms_name' THEN
+ source_network_id IN ( SELECT network_id
+ FROM att_details_fms WHERE fms_name IN (p_searchbytext) )
+ WHEN p_searchby = 'network_id' THEN
+ source_network_id = p_searchbytext
+ELSE
+ TRUE END and (source_ENTITY_TYPE='FMS' OR DESTINATION_ENTITY_TYPE='FMS') order by source_port_no ) x) as lstConnectionInfo
+)result ;
+
+END;
+$function$
+;
+
+-- Permissions
+
+---------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION public.fn_backbone_get_history_sites(planid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+    RETURN QUERY
+    SELECT row_to_json(row)
+    FROM (
+        SELECT DISTINCT ON (bpns.network_id)
+            bpns.network_id,
+            bpns.site_id,
+            bpns.site_name,
+            bpns.is_selected,
+            bpns.fibertype,
+            bpns.intersect_line_geom AS cable_geom,
+            bpns.site_geom,
+            bpns.line_geom,
+            COALESCE(
+                ROUND(
+                    ST_Length(
+                        ST_GeomFromText('LINESTRING(' || bpns.line_geom || ')', 4326),false
+                    )::numeric,
+                    3
+                ),
+                0
+            ) AS sprout_route_length,
+            bpns.id
+        FROM backbone_plan_nearest_site bpns
+        WHERE bpns.plan_id = planid and bpns.is_selected = true
+    ) row;
+END;
+$function$
+;
+
+-- Permissions
+-------------------------------------------------------------------------------------------
+
+
+
+CREATE OR REPLACE FUNCTION public.fn_network_planning_get_plan_bom_list(p_plan_name character varying, p_plan_mode character varying, p_cable_type character varying, is_create_trench boolean, is_create_duct boolean, p_line_geom character varying, p_cable_length double precision, p_distance double precision, p_user_id integer, p_temp_plan_id integer, p_is_loop_require boolean, p_is_loop_update boolean, p_loop_length double precision, p_polepecvendor character varying, p_manholepecvendor character varying, p_scspecvendor character varying, p_loop_span double precision)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+sql text;
+v_line_total_length DOUBLE PRECISION;
+v_point_entity character varying;
+v_line_geom geometry;
+v_total_point_entity integer;
+v_is_osp_tp boolean;
+v_total_line integer;
+V_IS_VALID BOOLEAN;
+V_MESSAGE CHARACTER VARYING;
+v_cable_length double precision;
+v_end_entity_count integer;
+v_middle_entity_count integer; 
+v_arrow_point record;
+v_loop_length double precision;
+v_outer_query text;
+v_temp_planid integer;
+p_site_id character varying;
+is_a_endpoint_entity_exists bool;
+is_b_endpoint_entity_exists bool;
+BEGIN
+v_is_valid:=true;
+v_message:='[SI_GBL_GBL_GBL_GBL_066]';
+sql:='';
+v_total_line:=0;
+v_temp_planid:=0;
+
+p_scspecvendor = case when p_scspecvendor is null then '' else p_scspecvendor end;
+p_manholepecvendor = case when p_manholepecvendor is null then '' else p_manholepecvendor end;
+
+if(p_line_geom is null or p_line_geom = '') 
+then 
+
+SELECT substring(st_astext(line_sp_geometry), 12, length(st_astext(line_sp_geometry)) - 12) INTO p_line_geom from temp_auto_network_plan where plan_id = p_temp_plan_id and line_sp_geometry is not null
+limit 1;
+
+end if;
+
+p_polepecvendor = case when p_polepecvendor is null then '' else p_polepecvendor end;
+
+if(p_is_loop_update)
+then
+v_temp_planid:= p_temp_plan_id;
+select coalesce(sum(loop_length)::double precision,0)  from temp_auto_network_plan where plan_id=p_temp_plan_id into v_loop_length;
+
+select count(plan_id)into v_total_point_entity from temp_auto_network_plan where plan_id=v_temp_planid and loop_length >0;
+
+sql:=sql || 'select '||v_loop_length||' as length_qty,''Loop''::character varying as entity_type,geom_type,cost_per_unit,service_cost_per_unit
+		from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+	raise info 'ssdfasdfql=%',sql;	
+
+   
+else
+
+if(upper(p_cable_type)=upper('overhead'))
+then
+	v_point_entity:='Pole';
+	else
+	v_point_entity:='Manhole';
+end if;
+
+ 
+ raise info 'p_site_id =%',p_site_id;
+	
+select is_osp_tp into v_is_osp_tp from vw_termination_point_master where tp_layer_id=(select layer_id from layer_details where layer_name='SpliceClosure')and layer_id=(select layer_id from layer_details where layer_name='Cable');
+
+  select validation.status,validation.message from  fn_network_planning_validate(p_plan_mode,p_cable_type,is_create_trench,
+  is_create_duct,v_is_osp_tp,p_cable_length,v_point_entity,p_user_id,0,p_line_geom) as validation into V_IS_VALID,V_MESSAGE;
+
+ IF(V_IS_VALID)
+THEN
+
+-- creating points entity according to line geom;
+select * from fn_temp_network_planning(p_plan_mode,p_cable_type,is_create_trench,is_create_duct,p_line_geom,p_cable_length,p_distance,p_user_id,p_plan_name,'', '', '', 0, '', 0, '',p_temp_plan_id)into v_arrow_point;
+
+v_temp_planid:=v_arrow_point.temp_plan_id;
+
+
+-- count of middle entity
+select count(plan_id)into v_middle_entity_count from temp_auto_network_plan where plan_id=v_arrow_point.temp_plan_id and is_middle_point='true';
+
+-- end entity
+select count(plan_id) into v_end_entity_count from temp_auto_network_plan where plan_id=v_arrow_point.temp_plan_id and is_middle_point='false';
+
+-- total count of point entity
+v_total_point_entity:=v_middle_entity_count+v_end_entity_count;
+
+ select ST_GeomFromText('LINESTRING('||p_line_geom||')',4326) into v_line_geom;
+ select round(st_length(v_line_geom,false)::numeric, 6)::double precision into v_line_total_length;
+
+-- get counts of cable 
+ if(v_line_total_length<p_cable_length)
+ then
+ 	v_total_line:=1;
+ else
+ 	select CEIL(v_line_total_length/p_cable_length)::integer into v_total_line;		
+ end if;
+
+-- for cable
+sql := 'select '||v_line_total_length||' as length_qty,* from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+
+if(is_create_trench) 
+then 
+	sql:=sql || ' union select '||v_line_total_length||' as length_qty,* from 
+	fn_network_planning_audit_template_detail(''trench'','||p_user_id||')';
+end if;
+
+if(is_create_duct) 
+then 
+	sql:=sql || ' union select '||v_line_total_length||' as length_qty,* from fn_network_planning_audit_template_detail(''duct'','||p_user_id||')';
+end if;
+ 
+
+if(upper(p_plan_mode)=upper('auto'))
+then
+	--sql:=sql || ' union select '||v_total_point_entity||' as length_qty,* from fn_network_planning_audit_template_detail('''||v_point_entity||''','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';	
+sql := sql || ' UNION SELECT ' || v_total_point_entity || ' AS length_qty, * 
+FROM fn_network_planning_audit_template_detail('
+|| quote_literal(v_point_entity) || ',' 
+|| p_user_id || ',' 
+|| quote_literal(p_polepecvendor) || ',' 
+|| quote_literal(p_manholepecvendor) || ',' 
+|| quote_literal(p_scspecvendor) || ')';
+
+else
+	--sql:=sql || ' union select '||v_total_point_entity||' as length_qty,* from fn_network_planning_audit_template_detail('''||v_point_entity||''','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';
+sql := sql || ' UNION SELECT ' || v_total_point_entity || ' AS length_qty, * 
+FROM fn_network_planning_audit_template_detail('
+|| quote_literal(v_point_entity) || ',' 
+|| p_user_id || ',' 
+|| quote_literal(p_polepecvendor) || ',' 
+|| quote_literal(p_manholepecvendor) || ',' 
+|| quote_literal(p_scspecvendor) || ')';
+
+raise info 'inner query11 =%',sql;
+end if;
+
+if(v_is_osp_tp)
+then 
+	sql:=sql || ' union select '||v_end_entity_count||' as length_qty,* from fn_network_planning_audit_template_detail(''spliceclosure'','||p_user_id||','''|| p_polepecvendor||''','''|| p_manholepecvendor||''','''|| p_scspecvendor||''')';
+end if;
+
+end if;
+
+
+end if;
+
+raise info 'inner query =%',sql;
+
+ SELECT count(*)>0 into is_a_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole','SpliceClosure','BDB','FDB', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = v_temp_planid and tp.fraction = 0
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+ SELECT count(*)>0 into is_b_endpoint_entity_exists FROM point_master pm
+ WHERE pm.entity_type IN ('Pole', 'SpliceClosure','BDB','FDB', 'Manhole', 'FMS','POD')
+ AND ST_Within(pm.sp_geometry, st_buffer_meters(
+ ST_SetSRID((SELECT sp_geometry FROM temp_auto_network_plan tp
+ WHERE tp.plan_id = v_temp_planid and tp.fraction = 1
+ ORDER BY tp.system_id LIMIT 1),4326),2));
+
+        -- First try with start point
+        SELECT pod.site_id
+        INTO p_site_id
+        FROM point_master pm
+        JOIN att_details_pod pod ON pod.system_id = pm.system_id 
+        WHERE pm.entity_type = 'POD'
+          AND ST_Within(
+                pm.sp_geometry,
+                st_buffer_meters(
+                    ST_StartPoint(
+                        ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+                    ), 3)
+            )
+        LIMIT 1;
+       
+        p_site_id = case when p_site_id is not null then p_site_id else '' end;
+         -- Update Manhole names (forward order)
+        UPDATE temp_auto_network_plan t
+        SET entity_name = 
+            CASE
+                WHEN p_site_id IS null or p_site_id ='' THEN 'MH-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-MH-' || LPAD(x.seq::text, 2, '0')
+            END
+        FROM (
+           SELECT system_id,
+          ROW_NUMBER() OVER (ORDER BY system_id desc) AS seq
+		FROM temp_auto_network_plan
+		WHERE entity_type = 'Manhole'
+		  AND plan_id = v_temp_planid
+		  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+             
+        ) x
+        WHERE t.system_id = x.system_id
+          AND t.plan_id = v_temp_planid;
+
+        -- Update Pole names (forward order)
+        UPDATE temp_auto_network_plan t
+        SET entity_name = 
+            CASE
+                WHEN p_site_id IS null or p_site_id ='' THEN 'PL-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-PL-' || LPAD(x.seq::text, 2, '0')
+            END
+        FROM (
+            SELECT system_id,
+                   ROW_NUMBER() OVER (ORDER BY system_id desc) AS seq
+            FROM temp_auto_network_plan
+            WHERE entity_type = 'Pole'
+              AND plan_id = v_temp_planid
+              AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+        ) x
+        WHERE t.system_id = x.system_id
+          AND t.plan_id = v_temp_planid;
+
+        -- If not found, try with end point
+        IF p_site_id IS null or p_site_id = '' THEN
+            SELECT pod.site_id 
+            INTO p_site_id
+            FROM point_master pm
+            JOIN att_details_pod pod ON pod.system_id = pm.system_id 
+            WHERE pm.entity_type = 'POD'
+              AND ST_Within(
+                    pm.sp_geometry,
+                    st_buffer_meters(
+                        ST_EndPoint(
+                            ST_GeomFromText(CONCAT('LINESTRING(', p_line_geom, ')'), 4326)
+          ), 3) )
+            LIMIT 1;
+                                   
+
+            -- Update Manhole names (reverse order)
+            UPDATE temp_auto_network_plan t
+            SET entity_name =  CASE
+                WHEN p_site_id IS NULL  or p_site_id ='' THEN 'MH-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-MH-' || LPAD(x.seq::text, 2, '0')
+            END
+            FROM (
+                SELECT system_id,
+                       ROW_NUMBER() OVER (ORDER BY system_id ) AS seq
+                FROM temp_auto_network_plan 
+                WHERE entity_type = 'Manhole'
+                  AND plan_id = v_temp_planid
+                  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+            ) x
+            WHERE t.system_id = x.system_id
+              AND t.plan_id = v_temp_planid;
+
+            -- Update Pole names (reverse order)
+            UPDATE temp_auto_network_plan t
+            SET entity_name =  CASE
+                WHEN p_site_id IS NULL or p_site_id ='' THEN 'PL-' || LPAD(x.seq::text, 2, '0')
+                ELSE p_site_id || '-PL-' || LPAD(x.seq::text, 2, '0') 
+            END
+            FROM (
+                SELECT system_id,
+                       ROW_NUMBER() OVER (ORDER BY system_id) AS seq
+                FROM temp_auto_network_plan
+                WHERE entity_type = 'Pole'
+                  AND plan_id = v_temp_planid
+                  AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      )
+            ) x
+            WHERE t.system_id = x.system_id
+              AND t.plan_id = v_temp_planid;
+             
+            
+   END IF;
+  
+ if(p_is_loop_update = false) then
+  perform (fn_auto_network_plan_draft_update_loop_network(p_line_geom, v_temp_planid, p_user_id, p_loop_span, p_loop_length));
+ end if;
+
+ if(p_is_loop_require and p_is_loop_update=false)
+	then 
+  select coalesce(sum(loop_length)::double precision,0) ,count(*)  from temp_auto_network_plan where plan_id=v_temp_planid AND (
+		        CASE
+		            WHEN is_a_endpoint_entity_exists THEN fraction > 0
+		            ELSE TRUE
+		        END
+		      )
+		  AND (
+		        CASE
+		            WHEN is_b_endpoint_entity_exists THEN fraction < 1
+		            ELSE TRUE
+		        END
+		      ) into v_loop_length,v_total_point_entity;
+	
+		sql:=sql || ' union select '||v_loop_length||' as length_qty,''Loop'' as entity_type,geom_type,cost_per_unit,service_cost_per_unit
+		from fn_network_planning_audit_template_detail(''cable'','||p_user_id||')';
+end if;
+	
+v_outer_query:= 'select '||V_IS_VALID||'::boolean AS is_template_extis,'||v_temp_planid||' as temp_plan_id,
+ case when upper(entity_type)=''CABLE'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+when upper(entity_type)=''DUCT'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+when upper(entity_type)=''TRENCH'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_line||')::character varying
+ when upper(entity_type)=''LOOP'' then concat(round((length_qty)::numeric, 2),''(m)/'','||v_total_point_entity||')::character varying else length_qty ::character varying end as length_qty,
+(round((length_qty)::numeric, 2) * service_cost_per_unit +  cost_per_unit * round((length_qty)::numeric, 2))as amount,entity_type,geom_type,cost_per_unit,service_cost_per_unit from ('||sql||')e';
+
+ raise info 'inner query fin=al =%',v_outer_query;
+  
+IF (V_IS_VALID) THEN
+    RETURN QUERY
+    EXECUTE 'select row_to_json(row) 
+             from (select *,'|| quote_literal(coalesce(p_site_id, '')) ||' as site_id 
+                   from ('||v_outer_query||')t order by geom_type) row';
+ELSE
+    RETURN QUERY
+    EXECUTE 'select row_to_json(row) 
+             from (select '||V_IS_VALID||'::boolean AS is_template_extis, 
+                          '||quote_literal(V_MESSAGE)||'::character varying AS msg, 
+                          '||quote_literal(coalesce(p_site_id, ''))||'::character varying as site_id) row';
+END IF;
+
+            
+ END
+$function$
+;
+
+-- Permissions
+
+----------------------------------------------------------------------------------------------
+
+
+alter table site_project_details add column network_id character varying null;
+
+---------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.update_site_project_detail(p_id integer, p_userid integer, p_site_name character varying, p_project_category character varying, p_cable_plan_cores character varying, p_comment character varying, p_site_owner character varying, p_maximum_cost integer, p_location_address character varying, p_ds_cmc_area character varying, p_destination_site_id character varying, p_destination_port_type character varying, p_no_of_cores integer, p_priority integer, p_fiber_link_type character varying, p_fiber_link_code character varying, p_total_fiber_distance double precision, p_plan_cost integer, p_site_id character varying, p_project_id character varying, OUT v_result boolean, OUT v_message character varying)
+ RETURNS record
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+
+update site_project_details set site_name=p_site_name,project_category=p_project_category,
+cable_plan_cores=p_cable_plan_cores,comment=p_comment,site_owner=p_site_owner,maximum_cost=p_maximum_cost,
+location_address=p_location_address,ds_cmc_area=p_ds_cmc_area,priority=p_priority,
+modified_by=p_userId, modified_on=now() where id=p_id;
+
+  --  IF FOUND THEN
+	 update att_details_pod set destination_site_id=p_destination_site_id,
+	destination_port_type=p_destination_port_type,
+	no_of_cores=p_no_of_cores,
+	plan_cost=p_plan_cost, 
+	--latitude=p_latitude,longitude=p_longitude,
+	fiber_link_type=p_fiber_link_type,
+	fiber_link_code=p_fiber_link_code,
+	total_fiber_distance=p_total_fiber_distance,
+	project_id=p_id 
+	where LOWER(site_id) = LOWER(p_site_id);
+	
+	IF FOUND THEN
+   RAISE NOTICE 'Row updated for site_id=%', p_site_id;
+ELSE
+   RAISE NOTICE 'No matching row for site_id=%', p_site_id;
+END IF;
+
+END;
+$function$
+;
