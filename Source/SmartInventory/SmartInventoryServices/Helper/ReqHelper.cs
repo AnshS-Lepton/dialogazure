@@ -100,13 +100,17 @@ namespace SmartInventoryServices.Helper
 
             try
             {
-                errorLog.ApiLogWriter("DeleteFileFromFTP", "", $"FTP Path={filePath}", null);
+                errorLog.ApiLogWriter("DeleteAttachment6", "", $"FTP Path={filePath}", null);
                 // Ensure the FTP path ends without a trailing slash
-                if (!strFTPPath.EndsWith("/"))
-                    strFTPPath += "/";
+                // Normalize base FTP path
+                strFTPPath = strFTPPath.TrimEnd('/');
+
+                // Normalize file path
+                filePath = filePath.TrimStart('/');
 
                 // Build the full FTP file URI
-                string ftpFilePath = strFTPPath + filePath;
+                string ftpFilePath = $"{strFTPPath}/{filePath}";
+                errorLog.ApiLogWriter("final URL", "", $"FTP Path={ftpFilePath}", null);
 
                 // Create the request
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpFilePath);
