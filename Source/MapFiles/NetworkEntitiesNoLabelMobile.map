@@ -226,11 +226,23 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_dsa_map_1 v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_dsa_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%NetworkFilter%)
 		VALIDATION		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'DSA'
@@ -260,11 +272,23 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_csa_map_1 v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_csa_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%NetworkFilter%)
 		VALIDATION		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'CSA'
@@ -296,11 +320,23 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_subarea_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_subare_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%NetworkFilter%)
-		VALIDATION		
+		VALIDATION	
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'SubArea'
@@ -330,11 +366,23 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_surveyarea_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_surveyarea_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%NetworkFilter%)
 		VALIDATION		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'SurveyArea'
@@ -358,12 +406,24 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_building_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_building_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-		    'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Building'
@@ -380,7 +440,7 @@ MAP
 		END
 		CLASS
 			NAME 'Building' 	
-			EXPRESSION ('[building_status]' = 'Surveyed')			
+			EXPRESSION ('[building_status]' eq 'Surveyed')			
 			STYLE
 				SYMBOL "icons/building_yellow.png" 
 				SIZE 18			
@@ -388,7 +448,7 @@ MAP
 		END
 		CLASS
 			NAME 'Building' 	
-			EXPRESSION ('[building_status]' = 'Resurveyed')			
+			EXPRESSION ('[building_status]' eq 'Resurveyed')			
 			STYLE
 				SYMBOL "icons/building_red.png" 
 				SIZE 18			
@@ -402,12 +462,24 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_building_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_building_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Building'
@@ -417,7 +489,7 @@ MAP
 		TRANSPARENCY 30	
 		CLASS
 			NAME 'Building' 			
-			#EXPRESSION ('[building_status]' = 'Approved')
+			#EXPRESSION ('[building_status]' eq 'Approved')
 			STYLE
 				 WIDTH 1 
 			 OUTLINECOLOR 00 255 00
@@ -432,12 +504,24 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_centroid FROM (select v.* FROM vw_att_details_building_MAP v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_building_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Building'
@@ -464,12 +548,24 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_structure_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_structure_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter'   '.*'	
+			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Structure'
@@ -478,7 +574,7 @@ MAP
 		GROUP 'Network'		
 		CLASS
 			NAME 'Structure'
-            EXPRESSION ('[network_status]'  eq 'P' && '[geom_type]'  eq 'Point')  			
+            EXPRESSION ('[network_status]'  eq 'P' and'[geom_type]'  eq 'Point')  			
 			STYLE
 				SYMBOL [icon_path]
 				SIZE 30			
@@ -487,7 +583,7 @@ MAP
 		END
 		CLASS
 			NAME 'Structure'
-            EXPRESSION ('[network_status]'  eq 'A' && '[geom_type]'  eq 'Point')  			
+            EXPRESSION ('[network_status]'  eq 'A' and '[geom_type]'  eq 'Point')  			
 			STYLE
 				SYMBOL [icon_path] 
 				SIZE 20			
@@ -496,7 +592,7 @@ MAP
 		END
 		CLASS
 			NAME 'Structure'
-            EXPRESSION ('[network_status]'  eq 'D' && '[geom_type]'  eq 'Point')  			
+            EXPRESSION ('[network_status]'  eq 'D' and '[geom_type]'  eq 'Point')  			
 			STYLE
 				SYMBOL [icon_path]
 				SIZE 30			
@@ -513,12 +609,24 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_structure_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_structure_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'Structure'
@@ -543,12 +651,25 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_centroid FROM (select v.* FROM vw_att_details_structure_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_structure_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION		
 			'layerFilter'   '.*'
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Structure'
@@ -574,12 +695,25 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_adb_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_adb_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION		
 			'layerFilter'   '.*'
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'ADB'
@@ -652,12 +786,25 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_bdb_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_bdb_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'BDB'
@@ -728,11 +875,25 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
 		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_cdb_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_cdb_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*'
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'CDB'
@@ -801,13 +962,25 @@ MAP
 		TYPE POINT
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
-		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_pole_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		INCLUDE "datashare.inc"	
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_pole_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter% ))
 		VALIDATION
 			'layerFilter'   '.*'		
 			'NetworkFilter'   '.*' 
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'POLE'
@@ -941,12 +1114,31 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_pod_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+    SELECT v.*
+    FROM vw_att_details_pod_map v
+    INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+    INNER JOIN polygon_master pm
+        ON ST_Within(v.sp_geometry, pm.sp_geometry)
+        AND (
+            CASE 
+                WHEN %SourcerefId% > 0 
+                THEN (pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket')
+                ELSE TRUE 
+            END
+        )
+) AS a USING UNIQUE system_id USING SRID=4326"
+
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'POD'
@@ -1028,12 +1220,25 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_equipment_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_equipment_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'EQUIPMENT'
@@ -1075,12 +1280,25 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_rack_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_rack_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'RACK'
@@ -1122,12 +1340,25 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_tree_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_manhole_tree v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%)) 
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'TREE'
@@ -1169,12 +1400,25 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_splitter_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_splitter_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%)) 
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'SPLITTER'
@@ -1295,12 +1539,26 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_manhole_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_manhole_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+
 		FILTER (%layerFilter% AND (%NetworkFilter%)) 
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'MANHOLE'
@@ -1309,7 +1567,7 @@ CLASS
 		GROUP 'Network'		
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'A' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber') 			
+            EXPRESSION ('[network_status]'  eq 'A' AND '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber') 			
 			STYLE
 				SYMBOL "icons/AsBuild/manhole.png" 
 				SIZE 20			
@@ -1318,7 +1576,7 @@ CLASS
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'D' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+            EXPRESSION ('[network_status]'  eq 'D' AND '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
 				SYMBOL "icons/Dorment/manhole.png" 
 				SIZE 30
@@ -1328,7 +1586,7 @@ CLASS
 		END
 		CLASS
 			NAME 'MANHOLE'
-            EXPRESSION ('[network_status]'  eq 'P' and '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
+            EXPRESSION ('[network_status]'  eq 'P' AND '[manhole_types]' ne 'Splice Chamber' and '[manhole_types]' ne 'Loop Chamber')  			
 			STYLE
 				SYMBOL "icons/Planned/manhole.png" 
 				SIZE 30
@@ -1408,12 +1666,25 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_cable_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+    SELECT v.*
+    FROM vw_att_details_cable_map v
+    INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+       AND v.province_id = m.province_id 
+       AND m.user_id = %userid%
+	 INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+       AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end 
+                   
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
 			'layerFilter' '.*'
 			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'userid' '.*'	
+			'SourcerefId' '.*'
 		END
 		METADATA
 			'ows_title' 'CABLE'
@@ -1427,7 +1698,8 @@ CLASS
 			'datum=WGS84'
 			'no_defs'
 		END
-		CLASSITEM 'cable_cores' 		 
+		CLASSITEM 'cable_cores' 
+		 
 		#====================Planned======================
 		CLASS 
 			EXPRESSION ('[network_status]'  eq 'P')					
@@ -1516,12 +1788,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_spliceclosure_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_spliceclosure_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		
 		METADATA
@@ -1531,7 +1815,7 @@ LAYER
 		GROUP 'Network'		
 		CLASS
 			NAME 'Splice Closure'
-            EXPRESSION ('[network_status]'  eq 'P' && ('[is_virtual]'  = 'false'))  			
+            EXPRESSION ('[network_status]'  eq 'P' and ('[is_virtual]' eq 'false'))  			
 			STYLE
 				SYMBOL "icons/Planned/spliceclosure.png" 
 				SIZE 30	
@@ -1541,7 +1825,7 @@ LAYER
 		END
 		CLASS
 			NAME 'Splice Closure'
-            EXPRESSION ('[network_status]'  eq 'A' && ('[is_virtual]'  = 'false'))  			
+            EXPRESSION ('[network_status]'  eq 'A' and ('[is_virtual]' eq 'false'))  			
 			STYLE
 				SYMBOL "icons/AsBuild/spliceclosure.png" 
 				SIZE 18			
@@ -1550,7 +1834,7 @@ LAYER
 		END
 		CLASS
 			NAME 'Splice Closure'
-            EXPRESSION ('[network_status]'  eq 'D' && ('[is_virtual]'  = 'false'))  			
+            EXPRESSION ('[network_status]'  eq 'D' and ('[is_virtual]' eq 'false'))  			
 			STYLE
 				SYMBOL "icons/Dorment/spliceclosure.png" 
 				SIZE 30
@@ -1561,7 +1845,7 @@ LAYER
 		
 		CLASS
 			NAME 'Splice Closure'
-            EXPRESSION (('[network_status]'  eq 'A') && ('[is_virtual]'  = 'true'))  			
+            EXPRESSION (('[network_status]'  eq 'A') and ('[is_virtual]'  eq 'true'))  			
 			STYLE
 				SYMBOL "icons/AsBuild/v_spliceclosure.png" 
 				SIZE 20			
@@ -1570,7 +1854,7 @@ LAYER
 		END
 		CLASS
 			NAME 'Splice Closure'
-            EXPRESSION (('[network_status]'  eq 'D') && ('[is_virtual]'  = 'true')) 		
+            EXPRESSION (('[network_status]'  eq 'D') and ('[is_virtual]' eq 'true')) 		
 			STYLE
 				SYMBOL "icons/Dorment/v_spliceclosure.png" 
 				SIZE 30
@@ -1580,7 +1864,7 @@ LAYER
 		END
 		CLASS
 			NAME 'Splice Closure'
-             EXPRESSION (('[network_status]'  eq 'P') && ('[is_virtual]'  = 'true'))  			
+             EXPRESSION (('[network_status]'  eq 'P') and ('[is_virtual]'  eq 'true'))  			
 			STYLE
 				SYMBOL "icons/Planned/v_spliceclosure.png" 
 				SIZE 30
@@ -1598,12 +1882,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_mpod_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_mpod_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'MPOD'
@@ -1645,13 +1941,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_pep_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_pep_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
-
-		VALIDATION		
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+		VALIDATION
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END 
 		METADATA
 			'ows_title' 'PEP'
@@ -1740,12 +2047,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_ont_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_ont_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'ONT'
@@ -1787,11 +2106,23 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_customer_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%NetworkFilter%) 
-		VALIDATION
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_building_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%NetworkFilter%)
+		VALIDATION	
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'Customer'
@@ -1815,12 +2146,24 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_duct_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_duct_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Duct'
@@ -1865,12 +2208,24 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_trench_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_trench_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Trench'
@@ -1962,12 +2317,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_wallmount_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_wallmount_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter'   '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'WallMount'
@@ -2013,12 +2380,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_fdb_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_fdb_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'FDB'
@@ -2060,12 +2439,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_fms_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_fms_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'FMS'
@@ -2110,12 +2501,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_coupler_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_coupler_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'COUPLER'
@@ -2161,12 +2564,24 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_htb_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_htb_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'HTB'
@@ -2212,11 +2627,23 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_row_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%NetworkFilter%) 
-		VALIDATION
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_row_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%NetworkFilter%)
+		VALIDATION	
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'			
 		END
 		METADATA
 			'ows_title' 'ROW'
@@ -2263,11 +2690,23 @@ LAYER
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'center_line_geom FROM (select v.* FROM vw_att_details_row_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%NetworkFilter%) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_row_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%NetworkFilter%)
 		VALIDATION
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'CABLE'
@@ -2344,12 +2783,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_loop_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_loop_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Loop'
@@ -2372,13 +2823,24 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_fault_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		#FILTER (%layerFilter% AND (%NetworkFilter%))
-		FILTER ((%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_fault_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			#'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Fault'
@@ -2434,12 +2896,24 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_cabinet_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_cabinet_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Cabinet'
@@ -2481,12 +2955,24 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_vault_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_vault_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'Vault'
@@ -2529,12 +3015,24 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_handhole_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%))  
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_handhole_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'HANDHOLE'
@@ -2576,12 +3074,24 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM (select v.* FROM vw_att_details_patchpanel_map v inner join user_permission_area  m on v.region_id=m.region_id and v.province_id=m.province_id and m.user_id=%userid%) as a USING UNIQUE system_id USING srid=4326'
-		FILTER (%layerFilter% AND (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT v.*
+		FROM vw_att_details_patchpanel_map v
+		INNER JOIN user_permission_area m 
+        ON v.region_id = m.region_id 
+        AND v.province_id = m.province_id 
+        AND m.user_id = %userid%
+	    INNER JOIN polygon_master pm
+        ON st_within(v.sp_geometry, pm.sp_geometry)
+        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
+	   else 1=1 end                  
+) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%layerFilter% AND (%NetworkFilter%))
 		VALIDATION
-			'layerFilter' '.*'
-			'NetworkFilter' '.*'		
-			'userid' '.*'			
+			'layerFilter'   '.*'		
+			'NetworkFilter'   '.*'
+			'userid' '.*'	
+            'SourcerefId' '.*'				
 		END
 		METADATA
 			'ows_title' 'PATCHPANEL'
