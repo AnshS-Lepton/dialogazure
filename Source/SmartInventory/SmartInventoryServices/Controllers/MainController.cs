@@ -3467,22 +3467,22 @@ namespace SmartInventoryServices.Controllers
                 string sFilePath = "";
                 int deleteChk = 0;
                 int DocumentId = objDeleteAttachmentsIn.attachmentId;
-                errorLogHelper.ApiLogWriter(sFilePath, "DeleteAttachment1","", null);
+                //errorLogHelper.ApiLogWriter(sFilePath, "", "DeleteAttachment1", null);
                 //Get File Name and Path...
                 var lstAttachmentDetails = new BLAttachment().getEntityDocumentById(DocumentId);
-                errorLogHelper.ApiLogWriter(lstAttachmentDetails.document_type, "DeleteAttachment2", "", null);
+                //errorLogHelper.ApiLogWriter(lstAttachmentDetails.document_type, "", "DeleteAttachment2", null);
 
                 if (lstAttachmentDetails != null)
                 {
                     sFilePath = lstAttachmentDetails.file_location + lstAttachmentDetails.file_name;
-                    errorLogHelper.ApiLogWriter(lstAttachmentDetails.document_type, "DeleteAttachment3", "", null);
+                    //errorLogHelper.ApiLogWriter(lstAttachmentDetails.document_type, "", "DeleteAttachment3", null);
 
                     if (!string.IsNullOrWhiteSpace(sFilePath))
                     {
                         deleteChk = new BLAttachment().DeleteAttachmentById(DocumentId);
                         if (deleteChk == 1)
                         {
-                            errorLogHelper.ApiLogWriter(sFilePath, "DeleteAttachment4", "", null);
+                            //errorLogHelper.ApiLogWriter(sFilePath, "", "DeleteAttachment4", null);
 
                             ReqHelper.DeleteFileFromFTP(sFilePath);
                         }
