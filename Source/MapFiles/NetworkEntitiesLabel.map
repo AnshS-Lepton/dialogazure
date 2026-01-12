@@ -5262,13 +5262,14 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_opticalrepeater_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'			
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
+			 'NetworkFilter' '.*'
 			
 		END 
 		METADATA
@@ -5361,7 +5362,7 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
 		DATA 'sp_geometry FROM vw_att_details_handhole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5369,6 +5370,7 @@ CLASS
 			'prjectspecificationFilter'   '.*'	            		
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
+			 'NetworkFilter' '.*'
 		END 
 		METADATA
 			'ows_title' 'HANDHOLE'
