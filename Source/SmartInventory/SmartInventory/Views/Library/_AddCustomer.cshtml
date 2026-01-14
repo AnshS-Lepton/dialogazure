@@ -138,12 +138,12 @@
                                 @*<div id="txtMaskedNetworkId"></div>*@
                                 @if (Model.system_id > 0)
                                 {
-                                    @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly numbers-only", @minlength = "6", @maxlength = "7", @id = "txtNetworkId", @readonly = true })
+                                    @Html.TextBoxFor(m => m.network_id, new { @class = "form-control clsReadOnly numbers-only", @minlength = "6", @maxlength = "10", @id = "txtNetworkId", @readonly = true })
                                 }
                                 else
                                 {
                                     Model.network_id = string.Empty;
-                                    @Html.TextBoxFor(m => m.network_id, new { @class = "form-control numbers-only", @onkeypress = "return allowOnlyNumber(event);", @minlength = "6", @maxlength = "7", @id = "txtNetworkId" })
+                                    @Html.TextBoxFor(m => m.network_id, new { @class = "form-control numbers-only", @onkeypress = "return allowOnlyNumber(event);", @minlength = "6", @maxlength = "10", @id = "txtNetworkId" })
                                     @Html.ValidationMessageFor(model => model.network_id)
                                 }
                             </div>
@@ -384,13 +384,13 @@
                 });
 
     function Validate_NetworkId() {
-         
+        debugger;
                     if ('@Model.system_id' == 0 && $('#txtNetworkId').val() != '') {
                          
                         var inputLength = $('#txtNetworkId').val().length;
                         var canId = $('#txtNetworkId').val();
                         var ret = false;
-                        if (inputLength <= 0 || inputLength > 7) {
+                        if (inputLength <= 0 || inputLength < 6) {
                             // Validate network id for duplicate....
                             //Ajax method
                             //alert('Customer code should be 1 to 7 character long!');

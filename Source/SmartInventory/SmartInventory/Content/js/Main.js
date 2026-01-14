@@ -27643,12 +27643,15 @@ var Main = function () {
         },
         RedirectNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName) {
             app.ticketId = _ticketId;
+            app.ticketStatus = "InProgress";
             $('#spnTicketNetworkId').text(_networkId + '(' + _ticketName + ')');
             $('#chk_rLyr_' + _regionId + '').prop('checked', true);
             $('#chk_pLyr_' + _provinceId + '').prop('checked', true);
             $('input:checkbox[data-layername=Network_Ticket]').prop('checked', true);
             app.Networkticket.getTicketBounds(_ticketId);
-            $(app.DE.lyrRefresh).trigger("click");
+           // $(app.DE.lyrRefresh).trigger("click");
+            app.Networkticket.LoadLayersOnMap();
+       
         },
 
         cleanNetwork: function () {
