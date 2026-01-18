@@ -108,6 +108,29 @@
                                         </div>
                                     }
                                 }
+                                else
+                                {
+                                    // Show a default upload block
+                                    var defaultKey = "Upload";
+                                    <div class="form-group fileUploadList">
+                                        <label class="control-label text-break" for="fileUpload_@defaultKey">
+                                            Upload File
+                                        </label>
+
+                                        <input type="file"
+                                               class="form-control"
+                                               name="uploadedFiles[@defaultKey]"
+                                               id="fileUpload_@defaultKey"
+                                               accept="@ApplicationSettings.validImageTypes"
+                                               multiple />
+
+                                        <button type="button"
+                                                class="btn btn-small btn-primary"
+                                                onclick="si.uploadSingleFile('@defaultKey')">
+                                            <i class="fa fa-upload"></i>
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         </div>
 

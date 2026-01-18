@@ -21643,7 +21643,13 @@ var Main = function () {
             eType: ettType
         }, "Upload Image/Document", 'modal-sm');
     }
-
+    this.uploadImageDocument = function (_systemId, _entityType) {
+        debugger;
+        var ettType = _entityType; //$("#infoTB").attr("att_entitytype");
+        popup.LoadModalDialog('PARENT', 'FileUpload/GetFileUploader', {
+            eType: ettType
+        }, "Upload Image/Document", 'modal-sm');
+    }
     this.uploadProfileImage = function () {
 
         popup.LoadModalDialog('PARENT', 'FileUpload/UploadProfileImage', {
@@ -27081,6 +27087,7 @@ var Main = function () {
                     //si.Networkticket.removeNWTNetwork();
                     //$('#chkExistingNetwork,#chkTicketNetwork').prop('checked', false);
                     app.Networkticket.removeExistingNetwork();
+                    app.LoadLayersOnMap();
                 }
             }, false, false)
 
