@@ -27321,11 +27321,11 @@ var Main = function () {
         AddNetworkTicket: function (geom, modeType, radius, obj, systemID, entityType) {
             app.addRemoveActiveClass('');
             
-
+            let projectId = $('#dvsiteAwardProjectId').val();
             if (obj) {
                 $('#NetTicket .iconBaricomoon').find(".activeToolBar").removeClass('activeToolBar');
             }
-            popup.LoadModalDialog('PARENT', 'NetworkTicket/AddTicketDetails', { 'objTicketMaster.geom': geom, 'objTicketMaster.modeType': modeType, 'radius': radius, 'objTicketMaster.SystemID': systemID, 'objTicketMaster.entityType': entityType }, MultilingualKey.SI_OSP_GBL_GBL_FRM_032, 'modal-xxl');
+            popup.LoadModalDialog('PARENT', 'NetworkTicket/AddTicketDetails', { 'objTicketMaster.geom': geom, 'objTicketMaster.modeType': modeType, 'radius': radius, 'objTicketMaster.SystemID': systemID, 'objTicketMaster.entityType': entityType, 'objTicketMaster.project_ids': projectId }, MultilingualKey.SI_OSP_GBL_GBL_FRM_032, 'modal-xxl');
         },
         ////AddNetworkTicket: function (geom, modeType, radius, obj) {
         ////    

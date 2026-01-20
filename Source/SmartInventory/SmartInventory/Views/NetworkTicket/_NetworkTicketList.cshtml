@@ -214,10 +214,11 @@
 
                                          <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
                                          <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name','@item.ticket_status')"></i>
-                                     } 
+                                     }
                                      <i class="i-icons-style icon-BOM-BOQ-Report" title="BOM/BOQ Report" onclick="si.showBomBoqReportWindow(@item.ticket_id, 'Network_Ticket', 'Polygon')"></i>
                                      <i class="i-icons-style icon-BOM-BOQ-Report" title="Upload Image/Document" onclick="si.uploadImageDocument(@item.ticket_id, 'Network_Ticket')"></i>
-
+                                     <i class="i-icons-style icon-Download" title="Download Image/Document" onclick="si.DownloadImgDocs(@item.ticket_id, 'Network_Ticket')"></i>
+                                     
                                  </div>
 
                         </text>, canSort: false),
@@ -682,5 +683,10 @@ format: @<text>@item.maximum_cost</text>)
             }
             }, false, false)
 
-  };
+    };
+    function DownloadImgDocs(systemid, Location) {
+        var ettType = "Network_Ticket";
+        si.downloadImgDocsByID('.ImagesContainer', '.img_doc_childcheck', 'Main/DownloadFiles', systemid, Location, ettType);
+    }
+
 </script>
