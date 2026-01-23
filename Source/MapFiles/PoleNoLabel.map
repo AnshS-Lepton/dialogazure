@@ -4,8 +4,24 @@ LAYER
 	DUMP true
 	TEMPLATE fooOnlyForWMSGetFeatureInfo 
 	INCLUDE "datashare.inc"	
-	DATA 'sp_geometry FROM vw_att_details_pole_map USING UNIQUE system_id USING srid=4326'	
-	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))
+	
+	DATA "sp_geometry FROM (
+    SELECT m.*
+    FROM vw_att_details_pole_map m
+    WHERE
+    CASE
+        WHEN '%NetworkFilter%' ILIKE '1=1' THEN TRUE
+        ELSE EXISTS (
+            SELECT 1
+            FROM polygon_master pm
+            WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+        )
+    END
+
+) AS a USING UNIQUE system_id USING SRID=4326"
+
+		
+	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and  (%AutoPlanningNetworkFilter%))
 			
 	VALIDATION		
 		'provinceFilter'   '.*'

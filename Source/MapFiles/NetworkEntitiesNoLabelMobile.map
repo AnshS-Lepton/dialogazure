@@ -1674,7 +1674,7 @@ CLASS
        AND v.province_id = m.province_id 
        AND m.user_id = %userid%
 	 INNER JOIN polygon_master pm
-        ON st_within(v.sp_geometry, pm.sp_geometry)
+        ON ST_Intersects(v.sp_geometry, pm.sp_geometry)
        AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
 	   else 1=1 end 
                    
@@ -2154,7 +2154,7 @@ LAYER
         AND v.province_id = m.province_id 
         AND m.user_id = %userid%
 	    INNER JOIN polygon_master pm
-        ON st_within(v.sp_geometry, pm.sp_geometry)
+        ON ST_Intersects(v.sp_geometry, pm.sp_geometry)
         AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
 	   else 1=1 end                  
 ) AS a USING UNIQUE system_id USING SRID=4326"
@@ -2216,7 +2216,7 @@ LAYER
         AND v.province_id = m.province_id 
         AND m.user_id = %userid%
 	    INNER JOIN polygon_master pm
-        ON st_within(v.sp_geometry, pm.sp_geometry)
+        ON ST_Intersects(v.sp_geometry, pm.sp_geometry)
         AND case when %SourcerefId% > 0 then pm.system_id = %SourcerefId% AND pm.entity_type = 'Network_Ticket' 
 	   else 1=1 end                  
 ) AS a USING UNIQUE system_id USING SRID=4326"

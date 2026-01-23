@@ -10557,3 +10557,85 @@ tfoot tr td a:hover {
         font-size: 1.4rem;
         margin: 0;
     }
+    /*-------------------------Network Ticket Details toast box -----------------------------------------*/
+
+.ticketWorkActions {
+    border-radius: 5px;
+    box-shadow: 0 7px 9px rgba(0,0,0,0.25);
+    backdrop-filter: blur(3px);
+    background-color: rgba(255,255,255,0.3);
+    position: fixed;
+    top: 81px;
+    right: calc(100% - 538px);
+    z-index: 999;
+    overflow: hidden;
+    width: 210px;
+    height: auto !important;
+}
+
+.collapsableArrow {
+    transition: 0.3s;
+    transform: rotate(180deg)
+}
+
+.collapseUD {
+    transform: rotate(0deg);
+}
+
+ul.ticketWork_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    ul.ticketWork_list li {
+        padding: 0.3rem 1.2rem;
+        font-size: 13px;
+    }
+
+        ul.ticketWork_list li, ul.ticketWork_list li i {
+            color: #393939;
+        }
+
+            ul.ticketWork_list li b {
+                font-weight: 500;
+            }
+
+            ul.ticketWork_list li i {
+                font-size: 18px;
+                transition: 0.3s;
+            }
+
+                ul.ticketWork_list li i:hover {
+                    color: var(--primary-dark);
+                }
+
+            ul.ticketWork_list li:not(:last-child) {
+                border-bottom: 1px solid rgba(220,220,220,0.73);
+            }
+
+.ticketWork_name {
+    background: var(--primary-dark);
+    color: var(--white-color) !important;
+    padding: 0.8rem 1rem;
+    cursor: move;
+}
+
+    .ticketWork_name h4 {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+.--gap05 b .checkbox-custom1-label {
+    margin-right: 0 !important;
+}
+
+.--gap05 .checkbox-custom1 + b .checkbox-custom1-label:before {
+    margin-left: -6.6px;
+}
+
+.modalTextWrap {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

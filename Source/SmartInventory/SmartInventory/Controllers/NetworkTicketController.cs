@@ -21,6 +21,7 @@ using System.Net;
 using SmartInventory.Settings;
 using System.Runtime.Remoting;
 using Newtonsoft.Json;
+using BusinessLogics.Admin;
 
 namespace SmartInventory.Controllers
 {
@@ -32,7 +33,7 @@ namespace SmartInventory.Controllers
 			int user_id = Convert.ToInt32(Session["user_id"]);
 			BLUser objBLuser = new BLUser();
 			User objUserDetails = objBLuser.getUserDetails(user_id);
-			if (objTicketMaster.ticket_id > 0)
+            if (objTicketMaster.ticket_id > 0)
 			{
 				User objUser = (User)Session["userDetail"];
 				objTicketMaster = new BLNetworkTicket().GetNetworkTicketById(objTicketMaster.ticket_id);
@@ -70,7 +71,12 @@ namespace SmartInventory.Controllers
 			objTicketMaster.user_role_id = objUserDetails.role_id;
 			objTicketMaster.source = source;
 			BindTicketDropDown(objTicketMaster);
-			return PartialView("_AddTicketDetails", objTicketMaster);
+            if (!string.IsNullOrEmpty(objTicketMaster.project_ids))
+            {
+                var siteDetails = new BLProject().GetProjectDetailsByProjectId(objTicketMaster.project_ids);
+				objTicketMaster.name = siteDetails.site_id;
+            }
+            return PartialView("_AddTicketDetails", objTicketMaster);
 		}
 		public void BindTicketDropDown(NetworkTicket objTicketMaster)
 		{

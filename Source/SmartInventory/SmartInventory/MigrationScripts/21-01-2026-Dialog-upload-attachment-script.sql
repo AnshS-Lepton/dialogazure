@@ -1,0 +1,126 @@
+
+CREATE OR REPLACE FUNCTION public.fn_get_library_attachments_details_opsisp(p_entity_system_id integer, p_entity_type character, p_upload_type character, p_feature_name character varying)
+ RETURNS TABLE(id integer, entitysystemid integer, entitytype character varying, orgfilename character varying, filename character varying, fileextension character varying, filelocation character varying, uploadtype character varying, uploadedby character varying, file_size character varying, entity_feature_name character varying, uploaded_on timestamp without time zone, categorytype character varying, delete_action boolean)
+ LANGUAGE plpgsql
+AS $function$
+
+declare v_sql character varying;
+declare v_tblName character varying;
+declare v_geom_type character varying;
+
+BEGIN
+
+if(upper(p_feature_name)=upper('SPECIFICATION')) THEN
+
+v_sql:='select sa.id as Id,0::integer as EntitySystemId, ''''::character varying as EntityType,sa.org_file_name as OrgFileName ,sa.file_name as FileName ,sa.file_extension as FileExtension ,sa.file_location as FileLocation, sa.upload_type as UploadType, um.user_name as UploadedBy, sa.file_size::character varying ,''''::character varying as entity_feature_name, sa.uploaded_on, ''Specification''::character varying as categorytype,false as delete_action from specification_attachments sa left join user_master um on sa.uploaded_by = um.user_id where upper(sa.upload_type)=upper('''||p_upload_type||''') and sa.id='||p_entity_system_id||'';
+RAISE INFO '1 %', v_sql;
+
+elsif(upper(p_feature_name)=upper('ENTITY')) THEN
+
+v_sql:='select la.id as Id,la.entity_system_id as EntitySystemId, la.entity_type as EntityType,la.org_file_name as OrgFileName ,la.file_name as FileName ,la.file_extension as FileExtension ,la.file_location as FileLocation,upload_type as UploadType, um.user_name as UploadedBy, la.file_size::character varying ,la.entity_feature_name,la.uploaded_on, ''Entity''::character varying as categorytype,false as delete_action from library_attachments la inner join user_master um on la.uploaded_by = um.user_id where la.id='||p_entity_system_id||' and entity_type='''||p_entity_type||''' and upper(upload_type)=upper('''||p_upload_type||''')';
+
+else
+RAISE INFO '2 %', v_sql;
+select layer_table,geom_type into v_tblName,v_geom_type from layer_details where upper(layer_name)=upper(p_entity_type) limit 1;
+RAISE INFO 'v_tblName %', v_tblName;
+
+IF(coalesce(v_tblName,'')='')THEN
+
+RAISE INFO '22%', v_sql;
+v_sql:='select la.id as Id,la.entity_system_id as EntitySystemId, la.entity_type as EntityType,la.org_file_name as OrgFileName ,la.file_name as FileName ,la.file_extension as FileExtension ,la.file_location as FileLocation,upload_type as UploadType, um.user_name as UploadedBy, la.file_size::character varying ,la.entity_feature_name,la.uploaded_on, ''Entity''::character varying as categorytype,true as delete_action from library_attachments la inner join user_master um on la.uploaded_by = um.user_id where la.entity_system_id='||p_entity_system_id||' and entity_type='''||p_entity_type||''' and upper(upload_type)=upper('''||p_upload_type||''')';
+
+elsif (p_entity_type ='Network_Ticket') then
+v_sql:='select la.id as Id,la.entity_system_id as EntitySystemId, la.entity_type as EntityType,la.org_file_name as OrgFileName ,la.file_name as FileName ,la.file_extension as FileExtension ,la.file_location as FileLocation,upload_type as UploadType, um.user_name as UploadedBy, la.file_size::character varying ,la.entity_feature_name,la.uploaded_on, ''Entity''::character varying as categorytype,true as delete_action from library_attachments la inner join user_master um on la.uploaded_by = um.user_id where la.entity_system_id='||p_entity_system_id||' and entity_type='''||p_entity_type||''' and upper(upload_type)=upper('''||p_upload_type||''')';
+
+else
+RAISE INFO '33 %', v_sql;
+v_sql:='select la.id as Id,la.entity_system_id as EntitySystemId, la.entity_type as EntityType,la.org_file_name as OrgFileName ,la.file_name as FileName ,la.file_extension as FileExtension ,la.file_location as FileLocation,upload_type as UploadType, 
+um.user_name as UploadedBy, la.file_size::character varying ,la.entity_feature_name,la.uploaded_on, ''Entity''::character varying as categorytype,case when upper(att.network_status)=''P'' then planned_delete when upper(att.network_status)=''A'' then asbuild_delete else dormant_delete end as delete_action
+ from library_attachments la inner join user_master um
+ on la.uploaded_by = um.user_id inner join '||v_tblName||' att on att.system_id=la.entity_system_id 
+inner join vw_network_layers vnl on  vnl.layer_id=(select layer_id from layer_details where upper(layer_name)=upper('''||p_entity_type||''')) and vnl.role_id=um.role_id
+  where la.entity_system_id='||p_entity_system_id||' and upper(entity_type)=upper('''||p_entity_type||''') and upper(upload_type)=upper('''||p_upload_type||''')';
+
+END IF;
+
+if upper(v_geom_type) != 'POLYGON' and exists(SELECT column_name FROM information_schema.columns WHERE upper(table_name)=upper(v_tblName) and column_name in('vendor_id')) then
+v_sql:=v_sql||'
+union all
+select sa.id as Id,0 as EntitySystemId, '''' as EntityType,sa.org_file_name as OrgFileName ,sa.file_name as FileName ,sa.file_extension as FileExtension ,sa.file_location as FileLocation,sa.upload_type as UploadType, um.user_name as UploadedBy,
+sa.file_size::character varying ,'''' as entity_feature_name,sa.uploaded_on, ''Specification''::character varying as categorytype,case when upper(att.network_status)=''P'' then planned_delete when upper(att.network_status)=''A'' then asbuild_delete else dormant_delete end as delete_action 
+from '||v_tblName||' att
+inner join item_template_master itm on att.vendor_id=itm.vendor_id and itm.code=att.Item_Code
+inner join specification_attachments sa on sa.specification_id=itm.id
+left join user_master um on sa.uploaded_by = um.user_id
+inner join vw_network_layers vnl on  vnl.layer_id=(select layer_id from layer_details where upper(layer_name)=upper('''||p_entity_type||''')) and vnl.role_id=um.role_id
+where att.system_id='||p_entity_system_id||' and upper(upload_type)=upper('''||p_upload_type||''')';
+
+end if;
+end if;
+
+RAISE INFO 'QUERY %', v_sql;
+RETURN QUERY EXECUTE v_sql ;
+
+END; 
+$function$
+;
+
+-------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_imported_site_project_details(p_page_no integer, p_page_size integer, p_sort_col character varying, p_sort_dir character varying)
+ RETURNS json
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_result    JSON;
+    v_sql       TEXT;
+    v_order_by  TEXT;
+BEGIN
+
+    v_order_by := CASE
+        WHEN p_sort_col = 'site_id'    THEN 'ps.site_id'
+        WHEN p_sort_col = 'site_name'  THEN 'ps.site_name'
+        WHEN p_sort_col = 'created_on' THEN 'ps.created_on'
+        WHEN p_sort_col = 'project_id' THEN 'ps.project_id'
+        WHEN p_sort_col = 'status'     THEN 'ps.status'
+        ELSE 'ps.created_on'
+    END || ' ' ||
+    CASE
+        WHEN upper(p_sort_dir) = 'ASC' THEN 'ASC'
+        ELSE 'DESC'
+    END;
+
+    v_sql := '
+        SELECT json_build_object(
+            ''totalRecord'',
+                (SELECT COUNT(*)
+                 FROM site_project_details ps
+                 JOIN att_details_pod pod
+                   ON pod.site_id = ps.site_id and pod.network_id = ps.network_id),
+            ''records'',
+                json_agg(row_to_json(r))
+        )
+        FROM (
+            SELECT 
+                ps.id,
+                ps.site_id,
+                ps.site_name,
+                ps.created_on,
+                ps.project_id,
+                ps.status,
+                pod.latitude || '','' || pod.longitude AS site_geom
+            FROM site_project_details ps
+            JOIN att_details_pod pod
+              ON pod.site_id = ps.site_id and pod.network_id = ps.network_id
+            ORDER BY ' || v_order_by || '
+            LIMIT ' || p_page_size || '
+            OFFSET ' || (p_page_no - 1) * p_page_size || '
+        ) r
+    ';
+
+    EXECUTE v_sql INTO v_result;
+
+    RETURN v_result;
+END;
+$function$
+;
