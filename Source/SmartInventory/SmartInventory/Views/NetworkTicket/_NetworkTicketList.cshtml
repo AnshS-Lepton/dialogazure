@@ -181,49 +181,49 @@
      mode: WebGridPagerModes.All,
      columns: grid.Columns(
      grid.Column(Resources.Resources.SI_OSP_GBL_GBL_GBL_028, format: @<text>
-                                 <div class="fDisBtn d-flex --gap-05">
-                                     @if ((item.ticket_status == "Assigned" || item.ticket_status == "InProgress" || item.ticket_status == "Rejected") && item.assigned_to == Convert.ToString(@Model.userId))
+                            <div class="fDisBtn d-flex --gap-05">
+                                @if ((item.ticket_status == "Assigned" || item.ticket_status == "InProgress" || item.ticket_status == "Rejected") && item.assigned_to == Convert.ToString(@Model.userId))
 
-                                     {
+                                {
 
-                                         if (objNWTicketDetails != null && (item.ticket_id == Convert.ToString(objNWTicketDetails.ticket_id)))
-                                         {
-                                             <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Already Selected" disabled="disabled"></i>
-                                         }
-                                         else
-                                         {
-                                             <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Ticket Details" onclick="setNWTicketDetailSession(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to',@item.region_id,@item.province_id,'@item.name')"></i>
+                                    if (objNWTicketDetails != null && (item.ticket_id == Convert.ToString(objNWTicketDetails.ticket_id)))
+                                    {
+                                        <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Already Selected" disabled="disabled"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-create_ticket i-icons-style i-icons-ptpb" title="Ticket Details" onclick="setNWTicketDetailSession(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to',@item.region_id,@item.province_id,'@item.name')"></i>
 
-                                         }
-                                     }
-                                     @if (item.ticket_status_id == "4")
-                                     {
-                                         @*<a id="btnAction" class="pad-0">*@
+                                    }
+                                }
+                                @if (item.ticket_status_id == "4")
+                                {
+                                    @*<a id="btnAction" class="pad-0">*@
 
-                                         <button class="fa fa-fw fa-edit i-icons-style i-icons-ptpb" id="iconEdit" onclick="editNetworkTicket(@item.ticket_id);" tabindex="5"
-                                                 @if (item.is_edit == "true") { { @: title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"
-                                                 } } else { { @: disabled title="Unauthorized Access"
-                                                 } }></button>
-                                         <i class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" id="DeleteTicket" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket(@item.ticket_id);"></i>
+                                    <button class="fa fa-fw fa-edit i-icons-style i-icons-ptpb" id="iconEdit" onclick="editNetworkTicket(@item.ticket_id);" tabindex="5"
+                                            @if (item.is_edit == "true") { { @: title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_003"
+                                            } } else { { @: disabled title="Unauthorized Access"
+                                            } }></button>
+                                    <i class="fa fa-fw fa-trash i-icons-style i-icons-ptpb" id="DeleteTicket" title="@Resources.Resources.SI_GBL_GBL_GBL_GBL_002" onclick="deleteTicket(@item.ticket_id);"></i>
 
 
-                                         @*</a>*@
-                                     }
-                                     else
-                                     {
+                                    @*</a>*@
+                                }
+                                else
+                                {
 
-                                         <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
-                                         <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name','@item.ticket_status')"></i>
-                                     }
-                                     <i class="i-icons-style icon-BOM-BOQ-Report" title="BOM/BOQ Report" onclick="si.showBomBoqReportWindow(@item.ticket_id, 'Network_Ticket', 'Polygon')"></i>
-                                     <i class="i-icons-style icon-BOM-BOQ-Report" title="Upload Image/Document" onclick="si.uploadImageDocument(@item.ticket_id, 'Network_Ticket')"></i>
-                                     <i class="i-icons-style icon-Download" title="Download Image/Document" onclick="si.DownloadImgDocs(@item.ticket_id, 'Network_Ticket')"></i>
-                                     
-                                 </div>
+                                    <i class="glyphicon glyphicon-eye-open i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_435" onclick="getNWEntitydetais(@item.ticket_id,'@item.network_id','@item.ticket_status','@item.is_approve',@Model.objNetworkTicket.user_role_id,'@item.ticket_type','@item.assigned_to')"></i>
+                                    <i class="fa fa-globe fa-fw m-r-xs i-icons-style i-icons-ptpb" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_036" onclick="si.Networkticket.showNetworkOnMap(@item.ticket_id,'@item.network_id',@item.region_id,@item.province_id,'@item.name','@item.ticket_status')"></i>
+                                }
+                                <i class="i-icons-style icon-BOM-BOQ-Report" title="BOM/BOQ Report" onclick="si.showBomBoqReportWindow(@item.ticket_id, 'Network_Ticket', 'Polygon')"></i>
+                                <i class="i-icons-style icon-BOM-BOQ-Report" title="Upload Image/Document" onclick="si.uploadImageDocument(@item.ticket_id, 'Network_Ticket')"></i>
+                                <i class="i-icons-style icon-Download" title="Download Image" onclick="si.downloadAllAttachments('Image',@item.ticket_id)"></i>
+                                <i class="i-icons-style icon-Download" title="Download Document" onclick="si.downloadAllAttachments( 'Document',@item.ticket_id)"></i>
+
+                            </div>
 
                         </text>, canSort: false),
 grid.Column("ticket_status", Resources.Resources.SI_OSP_GBL_NET_RPT_026, format: @<text><lable class="clsTSts" colorcode="@item.ticket_status_color_code">@item.ticket_status</lable></text>),
-grid.Column("network_id", Resources.Resources.SI_OSP_GBL_NET_GBL_153, format: @<text> @item.network_id</text>),
 grid.Column("ticket_type", Resources.Resources.SI_OSP_GBL_NET_FRM_133, format: @<text> @item.ticket_type</text>),
 grid.Column("name", Resources.Resources.SI_OSP_GBL_NET_FRM_059, format: @<text> @item.name</text>),
 grid.Column("region_name", Resources.Resources.SI_OSP_GBL_NET_FRM_065, format: @<text> @item.region_name</text>),
@@ -255,6 +255,7 @@ grid.Column("priority", "Priority", format: @<text> @item.priority </text>),
 grid.Column("cable_plan_cores", "Cable Plan Cores", format: @<text> @item.cable_plan_cores </text>),
 grid.Column("fiber_link_type_link_id_prefix", "Fiber Link Type(Link ID Prefix)", format: @<text> @item.fiber_link_type_link_id_prefix </text>),
 grid.Column("comment", "Comment", format: @<text> @item.comment </text>),
+grid.Column("network_id", Resources.Resources.SI_OSP_GBL_NET_GBL_153, format: @<text> @item.network_id</text>),
 grid.Column("maximum_cost", "Maximum Cost",
 format: @<text>@item.maximum_cost</text>)
 ) )

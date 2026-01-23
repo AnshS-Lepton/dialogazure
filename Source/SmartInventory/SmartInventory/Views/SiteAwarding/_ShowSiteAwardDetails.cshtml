@@ -30,7 +30,7 @@
             rowsPerPage: Model.pageSize,
            canSort: true,
             ajaxUpdateContainerId: "dvViewSiteAwarding",
-            ajaxUpdateCallback: "onGridHeaderClick('tblSiteAwarding');",
+            ajaxUpdateCallback: "onGridHeaderClick('tblSiteAwarding'); updateUploadSiteImport();",
             pageFieldName: "currentPage",
              sortFieldName: "col",
     sortDirectionFieldName: "dir"
@@ -116,9 +116,10 @@ grid.Column("status", header: "Status")
 
 <script>
     $(document).ready(function () {
-
+      
         addDefaultSortingIcons("tblSiteAwarding");
         onGridHeaderClick('tblSiteAwarding');
+        updateUploadSiteImport();
         document.getElementById("uploadExcelFile").addEventListener("click", function () {
             debugger;
             const fileInput = document.getElementById("updExcel");
@@ -172,11 +173,7 @@ grid.Column("status", header: "Status")
 
          });
 
-        $('#btnExports').on('click', function () {
-            $('.FlowDivs').slideToggle();
-
-        });
-
+       
         function initializeCheckboxLogic() {
             debugger;
             $(document).off('change', '#chkSelectAll').on('change', '#chkSelectAll', function () {
@@ -217,6 +214,13 @@ grid.Column("status", header: "Status")
         });
     }
 
+    function updateUploadSiteImport(){
+        $('#btnExports').on('click', function () {
+            $('.FlowDivs').slideToggle();
+
+        });
+
+    }
 
     function selectSiteBoundary() {
         debugger;

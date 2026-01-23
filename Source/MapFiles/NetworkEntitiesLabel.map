@@ -189,8 +189,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_area_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter% and (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_area_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -240,8 +251,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_restricted_area_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter% and (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_restricted_area_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -290,8 +312,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_networkticket_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter% and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_networkticket_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter%)
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -342,8 +375,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_dsa_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter% and (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_dsa_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -399,8 +443,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_csa_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter% and (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_csa_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter% ) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*' 
@@ -501,8 +556,19 @@ MAP
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_subarea_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter%  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_subarea_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  (%provinceFilter% )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -635,8 +701,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_building_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_building_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -736,8 +813,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM vw_att_details_building_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_building_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -785,8 +873,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo		
 		INCLUDE "datashare.inc"
-		DATA 'sp_centroid FROM vw_att_details_building_MAP USING UNIQUE system_id USING srid=4326'	
-	    FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ) and (%NetworkFilter%) )
+		DATA "sp_centroid FROM (
+		SELECT m.*
+		FROM vw_att_details_building_MAP m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_centroid, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+	    FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ) )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -821,8 +920,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_structure_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% )  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_structure_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -1063,8 +1173,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_adb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_adb_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'		
@@ -1241,8 +1362,20 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_bdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)) 
+			
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_bdb_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -1411,8 +1544,19 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_cdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_cdb_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -1586,8 +1730,20 @@ MAP
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_pod_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%) and (%PODFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_pod_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+			
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%PODFilter%))
 		VALIDATION		
 			'provinceFilter'   '.*'	
 			'layerFilter'   '.*'
@@ -1759,8 +1915,19 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_equipment_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%NetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_equipment_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))	
 		# AND (%PODFilter% )
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -1859,8 +2026,19 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_rack_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_rack_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))	
 		# AND (%PODFilter% )
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -1959,8 +2137,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_tree_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))	
+			
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_tree_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%PODFilter% ))	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2057,8 +2247,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_splitter_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%splitterFilter%) AND (%PODFilter%) AND (%NetworkFilter%))
+			
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_splitter_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%splitterFilter%) AND (%PODFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2237,8 +2439,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_manhole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  AND (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
+			
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_manhole_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"	
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2523,8 +2737,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_coupler_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_coupler_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"	
+			
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2626,9 +2852,21 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
-		INCLUDE "datashare.inc"		
-		DATA 'sp_geometry FROM vw_att_details_cable_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter%) AND (%ownershipFilter%) AND (%PODFilter%) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%) )		
+		INCLUDE "datashare.inc"	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_cable_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"		
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter%) AND (%ownershipFilter%) AND (%PODFilter%) AND (%AutoPlanningNetworkFilter%) )		
 
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2772,8 +3010,19 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_spliceclosure_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_spliceclosure_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -2947,8 +3196,20 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_fms_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_fms_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+			
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -3045,8 +3306,19 @@ LAYER
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_mpod_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_mpod_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -3145,8 +3417,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_ont_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )  AND (%PODFilter% )and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_ont_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+			
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )  AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -3224,8 +3508,19 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_customer_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%PODFilter% ) and (%NetworkFilter%)) 	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_customer_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%PODFilter% ) ) 	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'				
@@ -3481,8 +3776,21 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM "vw_att_details_duct_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%) AND (%AutoPlanningNetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_duct_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -3557,8 +3865,20 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM "vw_att_details_microduct_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )and (%NetworkFilter%) )
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_microduct_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -3607,8 +3927,20 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM "vw_att_details_trench_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  and (%NetworkFilter%)AND (%AutoPlanningNetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_trench_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -3751,8 +4083,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_wallmount_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_wallmount_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))	
 
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -3851,8 +4195,21 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_pep_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))	
+		
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_pep_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))	
 
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -3952,8 +4309,19 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_loop_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )and (%NetworkFilter%) and (%AutoPlanningNetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_loop_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) and (%AutoPlanningNetworkFilter%))	
 		VALIDATION		
 			'provinceFilter'   '.*'
             'layerFilter'   '.*'	
@@ -4005,8 +4373,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_fdb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_fdb_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4106,8 +4486,19 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_htb_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_htb_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4207,8 +4598,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_opticalrepeater_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_opticalrepeater_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4308,8 +4711,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_tower_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_tower_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4408,8 +4823,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_antenna_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_antenna_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+			
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4510,8 +4937,19 @@ END
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_row_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  ((%provinceFilter%)  AND (%prjectspecificationFilter% )  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_row_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER  ((%provinceFilter%)  AND (%prjectspecificationFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -4561,8 +4999,21 @@ END
 	TYPE POLYGON
 	DUMP true
 	INCLUDE "datashare.inc"
-	DATA 'sp_geometry FROM "vw_att_details_sector_map" USING UNIQUE system_id USING srid=4326'
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)and (%sectorFilter%) and (%NetworkFilter%))
+	DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_sector_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+				
+				
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter%)and (%sectorFilter%))
 		VALIDATION		
 			'provinceFilter'   '.*'
 			'layerFilter'   '.*'			
@@ -4753,8 +5204,20 @@ END
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		INCLUDE "datashare.inc"
 		#PROCESSING "NATIVE_FILTER=%provinceFilter%"
-		DATA 'sp_geometry FROM "vw_att_details_row_pit_map" USING UNIQUE system_id USING srid=4326'
-		FILTER  (%provinceFilter%  AND (%prjectspecificationFilter% )and (%NetworkFilter%)) 
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_row_pit_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER  (%provinceFilter%  AND (%prjectspecificationFilter% )) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -4806,8 +5269,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_fault_map USING UNIQUE system_id USING srid=4326'	
-		FILTER  (%provinceFilter% AND (%faultFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_fault_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+
+		FILTER  (%provinceFilter% AND (%faultFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -4933,8 +5408,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_competitor_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter%  and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_competitor_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+			
+		FILTER (%provinceFilter% )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -4983,8 +5470,20 @@ END
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_cabinet_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_cabinet_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5084,8 +5583,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_vault_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_vault_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
 		# AND (%PODFilter% ) 
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5187,8 +5698,20 @@ CLASS
 		TEMPLATE fooOnlyForWMSGetFeatureInfo
 		#EXTENT 72.504366 18.900959 73.403214 19.320367
 		INCLUDE "datashare.inc"
-		DATA 'sp_geometry FROM "vw_att_details_conduit_map" USING UNIQUE system_id USING srid=4326' 
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_conduit_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -5261,8 +5784,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_opticalrepeater_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_opticalrepeater_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5361,8 +5896,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_handhole_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_handhole_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5441,8 +5988,20 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_patchpanel_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) and (%NetworkFilter%))
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_patchpanel_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
@@ -5541,8 +6100,19 @@ CLASS
 		DUMP true
 		TEMPLATE fooOnlyForWMSGetFeatureInfo 
 		INCLUDE "datashare.inc"	
-		DATA 'sp_geometry FROM vw_att_details_slack_map USING UNIQUE system_id USING srid=4326'	
-		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% )and (%NetworkFilter%))	
+		DATA "sp_geometry FROM (
+		SELECT m.*
+		FROM vw_att_details_slack_map m
+		WHERE (%NetworkFilter% = 0)  
+		   OR (%NetworkFilter% > 0 AND EXISTS (  
+				SELECT 1
+				FROM polygon_master pm
+				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+				  AND pm.entity_type = 'Network_Ticket'
+				  AND pm.system_id = %NetworkFilter%
+			))
+		) AS a USING UNIQUE system_id USING SRID=4326"
+		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))	
 		VALIDATION		
 			'provinceFilter'   '.*'
             'layerFilter'   '.*'	
