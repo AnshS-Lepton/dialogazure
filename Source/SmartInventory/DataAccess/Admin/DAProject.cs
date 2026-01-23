@@ -1110,7 +1110,9 @@ namespace DataAccess.Admin
                 {
                     // Fetch existing record by SiteId
                     var existingRecord = repo.GetAll(x => x.site_id == pod.site_id).FirstOrDefault();
-
+                    pod.latitude = existingRecord.latitude;
+                    pod.longitude = existingRecord.longitude;
+                    pod.network_id = existingRecord.network_id;
                     if (existingRecord != null)
                     {
                         if (existingRecord.site_name.Trim() != pod.site_name.Trim())
@@ -1139,6 +1141,8 @@ namespace DataAccess.Admin
                             existingRecord.fiber_link_type = pod.fiber_link_type;
                             existingRecord.fiber_link_code = pod.fiber_link_code;
                             existingRecord.is_site_imported = true;
+                            //existingRecord.latitude = pod.latitude;
+                            //existingRecord.longitude = pod.longitude;
                             //// newly added fields
                             //existingRecord.destination_site_id = pod.destination_site_id;
                             //existingRecord.destination_port_type = pod.destination_port_type;
@@ -1227,8 +1231,8 @@ namespace DataAccess.Admin
                         maximum_cost = pod.maximum_cost,
                         location_address = pod.address,
                         //ds_cmc_area = pod.ds_cmc_area,
-                        //latitude = pod.latitude,
-                        //longitude = pod.longitude,
+                        latitude = pod.latitude.ToString(),
+                        longitude = pod.longitude.ToString(),
                         project_category = pod.project_category,
                         priority = pod.priority,
                         cable_plan_cores = pod.cable_plan_cores,
@@ -1236,7 +1240,8 @@ namespace DataAccess.Admin
                         comment = pod.comment,
                         created_by = userId,
                         created_on = pod.created_on != default(DateTime) ? pod.created_on : DateTime.Now,
-                        status = "Pending Assignment"
+                        status = "Pending Assignment",
+                        network_id = pod.network_id
                     };
 
                     repo.Insert(newRecord);
@@ -1393,8 +1398,8 @@ namespace DataAccess.Admin
                     p_destination_site_id = siteprojectdetails.destination_site_id,
                     p_destination_port_type = siteprojectdetails.destination_port_type,
                     p_no_of_cores = siteprojectdetails.no_of_cores,
-                    p_latitude = siteprojectdetails.latitude,
-                    p_longitude = siteprojectdetails.longitude,
+                    //p_latitude = siteprojectdetails.latitude,
+                    //p_longitude = siteprojectdetails.longitude,
                     p_priority = siteprojectdetails.priority,
                     p_fiber_link_type = siteprojectdetails.fiber_link_type,
                     p_fiber_link_code = siteprojectdetails.fiber_link_code,

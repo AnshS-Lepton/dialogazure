@@ -150,12 +150,14 @@ namespace Models
         public string entity_network_id { get; set; }
         public double longitude { get; set; }
         public double latitude { get; set; }
+        [NotMapped]
         public string sp_geometry { get; set; }
 
         public int? province_id { get; set; }
 
         public int? region_id { get; set; }
         public int? created_by { get; set; }
+        [NotMapped]
         public string line_sp_geometry { get; set; }
         public string is_middle_point { get; set; }
         public double fraction { get; set; }

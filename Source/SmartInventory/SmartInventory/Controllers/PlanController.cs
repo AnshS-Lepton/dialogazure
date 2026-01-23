@@ -157,6 +157,7 @@ namespace SmartInventory.Controllers
         {
             List<PlanBom> planobj = new List<PlanBom>();
             int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+            Session["BOMBOQ"] = model;
             if (user_id != 0)
             {
                 planobj = new BLPlan().PlanBom(model, user_id);
@@ -408,26 +409,31 @@ namespace SmartInventory.Controllers
         public JsonResult getLoopLength(int temp_plan_id)
         {
             NetworkPlanning model = new NetworkPlanning();
-            model.temp_plan_id = temp_plan_id;
-            model.is_loop_update = true;
             JsonResponse<PlanBom> objResp = new JsonResponse<PlanBom>();
+            objResp.status = ResponseStatus.OK.ToString();
             try
             {
-                var usrDetail = (User)Session["userDetail"];
-                if (usrDetail != null)
+                if (Session["BOMBOQ"] != null)
                 {
-                    int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
-                    if (user_id != 0)
+                    model = (NetworkPlanning)Session["BOMBOQ"];
+                    model.temp_plan_id= temp_plan_id;
+                    model.is_loop_update = true;
+                    var usrDetail = (User)Session["userDetail"];
+                    if (usrDetail != null)
                     {
-                        objResp.result = new BLPlan().PlanBom(model, user_id).FirstOrDefault();
+                        int user_id = Convert.ToInt32(((User)Session["userDetail"]).user_id);
+                        if (user_id != 0)
+                        {
+                            objResp.result = new BLPlan().PlanBom(model, user_id).FirstOrDefault();
+                        }
+                        objResp.status = ResponseStatus.OK.ToString();
                     }
-                    objResp.status = ResponseStatus.OK.ToString();
-                }
-                else
-                {
-                    objResp.status = ResponseStatus.FAILED.ToString();
-                    objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_145;
-                }
+                    else
+                    {
+                        objResp.status = ResponseStatus.FAILED.ToString();
+                        objResp.message = Resources.Resources.SI_GBL_GBL_GBL_GBL_145;
+                    }
+                }            
             }
             catch (Exception ex)
             {

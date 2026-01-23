@@ -2,7 +2,7 @@
 @model Models.BackBoneSitePlanDetails
 
 <style>
-    #tblNearestSiteGrid .form-control {
+    #tblNearestHistorySiteGrid .form-control {
         padding: 2px 6px;
     }
 
@@ -18,7 +18,7 @@
         canPage: false,
         canSort: false,
         ajaxUpdateContainerId: "VwNearestSiteGrid",
-        ajaxUpdateCallback: "onGridHeaderClick('tblNearestSiteGrid');"
+        ajaxUpdateCallback: "onGridHeaderClick('tblNearestHistorySiteGrid');"
     );
 
     grid.Bind(Model.sites, autoSortAndPage: false, rowCount: Model.totalRecord);
@@ -37,12 +37,12 @@
                 <div id="VwNearestSiteGrid">
                     @grid.GetHtml(
                         tableStyle: "stickyTh",
-                        htmlAttributes: new { id = "tblNearestSiteGrid" },
+                        htmlAttributes: new { id = "tblNearestHistorySiteGrid" },
                         columns: grid.Columns(
                                                         grid.Column(
                                 header: "Select",
                                 format: @<text>
-                                        <input type="checkbox" name="select_site" id="@item.id-line-geom" value="@item.network_id" class="row-checkbox" checked onchange="backbonedata.bindNearestSites()" />
+                                        <input type="checkbox" name="select_site" id="@item.id-line-geom" value="@item.network_id" class="row-checkbox history" checked onchange="backbonedata.bindNearestSites()" />
                                 </text>,
 canSort: false
 ),
@@ -70,7 +70,7 @@ grid.Column("sprout_route_length", "Route Length", format: @<text> <span id="rou
 </div>
 <script>
     $(document).ready(function () {
-        $("#tblNearestSiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' disabled />");
+        $("#tblNearestHistorySiteGrid thead th:first").html("<input type='checkbox' id='chkSelectAll' disabled />");
 
         // Individual checkbox click
         $(document).off('change', '.row-checkbox');
