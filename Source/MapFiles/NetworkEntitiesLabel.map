@@ -192,20 +192,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_area_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Area'
@@ -254,20 +263,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_restricted_area_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Area'
@@ -315,20 +333,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_networkticket_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter%)
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'NW Ticket Outline'
@@ -378,20 +405,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_dsa_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter%) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'DSA'
@@ -446,20 +482,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_csa_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter% ) 
 		
 		VALIDATION		
 			'provinceFilter'   '.*' 
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'CSA'
@@ -559,20 +604,29 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_subarea_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  (%provinceFilter% )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'SubArea'
@@ -704,14 +758,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_building_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
 		
@@ -719,7 +781,8 @@ MAP
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'	
 			'bldRFSFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Building'
@@ -816,14 +879,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_building_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ))
 		
@@ -831,7 +902,8 @@ MAP
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'	
 			'bldRFSFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END  
 		METADATA
 			'ows_title' 'Building'
@@ -876,14 +948,22 @@ MAP
 		DATA "sp_centroid FROM (
 		SELECT m.*
 		FROM vw_att_details_building_MAP m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_centroid, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 	    FILTER (%provinceFilter% AND (%layerFilter% ) AND (%bldRFSFilter% ) )
 		
@@ -891,7 +971,8 @@ MAP
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'	
 			'bldRFSFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Building'
@@ -923,21 +1004,30 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_structure_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ))
 		
 		VALIDATION		
 			'provinceFilter'   '.*'	
             'layerFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'		
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Structure'
@@ -1176,14 +1266,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_adb_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
@@ -1194,6 +1292,7 @@ MAP
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
 			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'ADB'
@@ -1366,14 +1465,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_bdb_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )) 
 		
@@ -1384,6 +1491,7 @@ MAP
 			'ownershipFilter'   '.*'	
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'BDB'
@@ -1547,14 +1655,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_cdb_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
@@ -1565,6 +1681,7 @@ MAP
 			'ownershipFilter'   '.*'	           		
 			'PODFilter'   '.*'
 			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'CDB'
@@ -1733,14 +1850,22 @@ MAP
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_pod_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 			
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%PODFilter%))
@@ -1751,6 +1876,7 @@ MAP
 			'ownershipFilter'   '.*'          				
 			'NetworkFilter'   '.*'
 			 'PODFilter'   '.*'
+			 'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'POD'
@@ -1918,14 +2044,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_equipment_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))	
 		# AND (%PODFilter% )
@@ -1936,6 +2070,7 @@ CLASS
 			'ownershipFilter'   '.*'          				
 			#'PODFilter'   '.*'
 			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'EQUIPMENT'
@@ -1943,7 +2078,7 @@ CLASS
 		STATUS OFF
 		LABELITEM 'label_column'
 		GROUP 'Network'
-CLASS
+		CLASS
 			NAME 'EQUIPMENT'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
@@ -2029,14 +2164,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_rack_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))	
 		# AND (%PODFilter% )
@@ -2047,6 +2190,7 @@ CLASS
 			'ownershipFilter'   '.*'          				
 			#'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'RACK'
@@ -2141,14 +2285,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_tree_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%PODFilter% ))	
 		
@@ -2158,6 +2310,7 @@ CLASS
 			'prjectspecificationFilter'   '.*'	            	
 			'PODFilter'   '.*'	
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Tree'
@@ -2251,14 +2404,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_splitter_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) and (%splitterFilter%) AND (%PODFilter%))
 		
@@ -2270,6 +2431,7 @@ CLASS
 			'splitterFilter' '.*'			
 			'PODFilter' '.*'
 			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'SPLITTER'
@@ -2443,14 +2605,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_manhole_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"	
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% )  AND (%AutoPlanningNetworkFilter%))
 		
@@ -2462,6 +2632,7 @@ CLASS
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
 			'AutoPlanningNetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'MANHOLE'
@@ -2740,14 +2911,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_coupler_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"	
 			
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) )
@@ -2759,6 +2938,7 @@ CLASS
 			'ownershipFilter'   '.*'          		
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'COUPLER'
@@ -2856,14 +3036,23 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_cable_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE
+			(%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"		
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%cableFilter%) AND (%ownershipFilter%) AND (%PODFilter%) AND (%AutoPlanningNetworkFilter%) )		
@@ -2877,6 +3066,7 @@ CLASS
 			'PODFilter'   '.*'
 			'NetworkFilter' '.*'
 			'AutoPlanningNetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'CABLE'
@@ -3013,14 +3203,22 @@ LAYER
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_spliceclosure_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))
 		
@@ -3032,6 +3230,7 @@ LAYER
 			'PODFilter'   '.*'
             'NetworkFilter' '.*'			
 			'AutoPlanningNetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'SPLICECLOSURE'
@@ -3199,14 +3398,22 @@ LAYER
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_fms_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 			
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
@@ -3217,7 +3424,8 @@ LAYER
 			'prjectspecificationFilter'   '.*'	
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
-			'NetworkFilter'   '.*'            			
+			'NetworkFilter'   '.*' 
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'FMS'
@@ -3309,14 +3517,22 @@ LAYER
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_mpod_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) )
 		
@@ -3327,6 +3543,7 @@ LAYER
 			'ownershipFilter'   '.*'		
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'MPOD'
@@ -3420,14 +3637,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_ont_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 			
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% )  AND (%PODFilter% ))
@@ -3438,7 +3663,8 @@ CLASS
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
 			'PODFilter'   '.*'
-            'NetworkFilter' '.*'			
+            'NetworkFilter' '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'ONT'
@@ -3511,21 +3737,30 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_customer_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%PODFilter% ) ) 	
 		
 		VALIDATION		
 			'provinceFilter'   '.*'				
 			'PODFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'			
 		END 
 		METADATA
 			'ows_title' 'Customer'
@@ -3779,17 +4014,23 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_duct_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
-		) AS a USING UNIQUE system_id USING SRID=4326"
-		
-		
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
+		) AS a USING UNIQUE system_id USING SRID=4326"		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))
 		
 		VALIDATION		
@@ -3799,6 +4040,7 @@ CLASS
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'		
 			'AutoPlanningNetworkFilter'	'.*'
+			'UserId' '.*'
 		END 	
 		METADATA
 			'ows_title' 'Duct'
@@ -3868,14 +4110,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_microduct_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
@@ -3886,6 +4136,7 @@ CLASS
 			'ownershipFilter'   '.*'				
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 	
 		METADATA
 			'ows_title' 'Duct'
@@ -3930,14 +4181,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_trench_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ) AND (%AutoPlanningNetworkFilter%))	
@@ -3950,6 +4209,7 @@ CLASS
 			'PODFilter'   '.*'
             'NetworkFilter'   '.*'	
 			'AutoPlanningNetworkFilter' '.*'
+			'UserId' '.*'
 		END 	
 		METADATA
 			'ows_title' 'Trench'
@@ -4086,14 +4346,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_wallmount_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))	
@@ -4104,7 +4372,8 @@ END
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
-            'NetworkFilter'   '.*'			
+            'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'WallMount'
@@ -4199,14 +4468,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_pep_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))	
@@ -4217,7 +4494,8 @@ END
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
-            'NetworkFilter'   '.*'			
+            'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'PEP'
@@ -4312,14 +4590,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_loop_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) and (%AutoPlanningNetworkFilter%))	
 		VALIDATION		
@@ -4327,7 +4613,8 @@ END
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
 			'NetworkFilter' '.*'			
-			'AutoPlanningNetworkFilter' '.*'			
+			'AutoPlanningNetworkFilter' '.*'
+			'UserId' '.*'			
 		END 
 		METADATA
 			'ows_title' 'Loop'
@@ -4377,14 +4664,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_fdb_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
@@ -4395,6 +4690,7 @@ END
 			'ownershipFilter'   '.*'	
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'FDB'
@@ -4489,14 +4785,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_htb_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
@@ -4507,6 +4811,7 @@ END
 			'ownershipFilter'   '.*'	
 			'PODFilter'   '.*'
 			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'HTB'
@@ -4601,14 +4906,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_opticalrepeater_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
@@ -4619,6 +4932,7 @@ END
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'OpticalRepeater'
@@ -4714,14 +5028,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_tower_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
@@ -4732,6 +5054,7 @@ END
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Tower'
@@ -4826,14 +5149,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_antenna_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 			
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
@@ -4844,6 +5175,7 @@ END
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
 			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Antenna'
@@ -4940,14 +5272,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_row_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER  ((%provinceFilter%)  AND (%prjectspecificationFilter% ))
 		
@@ -4955,6 +5295,7 @@ END
 			'provinceFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'ROW'
@@ -5002,14 +5343,22 @@ END
 	DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_sector_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Intersects(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 				
 				
@@ -5021,6 +5370,7 @@ END
 			'ownershipFilter'   '.*'
 			'sectorFilter'   '.*'			
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		VALIDATION		
 			'provinceFilter'   '.*'	
@@ -5207,14 +5557,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_row_pit_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER  (%provinceFilter%  AND (%prjectspecificationFilter% )) 
@@ -5223,6 +5581,7 @@ END
 			'provinceFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		
 		METADATA
@@ -5272,14 +5631,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_fault_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 
 		FILTER  (%provinceFilter% AND (%faultFilter% ) AND (%PODFilter% ))
@@ -5289,6 +5656,7 @@ END
 			'faultFilter'   '.*'
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Fault'
@@ -5411,21 +5779,30 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_competitor_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 			
 		FILTER (%provinceFilter% )
 		
 		VALIDATION		
 			'provinceFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'COMPETITOR'
@@ -5474,14 +5851,22 @@ END
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_cabinet_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
 		
@@ -5492,6 +5877,7 @@ END
 			'ownershipFilter'   '.*'		
 			'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Cabinet'
@@ -5586,14 +5972,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_vault_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
@@ -5605,6 +5999,7 @@ CLASS
 			'ownershipFilter'   '.*'		
 			#'PODFilter'   '.*'
 			'NetworkFilter'   '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Vault'
@@ -5613,7 +6008,7 @@ CLASS
 		LABELITEM 'label_column'
 		GROUP 'Network'	
 
-CLASS
+		CLASS
 			NAME 'Vault'
             EXPRESSION ('[network_status]'  eq 'P')  			
 			STYLE
@@ -5701,14 +6096,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_conduit_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%ownershipFilter% ))
@@ -5717,7 +6120,8 @@ CLASS
 			'provinceFilter'   '.*'	
              'layerFilter'   '.*'
 			'ownershipFilter'   '.*'
-			'NetworkFilter'   '.*'			
+			'NetworkFilter'   '.*'	
+			'UserId' '.*'			
 		END 	
 		METADATA
 			'ows_title' 'Conduit'
@@ -5787,14 +6191,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_opticalrepeater_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ))
@@ -5805,6 +6217,7 @@ CLASS
 			'prjectspecificationFilter'   '.*'
 			'ownershipFilter'   '.*'	
 			 'NetworkFilter' '.*'
+			 'UserId' '.*'
 			
 		END 
 		METADATA
@@ -5899,14 +6312,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_handhole_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
@@ -5918,6 +6339,7 @@ CLASS
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
 			 'NetworkFilter' '.*'
+			 'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'HANDHOLE'
@@ -5991,14 +6413,22 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_patchpanel_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%PODFilter% ))
@@ -6009,7 +6439,8 @@ CLASS
 			'prjectspecificationFilter'   '.*'	
 			'ownershipFilter'   '.*'
 			'PODFilter'   '.*'
-			'NetworkFilter'   '.*'            			
+			'NetworkFilter'   '.*'   
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'PATCHPANEL'
@@ -6103,21 +6534,30 @@ CLASS
 		DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_slack_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 		FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ))	
 		VALIDATION		
 			'provinceFilter'   '.*'
             'layerFilter'   '.*'	
 			'prjectspecificationFilter'   '.*'
-			'NetworkFilter' '.*'			
+			'NetworkFilter' '.*'
+			'UserId' '.*'
 		END 
 		METADATA
 			'ows_title' 'Slack'

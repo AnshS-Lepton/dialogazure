@@ -120,39 +120,7 @@ grid.Column("status", header: "Status")
         addDefaultSortingIcons("tblSiteAwarding");
         onGridHeaderClick('tblSiteAwarding');
         updateUploadSiteImport();
-        document.getElementById("uploadExcelFile").addEventListener("click", function () {
-            debugger;
-            const fileInput = document.getElementById("updExcel");
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please select a file.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            // Use your reusable AJAX file upload function
-            ajaxReqforFileUpload('Report/UploadSiteFiles', formData, true, function (result) {
-                if (result.success) {
-                    debugger;
-                    alert(result.message);
-                    if (result.fName) {
-
-                        window.location = appRoot + 'Report/ExportSiteImportLog?fName=' + result.fName;
-                    }
-                    $("#updExcel").val("");
-                    $('#btnShowReportData').trigger("click");
-                    si.showSiteAwardDetails();
-                    //popup.LoadModalDialog('PARENT', 'Report/ExportSiteReport', {
-                    //    eType: ''
-                    //}, MultilingualKey.SI_OSP_GBL_NET_RPT_354, 'modal-xl');
-                } else {
-                    alert("Import failed: " + (result.message || "Unknown error"));
-                }
-            });
-        });
-
+       
         $(document).on('click', '#closeModalPopup', function () {
             // Remove all markers from map
             if (si.arrowMarkers && si.arrowMarkers.length > 0) {
@@ -165,15 +133,6 @@ grid.Column("status", header: "Status")
             if (si.gMapObj.shapeObj)
                 si.gMapObj.shapeObj.setMap(null);
         });
-
-         $("#downloadTemplate").on("click", function () {
-          debugger;
-          var appRoot = '@Url.Content("~")';
-          var applicationUrl = window.location.origin + appRoot;
-          window.location.href = applicationUrl + '/Content/Templates/Site/ImportSite.xlsx';
-
-         });
-
 
         function initializeCheckboxLogic() {
             debugger;
