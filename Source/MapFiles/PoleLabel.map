@@ -7,14 +7,22 @@ LAYER
 	DATA "sp_geometry FROM (
 		SELECT m.*
 		FROM vw_att_details_pole_map m
-		WHERE (%NetworkFilter% = 0)  
-		   OR (%NetworkFilter% > 0 AND EXISTS (  
-				SELECT 1
-				FROM polygon_master pm
-				WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
-				  AND pm.entity_type = 'Network_Ticket'
-				  AND pm.system_id = %NetworkFilter%
-			))
+		WHERE (%NetworkFilter% > 0 AND EXISTS (
+					SELECT 1
+					FROM polygon_master pm
+					WHERE ST_Within(m.sp_geometry, pm.sp_geometry)
+					  AND pm.entity_type = 'Network_Ticket'
+					  AND pm.system_id = %NetworkFilter%
+				))
+				OR (
+					%NetworkFilter% = 0
+					AND NOT EXISTS (
+						SELECT 1
+						FROM user_master
+						WHERE user_id = %UserId%
+						  AND lower(user_type) = 'vendor'
+					)
+				)
 		) AS a USING UNIQUE system_id USING SRID=4326"
 	FILTER (%provinceFilter% AND (%layerFilter% ) AND (%prjectspecificationFilter% ) AND (%ownershipFilter% ) AND (%AutoPlanningNetworkFilter%))
 			
@@ -25,6 +33,7 @@ LAYER
 		'ownershipFilter'   '.*'							
 		'NetworkFilter'   '.*'
 		'AutoPlanningNetworkFilter' '.*'
+		'UserId' '.*'
 	END 
 	METADATA
 		'ows_title' 'POLE'
