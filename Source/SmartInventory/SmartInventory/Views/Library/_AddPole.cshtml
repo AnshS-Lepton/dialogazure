@@ -45,8 +45,9 @@
 @{
     var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
     var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
-}
+    var objUser = (User)Session["userDetail"];
 
+}
 
 @helper pageMessage()
 {
@@ -81,6 +82,13 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+        @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+        @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
+
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -232,9 +240,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div class="form-group row">
                             @*<label class="control-label col-sm-2" for="ddlPoleType">@layerDetail.layer_title @Resources.Resources.SI_OSP_GBL_GBL_GBL_023<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
-            </div>*@
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.pole_type, new SelectList(Model.lstPoleType.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Pole Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlPoleType" })
+                                </div>*@
 
                             <label class="control-label col-sm-2" for="txtPoleNo">@layerDetail.layer_title @Resources.Resources.SI_GBL_GBL_NET_FRM_214:</label>
                             <div class="col-sm-4">
@@ -254,9 +262,9 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                         </div>
                         <div class="form-group">
                             @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-            </div>*@
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+                                </div>*@
                             @OwnershipInfo()
                         </div>
                         <div class="form-group row">
@@ -288,7 +296,7 @@ new { id = "frmAddPole", enctype = "multipart/form-data", autocomplete = "off", 
                             <div class="col-md-4 col-sm-4">
                                 @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @maxlength = "35" })
                             </div>
-                        
+
                             <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
                             <div class="col-md-4 col-sm-4">
                                 @Html.TextBoxFor(m => m.subarea_id, new { @class = "form-control", @maxlength = "35" })

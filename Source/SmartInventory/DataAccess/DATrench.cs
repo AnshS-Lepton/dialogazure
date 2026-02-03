@@ -99,7 +99,11 @@ namespace DataAccess
                     objTrench.hierarchy_type = TrenchInfo.hierarchy_type;
 					objTrench.a_location_code = TrenchInfo.a_location_code;
 					objTrench.b_location_code = TrenchInfo.b_location_code;
-					var TrenchResp = repo.Update(objTrench);
+                    if (!string.IsNullOrEmpty(TrenchInfo.source_ref_type))
+                        objTrench.source_ref_type = TrenchInfo.source_ref_type;
+                    if (!string.IsNullOrEmpty(TrenchInfo.source_ref_id))
+                        objTrench.source_ref_id = TrenchInfo.source_ref_id;
+                    var TrenchResp = repo.Update(objTrench);
                     RouteCreation routeObj = new DAMisc().createRouteId(TrenchResp.system_id, Models.EntityType.Trench.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(TrenchResp.system_id, Models.EntityType.Trench.ToString(), TrenchResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Trench.ToString(), TrenchResp.province_id);

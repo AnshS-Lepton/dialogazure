@@ -56,6 +56,7 @@
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Manhole.ToString());
     var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
     var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -81,6 +82,11 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -291,9 +297,9 @@
 
 
                         @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-        <div class="col-md-4 col-sm-4 mrgn_btm">
-            @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-        </div>*@
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+                            </div>*@
                         <div id="dvOwnerShip" class="form-group row">
                             @AcquireFrom()
                         </div>
@@ -312,78 +318,78 @@
                                 </div>
                             }
                         </div>
-                            <div class="form-group row">
-                                @if (constructionType != null)
-                                {
-                                    <label class="col-md-2 col-sm-2 white-space" for="txtProvinceName">@Resources.Resources.SI_OSP_MH_NET_FRM_006:</label>
-                                    <div class="col-md-4 col-sm-4">
-                                        @Html.DropDownListFor(m => m.construction_type, new SelectList(Model.listConstructionType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                                    </div>
-                                }
-                            </div>
-                            @*-------------------------------------------------Added By Manoj------------------------------------------------------------------*@
-                            <div class="form-group row">
-                                <label class="col-md-2 col-sm-2" for="txtarea">Area:</label>
+                        <div class="form-group row">
+                            @if (constructionType != null)
+                            {
+                                <label class="col-md-2 col-sm-2 white-space" for="txtProvinceName">@Resources.Resources.SI_OSP_MH_NET_FRM_006:</label>
                                 <div class="col-md-4 col-sm-4">
-                                    @Html.TextBoxFor(m => m.area, new { @class = "form-control " })
+                                    @Html.DropDownListFor(m => m.construction_type, new SelectList(Model.listConstructionType.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
                                 </div>
-                                <label class="col-md-2 col-sm-2" for="txtAuthority">Authority:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.TextBoxFor(m => m.authority, new { @class = "form-control", @id = "txtParentCode" })
-                                </div>
+                            }
+                        </div>
+                        @*-------------------------------------------------Added By Manoj------------------------------------------------------------------*@
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtarea">Area:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.area, new { @class = "form-control " })
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
-                                </div>
+                            <label class="col-md-2 col-sm-2" for="txtAuthority">Authority:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.authority, new { @class = "form-control", @id = "txtParentCode" })
                             </div>
-                            @*----------------------------------------------------------------------------------------------------------------------------------------------*@
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRouteName">Route ID:</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.DropDownListFor(m => m.selected_route_ids, new SelectList(Model.lstRouteInfo.Select(x => new { Value = x.cable_id, Text = x.route_id + " - (" + x.entity_network_id + ")" }), "Value", "Text"), new { @multiple = "multiple", @class = "chosen-select col-sm-12", id = "txtrouteInfo" })
+                            </div>
+                        </div>
+                        @*----------------------------------------------------------------------------------------------------------------------------------------------*@
 
 
 
-                            <div class="form-group row">
-                                <label class="col-md-2 col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
-                                <div class="col-md-10 col-sm-10">
-                                    @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
-                                </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
+                            <div class="col-md-10 col-sm-10">
+                                @Html.TextBoxFor(m => m.address, new { @class = "form-control", @id = "txtAddress", @maxlength = "100", autocomplete = "do-not-show-ac" })
                             </div>
-                            <div class="form-group row">
-                                <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_075:</label>
-                                <div class="col-md-4 col-sm-4 mrgn_btm">
-                                    @Html.DropDownListFor(m => m.aerial_location, new SelectList(Model.listaerialLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2">@Resources.Resources.SI_OSP_CAB_NET_FRM_075:</label>
+                            <div class="col-md-4 col-sm-4 mrgn_btm">
+                                @Html.DropDownListFor(m => m.aerial_location, new SelectList(Model.listaerialLocation.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "-Select-", new { @class = "chosen-select form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_073:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.section_name, new { @class = "form-control" })
                             </div>
 
-                            <div class="form-group row">
-                                <label class="control-label col-md-2 col-sm-2 ">@Resources.Resources.SI_OSP_CAB_NET_FRM_073:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.TextBoxFor(m => m.section_name, new { @class = "form-control" })
-                                </div>
+                            <label class="control-label col-md-2 col-sm-2 " style="word-break:break-word; white-space:normal">@Resources.Resources.SI_OSP_CAB_NET_FRM_074:</label>
+                            <div class="col-md-4 col-sm-4  mrgn_btm">
+                                @Html.TextBoxFor(m => m.generic_section_name, new { @class = "form-control" })
+                            </div>
+                        </div>
 
-                                <label class="control-label col-md-2 col-sm-2 " style="word-break:break-word; white-space:normal">@Resources.Resources.SI_OSP_CAB_NET_FRM_074:</label>
-                                <div class="col-md-4 col-sm-4  mrgn_btm">
-                                    @Html.TextBoxFor(m => m.generic_section_name, new { @class = "form-control" })
-                                </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
+                            <div class="col-md-10 col-sm-10">
+                                @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @maxlength = "35" })
                             </div>
 
-                            <div class="form-group row">
-                                <label class="col-md-2 col-sm-2" for="txtRemarks">@Resources.Resources.SI_OSP_GBL_GBL_GBL_006:</label>
-                                <div class="col-md-10 col-sm-10">
-                                    @Html.TextAreaFor(m => m.remarks, new { @class = "form-control textarea-maxlen-validate", @id = "txtRemarks", @maxlength = "1000" })
-                                </div>
+                            <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
+                            <div class="col-md-4 col-sm-4">
+                                @Html.TextBoxFor(m => m.subarea_id, new { @class = "form-control", @maxlength = "35" })
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_164</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.TextBoxFor(m => m.gis_design_id, new { @class = "form-control", @maxlength = "35" })
-                                </div>
-
-                                <label class="col-md-2 col-sm-2">@Resources.Resources.SI_OSP_GBL_NET_FRM_545</label>
-                                <div class="col-md-4 col-sm-4">
-                                    @Html.TextBoxFor(m => m.subarea_id, new { @class = "form-control", @maxlength = "35" })
-                                </div>
-                            </div>
+                        </div>
                     </fieldset>
                     @if (Model.lstUserModule.Contains("PROJ"))
                     {

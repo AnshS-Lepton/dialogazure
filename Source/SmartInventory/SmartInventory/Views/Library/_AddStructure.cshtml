@@ -29,7 +29,7 @@
 @{
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Structure.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Structure.ToString());
-
+    var objUser = (User)Session["userDetail"];
 }
 
 
@@ -72,6 +72,11 @@
         @Html.HiddenFor(m => m.latitude)
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         @Html.HiddenFor(m => m.network_status)
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <input type="hidden" value="Structure" id="hdnEntityType" />
         <input name="actionTab" type="hidden" value="GISInfoTab" id="hdnStructureTab" />
         <div class="libTabs">

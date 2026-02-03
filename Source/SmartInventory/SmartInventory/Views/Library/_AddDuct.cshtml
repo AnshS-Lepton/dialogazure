@@ -54,7 +54,7 @@
     var innserOuterDimension = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.inner_outer_dimension.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var a_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.a_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
     var b_location_code = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.b_location_code.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_active == true).FirstOrDefault() : null;
-
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -88,6 +88,11 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         //@Html.HiddenFor(m => m.duct_name, new { @id = "hdnProvinceAbbr" })
 
         <!-- Message Pop-up -->
@@ -358,12 +363,12 @@
                                 @Html.TextBoxFor(m => m.calculated_length, new { @class = "form-control", @onkeydown = "return ValidateNumberDecimal(this,event,8,2);" })
                             </div>
                             @*@if (Model.system_id == 0)
-        {
-            <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
-            <div class="col-md-4 col-sm-4  mrgn_btm">
-                @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
-            </div>
-        }*@
+                                {
+                                    <label class="control-label col-md-2 col-sm-2 ">No of Ducts Created:</label>
+                                    <div class="col-md-4 col-sm-4  mrgn_btm">
+                                        @Html.DropDownListFor(m => m.no_of_ducts_created, new SelectList(Model.NoofDuctsCreated.Select(x => new { Value = x.dropdown_key, Text = x.dropdown_value }), "Value", "Text"), "", new { @class = "chosen-select col-sm-12" })
+                                    </div>
+                                }*@
                             <label class="control-label col-md-2 col-sm-2 " for="txtSubAreaName">Slack Count:</label>
                             <div class="col-md-4 col-sm-4  mrgn_btm">
                                 @Html.TextBoxFor(m => m.total_slack_count, new { @class = "form-control clsReadOnly", @onkeypress = "return si.allowNumberwithOneDot(event,'calculated_length');", @readonly = true, @maxlength = "10" })
@@ -408,14 +413,14 @@
                         </div>
                         <!--<div class="form-group">-->
                         @*<label class="control-label col-sm-2">@Resources.Resources.SI_GBL_GBL_GBL_GBL_009<i class="clsMandatory">*</i>:</label>
-                <div class="col-sm-45">
-                    @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
-                </div>*@
+                            <div class="col-sm-45">
+                                @Html.DropDownListFor(m => m.ownership, new SelectList(Model.listOwnership.Select(x => new { Value = x.dropdown_value, Text = x.dropdown_key }), "Value", "Text"), "--Select--", new { @class = "chosen-select form-control" })
+                            </div>*@
                         <!--<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                <div class="col-sm-45">
-                    Html.TextBoxFor(m => m.acquire_from, new { class = "form-control" })
-                </div>
-            </div>-->
+                            <div class="col-sm-45">
+                                Html.TextBoxFor(m => m.acquire_from, new { class = "form-control" })
+                            </div>
+                        </div>-->
                         <div class="form-group">
                             @AcquireFrom()
                         </div>

@@ -52,7 +52,7 @@
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.Splitter.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Splitter.ToString());
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
-
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -78,6 +78,11 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -87,12 +92,12 @@
                     <ul class="nav nav-tabs tabs-left" id="ulAreaTabs">
 
                         <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
-                        <li ><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
+                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_ISP_GBL_GBL_GBL_006</a></li>
                         @if (Model.system_id > 0)
                         {
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-PIF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-PIF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"#PortInfo":"")" onclick="si.GetPortInfo('@Model.system_id',@Model.model,'Splitter');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_025</a></li>
                         }
-                        @if (layerDetail != null && layerDetail.is_reference_allowed) 
+                        @if (layerDetail != null && layerDetail.is_reference_allowed)
                         {
                             <li class="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_006 @(Model.lstUserModule.Contains("ENT-DTL-GRF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GRF") ? "" : "block;")"><a href="@(Model.lstUserModule.Contains("ENT-DTL-GRF")?"#dvRefrence":"")" onclick="si.getEntityReference('@Model.system_id','@EntityType.Splitter.ToString()','@editPermission.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_006</a></li>
                         }
@@ -207,15 +212,15 @@
                             @CustomCoordinate()
                         </div>
                         @*<div class="form-group">
-            <label class="control-label col-sm-2" data-val="@Model.splitter_ratio" for="ddlSplitterType">Splitter Ratio<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.splitter_ratio, new SelectList(Model.lstSplRatio.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Splitter Ratio", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterRatio" })
-            </div>
-            <label class="control-label col-sm-2" for="ddlType">Splitter Type<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-45">
-                @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterType", @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');" })
-            </div>
-        </div>*@
+                                <label class="control-label col-sm-2" data-val="@Model.splitter_ratio" for="ddlSplitterType">Splitter Ratio<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.splitter_ratio, new SelectList(Model.lstSplRatio.Select(x => new { Value = x.dropdown_value.ToString(), Text = x.dropdown_value }), "Value", "Text"), "Select Splitter Ratio", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterRatio" })
+                                </div>
+                                <label class="control-label col-sm-2" for="ddlType">Splitter Type<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-45">
+                                    @Html.DropDownListFor(m => m.splitter_type, new SelectList(Model.lstType.Select(x => new { Value = x.value, Text = x.key }), "Value", "Text"), "Select Type", new { @class = "chosen-select col-sm-12", @style = "padding:0;", @id = "ddlSplitterType", @onchange = "si.ddlChangeRemoveCss(this.id, 'Type');" })
+                                </div>
+                            </div>*@
                         <div>
                             @OwnershipInfo()
                         </div>

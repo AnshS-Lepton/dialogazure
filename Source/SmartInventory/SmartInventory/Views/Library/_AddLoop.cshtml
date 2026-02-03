@@ -19,6 +19,7 @@
     var lstInputSettings = ApplicationSettings.formInputSettings.Where(m => m.form_name.ToLower() == Models.EntityType.Cable.ToString().ToLower()).ToList();
     var startEndReading = lstInputSettings.Count > 0 ? lstInputSettings.Where(m => m.form_feature_name.ToLower() == Models.formFeatureName.start_end_reading.ToString() && m.form_feature_type.ToLower() == Models.formFeatureType.feature.ToString() && m.is_active == true).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.Loop.ToString());
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -51,7 +52,11 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         @Html.HiddenFor(m => m.associated_network_id, new { id = "hdnAssNtwkId" })
 
-
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="TabContent--max-over">

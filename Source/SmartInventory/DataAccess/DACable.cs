@@ -177,6 +177,10 @@ namespace DataAccess
                     objCable.generic_section_name = cableInfo.generic_section_name;
                     objCable.section_name = cableInfo.section_name;
                     objCable.hierarchy_type = cableInfo.hierarchy_type;
+                    if (!string.IsNullOrEmpty(cableInfo.source_ref_type))
+                        objCable.source_ref_type = cableInfo.source_ref_type;
+                    if (!string.IsNullOrEmpty(cableInfo.source_ref_id))
+                        objCable.source_ref_id = cableInfo.source_ref_id;
                     ////objCable.served_by_ring= cableInfo.served_by_ring;
                     var response = repo.Update(objCable);
                     RouteCreation routeObj = new DAMisc().createRouteId(response.system_id, Models.EntityType.Cable.ToString());

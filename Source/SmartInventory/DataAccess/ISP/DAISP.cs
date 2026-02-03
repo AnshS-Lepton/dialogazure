@@ -1347,6 +1347,10 @@ namespace DataAccess.ISP
                     result.origin_ref_code = model.origin_ref_code;
                     result.bom_sub_category = model.bom_sub_category;
                     result.barcode = model.barcode;
+                    if (!string.IsNullOrEmpty(model.source_ref_type))
+                        result.source_ref_type = model.source_ref_type;
+                    if (!string.IsNullOrEmpty(model.source_ref_id))
+                        result.source_ref_id = model.source_ref_id;
                     //  result.served_by_ring = model.served_by_ring;
                 }
                 var responseAsso = DAIspEntityMapping.Instance.associateEntityInStructure(model.objIspEntityMap.shaft_id, model.objIspEntityMap.floor_id, model.system_id, EntityType.FDB.ToString(), model.parent_system_id, model.parent_entity_type, model.longitude + " " + model.latitude);

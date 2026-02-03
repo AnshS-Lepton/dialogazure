@@ -94,8 +94,13 @@ namespace DataAccess
                     objDuct.own_vendor_id = DuctInfo.own_vendor_id;
 					objDuct.a_location_code = DuctInfo.a_location_code;
 					objDuct.b_location_code = DuctInfo.b_location_code;
-					//DuctInfo.served_by_ring = DuctInfo.served_by_ring;
-					var DuctResp =  repo.Update(objDuct);
+                    if (!string.IsNullOrEmpty(DuctInfo.source_ref_type))
+                        objDuct.source_ref_type = DuctInfo.source_ref_type;
+                    if (!string.IsNullOrEmpty(DuctInfo.source_ref_id))
+                        objDuct.source_ref_id = DuctInfo.source_ref_id;
+
+                    //DuctInfo.served_by_ring = DuctInfo.served_by_ring;
+                    var DuctResp =  repo.Update(objDuct);
                     RouteCreation routeObj = new DAMisc().createRouteId(DuctResp.system_id, Models.EntityType.Duct.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(DuctResp.system_id, Models.EntityType.Duct.ToString(), DuctResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Duct.ToString(), DuctResp.province_id);

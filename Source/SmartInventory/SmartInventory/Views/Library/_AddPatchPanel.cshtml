@@ -43,7 +43,7 @@
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.PatchPanel.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], Model.network_status, EntityType.PatchPanel.ToString());
     var layer_Detail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.POD.ToString().ToUpper()).FirstOrDefault() : null;
-
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -71,6 +71,11 @@ new { id = "frmAddPatchPanel", enctype = "multipart/form-data", autocomplete = "
         @Html.HiddenFor(m => m.pEntityType)
         @Html.HiddenFor(m => m.pNetworkId)
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -83,20 +88,22 @@ new { id = "frmAddPatchPanel", enctype = "multipart/form-data", autocomplete = "
                         <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
                         @if (Model.system_id > 0 && layerDetail != null)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_025 @(Model.lstUserModule.Contains("ENT-DTL-PIF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-PIF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"#PortInfo":"")" onclick="si.GetPortInfo('@Model.system_id',@Model.model,'PatchPanel');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_025</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_025 @(Model.lstUserModule.Contains("ENT-DTL-PIF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-PIF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"#PortInfo":"")" onclick="si.GetPortInfo('@Model.system_id',@Model.model,'PatchPanel');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_025</a></li>
                         }
                         @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.PatchPanel.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.PatchPanel.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
                         }
                         @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
-                             href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.PatchPanel.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a></li>
+                            <li>
+                                <a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
+                                   href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.PatchPanel.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a>
+                            </li>
                         }
                         @if (Model.system_id > 0 && layerDetail != null)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
                         }
                     </ul>
                 </div>
@@ -107,24 +114,26 @@ new { id = "frmAddPatchPanel", enctype = "multipart/form-data", autocomplete = "
                     <div class="dropMenu">
                         <div class="alltabs">@Resources.Resources.SI_OSP_CAB_NET_FRM_014</div>
                         <ul>
-                            <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
+                            <li class="active"><a class="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_010 @(Model.lstUserModule.Contains("ENT-DTL-GI")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-GI") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-GI")?"#GISInfo":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_010</a></li>
+                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_005 @(Model.lstUserModule.Contains("ENT-DTL-ISP")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ISP") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ISP")?"#ItemSpecf":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_005</a></li>
                             @if (Model.system_id > 0 && layerDetail != null)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_025 @(Model.lstUserModule.Contains("ENT-DTL-PIF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-PIF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"#PortInfo":"")" onclick="si.GetPortInfo('@Model.system_id',@Model.model,'PatchPanel');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_025</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_025 @(Model.lstUserModule.Contains("ENT-DTL-PIF")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-PIF") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-PIF")?"#PortInfo":"")" onclick="si.GetPortInfo('@Model.system_id',@Model.model,'PatchPanel');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_025</a></li>
                             }
                             @if (Model.system_id > 0 && layerDetail != null && layerDetail.is_barcode_enabled)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.PatchPanel.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_057 @(Model.lstUserModule.Contains("ENT-DTL-BRC")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-BRC") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-BRC")?"#BarCodeInfo":"")" onclick="si.GetBarCode('@Model.system_id','@EntityType.PatchPanel.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_057</a></li>
                             }
                             @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
-                               href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.PatchPanel.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a></li>
+                                <li>
+                                    <a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
+                                       href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.PatchPanel.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a>
+                                </li>
                             }
                             @if (Model.system_id > 0 && layerDetail != null)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)"style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
                             }
 
                         </ul>
@@ -211,9 +220,9 @@ new { id = "frmAddPatchPanel", enctype = "multipart/form-data", autocomplete = "
 
                             </div>
                             @*<label class="control-label col-md-2 col-sm-2" for="txtAcquireFrom">@Resources.Resources.SI_GBL_GBL_GBL_GBL_010:</label>
-                <div class="col-sm-45">
-                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
-                </div>*@
+                                <div class="col-sm-45">
+                                    @Html.TextBoxFor(m => m.acquire_from, new { @class = "form-control" })
+                                </div>*@
                         </div>
                         <div class="form-group row">
                             <label class="control-label col-sm-2" for="txtAddress">@Resources.Resources.SI_OSP_GBL_GBL_GBL_008:</label>
@@ -237,10 +246,10 @@ new { id = "frmAddPatchPanel", enctype = "multipart/form-data", autocomplete = "
                     }
                     <div>@GeographicDetails()</div>
                 </div>
-            
-                    <div class="tab-pane" id="ItemSpecf">
-                        @PatchPanelTemplateMaster()
-                    </div>
+
+                <div class="tab-pane" id="ItemSpecf">
+                    @PatchPanelTemplateMaster()
+                </div>
 
                 <div class="tab-pane" id="PODAssoctn"></div>
                 <div class="tab-pane" id="PortInfo"></div>

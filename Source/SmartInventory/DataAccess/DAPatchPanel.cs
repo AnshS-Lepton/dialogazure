@@ -115,6 +115,10 @@ namespace DataAccess
                     objPatchPanelItem.gis_design_id = objPatchPanelMaster.gis_design_id;
                     objPatchPanelItem.own_vendor_id = objPatchPanelMaster.own_vendor_id;
                     objPatchPanelItem.hierarchy_type = objPatchPanelMaster.hierarchy_type;
+                    if (!string.IsNullOrEmpty(objPatchPanelMaster.source_ref_type))
+                        objPatchPanelItem.source_ref_type = objPatchPanelMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objPatchPanelMaster.source_ref_id))
+                        objPatchPanelItem.source_ref_id = objPatchPanelMaster.source_ref_id;
                     // objPatchPanelItem.served_by_ring=objPatchPanelMaster.served_by_ring;
                     var PPResp = repo.Update(objPatchPanelItem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(PPResp.system_id, Models.EntityType.PatchPanel.ToString(), PPResp.province_id, 1);

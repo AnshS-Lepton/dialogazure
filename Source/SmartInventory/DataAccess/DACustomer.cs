@@ -127,6 +127,10 @@ namespace DataAccess
                     objitem.origin_ref_description = objCustomer.origin_ref_description;
                     objitem.origin_from = objCustomer.origin_from;
                     objitem.origin_ref_code = objCustomer.origin_ref_code;
+                    if (!string.IsNullOrEmpty(objCustomer.source_ref_type))
+                        objitem.source_ref_type = objCustomer.source_ref_type;
+                    if (!string.IsNullOrEmpty(objCustomer.source_ref_id))
+                        objitem.source_ref_id = objCustomer.source_ref_id;
                     var result = repo.Update(objitem);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Customer.ToString(), result.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Customer.ToString(), result.province_id);

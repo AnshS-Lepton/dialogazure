@@ -17,6 +17,7 @@
 
 @Html.Hidden("hdnRole_Id", Model.userDetail.role_id)
 @Html.Hidden("hdUser_Id", Model.userDetail.user_id)
+@Html.Hidden("hdUser_Type", Model.userDetail.user_type)
 @Html.Hidden("hdn_IsBroadcastMessageEnabled", Model.IsBroadcastMessageEnabled)
 
 @*<input type="hidden" value="0" id="hdnEntitybuffer_value" />*@
@@ -1758,14 +1759,22 @@
                     </a>
                 </li>
                 <li class="techSep"></li>
-                @if (Model.lstUserModule.Contains("NE-LIBRY"))
+                @if (Model.lstUserModule.Contains("NE-LIBRY") && Model.userDetail.user_type != "Vendor")
                 {
 
                     <div class="iconBaricomoon" id="divLibSwitch" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_028">
                         <span class="icon-NE_Library"></span>
                     </div>
+
+
                     <li class="techSep"></li>
 
+                }
+                else
+                {
+                    <div class="iconBaricomoon" id="divLibSwitch" title="@Resources.Resources.SI_OSP_GBL_NET_GBL_028" style="display: none;">
+                        <span class="icon-NE_Library"></span>
+                    </div>
                 }
 
                 @*<li>
@@ -2413,6 +2422,8 @@
 </div>
 <div id="dvsiteAwardProjectId" style="display:none;"></div>
 <div id="dvNetworkTicketId" style="display:none;"></div>
+<div id="dvNTId" style="display:none;"></div>
+
 <style>
     @*.mainLegend {
         background-image: url('@Url.Content("~/content/images/loading_new.gif")');
@@ -2438,7 +2449,7 @@
 </script>
 <script>
 
-
+    
     function showSliderValue(obj) {
 
         var id = obj.id.replace("sld_Ortho_", "sld_val_");
@@ -2487,6 +2498,11 @@
         var hdn_IsBroadcastMessageEnabled = document.getElementById('hdn_IsBroadcastMessageEnabled').value;
         if (hdn_IsBroadcastMessageEnabled == 'True') {
             showMessageBox(MultilingualKey.SI_OSP_GBL_GBL_GBL_321, '', "Information");
+        }
+       
+        var userType = $('#hdUser_Type').val() || '';
+        if (userType.toLowerCase() === "vendor") {
+            $("#divLibSwitch").hide();
         }
     });
 </script>

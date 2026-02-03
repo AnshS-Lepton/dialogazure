@@ -369,11 +369,11 @@ namespace SmartInventory.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetNearByEntities(double latitude, double longitude, int bufferInMtrs)
+        public ActionResult GetNearByEntities(double latitude, double longitude, int bufferInMtrs,string source_ref_id ="",string source_ref_type="")
         {
             var usrDetail = (User)Session["userDetail"];
-            var source_ref_id = "";
-            var source_ref_type = "";
+            //var source_ref_id = "";
+            //var source_ref_type = "";
             var lstEntities = new BLMisc().getNearByEntities(latitude, longitude, bufferInMtrs, source_ref_id, source_ref_type, usrDetail.user_id);
 
             return PartialView("_Information", lstEntities);
