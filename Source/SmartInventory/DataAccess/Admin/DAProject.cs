@@ -1109,12 +1109,12 @@ namespace DataAccess.Admin
                 foreach (var pod in pODMasterList)
                 {
                     // Fetch existing record by SiteId
-                    var existingRecord = repo.GetAll(x => x.site_id == pod.site_id).FirstOrDefault();
-                    pod.latitude = existingRecord.latitude;
-                    pod.longitude = existingRecord.longitude;
-                    pod.network_id = existingRecord.network_id;
+                    var existingRecord = repo.GetAll(x => x.site_id == pod.site_id.Trim()).FirstOrDefault();
                     if (existingRecord != null)
                     {
+                        pod.latitude = existingRecord.latitude;
+                        pod.longitude = existingRecord.longitude;
+                        pod.network_id = existingRecord.network_id;
                         if (existingRecord.site_name.Trim() != pod.site_name.Trim())
                         {
                             siteImportLog.Add(
@@ -1141,14 +1141,6 @@ namespace DataAccess.Admin
                             existingRecord.fiber_link_type = pod.fiber_link_type;
                             existingRecord.fiber_link_code = pod.fiber_link_code;
                             existingRecord.is_site_imported = true;
-                            //existingRecord.latitude = pod.latitude;
-                            //existingRecord.longitude = pod.longitude;
-                            //// newly added fields
-                            //existingRecord.destination_site_id = pod.destination_site_id;
-                            //existingRecord.destination_port_type = pod.destination_port_type;
-                            //existingRecord.no_of_cores = pod.no_of_cores;
-                            //existingRecord.project_id_dialog = pod.project_id_dialog;
-
                             // Update in DB
                             repo.Update(existingRecord);
 

@@ -3224,6 +3224,8 @@ namespace Models
         public string entityType { get; set; }
         [NotMapped]
         public string partner_name { get; set; }
+        public string source_ref_id { get; set; }
+        public string source_ref_type { get; set; }
         public NELoopDetails()
         {
             objPM = new PageMessage();
@@ -4872,6 +4874,8 @@ namespace Models
         public string partner_name { get; set; }
         [NotMapped]
         public List<string> lstUserModule { get; set; }
+        public string source_ref_id { get; set; }
+        public string source_ref_type { get; set; }
         public PatchPanelMaster()
         {
             objPM = new PageMessage();

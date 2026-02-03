@@ -17,6 +17,7 @@
 @{
     var layerDetail = ApplicationSettings.listLayerDetails.Count > 0 ? ApplicationSettings.listLayerDetails.Where(x => x.layer_name.ToUpper() == EntityType.RestrictedArea.ToString().ToUpper()).FirstOrDefault() : null;
     var editPermission = Utility.MiscHelper.GetLayerEditPermission(Model.system_id, (List<NetworkLayer>)Session["NerworkLayerDetails"], NetworkStatus.P.ToString(), EntityType.RestrictedArea.ToString());
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div class="libDetail">
@@ -39,7 +40,11 @@
         @Html.HiddenFor(m => m.network_id)
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         @Html.HiddenFor(m => m.network_status, new { Value = Model.network_status == null ? "P" : Model.network_status })
-
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -99,19 +104,19 @@
                         <div id="txtMasked"></div>
 
                         @*<div class="form-group">
-            <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
-            </div>
+                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_004<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.parent_network_id, new { @class = "form-control clsReadOnly", @readonly = true })
+                                </div>
 
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005<i class="clsMandatory">*</i>:</label>
-            <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
-            </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">@Resources.Resources.SI_OSP_GBL_GBL_GBL_005<i class="clsMandatory">*</i>:</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.parent_entity_type, new { @class = "form-control clsReadOnly", @readonly = true })
+                                </div>
 
-        </div>*@
+                            </div>*@
                         <div class="form-group" style="display:none;">
                             <label class="control-label col-sm-4" for="txtAreaName"> System ID<i class="clsMandatory">*</i>:</label>
                             <div class="col-sm-8">

@@ -116,10 +116,17 @@ namespace DataAccess
                     objFMSItem.gis_design_id = objFMSMaster.gis_design_id;
                     objFMSItem.own_vendor_id = objFMSMaster.own_vendor_id;
                     objFMSItem.hierarchy_type = objFMSMaster.hierarchy_type;
+                    objFMSItem.source_ref_id = objFMSMaster.source_ref_id;
+                    objFMSItem.source_ref_type = objFMSMaster.source_ref_type;
                     //objFMSItem.served_by_ring=objFMSMaster.served_by_ring;
                     objFMSItem.installation_location_code = objFMSMaster.installation_location_code;
                     objFMSItem.fms_type = objFMSMaster.fms_type;
-					var FMSResp = repo.Update(objFMSItem);
+                    if (!string.IsNullOrEmpty(objFMSMaster.source_ref_type))
+                        objFMSItem.source_ref_type = objFMSMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objFMSMaster.source_ref_id))
+                        objFMSItem.source_ref_id = objFMSMaster.source_ref_id;
+
+                    var FMSResp = repo.Update(objFMSItem);
                     RouteCreation routeObj = new DAMisc().createRouteId(FMSResp.system_id, Models.EntityType.FMS.ToString());
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(FMSResp.system_id, Models.EntityType.FMS.ToString(), FMSResp.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.FMS.ToString(), FMSResp.province_id);

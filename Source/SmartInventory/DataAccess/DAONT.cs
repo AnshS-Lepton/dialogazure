@@ -143,6 +143,11 @@ namespace DataAccess
                     objONT.gis_design_id = objONTMaster.gis_design_id;
                     objONT.own_vendor_id = objONTMaster.own_vendor_id;
                     objONT.hierarchy_type = objONTMaster.hierarchy_type;
+                    if (!string.IsNullOrEmpty(objONTMaster.source_ref_type))
+                        objONT.source_ref_type = objONTMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objONTMaster.source_ref_id))
+                        objONT.source_ref_id = objONTMaster.source_ref_id;
+
                     // objONT.served_by_ring   = objONTMaster.served_by_ring;
                     var result = repo.Update(objONT);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.ONT.ToString(), result.province_id, 1);

@@ -13273,10 +13273,11 @@ var Main = function () {
         ;
         app.collapseRemove();
         var _zoom = app.map.getZoom();
+        let ticketId = $('#dvNTId').val();
         if (_zoom >= parseInt($('#hdnInfoToolZoom').val())) {
             app.showTempBufferforInfo(latLng);
 
-            ajaxReq('Main/GetNearByEntities', { latitude: latLng.lat(), longitude: latLng.lng(), bufferInMtrs: getMeterDistanceFromZoom(_zoom) }, true, function (resp) {
+            ajaxReq('Main/GetNearByEntities', { latitude: latLng.lat(), longitude: latLng.lng(), bufferInMtrs: getMeterDistanceFromZoom(_zoom), source_ref_id: ticketId, source_ref_type: 'Network Ticket' }, true, function (resp) {
                 ;
                 // si.HideElementInfo()
                 // $('.infoBack').hide();
@@ -17508,8 +17509,19 @@ var Main = function () {
             alert(getMultilingualStringValue(MultilingualKey.SI_OSP_GBL_JQ_FRM_037));
             return false;
         }
+        var userType = ($('#hdUser_Type').val() || '').toLowerCase();
+        let _sourceRefId = '';
+        let _sourceRefType = '';
 
-        ajaxReq('Main/SaveEditGeometry', { systemId: systemId, geomType: geomType, entityType: entityType, longLat: entityGeom, isExisting: true, centerLineGeom: centerLineGeom, tpDetail: app.editExistTerminationPoint }, false, function (resp) {
+        if (userType === 'vendor') {
+            _sourceRefId = $('#dvNTId').val() || '';
+
+            _sourceRefType = _sourceRefId
+                ? 'NETWORK_TICKET'
+                : '';
+        }
+
+        ajaxReq('Main/SaveEditGeometry', { systemId: systemId, geomType: geomType, entityType: entityType, longLat: entityGeom, isExisting: true, centerLineGeom: centerLineGeom, tpDetail: app.editExistTerminationPoint, source_ref_id: _sourceRefId, source_ref_type: _sourceRefType }, false, function (resp) {
             if (resp.status == "OK" && resp.status == "OK") {
                 if (app.IsVecorLayerEnabled) {
                     app.fetchVectorDelta();
@@ -22755,8 +22767,16 @@ var Main = function () {
     }
 
     this.downloadall = function () {
-        var system_Id = $('#infoTB').attr('att_systemid');
-        var entity_type = $('#infoTB').attr('att_entityType');
+        var system_Id = 0;
+        var entity_type = '';
+        var ticketId = $("#dvNetworkTicketId").val();
+        if (ticketId == undefined || ticketId == '') {
+            systemId = ticketId;
+            entityType = 'Network_Ticket';
+        } else {
+            systemId = $('#infoTB').attr('att_systemid');
+            entityType = $('#infoTB').attr('att_entityType');
+        } 
         ajaxReq('Main/downloadall', {
             'system_Id': system_Id, 'entity_type': entity_type
         }, true, function (j) {
@@ -22813,11 +22833,15 @@ var Main = function () {
 
     this.getElementImages = function () {
        
-        var _system_Id = $('#infoTB').attr('att_systemid');
-        var _entity_type = $('#infoTB').attr('att_entityType');
-        if (_system_Id == undefined || _system_Id == '') {
+        var ticketId = $("#dvNetworkTicketId").val();
+        var _system_Id = 0;
+        var _entity_type = '';
+        if (ticketId == undefined || ticketId == '') {
             _system_Id = $("#dvNetworkTicketId").val();
             _entity_type = 'Network_Ticket';
+        }else{            
+            _system_Id = $('#infoTB').attr('att_systemid');
+            _entity_type = $('#infoTB').attr('att_entityType');
         }
         
         $('#dvImages').load(
@@ -23018,12 +23042,13 @@ var Main = function () {
                 alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
                 return false; // Stop further processing
             }
-            let systemId = $('#infoTB').attr('att_systemid');
-            if (systemId == undefined || systemId == '') {
-                frmData.append('system_Id', $('#dvNetworkTicketId').val());
+
+            var ticketId = $("#dvNetworkTicketId").val();
+            if (ticketId == undefined || ticketId == '') {
+                frmData.append('system_Id', ticketId);
                 frmData.append('entity_type', 'Network_Ticket');
             } else {
-                frmData.append('system_Id', $('#dvNetworkTicketId').attr('att_systemid'));
+                frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
                 frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
             }
             
@@ -23123,13 +23148,13 @@ var Main = function () {
             alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
             return false;
         }
-        let systemId = $('#infoTB').attr('att_systemid');
-        if (systemId == undefined || systemId ==''){
-            frmData.append('system_Id', $('#dvNetworkTicketId').val());
+        var ticketId = $("#dvNetworkTicketId").val();
+        if (ticketId == undefined || ticketId == '') {
+            frmData.append('system_Id', ticketId);
             frmData.append('entity_type', 'Network_Ticket');
-        }else{
-        frmData.append('system_Id', $('#dvNetworkTicketId').attr('att_systemid'));
-        frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+        } else {
+            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
         }
         ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
             if (resp.status == "OK" || resp.status == "DUPLICATE_EXIST") {
@@ -23175,10 +23200,15 @@ var Main = function () {
             frmData.append(uploadedfile.name, uploadedfile);
             //frmData.append('ASPSESSID', ASPSESSID);
             //frmData.append('AUTHID', auth);
-            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
-            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            var ticketId = $("#dvNetworkTicketId").val();
+            if (ticketId == undefined || ticketId == '') {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
+            } else {
+                frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+                frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            }     
             frmData.append('document_type', 'Document');
-
             ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
                 if (resp.status == "OK") {
                     ajaxReqforFileUpload('Main/UploadDocument', frmData, true, function (resp) {
@@ -23383,8 +23413,15 @@ var Main = function () {
                 alert("The following files are not of allowed file type or exceed the name length limit:\n" + invalidFiles.join("\n"));
                 return false; // Stop further processing
             }
-            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
-            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+
+            var ticketId = $("#dvNetworkTicketId").val();
+            if (ticketId == undefined || ticketId == '') {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
+            } else {
+                frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+                frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            }   
             frmData.append('document_type', 'Image');
 
             ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
@@ -23458,8 +23495,16 @@ var Main = function () {
             }
 
             frmData.append(uploadedfile.name, uploadedfile);
-            frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
-            frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+
+            var ticketId = $("#dvNetworkTicketId").val();
+            if (ticketId == undefined || ticketId == '') {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
+            } else {
+                frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
+                frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            }   
+
             frmData.append('document_type', 'Image');
 
             ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
@@ -23593,13 +23638,17 @@ var Main = function () {
             alert("Please select at least one file to upload.");
             return;
         }
-
-        var systemId = $('#infoTB').attr('att_systemid');
-        var entityType = $('#infoTB').attr('att_entityType');
-        if (systemId == undefined || systemId ==''){
-           systemId = $("#dvNetworkTicketId").val();
+        var systemId =0;
+        var entityType ='';
+        var ticketId = $("#dvNetworkTicketId").val();
+        if (ticketId == undefined || ticketId == '') {
+            systemId = ticketId;
             entityType = 'Network_Ticket';
-        }
+        } else {
+             systemId = $('#infoTB').attr('att_systemid');
+             entityType = $('#infoTB').attr('att_entityType');
+        }   
+    
         // Call backend via AJAX to get the existing image count
         $.ajax({
             url: 'Main/GetImageCountByType',
@@ -27127,7 +27176,13 @@ var Main = function () {
                 }
             }, false, false)
 
-          
+            $("#dvNetworkTicketId").val('');
+            $("#dvNTId").val('');
+            var userType = $('#hdUser_Type').val() || '';
+            if (userType.toLowerCase() === "vendor") {
+                $("#divLibSwitch, #liLibSep").hide();
+            }
+           
         },
 
         setDateTimeCalendar: function (startdateid, startdateimgid, chkDisabled, isFutureDateAllowed) {
@@ -27585,6 +27640,11 @@ var Main = function () {
         getEntityBounds: function (_ticketId) {
             ajaxReq('NetworkTicket/getTicketEntityBounds', { ticketId: _ticketId }, false, function (resp) {
                 app.fitElementOnMap(resp);
+                var userType = $('#hdUser_Type').val() || '';
+                if (userType.toLowerCase() === "vendor") {
+                    $("#divLibSwitch, #liLibSep").show();
+                }
+                
                 //var bounds = new google.maps.LatLngBounds();
                 //for (var i = 0; i < resp.length; i++) {
                 //    if (resp[i].geom_type == 'Point') {
@@ -27640,6 +27700,7 @@ var Main = function () {
         showNetworkOnMap: function (_ticketId, _networkId, _regionId, _provinceId, _ticketName, ticket_status) {
             app.ticketId = _ticketId;
             app.ticketStatus = ticket_status;
+            $("#dvNTId").val(_ticketId);
             $(popup.DE.MinimizeModel).trigger("click");
             $('#spnTicketNetworkId').text(_networkId + '(' + _ticketName + ')');
             $('#chk_rLyr_' + _regionId + '').prop('checked', true);
@@ -27653,7 +27714,10 @@ var Main = function () {
             app.Networkticket.shoNWTNetwork(_ticketId);
 
             $('#chkTicketNetwork').prop('checked', true);
-
+            var userType = $('#hdUser_Type').val() || '';
+            if (userType.toLowerCase() === "vendor") {
+                $("#divLibSwitch, #liLibSep").hide();
+            }
             //$('#chkTicketNetwork').trigger("click");
             $('#chkTicketNetwork').unbind('click').on("click", function () {
                 if ($(this).is(':checked')) {

@@ -94,6 +94,11 @@ namespace DataAccess
                     objADB.gis_design_id = objADBMaster.gis_design_id;
                     objADB.hierarchy_type = objADBMaster.hierarchy_type;
                     objADB.own_vendor_id = objADBMaster.own_vendor_id;
+                    if (!string.IsNullOrEmpty(objADBMaster.source_ref_type))
+                        objADB.source_ref_type = objADBMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objADBMaster.source_ref_id))
+                        objADB.source_ref_id = objADBMaster.source_ref_id;
+
                     //objADB.served_by_ring = objADBMaster.served_by_ring;
                     var ADBResp = repo.Update(objADB);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(ADBResp.system_id, Models.EntityType.ADB.ToString(), ADBResp.province_id, 1);
@@ -596,6 +601,10 @@ namespace DataAccess
                     objBDB.origin_from = objBDBMaster.origin_from;
                     objBDB.origin_ref_code = objBDBMaster.origin_ref_code;
                     objBDB.bom_sub_category=objBDBMaster.bom_sub_category;
+                    if (!string.IsNullOrEmpty(objBDBMaster.source_ref_type))
+                        objBDB.source_ref_type = objBDBMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objBDBMaster.source_ref_id))
+                        objBDB.source_ref_id = objBDBMaster.source_ref_id;
                     ////  objBDB.served_by_ring=objBDBMaster.served_by_ring;
                     var result = repo.Update(objBDB);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.BDB.ToString(), result.province_id, 1);

@@ -213,6 +213,11 @@ namespace DataAccess
                     objBuilding.locality = buildingInfo.locality;
                     objBuilding.sub_locality = buildingInfo.sub_locality;
                     objBuilding.road = buildingInfo.road;
+                    if (!string.IsNullOrEmpty(buildingInfo.source_ref_type))
+                        objBuilding.source_ref_type = buildingInfo.source_ref_type;
+                    if (!string.IsNullOrEmpty(buildingInfo.source_ref_id))
+                        objBuilding.source_ref_id = buildingInfo.source_ref_id;
+
                     var response = repo.Update(objBuilding);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(response.system_id, Models.EntityType.Building.ToString(), response.province_id, 1);
                    // DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Building.ToString(), response.province_id);

@@ -1,5 +1,6 @@
 ﻿using DataAccess.DBHelpers;
 using Models;
+using Models.API;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -85,6 +86,11 @@ namespace DataAccess
                     //  objSplitter.served_by_ring = objSplitterMaster.served_by_ring;
                     objSplitter.bom_sub_category = objSplitterMaster.bom_sub_category;
                     objSplitter.gis_design_id = objSplitterMaster.gis_design_id;
+                    if (!string.IsNullOrEmpty(objSplitterMaster.source_ref_type))
+                        objSplitter.source_ref_type = objSplitterMaster.source_ref_type;
+                    if (!string.IsNullOrEmpty(objSplitterMaster.source_ref_id))
+                        objSplitter.source_ref_id = objSplitterMaster.source_ref_id;
+
                     var result = repo.Update(objSplitter);
                     DbMessage entityObj = new DAMisc().updateGeojsonEntityAttribute(result.system_id, Models.EntityType.Splitter.ToString(), result.province_id, 1);
                     //DbMessage geojsonObj = new DAMisc().updateGeojsonMetadata(Models.EntityType.Splitter.ToString(), result.province_id);

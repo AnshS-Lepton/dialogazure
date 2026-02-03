@@ -54,6 +54,7 @@
 @{
     var lat_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.latitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
     var lng_ = Model.formInputSettings.Count > 0 ? Model.formInputSettings.Where(m => m.form_feature_name.ToLower() == formFeatureName.longitude.ToString() && m.form_feature_type.ToLower() == formFeatureType.field.ToString() && m.is_readonly == false).FirstOrDefault() : null;
+    var objUser = (User)Session["userDetail"];
 }
 <!DOCTYPE html>
 <div>
@@ -81,6 +82,12 @@
         @Html.HiddenFor(m => m.modified_on, new { Value = Model.modified_on != null ? ((DateTime)Model.modified_on).ToString("dd-MMM-yyyy HH:mm:ss.fffff") : "" })
         //Add the other_info as hidden field for additional attributes
         @Html.HiddenFor(m => m.other_info, new { @id = "hdnOtherInfo" })
+        if (objUser.user_type.ToLower() == "vendor")
+        {
+            @Html.HiddenFor(m => m.source_ref_id, new { id = "dvNTId" })
+            @Html.HiddenFor(m => m.source_ref_type, new { id = "NETWORK_TICKET" })
+        }
+
         <!-- Message Pop-up -->
         @pageMessage()
         <div class="libTabs">
@@ -109,18 +116,24 @@
                         }
                         @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
-                             href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.ADB.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a></li>
+                            <li>
+                                <a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
+                                   href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.ADB.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a>
+                            </li>
                         }
-                        <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
-                            href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Pole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                        <li>
+                            <a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                               href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Pole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a>
+                        </li>
                         <!--Reigon Additional Attribute to show the partial view-->
                         <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
                         <!--End Reigon Additional Attribute-->
                         @if (Model.system_id > 0 && layerDetail != null)
                         {
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"
-                           href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                            <li>
+                                <a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"
+                                   href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a>
+                            </li>
                         }
                     </ul>
                 </div>
@@ -152,17 +165,21 @@
                             }
                             @if (layerDetail != null && layerDetail.is_pod_association_allowed)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
-                                 href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.ADB.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a></li>
+                                <li>
+                                    <a class="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_159 @(Model.lstUserModule.Contains("ENT-DTL-COAS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-COAS") ? "" : "block;")"
+                                       href="@(Model.lstUserModule.Contains("ENT-DTL-COAS")?"#PODAssoctn":"")" id="Pod_Association" onclick="si.GetPODAssociationDetail('@Model.geom', '@Model.system_id','@EntityType.ADB.ToString()', '@Model.primary_pod_system_id', '@Model.secondary_pod_system_id');" data-toggle="tab">@layer_Detail.layer_title <label>@Resources.Resources.SI_OSP_GBL_GBL_GBL_159</label></a>
+                                </li>
                             }
-                            <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
-                                href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Pole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a></li>
+                            <li>
+                                <a class="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_GBL_152 @(Model.lstUserModule.Contains("ENT-DTL-ENS")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENS") ? "" : "block;")"
+                                   href="@(Model.lstUserModule.Contains("ENT-DTL-ENS")?"#NwEntityHistory":"")" id="Nw_EntityHistory" onclick="si.GetNetworkEntityHistory('@Model.system_id','@EntityType.Pole.ToString()');" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_GBL_152</a>
+                            </li>
                             <!--Reigon Additional Attribute to show the partial view-->
                             <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_GBL_FRM_222 @(Model.lstUserModule.Contains("ENT-DTL-ADA")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ADA") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ADA")?"#AdditionalAttributes":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_GBL_FRM_222</a></li>
                             <!--End Reigon Additional Attribute-->
                             @if (Model.system_id > 0 && layerDetail != null)
                             {
-                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")"href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
+                                <li><a class="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"":"roledisabled")" title="@Resources.Resources.SI_OSP_GBL_NET_FRM_537 @(Model.lstUserModule.Contains("ENT-DTL-ENR")? "" : Resources.Resources.GBL_GBL_GBL_GBL_GBL_021)" style="display:@(Model.lstUserModule.Contains("ENT-DTL-ENR") ? "" : "block;")" href="@(Model.lstUserModule.Contains("ENT-DTL-ENR")?"#Reference":"")" data-toggle="tab">@Resources.Resources.SI_OSP_GBL_NET_FRM_537</a></li>
                             }
                         </ul>
                     </div>

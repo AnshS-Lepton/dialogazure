@@ -450,7 +450,10 @@ format: @<text>@item.maximum_cost</text>)
           });
          }
     });
-   // $("#closeModalPopup").on("click", function () { $("#closeShowNetowkOnMap").trigger("click"); });
+
+    $("#closeModalPopup").on("click", function () {
+        $("#dvNetworkTicketId").val('');
+    });
 
     $("#CloseAdvanceFilter").on("click", function () {
         $("#frmTicket")[0].reset();
@@ -665,6 +668,7 @@ format: @<text>@item.maximum_cost</text>)
     function setNWTicketDetailSession(ticket_id, network_id, ticket_status, fndTypeid, user_role_id, ticket_type, assigned_to, _regionId, _provinceId, _ticketName) {
         visibleNetworkLayer = true;
         $("#dvProgress").show();
+        $("#dvNTId").val(ticket_id);
         ajaxReq('NetworkTicket/NetworkTicketSessionDetails', {
             'ticket_id': ticket_id, 'network_id': network_id, 'ticket_status': ticket_status, 'ticket_type_id_match': fndTypeid, 'user_role_id': user_role_id, 'ticket_Type': ticket_type, 'assigned_to': assigned_to, 'region_id': _regionId, 'province_id': _provinceId, 'Action':'Add'
         }, true, function (resp) {
@@ -675,6 +679,11 @@ format: @<text>@item.maximum_cost</text>)
                 TicketNetworkId = network_id;
                 si.Networkticket.RedirectNetworkOnMap(ticket_id, network_id, _regionId, _provinceId, _ticketName);
                 $("#dvProgress").hide();
+                var userType = $('#hdUser_Type').val() || '';
+                if (userType.toLowerCase() === "vendor") {
+                    $("#divLibSwitch, #liLibSep").show();
+                }             
+
             }
             else {
                 $("#ticketWork_id").text('');
