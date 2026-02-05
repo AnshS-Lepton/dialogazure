@@ -4002,8 +4002,12 @@ namespace SmartInventoryServices.Controllers
 						headerAttribute.source_ref_type = dicParentEntityDetail["source_ref_type"];
 					}                  				
 				}
-
-				geomObj.Bld_Buffer = SmartInventory.Settings.ApplicationSettings.Bld_Buffer_Mtr;
+                if (geomObj.source_ref_id != "0" && geomObj.source_ref_type.ToUpper() == "NETWORK_TICKET")
+                {      
+                        headerAttribute.source_ref_id = geomObj.source_ref_id;
+                        headerAttribute.source_ref_type = geomObj.source_ref_type;             
+                }
+                geomObj.Bld_Buffer = SmartInventory.Settings.ApplicationSettings.Bld_Buffer_Mtr;
                 headerAttribute.source_ref_type = headerAttribute.source_ref_type == null ? "" : headerAttribute.source_ref_type.ToUpper();
                 if (headerAttribute.source_ref_id != "0" && headerAttribute.source_ref_type != "NETWORK_TICKET" || headerAttribute.is_new_entity)
                 {

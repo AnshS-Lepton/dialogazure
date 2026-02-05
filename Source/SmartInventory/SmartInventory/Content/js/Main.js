@@ -22771,11 +22771,11 @@ var Main = function () {
         var entity_type = '';
         var ticketId = $("#dvNetworkTicketId").val();
         if (ticketId == undefined || ticketId == '') {
-            systemId = ticketId;
-            entityType = 'Network_Ticket';
-        } else {
             systemId = $('#infoTB').attr('att_systemid');
             entityType = $('#infoTB').attr('att_entityType');
+        } else {            
+            systemId = ticketId;
+            entityType = 'Network_Ticket';
         } 
         ajaxReq('Main/downloadall', {
             'system_Id': system_Id, 'entity_type': entity_type
@@ -22836,12 +22836,12 @@ var Main = function () {
         var ticketId = $("#dvNetworkTicketId").val();
         var _system_Id = 0;
         var _entity_type = '';
-        if (ticketId == undefined || ticketId == '') {
-            _system_Id = $("#dvNetworkTicketId").val();
-            _entity_type = 'Network_Ticket';
-        }else{            
+        if (ticketId == undefined || ticketId == '') {          
             _system_Id = $('#infoTB').attr('att_systemid');
             _entity_type = $('#infoTB').attr('att_entityType');
+        }else{            
+            _system_Id = $("#dvNetworkTicketId").val();
+            _entity_type = 'Network_Ticket';
         }
         
         $('#dvImages').load(
@@ -23045,11 +23045,11 @@ var Main = function () {
 
             var ticketId = $("#dvNetworkTicketId").val();
             if (ticketId == undefined || ticketId == '') {
-                frmData.append('system_Id', ticketId);
-                frmData.append('entity_type', 'Network_Ticket');
-            } else {
                 frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
                 frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            } else {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
             }
             
             frmData.append('document_type', 'Image');
@@ -23150,11 +23150,12 @@ var Main = function () {
         }
         var ticketId = $("#dvNetworkTicketId").val();
         if (ticketId == undefined || ticketId == '') {
-            frmData.append('system_Id', ticketId);
-            frmData.append('entity_type', 'Network_Ticket');
-        } else {
             frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
             frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+        } else {
+            frmData.append('system_Id', ticketId);
+            frmData.append('entity_type', 'Network_Ticket');
+           
         }
         ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
             if (resp.status == "OK" || resp.status == "DUPLICATE_EXIST") {
@@ -23202,11 +23203,12 @@ var Main = function () {
             //frmData.append('AUTHID', auth);
             var ticketId = $("#dvNetworkTicketId").val();
             if (ticketId == undefined || ticketId == '') {
-                frmData.append('system_Id', ticketId);
-                frmData.append('entity_type', 'Network_Ticket');
-            } else {
                 frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
                 frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            } else {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
+                
             }     
             frmData.append('document_type', 'Document');
             ajaxReqforFileUpload('Main/CheckFileExist', frmData, true, function (resp) {
@@ -23416,11 +23418,12 @@ var Main = function () {
 
             var ticketId = $("#dvNetworkTicketId").val();
             if (ticketId == undefined || ticketId == '') {
-                frmData.append('system_Id', ticketId);
-                frmData.append('entity_type', 'Network_Ticket');
-            } else {
                 frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
                 frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            } else {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
+               
             }   
             frmData.append('document_type', 'Image');
 
@@ -23497,12 +23500,12 @@ var Main = function () {
             frmData.append(uploadedfile.name, uploadedfile);
 
             var ticketId = $("#dvNetworkTicketId").val();
-            if (ticketId == undefined || ticketId == '') {
-                frmData.append('system_Id', ticketId);
-                frmData.append('entity_type', 'Network_Ticket');
-            } else {
+            if (ticketId == undefined || ticketId == '') {            
                 frmData.append('system_Id', $('#infoTB').attr('att_systemid'));
                 frmData.append('entity_type', $('#infoTB').attr('att_entityType'));
+            } else {
+                frmData.append('system_Id', ticketId);
+                frmData.append('entity_type', 'Network_Ticket');
             }   
 
             frmData.append('document_type', 'Image');
@@ -23642,11 +23645,12 @@ var Main = function () {
         var entityType ='';
         var ticketId = $("#dvNetworkTicketId").val();
         if (ticketId == undefined || ticketId == '') {
+            systemId = $('#infoTB').attr('att_systemid');
+            entityType = $('#infoTB').attr('att_entityType');
+        } else {
             systemId = ticketId;
             entityType = 'Network_Ticket';
-        } else {
-             systemId = $('#infoTB').attr('att_systemid');
-             entityType = $('#infoTB').attr('att_entityType');
+            
         }   
     
         // Call backend via AJAX to get the existing image count
