@@ -1109,7 +1109,7 @@ namespace DataAccess.Admin
                 foreach (var pod in pODMasterList)
                 {
                     // Fetch existing record by SiteId
-                    var existingRecord = repo.GetAll(x => x.site_id == pod.site_id.Trim()).FirstOrDefault();
+                    var existingRecord = repo.GetAll(x => x.site_id.Trim() == pod.site_id.Trim()).FirstOrDefault();
                     if (existingRecord != null)
                     {
                         pod.latitude = existingRecord.latitude;
