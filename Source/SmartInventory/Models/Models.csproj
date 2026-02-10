@@ -86,6 +86,7 @@
     <Compile Include="Admin\OTPAuthenticationSettings.cs" />
     <Compile Include="AssociationReportLog.cs" />
     <Compile Include="BackBonePlanning.cs" />
+    <Compile Include="Notification.cs" />
     <Compile Include="ProjectwiseReport.cs" />
     <Compile Include="SplicingRecord.cs" />
     <Compile Include="DaFiFeasibilityAPI\DaFiModels.cs" />

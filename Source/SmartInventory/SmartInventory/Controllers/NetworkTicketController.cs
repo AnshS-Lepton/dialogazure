@@ -101,6 +101,7 @@ namespace SmartInventory.Controllers
 		}
 		public ActionResult SaveNetworkTicket(NetworkTicket objTicketMaster)
 		{
+			NetworkTicket networkTickets = new NetworkTicket();
 			ModelState.Clear();
 			if (TryValidateModel(objTicketMaster))
 			{
@@ -108,8 +109,8 @@ namespace SmartInventory.Controllers
 				User ManagerDetails = objBLuser.getUserDetails(Convert.ToInt32(Session["user_id"]));
                 User objUserDetails = objBLuser.getUserDetails(objTicketMaster.assigned_to);
 				var manager_id = new BLUserManagerMapping().GetManagerMapping(objTicketMaster.assigned_to).Where(x => x.manager_id == Convert.ToInt32(Session["user_id"])).Select(x => x.manager_id).FirstOrDefault();
-				//if (objUserDetails.manager_id == Convert.ToInt32(Session["user_id"]))
-				if (manager_id > 0)
+                var networkTicketsTargetDate = new BLNetworkTicket().GetNetworkTicketById(objTicketMaster.ticket_id);
+                if (manager_id > 0)
 				{
 					if(!string.IsNullOrEmpty(objTicketMaster.project_ids)) { 
                     string projectIds = objTicketMaster.project_ids ?? "";
@@ -118,8 +119,11 @@ namespace SmartInventory.Controllers
 						foreach (string pId in arrProjectIds)
 						{
 							objTicketMaster.site_project_id = pId;
-							objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
-							/*var receivers = new string[] { MiscHelper.EncodeTo64(objUserDetails.user_email) };
+							var networkTicketResponse = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                            networkTickets = new BLNetworkTicket().GetNetworkTicketByNetworkId(networkTicketResponse.network_id);
+							
+							objTicketMaster.pageMsg.message = networkTicketResponse.message;
+                            /*var receivers = new string[] { MiscHelper.EncodeTo64(objUserDetails.user_email) };
 							 var listEmail = new List<EmailSettingsModel>
 							  {
 									new EmailSettingsModel
@@ -133,32 +137,39 @@ namespace SmartInventory.Controllers
 							 string mailSentMsg = "";
 
 							 commonUtil.SendSiteAwardEmail(receivers, "The Network Ticket is assigned by", "Network Ticket Notifiation", out mailSentMsg, listEmail);
-							*/
-							//string WH24AuthBaseURL = ApplicationSettings.WH24AuthBaseURL;
-							//string WH24URL = ApplicationSettings.WH24URL;
-							//string WH24ClientId = ApplicationSettings.WH24ClientId;
-							//string WH24ClientSecret = ApplicationSettings.WH24ClientSecret;
-							//string WH24grantType = ApplicationSettings.WH24grantType;
-
-							//ADOIDSecoAuth aDOIDSecoAuth = new ADOIDSecoAuth();
-							//aDOIDSecoAuth.CallWH24API(WH24ClientId, WH24ClientSecret, WH24grantType, WH24AuthBaseURL, WH24URL);
-						
-						}
+							*/                     
+                        }
 					}
 					else
 					{
-                        objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                        var networkTicketResponse = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                        objTicketMaster.pageMsg.message = networkTicketResponse.message;
                     }
                     if (!string.IsNullOrEmpty(objTicketMaster.pageMsg.message))
 					    {
 						if (objTicketMaster.pageMsg.message == "Save")
 						{
-							objTicketMaster.pageMsg.message = Resources.Resources.SI_OSP_GBL_GBL_GBL_153;
+							if (Convert.ToInt32(ApplicationSettings.IsPushNotificationEnabled) == 1)
+							{
+								var notificationDetails = PushNotification.GetInstance.SendNotification(objUserDetails, "A ticket " + networkTickets.network_id + " has been assigned", "Ticket assignment", Convert.ToInt32(Session["user_id"]), "Network Ticket", networkTickets.network_id, networkTickets.ticket_id, networkTickets.name, "NT", "Assigned", "Ticket has been assigned");
+                                new BLNotification().SaveNotification(objUserDetails.user_id, notificationDetails);
+                            }
+								objTicketMaster.pageMsg.message = Resources.Resources.SI_OSP_GBL_GBL_GBL_153;
 							objTicketMaster.pageMsg.status = "Save";
 						}
 						else if (objTicketMaster.pageMsg.message == "Update")
 						{
-							objTicketMaster.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_318;
+                            if (networkTicketsTargetDate.assigned_to != objTicketMaster.assigned_to && Convert.ToInt32(ApplicationSettings.IsPushNotificationEnabled) == 1)
+                            {
+                                var notificationDetails = PushNotification.GetInstance.SendNotification(objUserDetails, "Ticket " + networkTickets.network_id + " has been assigned", "Ticket assignee change", Convert.ToInt32(Session["user_id"]), "Network Ticket", networkTickets.network_id, networkTickets.ticket_id, networkTickets.name, "NT", "Assigned", "Ticket has been assigned");
+                                new BLNotification().SaveNotification(objUserDetails.user_id, notificationDetails);
+                            }
+                            if (networkTicketsTargetDate.target_date != objTicketMaster.target_date && Convert.ToInt32(ApplicationSettings.IsPushNotificationEnabled) == 1)
+                            {
+                                var notificationDetails = PushNotification.GetInstance.SendNotification(objUserDetails, "Ticket " + networkTickets.network_id + " target date has been changed", "Ticket Target Date change", Convert.ToInt32(Session["user_id"]), "Network Ticket", networkTickets.network_id, networkTickets.ticket_id, networkTickets.name, "NT", "Assigned", "Ticket target date has been changed");
+                                new BLNotification().SaveNotification(objUserDetails.user_id, notificationDetails);
+                            }
+                            objTicketMaster.pageMsg.message = Resources.Resources.SI_OSP_GBL_NET_FRM_318;
 							objTicketMaster.pageMsg.status = "Update";
 						}
 						else

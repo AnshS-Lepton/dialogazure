@@ -971,7 +971,20 @@ namespace DataAccess
             }
             catch { throw; }
         }
-
+        public User UpdateFCMKey(int user_id, string fcmkey)
+        {
+            try
+            {
+                var userDetails = repo.Get(x => x.user_id == user_id);
+                if (userDetails != null)
+                {
+                    userDetails.fcmkey = fcmkey;
+                    return repo.Update(userDetails);
+                }
+                return null;
+            }
+            catch { throw; }
+        }
     }
 
 

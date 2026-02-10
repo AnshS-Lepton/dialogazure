@@ -430,6 +430,11 @@ namespace Models
 		public string message { get; set; }
 		public string result { get; set; }
 	}
+    public class NetworkTicketResponse
+    {
+        public string network_id { get; set; }
+        public string message { get; set; }
+    }
     public class RouteCreation
     {
         public bool STATUS { get; set; }

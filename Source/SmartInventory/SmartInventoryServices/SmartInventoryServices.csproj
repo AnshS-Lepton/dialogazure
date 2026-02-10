@@ -610,6 +610,7 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\MiscellaneousTaskController.cs" />
     <Compile Include="Controllers\NetworkTicketController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\OfflineController.cs" />
     <Compile Include="Controllers\OTPController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -715,6 +716,7 @@
     <Folder Include="Views\CustomAuthorization\" />
     <Folder Include="Views\ISP\" />
     <Folder Include="Views\NetworkPlanning\" />
+    <Folder Include="Views\Notification\" />
     <Folder Include="Views\Report\" />
     <Folder Include="Views\SignIn\" />
     <Folder Include="Views\User\" />

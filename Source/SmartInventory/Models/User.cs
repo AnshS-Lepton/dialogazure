@@ -178,6 +178,7 @@ namespace Models
         [NotMapped]
         public IList<DropDownMaster> lstUserType { get; set; }
         public int? jc_id { get; set; }
+        public string fcmkey { get; set; }
         [NotMapped]
         public List<FormInputSettings> formInputSettings { get; set; }
         public User()
@@ -1053,6 +1054,13 @@ namespace Models
         public int id { get; set; }
         public int cable_id { get; set; }
         public int ring_id { get; set; }
+    }
+    public class fcmKeyInfo
+    {
+        [Required]
+        public int userId { get; set; }
+        [Required]
+        public string fcmKey { get; set; }
     }
 }
 
