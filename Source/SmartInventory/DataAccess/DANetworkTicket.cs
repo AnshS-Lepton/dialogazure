@@ -59,12 +59,12 @@ namespace DataAccess
             }
             catch { throw; }
         }
-        public string SaveNetworkTicket(NetworkTicket objNetworkTicket, int userId)
+        public NetworkTicketResponse SaveNetworkTicket(NetworkTicket objNetworkTicket, int userId)
         {
             try
             {
                 var dt = DateTimeHelper.DateTimeFormate(objNetworkTicket.target_date.ToString());
-                var result = repo.ExecuteProcedure<string>("fn_nwt_insert_update_ticket", new
+                var result = repo.ExecuteProcedure<NetworkTicketResponse>("fn_nwt_insert_update_ticket", new
                 {
                     p_ticket_id = objNetworkTicket.ticket_id,
                     p_ticket_type_id = objNetworkTicket.ticket_type_id,
@@ -84,7 +84,7 @@ namespace DataAccess
                     p_project_code = objNetworkTicket.project_code,
                     p_account_code = objNetworkTicket.account_code,
                     p_project_id = objNetworkTicket.site_project_id
-                });
+                },true);
 				return result.Last(); ;
 
             }
@@ -167,7 +167,19 @@ namespace DataAccess
                 throw;
             }
         }
-		public DataTable GetNetworkTicketDetailsById(int ticket_id)
+        public NetworkTicket GetNetworkTicketByNetworkId(string network_id)
+        {
+            try
+            {
+                return repo.Get(u => u.network_id == network_id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public DataTable GetNetworkTicketDetailsById(int ticket_id)
 		{
 			try
 			{

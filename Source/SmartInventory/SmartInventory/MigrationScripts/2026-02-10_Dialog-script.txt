@@ -1,0 +1,45 @@
+
+CREATE TABLE public.user_notification_details (
+	id serial4 NOT NULL,
+	receiver_id int4 NULL,
+	receiver_fcm_key varchar NULL,
+	created_on timestamp NULL DEFAULT now(),
+	sender_id int4 NULL,
+	message varchar NULL,
+	notification_type varchar NULL,
+	notification_source_system varchar NULL,
+	feature_name varchar NULL,
+	notification_status varchar NULL DEFAULT 'In-Progress'::character varying,
+	is_read bool NULL DEFAULT false,
+	mobilenumber varchar NULL,
+	username varchar NULL,
+	"action" varchar NULL,
+	matcode varchar NULL,
+	min_id varchar NULL,
+	title varchar NULL,
+	is_app_notification bool NULL DEFAULT true,
+	process_start_time timestamp NULL,
+	process_end_time timestamp NULL,
+	ticket_name varchar NULL,
+	is_processed bool NULL DEFAULT false
+);
+
+----------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_get_notification_history_details(p_userid integer)
+ RETURNS SETOF json
+ LANGUAGE plpgsql
+AS $function$ 
+DECLARE 
+begin
+	
+   
+  RETURN QUERY 
+ select row_to_json(row) from  ( SELECT 
+ id, receiver_id, receiver_fcm_key, CAST(TO_CHAR(created_on, 'YYYY-MM-DD HH24:MI:SS') AS timestamp)  as created_on, sender_id, message, notification_type, notification_source_system, feature_name, notification_status, is_read, mobilenumber, username, title, is_app_notification, ticket_name
+ 
+FROM user_notification_details where receiver_id = p_userid and feature_name = 'Network Ticket' order by created_on desc ) row;
+  
+END 
+$function$
+;

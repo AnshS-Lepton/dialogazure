@@ -273,6 +273,7 @@ namespace SmartInventory.Settings
         public static string WH24grantType = "";
         public static string WH24URL = "";
         public static string WH24AuthBaseURL = "";
+        public static int IsPushNotificationEnabled = 0;
         public static void InitializeGlobalSettings()
         {            
             formInputSettings = new BLFormInputSettings().getformInputSettings();
@@ -969,6 +970,13 @@ namespace SmartInventory.Settings
                 if (objSetting.key == "WH24AuthBaseURL")
                 {
                     WH24AuthBaseURL = objSetting.value;
+                }
+                if (objSetting.key == "WH24AuthBaseURL")
+                {
+                    WH24AuthBaseURL = objSetting.value;
+                } if (objSetting.key == "IsPushNotificationEnabled")
+                {
+                    IsPushNotificationEnabled = Convert.ToInt32(objSetting.value);
                 }
             }
             IsLicenseExpAlrtAllowed = globalSettings

@@ -364,7 +364,11 @@ namespace BusinessLogics
         {
             return new DAUser().GetManagerEmailId(user_id);
         }
+        public User UpdateFCMKey(int user_id, string fcmkey)
+        {
+            return new DAUser().UpdateFCMKey(user_id, fcmkey);
 
+        }
     }
 
     public class BLUserLogin

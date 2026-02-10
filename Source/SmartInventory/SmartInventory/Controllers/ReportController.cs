@@ -14393,7 +14393,8 @@ foreach (var objEntity in lstExportReportKML)
                     objTicketMaster.for_network_type = "P";
                     objTicketMaster.ticket_type_id = 7;//Construction
                     objTicketMaster.name = "Award Site";// default name
-                    objTicketMaster.pageMsg.message = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                    var tickets = new BLNetworkTicket().SaveNetworkTicket(objTicketMaster, Convert.ToInt32(Session["user_id"]));
+                    objTicketMaster.pageMsg.message = tickets.message;
                     // always retunrs "Save" ;
                     #endregion
 

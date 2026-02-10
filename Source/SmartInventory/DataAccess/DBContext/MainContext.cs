@@ -681,7 +681,9 @@ namespace DataAccess.DBContext
             #region Projectwise Report
             modelBuilder.Entity<ProjectwiseReportRequestLog>().ToTable("projectwise_report_request_logs", dbschema);
             #endregion
+            modelBuilder.Entity<Notification>().ToTable("user_notification_details", dbschema);
 
+            
         }
 
     }

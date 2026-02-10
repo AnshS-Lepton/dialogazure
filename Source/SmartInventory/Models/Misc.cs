@@ -3198,6 +3198,24 @@ namespace Models
         [Newtonsoft.Json.JsonProperty("entity_name")]
         public string EntityName { get; set; }
     }
+    public class FCMRequest
+    {
+        public string title { get; set; }
+        public string body { get; set; }
+        public string mobileNumber { get; set; }
+        public string userName { get; set; }
+        public string action { get; set; }
+        public string matCode { get; set; }
+        public string minId { get; set; }
+        public string notificationType { get; set; }
+        public DateTime? process_start_time { get; set; }
+        public DateTime? process_end_time { get; set; }
+        public string notification_status { get; set; }
+        public int sender_id { get; set; }
+        public string feature_name { get; set; }
+        public bool is_app_notification { get; set; } = true;
+        public string ticket_name { get; set; }
+    }
 
 }
 

@@ -16,7 +16,7 @@ namespace BusinessLogics
             return new DANetworkTicket().GetAPINetworkTicket(objNetworkTicketFilter);
         }
         
-        public string SaveNetworkTicket(NetworkTicket objTicketMaster, int userId)
+        public NetworkTicketResponse SaveNetworkTicket(NetworkTicket objTicketMaster, int userId)
         {
             return new DANetworkTicket().SaveNetworkTicket(objTicketMaster, userId);
         }
@@ -39,6 +39,10 @@ namespace BusinessLogics
         public NetworkTicket GetNetworkTicketById(int ticket_id)
         {
             return new DANetworkTicket().GetNetworkTicketById(ticket_id);
+        }
+        public NetworkTicket GetNetworkTicketByNetworkId(string network_id)
+        {
+            return new DANetworkTicket().GetNetworkTicketByNetworkId(network_id);
         }
 
 		public DataTable GetNetworkTicketDetailsById(int ticket_id)
